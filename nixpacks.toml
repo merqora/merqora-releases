@@ -1,0 +1,8 @@
+[phases.setup]
+nixPkgs = ["python310", "gcc"]
+
+[phases.install]
+cmds = ["cd ai-support/python && pip install -r requirements.txt"]
+
+[start]
+cmd = "cd ai-support/python && uvicorn main:app --host 0.0.0.0 --port ${PORT:-8000}"
