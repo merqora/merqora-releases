@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  ai-support:
+    build: .
+    container_name: rendly-ai-support
+    ports:
+      - "8000:8000"
+    environment:
+      - RENDLY_AI_API_HOST=0.0.0.0
+      - RENDLY_AI_API_PORT=8000
+      - RENDLY_AI_DEBUG=false
+      - RENDLY_AI_SUPABASE_URL=${SUPABASE_URL}
+      - RENDLY_AI_SUPABASE_KEY=${SUPABASE_SERVICE_KEY}
+      - RENDLY_AI_CONFIDENCE_THRESHOLD=70
+      - RENDLY_AI_SUPPORT_USER_ID=${SUPPORT_USER_ID}
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    volumes:
+      - ./logs:/app/logs
+    networks:
+      - rendly-network
+
+  # Optional: Redis for caching (future enhancement)
+  # redis:
+  #   image: redis:7-alpine
+  #   container_name: rendly-ai-redis
+  #   ports:
+  #     - "6379:6379"
+  #   networks:
+  #     - rendly-network
+
+networks:
+  rendly-network:
+    driver: bridge

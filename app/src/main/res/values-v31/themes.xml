@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Theme para Android 12+ (API 31+) con SplashScreen API nativo -->
+    <style name="Theme.Merqora" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        
+        <!-- SplashScreen API Android 12+ - Máxima optimización -->
+        <item name="android:windowSplashScreenBackground">#FFFFFF</item>
+        <item name="android:windowSplashScreenAnimatedIcon">@mipmap/ic_launcher_round</item>
+        <item name="android:windowSplashScreenAnimationDuration">200</item>
+        <item name="android:windowSplashScreenIconBackgroundColor">#FFFFFF</item>
+        
+        <!-- Optimizaciones de renderizado Android 12+ -->
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:windowLayoutInDisplayCutoutMode">shortEdges</item>
+        <item name="android:enforceNavigationBarContrast">false</item>
+        <item name="android:enforceStatusBarContrast">false</item>
+    </style>
+    
+    <style name="Theme.Merqora.Splash" parent="Theme.Merqora">
+        <item name="android:windowBackground">#FFFFFF</item>
+    </style>
+</resources>

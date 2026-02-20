@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#000000</color>
+    <color name="ic_launcher_background">#000000</color>
+    <color name="purple_500">#8B5CF6</color>
+    <color name="purple_700">#7C3AED</color>
+    <color name="white">#FFFFFF</color>
+    <string name="app_name">Merqora</string>
+    <string name="gcm_defaultSenderId" translatable="false">619903470328</string>
+    <string name="google_api_key" translatable="false">AIzaSyCs0DAvRZRHnKx6Xh-bYyVTs81EH4sNJZI</string>
+    <string name="google_app_id" translatable="false">1:619903470328:android:46712dc0bcaa858713090d</string>
+    <string name="google_crash_reporting_api_key" translatable="false">AIzaSyCs0DAvRZRHnKx6Xh-bYyVTs81EH4sNJZI</string>
+    <string name="google_storage_bucket" translatable="false">rendly-app.firebasestorage.app</string>
+    <string name="project_id" translatable="false">rendly-app</string>
+    <style name="Theme.Merqora" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        
+        
+        
+        <item name="android:windowSplashScreenBackground">#FFFFFF</item>
+        
+        <item name="android:windowSplashScreenAnimatedIcon">@mipmap/ic_launcher_round</item>
+        
+        <item name="android:windowSplashScreenAnimationDuration">300</item>
+        
+        
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:windowLayoutInDisplayCutoutMode">shortEdges</item>
+    </style>
+    <style name="Theme.Merqora.Splash" parent="Theme.Merqora">
+        <item name="android:windowBackground">#FFFFFF</item>
+        <item name="android:windowSplashScreenBackground">#FFFFFF</item>
+    </style>
+</resources>
