@@ -1,0 +1,49 @@
+[package]
+name = "rendly-security"
+version = "1.0.0"
+edition = "2021"
+description = "Rendly AI Support - Security & Infrastructure Service"
+
+[lib]
+name = "rendly_security"
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+# Async runtime
+tokio = { version = "1.35", features = ["full"] }
+
+# Web framework (for internal service)
+axum = "0.7"
+tower = "0.4"
+tower-http = { version = "0.5", features = ["cors", "trace"] }
+
+# Serialization
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+
+# Rate limiting
+governor = "0.6"
+
+# Logging
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["json", "env-filter"] }
+
+# Security
+uuid = { version = "1.6", features = ["v4", "serde"] }
+chrono = { version = "0.4", features = ["serde"] }
+regex = "1.10"
+lazy_static = "1.4"
+
+# Python bindings
+pyo3 = { version = "0.20", features = ["extension-module"] }
+
+# Hashing
+blake3 = "1.5"
+
+[dev-dependencies]
+tokio-test = "0.4"
+
+[profile.release]
+lto = true
+codegen-units = 1
+opt-level = 3

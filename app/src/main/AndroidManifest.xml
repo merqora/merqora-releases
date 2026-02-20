@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- Permissions -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="28" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32" />
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+    <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    
+    <!-- Location permissions for GPS -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    
+    <!-- Biometric Authentication -->
+    <uses-permission android:name="android.permission.USE_BIOMETRIC" />
+    <uses-permission android:name="android.permission.USE_FINGERPRINT" />
+    
+    <uses-feature android:name="android.hardware.camera" android:required="false" />
+    <uses-feature android:name="android.hardware.fingerprint" android:required="false" />
+    <uses-feature android:name="android.hardware.camera.autofocus" android:required="false" />
+    <uses-feature android:name="android.hardware.location.gps" android:required="false" />
+
+    <application
+        android:name=".MerqoraApplication"
+        android:usesCleartextTraffic="true"
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:icon="@mipmap/ic_launcher"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.Merqora"
+        android:hardwareAccelerated="true"
+        android:largeHeap="true"
+        tools:targetApi="31">
+        
+        <!-- ═══════════════════════════════════════════════════════════════════
+             APP STARTUP LIBRARY - Disable auto-init ContentProviders
+             These ContentProviders add ~300-500ms to cold start
+             ═══════════════════════════════════════════════════════════════════ -->
+        
+        <!-- Disable WorkManager auto-initialization -->
+        <provider
+            android:name="androidx.startup.InitializationProvider"
+            android:authorities="${applicationId}.androidx-startup"
+            android:exported="false"
+            tools:node="merge">
+            
+            <!-- Disable WorkManager ContentProvider -->
+            <meta-data
+                android:name="androidx.work.WorkManagerInitializer"
+                android:value="androidx.startup"
+                tools:node="remove" />
+                
+            <!-- Custom initializers disabled - adding overhead in debug builds -->
+            <!-- TODO: Re-enable for release builds after signing setup -->
+            <!--
+            <meta-data
+                android:name="com.rendly.app.startup.DeferredInitializer"
+                android:value="androidx.startup" />
+            -->
+        </provider>
+        
+        <!-- Disable Emoji2 auto-init (adds ~50ms) -->
+        <provider
+            android:name="androidx.emoji2.text.EmojiCompatInitializer"
+            android:authorities="${applicationId}.emoji2"
+            tools:node="remove" />
+            
+        <!-- Disable Lifecycle ProcessLifecycleOwnerInitializer if present -->
+        <provider
+            android:name="androidx.lifecycle.ProcessLifecycleOwnerInitializer"
+            android:authorities="${applicationId}.lifecycle-process"
+            tools:node="remove" />
+        
+        <!-- FileProvider for sharing files (PDFs, etc.) -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+        
+        <!-- Splash Screen Activity -->
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:theme="@style/Theme.Merqora"
+            android:windowSoftInputMode="adjustResize"
+            android:screenOrientation="portrait"
+            android:launchMode="singleTask"
+            tools:ignore="LockedOrientationActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            
+            <!-- ═══════════════════════════════════════════════════════════════════
+                 MERCADO PAGO DEEP LINKS - Retorno después del pago
+                 Maneja: merqora://payment/success, merqora://payment/failure, merqora://payment/pending
+                 ═══════════════════════════════════════════════════════════════════ -->
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <!-- Deep link scheme: merqora://payment/* -->
+                <data 
+                    android:scheme="merqora"
+                    android:host="payment" />
+            </intent-filter>
+        </activity>
+        
+        <!-- ═══════════════════════════════════════════════════════════════════
+             MERCADO PAGO CHECKOUT ACTIVITY
+             Activity dedicada para el flujo de pago nativo con SDK de MP
+             ═══════════════════════════════════════════════════════════════════ -->
+        <activity
+            android:name=".ui.screens.checkout.MercadoPagoCheckoutActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Merqora"
+            android:screenOrientation="portrait"
+            tools:ignore="LockedOrientationActivity" />
+        
+        <!-- ═══════════════════════════════════════════════════════════════════
+             FIREBASE CLOUD MESSAGING SERVICE
+             Recibe notificaciones push incluso con la app cerrada
+             ═══════════════════════════════════════════════════════════════════ -->
+        <service
+            android:name=".service.MerqoraFirebaseMessagingService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+        
+        <!-- FCM Default Notification Channel -->
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_channel_id"
+            android:value="merqora_messages" />
+            
+        <!-- FCM Default Notification Icon -->
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/ic_launcher" />
+            
+        <!-- FCM Default Notification Color -->
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_color"
+            android:resource="@color/purple_500" />
+    </application>
+
+</manifest>

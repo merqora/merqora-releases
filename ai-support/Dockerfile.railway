@@ -1,0 +1,22 @@
+# Rendly AI Support - Lightweight deploy (Python-only, C++/Rust in fallback)
+# Use this for Railway/Render deployment where C++/Rust native builds aren't needed
+FROM python:3.11-slim
+
+WORKDIR /app
+
+# Copy Python source
+COPY python/ .
+
+# Install Python dependencies
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Environment
+ENV PYTHONPATH=/app
+ENV PYTHONUNBUFFERED=1
+ENV PORT=8000
+
+# Railway provides PORT env var dynamically
+EXPOSE ${PORT}
+
+# Use shell form for CMD to expand $PORT
+CMD ["sh", "-c", "uvicorn main:app --host 0.0.0.0 --port $PORT"]

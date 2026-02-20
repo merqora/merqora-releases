@@ -1,0 +1,123 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+# Rendly Baseline Profile - Pre-compiled startup code paths
+# This profile tells ART to AOT-compile these methods during install
+# Target: Cold start < 1000ms
+# ═══════════════════════════════════════════════════════════════════════════════
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# STARTUP CRITICAL PATH - Application & MainActivity
+# ─────────────────────────────────────────────────────────────────────────────────
+HSPLcom/rendly/app/RendlyApplication;-><init>()V
+HSPLcom/rendly/app/RendlyApplication;->onCreate()V
+HSPLcom/rendly/app/RendlyApplication;->newImageLoader()Lcoil/ImageLoader;
+HSPLcom/rendly/app/MainActivity;-><init>()V
+HSPLcom/rendly/app/MainActivity;->onCreate(Landroid/os/Bundle;)V
+HSPLcom/rendly/app/MainActivity;->initializeComposeUI(Landroidx/core/splashscreen/SplashScreen;)V
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# STARTUP OPTIMIZER
+# ─────────────────────────────────────────────────────────────────────────────────
+HSPLcom/rendly/app/startup/StartupOptimizer;->initCritical(Landroid/content/Context;)V
+HSPLcom/rendly/app/startup/StartupOptimizer;->initDeferred(Landroid/content/Context;Lkotlin/jvm/functions/Function0;)V
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# HILT / DEPENDENCY INJECTION
+# ─────────────────────────────────────────────────────────────────────────────────
+HSPLdagger/hilt/android/internal/managers/ActivityComponentManager;->**(**)**
+HSPLdagger/hilt/android/internal/managers/ApplicationComponentManager;->**(**)**
+HSPLcom/rendly/app/Hilt_RendlyApplication;->**(**)**
+HSPLcom/rendly/app/RendlyApplication_HiltComponents$**;->**(**)**
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# COMPOSE RUNTIME - Critical for first frame
+# ─────────────────────────────────────────────────────────────────────────────────
+HSPLandroidx/compose/runtime/Composer;->**(**)**
+HSPLandroidx/compose/runtime/ComposerImpl;->**(**)**
+HSPLandroidx/compose/runtime/Recomposer;->**(**)**
+HSPLandroidx/compose/runtime/SlotTable;->**(**)**
+HSPLandroidx/compose/runtime/SlotWriter;->**(**)**
+HSPLandroidx/compose/runtime/SlotReader;->**(**)**
+HSPLandroidx/compose/runtime/snapshots/Snapshot;->**(**)**
+HSPLandroidx/compose/runtime/snapshots/SnapshotStateList;->**(**)**
+HSPLandroidx/compose/runtime/snapshots/SnapshotStateMap;->**(**)**
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# COMPOSE UI - Layout & Rendering
+# ─────────────────────────────────────────────────────────────────────────────────
+HSPLandroidx/compose/ui/platform/AndroidComposeView;->**(**)**
+HSPLandroidx/compose/ui/platform/ComposeView;->**(**)**
+HSPLandroidx/compose/ui/node/LayoutNode;->**(**)**
+HSPLandroidx/compose/ui/node/MeasureAndLayoutDelegate;->**(**)**
+HSPLandroidx/compose/ui/layout/RootMeasurePolicy;->**(**)**
+HSPLandroidx/compose/foundation/layout/BoxKt;->**(**)**
+HSPLandroidx/compose/foundation/layout/ColumnKt;->**(**)**
+HSPLandroidx/compose/foundation/layout/RowKt;->**(**)**
+HSPLandroidx/compose/foundation/layout/SizeKt;->**(**)**
+HSPLandroidx/compose/foundation/layout/PaddingKt;->**(**)**
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# COMPOSE MATERIAL3
+# ─────────────────────────────────────────────────────────────────────────────────
+HSPLandroidx/compose/material3/SurfaceKt;->**(**)**
+HSPLandroidx/compose/material3/TextKt;->**(**)**
+HSPLandroidx/compose/material3/ColorSchemeKt;->**(**)**
+HSPLandroidx/compose/material3/tokens/ColorSchemeKeyTokens;->**(**)**
+HSPLandroidx/compose/material3/MaterialTheme;->**(**)**
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# NAVIGATION COMPOSE
+# ─────────────────────────────────────────────────────────────────────────────────
+HSPLandroidx/navigation/compose/NavHostKt;->**(**)**
+HSPLandroidx/navigation/compose/NavHostControllerKt;->**(**)**
+HSPLandroidx/navigation/NavController;->**(**)**
+HSPLandroidx/navigation/NavGraph;->**(**)**
+HSPLandroidx/navigation/NavDestination;->**(**)**
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# COIL IMAGE LOADING
+# ─────────────────────────────────────────────────────────────────────────────────
+HSPLcoil/ImageLoader;->**(**)**
+HSPLcoil/RealImageLoader;->**(**)**
+HSPLcoil/memory/MemoryCache;->**(**)**
+HSPLcoil/disk/DiskCache;->**(**)**
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# KOTLIN COROUTINES - Startup scope
+# ─────────────────────────────────────────────────────────────────────────────────
+HSPLkotlinx/coroutines/CoroutineScope;->**(**)**
+HSPLkotlinx/coroutines/Job;->**(**)**
+HSPLkotlinx/coroutines/Dispatchers;->**(**)**
+HSPLkotlinx/coroutines/android/AndroidDispatcherFactory;->**(**)**
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# ACTIVITY / LIFECYCLE
+# ─────────────────────────────────────────────────────────────────────────────────
+HSPLandroidx/activity/ComponentActivity;->**(**)**
+HSPLandroidx/lifecycle/LifecycleRegistry;->**(**)**
+HSPLandroidx/lifecycle/ViewModelStore;->**(**)**
+HSPLandroidx/lifecycle/ViewModelProvider;->**(**)**
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# SPLASH SCREEN
+# ─────────────────────────────────────────────────────────────────────────────────
+HSPLandroidx/core/splashscreen/SplashScreen;->**(**)**
+HSPLandroidx/core/splashscreen/SplashScreen$Companion;->**(**)**
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# UI THEME - RendlyTheme
+# ─────────────────────────────────────────────────────────────────────────────────
+HSPLcom/rendly/app/ui/theme/ThemeKt;->**(**)**
+HSPLcom/rendly/app/ui/theme/ColorKt;->**(**)**
+HSPLcom/rendly/app/ui/theme/TypeKt;->**(**)**
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# LOGIN SCREEN - First visible screen
+# ─────────────────────────────────────────────────────────────────────────────────
+HSPLcom/rendly/app/ui/screens/auth/LoginScreenKt;->**(**)**
+HSPLcom/rendly/app/ui/screens/auth/LoginViewModel;->**(**)**
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# NAVIGATION - Screen definitions
+# ─────────────────────────────────────────────────────────────────────────────────
+HSPLcom/rendly/app/ui/navigation/Screen;->**(**)**
+HSPLcom/rendly/app/ui/navigation/RendlyNavHostKt;->**(**)**
