@@ -400,6 +400,269 @@ class SupabaseService:
             logger.info("similar_query_found", score=best_score)
         
         return best_match
+    
+    # ═══════════════════════════════════════
+    # AI TRAINING DATA METHODS
+    # ═══════════════════════════════════════
+    
+    async def save_training_data(
+        self,
+        user_message: str,
+        detected_intent: str,
+        ai_response: str,
+        confidence_score: int,
+        category: str = None,
+        escalated: bool = False,
+        escalation_reason: str = None,
+        response_source: str = None,
+        response_time_ms: int = 0,
+        conversation_id: str = None,
+        message_id: str = None,
+        user_id: str = None,
+        session_id: str = None,
+        matched_keywords: List[str] = None,
+        clarity_score: float = 0.0,
+        completeness_score: float = 0.0,
+    ) -> Optional[str]:
+        """Save interaction to ai_training_data table"""
+        if not self.is_configured:
+            logger.warn("supabase_not_configured_for_training_data")
+            return None
+        
+        # Validate response_source
+        valid_sources = {'faq', 'llm', 'local_model', 'cache', 'agent_learning', 'reasoning', 'escalation'}
+        if response_source and response_source not in valid_sources:
+            response_source = None
+        
+        # Helper to validate UUID format
+        def _uuid_or_none(val):
+            if not val or (isinstance(val, str) and not val.strip()):
+                return None
+            try:
+                import uuid as uuid_module
+                uuid_module.UUID(str(val))
+                return str(val)
+            except (ValueError, AttributeError):
+                return None
+        
+        data = {
+            "user_message": user_message,
+            "detected_intent": detected_intent,
+            "ai_response": ai_response,
+            "confidence_score": confidence_score,
+            "category": category or None,
+            "escalated": escalated,
+            "escalation_reason": escalation_reason or None,
+            "response_source": response_source,
+            "response_time_ms": response_time_ms,
+            "session_id": session_id or None,
+            "matched_keywords": matched_keywords or [],
+            "clarity_score": clarity_score,
+            "completeness_score": completeness_score,
+            "dataset_status": "pending",
+        }
+        
+        # Only include FK UUID fields if valid
+        conv_id = _uuid_or_none(conversation_id)
+        msg_id = _uuid_or_none(message_id)
+        uid = _uuid_or_none(user_id)
+        
+        if conv_id:
+            data["conversation_id"] = conv_id
+        if msg_id:
+            data["message_id"] = msg_id
+        if uid:
+            data["user_id"] = uid
+        
+        try:
+            result = await self._request("POST", "ai_training_data", data)
+            if result and len(result) > 0:
+                record_id = result[0].get("id")
+                logger.info("training_data_saved", id=record_id, intent=detected_intent)
+                return record_id
+            else:
+                logger.warn("training_data_save_failed", data=str(data)[:200])
+                return None
+        except Exception as e:
+            logger.error("training_data_save_error", error=str(e))
+            return None
+    
+    async def save_training_run(
+        self,
+        run_name: str,
+        run_type: str,
+        status: str,
+        training_samples: int = 0,
+        validation_samples: int = 0,
+        test_samples: int = 0,
+        intents_count: int = 0,
+        accuracy: float = 0.0,
+        f1_score: float = 0.0,
+        precision_score: float = 0.0,
+        recall_score: float = 0.0,
+        model_path: str = None,
+        dataset_path: str = None,
+        report_path: str = None,
+        config: Dict = None,
+        error_message: str = None,
+    ) -> Optional[str]:
+        """Save training run to ai_training_runs table"""
+        if not self.is_configured:
+            return None
+        
+        data = {
+            "run_name": run_name,
+            "run_type": run_type,
+            "status": status,
+            "training_samples": training_samples,
+            "validation_samples": validation_samples,
+            "test_samples": test_samples,
+            "intents_count": intents_count,
+            "accuracy": accuracy,
+            "f1_score": f1_score,
+            "precision_score": precision_score,
+            "recall_score": recall_score,
+            "model_path": model_path,
+            "dataset_path": dataset_path,
+            "report_path": report_path,
+            "config": config or {},
+            "error_message": error_message,
+        }
+        
+        try:
+            result = await self._request("POST", "ai_training_runs", data)
+            if result and len(result) > 0:
+                run_id = result[0].get("id")
+                logger.info("training_run_saved", id=run_id, status=status)
+                return run_id
+            return None
+        except Exception as e:
+            logger.error("training_run_save_error", error=str(e))
+            return None
+    
+    async def update_training_run(
+        self,
+        run_id: str,
+        status: str = None,
+        accuracy: float = None,
+        f1_score: float = None,
+        precision_score: float = None,
+        recall_score: float = None,
+        model_path: str = None,
+        error_message: str = None,
+        completed_at: str = None,
+    ) -> bool:
+        """Update existing training run"""
+        if not self.is_configured or not run_id:
+            return False
+        
+        data = {}
+        if status:
+            data["status"] = status
+        if accuracy is not None:
+            data["accuracy"] = accuracy
+        if f1_score is not None:
+            data["f1_score"] = f1_score
+        if precision_score is not None:
+            data["precision_score"] = precision_score
+        if recall_score is not None:
+            data["recall_score"] = recall_score
+        if model_path:
+            data["model_path"] = model_path
+        if error_message:
+            data["error_message"] = error_message
+        if completed_at:
+            data["completed_at"] = completed_at
+        
+        if not data:
+            return True
+        
+        try:
+            result = await self._request("PATCH", f"ai_training_runs?id=eq.{run_id}", data)
+            return result is not None
+        except Exception as e:
+            logger.error("training_run_update_error", error=str(e))
+            return False
+    
+    async def save_metrics_snapshot(
+        self,
+        period_start: str,
+        period_end: str,
+        total_messages: int,
+        ai_resolved: int,
+        escalated: int,
+        avg_confidence: float,
+        escalation_rate: float,
+        intent_accuracy: float = None,
+        top_intents: Dict = None,
+        common_errors: List = None,
+    ) -> Optional[str]:
+        """Save metrics snapshot to ai_metrics_snapshots table"""
+        if not self.is_configured:
+            return None
+        
+        data = {
+            "period_start": period_start,
+            "period_end": period_end,
+            "total_messages": total_messages,
+            "ai_resolved": ai_resolved,
+            "escalated": escalated,
+            "avg_confidence": avg_confidence,
+            "escalation_rate": escalation_rate,
+            "intent_accuracy": intent_accuracy,
+            "top_intents": top_intents or {},
+            "common_errors": common_errors or [],
+        }
+        
+        try:
+            result = await self._request("POST", "ai_metrics_snapshots", data)
+            if result and len(result) > 0:
+                snapshot_id = result[0].get("id")
+                logger.info("metrics_snapshot_saved", id=snapshot_id)
+                return snapshot_id
+            return None
+        except Exception as e:
+            logger.error("metrics_snapshot_save_error", error=str(e))
+            return None
+    
+    async def update_daily_stats(
+        self,
+        date: str,
+        total_messages: int = 0,
+        ai_resolved: int = 0,
+        escalated: int = 0,
+        avg_confidence: float = 0.0,
+    ) -> bool:
+        """Update or insert daily stats in ai_stats_daily"""
+        if not self.is_configured:
+            return False
+        
+        # Try to get existing record for today
+        endpoint = f"ai_stats_daily?date=eq.{date}"
+        existing = await self._request("GET", endpoint)
+        
+        if existing and len(existing) > 0:
+            # Update existing
+            current = existing[0]
+            data = {
+                "total_messages": current.get("total_messages", 0) + total_messages,
+                "ai_resolved": current.get("ai_resolved", 0) + ai_resolved,
+                "escalated": current.get("escalated", 0) + escalated,
+                "avg_confidence": avg_confidence if avg_confidence > 0 else current.get("avg_confidence", 0),
+            }
+            await self._request("PATCH", f"ai_stats_daily?date=eq.{date}", data)
+        else:
+            # Insert new
+            data = {
+                "date": date,
+                "total_messages": total_messages,
+                "ai_resolved": ai_resolved,
+                "escalated": escalated,
+                "avg_confidence": avg_confidence,
+            }
+            await self._request("POST", "ai_stats_daily", data)
+        
+        return True
 
 
 # Singleton

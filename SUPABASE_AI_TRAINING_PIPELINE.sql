@@ -627,7 +627,44 @@ GROUP BY COALESCE(td.correct_intent, td.detected_intent)
 ORDER BY total_samples DESC;
 
 -- ═══════════════════════════════════════
+-- 6. TABLA: ai_stats_daily
+-- Estadísticas diarias agregadas
+-- ═══════════════════════════════════════
+CREATE TABLE IF NOT EXISTS ai_stats_daily (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    date DATE NOT NULL UNIQUE,
+    total_messages INTEGER DEFAULT 0,
+    ai_resolved INTEGER DEFAULT 0,
+    escalated INTEGER DEFAULT 0,
+    avg_confidence REAL DEFAULT 0,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_stats_daily_date ON ai_stats_daily(date DESC);
+
+-- RLS for ai_stats_daily
+ALTER TABLE ai_stats_daily ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Service role full access stats_daily" ON ai_stats_daily FOR ALL USING (true) WITH CHECK (true);
+
+-- Trigger for updated_at
+CREATE OR REPLACE FUNCTION update_stats_daily_updated_at()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.updated_at = NOW();
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+DROP TRIGGER IF EXISTS trigger_stats_daily_updated_at ON ai_stats_daily;
+CREATE TRIGGER trigger_stats_daily_updated_at
+    BEFORE UPDATE ON ai_stats_daily
+    FOR EACH ROW
+    EXECUTE FUNCTION update_stats_daily_updated_at();
+
+-- ═══════════════════════════════════════
 -- REALTIME
 -- ═══════════════════════════════════════
 ALTER PUBLICATION supabase_realtime ADD TABLE ai_training_data;
 ALTER PUBLICATION supabase_realtime ADD TABLE ai_training_runs;
+ALTER PUBLICATION supabase_realtime ADD TABLE ai_stats_daily;

@@ -719,7 +719,7 @@ También puedes explorar el **Centro de ayuda** para más información."""
                 
                 logger.info("interaction_saved_to_supabase", conversation_id=conv_id)
             
-            # 5. TRAINING PIPELINE - Record interaction for ML training
+            # 5. TRAINING PIPELINE - Record interaction for ML training (in-memory)
             self.training_pipeline.record_interaction(
                 user_message=user_message,
                 detected_intent=analysis.detected_intent or "unknown",
@@ -738,6 +738,43 @@ También puedes explorar el **Centro de ayuda** para más información."""
                 clarity_score=analysis.clarity_score,
                 completeness_score=analysis.completeness_score,
             )
+            
+            # 5b. SAVE DIRECTLY TO SUPABASE ai_training_data (persistent storage)
+            try:
+                await self.supabase.save_training_data(
+                    user_message=user_message,
+                    detected_intent=analysis.detected_intent or "unknown",
+                    ai_response=ai_response,
+                    confidence_score=analysis.confidence_score,
+                    category=category_str,
+                    escalated=escalated,
+                    escalation_reason=escalation_reason or "",
+                    response_source=response_source,
+                    response_time_ms=response_time_ms,
+                    conversation_id=str(conv_id) if conv_id else "",
+                    message_id=str(msg_id_result) if conv_id and msg_id_result else "",
+                    user_id=user_id,
+                    session_id=session_id,
+                    matched_keywords=analysis.matched_keywords or [],
+                    clarity_score=analysis.clarity_score,
+                    completeness_score=analysis.completeness_score,
+                )
+            except Exception as td_err:
+                logger.warn("training_data_direct_save_error", error=str(td_err))
+            
+            # 5c. UPDATE DAILY STATS
+            try:
+                from datetime import date as date_module
+                today = date_module.today().isoformat()
+                await self.supabase.update_daily_stats(
+                    date=today,
+                    total_messages=1,
+                    ai_resolved=0 if escalated else 1,
+                    escalated=1 if escalated else 0,
+                    avg_confidence=float(analysis.confidence_score),
+                )
+            except Exception as stats_err:
+                logger.warn("daily_stats_update_error", error=str(stats_err))
             
             # 6. APRENDIZAJE CONTINUO - Aprender de CADA interacción
             if analysis.detected_intent and analysis.detected_intent != "unknown":
