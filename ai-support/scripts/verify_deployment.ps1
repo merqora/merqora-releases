@@ -307,9 +307,9 @@ if ($WarningCount -gt 0) {
 }
 
 Write-Host "Monitoreo continuo:" -ForegroundColor Cyan
-Write-Host "  • Dashboard: $AdminUrl/admin/training-pipeline" -ForegroundColor Gray
-Write-Host "  • Metrics API: $BaseUrl/ai/training/metrics" -ForegroundColor Gray
-Write-Host "  • Training runs: $BaseUrl/ai/training/runs" -ForegroundColor Gray
+Write-Host "  - Dashboard: $AdminUrl/admin/training-pipeline" -ForegroundColor Gray
+Write-Host "  - Metrics API: $BaseUrl/ai/training/metrics" -ForegroundColor Gray
+Write-Host "  - Training runs: $BaseUrl/ai/training/runs" -ForegroundColor Gray
 Write-Host ""
 
 exit 0
