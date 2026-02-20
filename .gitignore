@@ -23,6 +23,12 @@ gradle-app.setting
 
 # Local configuration file
 local.properties
+gradle.properties
+
+# Build outputs
+app/build/
+build_output.txt
+build_result.txt
 
 # NDK
 obj/

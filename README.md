@@ -1,4 +1,6 @@
-# 🚀 Rendly Native - Ultra Fast Android App
+# 🚀 Merqora Releases - Production App Repository
+
+APK releases y código fuente completo para Merqora/Rendly app.
 
 ## Stack Tecnológico Enterprise
 
@@ -7,6 +9,12 @@
 - **Jetpack Compose** - UI declarativa de Google
 - **C++/JNI** - Operaciones críticas de rendimiento
 - **Hilt** - Inyección de dependencias
+
+### **Backend & AI**
+- **FastAPI (Python)** - API de soporte con IA
+- **Supabase** - Base de datos PostgreSQL + Realtime
+- **scikit-learn** - ML training pipeline para intent classification
+- **C++/Rust** - Scoring engine y rate limiting
 
 ### **Arquitectura**
 - **MVVM** - Model-View-ViewModel
@@ -24,10 +32,13 @@
 ### **Features Implementadas**
 ✅ Feed infinito optimizado (estilo Instagram)
 ✅ Animaciones nativas fluidas (60 FPS garantizado)
-✅ Double-tap to like con animación
-✅ Image loading con Coil (cache inteligente)
+✅ Sistema de compras online con Mercado Pago
+✅ Chat en tiempo real con Supabase Realtime
+✅ Llamadas VoIP con WebRTC
+✅ AI Support con continuous learning
+✅ Stories con highlights
+✅ Sistema de verificación de usuarios
 ✅ Dark theme (Midnight Luxe)
-✅ Módulo C++ para procesamiento de imágenes
 
 ## Compilar y Ejecutar
 
@@ -44,79 +55,22 @@ cd Rendly
 # O desde Android Studio: Run > Run 'app'
 ```
 
-## Estructura del Proyecto
+## AI Support System
 
-```
-app/
-├── src/main/
-│   ├── cpp/               # Código C++ nativo
-│   │   ├── FeedEngine.cpp
-│   │   ├── ImageProcessor.cpp
-│   │   └── CMakeLists.txt
-│   ├── java/com/rendly/app/
-│   │   ├── data/          # Modelos y repositorios
-│   │   ├── ui/
-│   │   │   ├── screens/   # Pantallas (HomeScreen, etc)
-│   │   │   ├── components/# Componentes reutilizables
-│   │   │   ├── theme/     # Tema y colores
-│   │   │   └── navigation/# Navegación
-│   │   ├── RendlyApplication.kt
-│   │   └── MainActivity.kt
-│   └── res/               # Recursos Android
-```
+El sistema de IA incluye:
+- **Training Pipeline** con scikit-learn (TF-IDF + LinearSVC)
+- **Auto-retraining** cada 100 samples
+- **Human feedback loop** con admin dashboard
+- **13 API endpoints** para training y métricas
 
-## Diferencias vs React Native
+Ver documentación completa en `ai-support/python/README_TRAINING.md`
 
-| Aspecto | React Native | Rendly Native |
-|---------|--------------|---------------|
-| **Lenguaje** | JavaScript | Kotlin + C++ |
-| **UI** | React Components | Jetpack Compose |
-| **Bridge** | JS ↔ Native | Directo (sin bridge) |
-| **Rendimiento** | ~55 FPS | 60 FPS constante |
-| **Tamaño APK** | ~50 MB | ~15 MB |
-| **Startup** | ~2s | <500ms |
-| **Memory** | ~200 MB | ~80 MB |
+## Deployment
 
-## Optimizaciones Aplicadas
+- **Backend**: Railway - https://merqora-releases-production.up.railway.app
+- **Admin Panel**: Netlify
+- **APK Releases**: GitHub Releases
 
-### 1. **Compose Optimizations**
-- Recomposición inteligente con `remember`
-- Keys estables en LazyColumn
-- Animaciones en UI thread
+Ver guía completa en `AI_TRAINING_DEPLOYMENT.md`
 
-### 2. **Image Loading**
-- Cache de memoria (25% RAM)
-- Cache de disco (512 MB)
-- Prefetch inteligente
-- Crossfade transitions
-
-### 3. **C++ Native**
-- Procesamiento de imágenes
-- Cálculos de scroll velocity
-- Detección de prefetch
-
-### 4. **Build Optimizations**
-- R8 minification
-- ProGuard rules
-- ABI filters (arm64-v8a, armeabi-v7a)
-- C++ flags: -O3, -ffast-math, -flto
-
-## Próximos Pasos
-
-- [ ] Integrar API real (Supabase/Firebase)
-- [ ] Implementar pantalla de producto
-- [ ] Agregar perfil de usuario
-- [ ] Sistema de comentarios
-- [ ] Video player nativo
-- [ ] Notificaciones push
-- [ ] Analytics
-
-## Rendimiento Medido
-
-- **Frame rate**: 60 FPS constante
-- **Memory usage**: ~80 MB en runtime
-- **Cold start**: <500ms
-- **Image loading**: <100ms (cache hit)
-- **Scroll smoothness**: Sin drops
-
-**¡Esta es una app VERDADERAMENTE nativa y ultra-rápida!** 🚀
+**¡App nativa ultra-rápida con IA real!** 🚀
