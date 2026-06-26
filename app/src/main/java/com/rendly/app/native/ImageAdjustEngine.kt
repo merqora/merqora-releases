@@ -6,10 +6,6 @@ import android.graphics.ColorMatrix
 import android.graphics.ColorMatrixColorFilter
 import android.graphics.Paint
 import com.rendly.app.ui.components.ImageAdjustState
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.runBlocking
 import kotlin.math.pow
 import kotlin.math.sqrt
 import kotlin.random.Random
@@ -114,9 +110,10 @@ object ImageAdjustEngine {
         
         val chunkSize = (totalPixels + NUM_THREADS - 1) / NUM_THREADS
         
-        runBlocking(Dispatchers.Default) {
-            (0 until NUM_THREADS).map { threadIdx ->
-                async {
+        // Usar threads nativos en vez de runBlocking para evitar contención
+        // con Dispatchers.Default cuando se llama desde withContext(Default)
+        val threads = Array(NUM_THREADS) { threadIdx ->
+            Thread {
                     val start = threadIdx * chunkSize
                     val end = minOf(start + chunkSize, totalPixels)
                     val random = if (hasGrain) Random(threadIdx * 12345L) else null
@@ -219,8 +216,9 @@ object ImageAdjustEngine {
                         }
                     }
                 }
-            }.awaitAll()
-        }
+            }
+        threads.forEach { it.start() }
+        threads.forEach { it.join() }
         
         bitmap.setPixels(pixels, 0, width, 0, 0, width, height)
     }

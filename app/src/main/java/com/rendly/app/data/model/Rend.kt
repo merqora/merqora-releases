@@ -25,7 +25,16 @@ data class RendDB(
     val status: String = "active",
     @SerialName("created_at") val createdAt: String = "",
     @SerialName("updated_at") val updatedAt: String = "",
-    @SerialName("product_id") val productId: String? = null
+    @SerialName("product_id") val productId: String? = null,
+    // Interactions & Privacy
+    val visibility: String = "public",
+    @SerialName("allow_opinions") val allowOpinions: Boolean = true,
+    @SerialName("allow_consults") val allowConsults: Boolean = true,
+    @SerialName("allow_downloads") val allowDownloads: Boolean = false,
+    @SerialName("allow_shares") val allowShares: Boolean = true,
+    val hashtags: List<String> = emptyList(),
+    val category: String? = null,
+    val location: String? = null
 )
 
 @Immutable
@@ -59,7 +68,17 @@ data class Rend(
     val isSaved: Boolean = false,
     
     // Identificador unificado de producto
-    val productId: String? = null
+    val productId: String? = null,
+    
+    // Interactions & Privacy
+    val visibility: String = "public",
+    val allowOpinions: Boolean = true,
+    val allowConsults: Boolean = true,
+    val allowDownloads: Boolean = false,
+    val allowShares: Boolean = true,
+    val hashtags: List<String> = emptyList(),
+    val category: String? = null,
+    val location: String? = null
 ) {
     /**
      * Obtiene la mejor imagen disponible para el producto anclado.
@@ -97,7 +116,15 @@ data class Rend(
                 username = username,
                 userAvatar = avatarUrl,
                 userStoreName = storeName,
-                productId = db.productId
+                productId = db.productId,
+                visibility = db.visibility,
+                allowOpinions = db.allowOpinions,
+                allowConsults = db.allowConsults,
+                allowDownloads = db.allowDownloads,
+                allowShares = db.allowShares,
+                hashtags = db.hashtags,
+                category = db.category,
+                location = db.location
             )
         }
     }

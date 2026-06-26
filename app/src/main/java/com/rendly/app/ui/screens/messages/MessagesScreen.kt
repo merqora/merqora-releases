@@ -1,8 +1,11 @@
 package com.rendly.app.ui.screens.messages
 
-import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.*
+import androidx.compose.animation.core.*
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -17,97 +20,79 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import com.rendly.app.data.model.Usuario
+import com.rendly.app.data.repository.ChatRepository
+import com.rendly.app.data.repository.Conversation
+import com.rendly.app.data.repository.HandshakeRepository
+import com.rendly.app.data.model.HandshakeEvent
+import com.rendly.app.data.remote.SupabaseClient
 import com.rendly.app.ui.theme.*
-
-data class Conversation(
-    val id: String,
-    val name: String,
-    val avatar: String?,
-    val lastMessage: String,
-    val timestamp: String,
-    val unreadCount: Int = 0,
-    val isOnline: Boolean = false,
-    val isTyping: Boolean = false,
-    val isVerified: Boolean = false
-)
-
-// Datos de ejemplo
-private val DEMO_CONVERSATIONS = listOf(
-    Conversation(
-        id = "1",
-        name = "María González",
-        avatar = "https://i.pravatar.cc/150?img=1",
-        lastMessage = "¡Me encantó el producto! 😍",
-        timestamp = "Ahora",
-        unreadCount = 3,
-        isOnline = true,
-        isVerified = true
-    ),
-    Conversation(
-        id = "2",
-        name = "Carlos Rodríguez",
-        avatar = "https://i.pravatar.cc/150?img=12",
-        lastMessage = "Nos vemos mañana entonces 👍",
-        timestamp = "5m",
-        unreadCount = 0,
-        isOnline = true
-    ),
-    Conversation(
-        id = "3",
-        name = "Ana Martínez",
-        avatar = "https://i.pravatar.cc/150?img=5",
-        lastMessage = "",
-        timestamp = "10m",
-        unreadCount = 0,
-        isOnline = true,
-        isTyping = true
-    ),
-    Conversation(
-        id = "4",
-        name = "Luis Fernández",
-        avatar = "https://i.pravatar.cc/150?img=33",
-        lastMessage = "Perfecto, gracias por la info",
-        timestamp = "1h",
-        unreadCount = 1,
-        isOnline = false,
-        isVerified = true
-    ),
-    Conversation(
-        id = "5",
-        name = "Isabel Torres",
-        avatar = "https://i.pravatar.cc/150?img=9",
-        lastMessage = "¿Está disponible en talle M?",
-        timestamp = "2h",
-        unreadCount = 0,
-        isOnline = false
-    ),
-    Conversation(
-        id = "6",
-        name = "Pedro Sánchez",
-        avatar = "https://i.pravatar.cc/150?img=15",
-        lastMessage = "¿Vienes a la reunión de hoy?",
-        timestamp = "3h",
-        unreadCount = 2,
-        isOnline = true
-    )
-)
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MessagesScreen(
     onBack: () -> Unit,
-    onConversationClick: (Conversation) -> Unit = {},
+    onConversationClick: (Usuario) -> Unit = {},
     onNewMessage: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
-    var searchQuery by remember { mutableStateOf("") }
-    val conversations = remember { DEMO_CONVERSATIONS }
+    // Cargar conversaciones reales desde Supabase
+    val conversations by ChatRepository.conversations.collectAsState()
+    val isLoading by ChatRepository.isLoading.collectAsState()
+    
+    // Cargar conversaciones + suscribirse a handshakes al inicio
+    LaunchedEffect(Unit) {
+        ChatRepository.loadConversations()
+        
+        // Suscribirse a handshakes para recibir eventos en tiempo real
+        // (necesario porque la suscripción solo se hace en ChatScreen normalmente)
+        val userId = try {
+            SupabaseClient.auth.currentUserOrNull()?.id
+        } catch (_: Exception) { null }
+        
+        if (userId != null) {
+            launch {
+                try {
+                    HandshakeRepository.subscribeToHandshakes(userId)
+                    android.util.Log.d("MessagesScreen", ">>> Subscribed to handshakes for userId=$userId")
+                } catch (e: Exception) {
+                    android.util.Log.e("MessagesScreen", "Error subscribing: ${e.message}")
+                }
+            }
+        }
+    }
+    
+    // Polling: recargar conversaciones cada 5 segundos para reflejar cambios
+    // Esto cubre el caso donde admin-web cambia el estado y el Realtime no llega
+    LaunchedEffect(Unit) {
+        while (isActive) {
+            delay(5000)
+            try {
+                ChatRepository.loadConversations()
+            } catch (_: Exception) {}
+        }
+    }
+    
+    // Escuchar eventos de handshake para recargar conversaciones inmediatamente
+    LaunchedEffect(Unit) {
+        HandshakeRepository.handshakeEvents.collectLatest { event ->
+            android.util.Log.d("MessagesScreen", ">>> Handshake event received: $event")
+            ChatRepository.loadConversations()
+        }
+    }
     
     Scaffold(
         topBar = {
@@ -176,34 +161,6 @@ fun MessagesScreen(
                 }
             }
             
-            // Online users row
-            if (conversations.any { it.isOnline }) {
-                Text(
-                    text = "ACTIVOS AHORA",
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = TextMuted,
-                    letterSpacing = 1.sp,
-                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)
-                )
-                
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp),
-                    horizontalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
-                    conversations.filter { it.isOnline }.take(5).forEach { conversation ->
-                        OnlineUserAvatar(
-                            conversation = conversation,
-                            onClick = { onConversationClick(conversation) }
-                        )
-                    }
-                }
-                
-                Spacer(modifier = Modifier.height(16.dp))
-            }
-            
             // Messages section header
             Text(
                 text = "MENSAJES",
@@ -214,203 +171,441 @@ fun MessagesScreen(
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
             )
             
-            // Conversations list
-            LazyColumn(
-                modifier = Modifier.weight(1f),
-                contentPadding = PaddingValues(horizontal = 16.dp)
-            ) {
-                items(conversations) { conversation ->
-                    ConversationItem(
-                        conversation = conversation,
-                        onClick = { onConversationClick(conversation) }
-                    )
+            if (isLoading && conversations.isEmpty()) {
+                // Skeleton loading
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator(color = PrimaryPurple)
+                }
+            } else if (conversations.isEmpty()) {
+                // Empty state
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Icon(
+                            imageVector = Icons.Outlined.ChatBubbleOutline,
+                            contentDescription = null,
+                            tint = TextMuted,
+                            modifier = Modifier.size(48.dp)
+                        )
+                        Spacer(modifier = Modifier.height(12.dp))
+                        Text(
+                            text = "Sin conversaciones",
+                            color = TextMuted,
+                            fontSize = 16.sp
+                        )
+                    }
+                }
+            } else {
+                // Conversations list
+                LazyColumn(
+                    modifier = Modifier.weight(1f),
+                    contentPadding = PaddingValues(horizontal = 16.dp)
+                ) {
+                    items(conversations, key = { it.id }) { conversation ->
+                        ConversationItem(
+                            conversation = conversation,
+                            onClick = { onConversationClick(conversation.otherUser) }
+                        )
+                    }
                 }
             }
         }
     }
 }
 
-@Composable
-private fun OnlineUserAvatar(
-    conversation: Conversation,
-    onClick: () -> Unit
-) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.clickable { onClick() }
-    ) {
-        Box {
-            AsyncImage(
-                model = conversation.avatar,
-                contentDescription = conversation.name,
-                modifier = Modifier
-                    .size(56.dp)
-                    .clip(CircleShape),
-                contentScale = ContentScale.Crop
-            )
-            
-            // Online indicator
-            Box(
-                modifier = Modifier
-                    .size(14.dp)
-                    .align(Alignment.BottomEnd)
-                    .clip(CircleShape)
-                    .background(HomeBg)
-                    .padding(2.dp)
-            ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .clip(CircleShape)
-                        .background(AccentGreen)
-                )
-            }
-        }
-        
-        Spacer(modifier = Modifier.height(4.dp))
-        
-        Text(
-            text = conversation.name.split(" ").first(),
-            fontSize = 11.sp,
-            color = TextSecondary,
-            maxLines = 1
-        )
-    }
-}
-
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun ConversationItem(
     conversation: Conversation,
     onClick: () -> Unit
 ) {
     val hasUnread = conversation.unreadCount > 0
+    val user = conversation.otherUser
+    val displayName = user.nombreTienda ?: user.nombre ?: user.username
+    val haptic = LocalHapticFeedback.current
+    val scope = rememberCoroutineScope()
     
+    // Estado del menú contextual
+    var showContextMenu by remember { mutableStateOf(false) }
+    
+    // Estado local para actualización inmediata de la UI
+    var localIsPinned by remember { mutableStateOf(conversation.isPinned) }
+    
+    // Sincronizar con datos del servidor cuando cambian
+    LaunchedEffect(conversation.isPinned) { localIsPinned = conversation.isPinned }
+    
+    Box {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .combinedClickable(
+                    onClick = { onClick() },
+                    onLongClick = {
+                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                        showContextMenu = true
+                    }
+                )
+                .padding(vertical = 12.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            // Avatar
+            Box {
+                AsyncImage(
+                    model = user.avatarUrl,
+                    contentDescription = displayName,
+                    modifier = Modifier
+                        .size(52.dp)
+                        .clip(CircleShape),
+                    contentScale = ContentScale.Crop
+                )
+            }
+            
+            Spacer(modifier = Modifier.width(12.dp))
+            
+            // Content
+            Column(modifier = Modifier.weight(1f)) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        text = displayName,
+                        fontSize = 15.sp,
+                        fontWeight = if (hasUnread) FontWeight.Bold else FontWeight.Medium,
+                        color = TextPrimary,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.weight(1f, fill = false)
+                    )
+                    
+                    if (user.isVerified) {
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Icon(
+                            imageVector = Icons.Default.CheckCircle,
+                            contentDescription = "Verificado",
+                            tint = PrimaryPurple,
+                            modifier = Modifier.size(16.dp)
+                        )
+                    }
+                    
+                    
+                    // Icono de fijado
+                    if (localIsPinned) {
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Icon(
+                            imageVector = Icons.Filled.PushPin,
+                            contentDescription = "Fijado",
+                            tint = PrimaryPurple,
+                            modifier = Modifier.size(14.dp)
+                        )
+                    }
+                }
+                
+                Spacer(modifier = Modifier.height(2.dp))
+                
+                // Formatear mensaje de preview
+                val displayMessage = formatLastMessagePreview(conversation.lastMessage)
+                
+                // Detectar color especial para handshake states
+                val messageColor = getHandshakeMessageColor(conversation.lastMessage)
+                
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        text = displayMessage,
+                        fontSize = 13.sp,
+                        color = messageColor ?: if (hasUnread) TextPrimary else TextMuted,
+                        fontWeight = if (hasUnread) FontWeight.Medium else FontWeight.Normal,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.weight(1f, fill = false)
+                    )
+                    
+                    // Badge +N mensajes cuando hay más de 1 no leído
+                    if (hasUnread && conversation.unreadCount > 1) {
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text(
+                            text = "+${conversation.unreadCount} mensajes",
+                            fontSize = 11.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White
+                        )
+                    }
+                }
+            }
+            
+            // Right side
+            Column(
+                horizontalAlignment = Alignment.End
+            ) {
+                Text(
+                    text = formatMessageTimeAgo(conversation.lastMessageAt),
+                    fontSize = 12.sp,
+                    color = if (hasUnread) PrimaryPurple else TextMuted
+                )
+                
+                if (hasUnread) {
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Box(
+                        modifier = Modifier
+                            .size(20.dp)
+                            .clip(CircleShape)
+                            .background(PrimaryPurple),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "${conversation.unreadCount}",
+                            fontSize = 11.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White
+                        )
+                    }
+                }
+            }
+        }
+        
+        // Menú contextual con animación fluida
+        ConversationContextMenu(
+            isVisible = showContextMenu,
+            isPinned = localIsPinned,
+            onDismiss = { showContextMenu = false },
+            onTogglePin = {
+                val newPinned = !localIsPinned
+                localIsPinned = newPinned
+                showContextMenu = false
+                scope.launch {
+                    ChatRepository.togglePinConversation(conversation.id, newPinned)
+                }
+            },
+            onDelete = {
+                scope.launch {
+                    ChatRepository.deleteConversation(conversation.id)
+                }
+                showContextMenu = false
+            }
+        )
+    }
+}
+
+@Composable
+private fun ConversationContextMenu(
+    isVisible: Boolean,
+    isPinned: Boolean,
+    onDismiss: () -> Unit,
+    onTogglePin: () -> Unit,
+    onDelete: () -> Unit
+) {
+    // Backdrop
+    AnimatedVisibility(
+        visible = isVisible,
+        enter = fadeIn(tween(120)),
+        exit = fadeOut(tween(120))
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Black.copy(alpha = 0.3f))
+                .clickable { onDismiss() }
+        )
+    }
+    
+    // Menu con slide-up fluido
+    AnimatedVisibility(
+        visible = isVisible,
+        enter = slideInVertically(
+            initialOffsetY = { it / 2 },
+            animationSpec = spring(dampingRatio = 0.8f, stiffness = 400f)
+        ) + fadeIn(tween(100)),
+        exit = slideOutVertically(
+            targetOffsetY = { it / 2 },
+            animationSpec = tween(150)
+        ) + fadeOut(tween(100))
+    ) {
+        Surface(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 4.dp),
+            shape = RoundedCornerShape(16.dp),
+            color = Surface,
+            tonalElevation = 4.dp,
+            shadowElevation = 8.dp
+        ) {
+            Column(modifier = Modifier.padding(vertical = 8.dp)) {
+                // Fijar chat
+                ContextMenuItem(
+                    icon = if (isPinned) Icons.Filled.PushPin else Icons.Outlined.PushPin,
+                    text = if (isPinned) "Desfijar chat" else "Fijar chat",
+                    iconTint = PrimaryPurple,
+                    onClick = onTogglePin
+                )
+                // Eliminar
+                ContextMenuItem(
+                    icon = Icons.Outlined.Delete,
+                    text = "Eliminar chat",
+                    iconTint = Color(0xFFEF4444),
+                    onClick = onDelete
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun ContextMenuItem(
+    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    text: String,
+    iconTint: Color,
+    onClick: () -> Unit
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .clickable { onClick() }
-            .padding(vertical = 12.dp),
+            .padding(horizontal = 16.dp, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // Avatar with online indicator
-        Box {
-            AsyncImage(
-                model = conversation.avatar,
-                contentDescription = conversation.name,
-                modifier = Modifier
-                    .size(52.dp)
-                    .clip(CircleShape),
-                contentScale = ContentScale.Crop
-            )
-            
-            if (conversation.isOnline) {
-                Box(
-                    modifier = Modifier
-                        .size(14.dp)
-                        .align(Alignment.BottomEnd)
-                        .clip(CircleShape)
-                        .background(HomeBg)
-                        .padding(2.dp)
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .clip(CircleShape)
-                            .background(AccentGreen)
-                    )
-                }
-            }
-        }
-        
-        Spacer(modifier = Modifier.width(12.dp))
-        
-        // Content
-        Column(modifier = Modifier.weight(1f)) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(
-                    text = conversation.name,
-                    fontSize = 15.sp,
-                    fontWeight = if (hasUnread) FontWeight.Bold else FontWeight.Medium,
-                    color = TextPrimary,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.weight(1f, fill = false)
-                )
-                
-                if (conversation.isVerified) {
-                    Spacer(modifier = Modifier.width(4.dp))
-                    Icon(
-                        imageVector = Icons.Default.CheckCircle,
-                        contentDescription = "Verificado",
-                        tint = PrimaryPurple,
-                        modifier = Modifier.size(16.dp)
-                    )
-                }
-            }
-            
-            Spacer(modifier = Modifier.height(2.dp))
-            
-            // Formatear mensaje de preview - detectar posts compartidos
-            val displayMessage = when {
-                conversation.isTyping -> "Escribiendo..."
-                conversation.lastMessage.startsWith("[SHARED_POST]") -> {
-                    // Parsear para obtener el username del dueño del post
-                    try {
-                        val jsonStr = conversation.lastMessage.removePrefix("[SHARED_POST]")
-                        val json = org.json.JSONObject(jsonStr)
-                        val ownerUsername = json.optString("ownerUsername", "")
-                        if (ownerUsername.isNotEmpty()) {
-                            "Envió un post de ${ownerUsername.take(15)}${if (ownerUsername.length > 15) "..." else ""}"
-                        } else {
-                            "Envió un post compartido"
-                        }
-                    } catch (e: Exception) {
-                        "Envió un post compartido"
-                    }
-                }
-                conversation.lastMessage.startsWith("[IMG]") -> "📷 Imagen"
-                conversation.lastMessage.startsWith("[VIDEO]") -> "🎬 Video"
-                conversation.lastMessage.startsWith("[AUDIO]") -> "🎤 Audio"
-                else -> conversation.lastMessage
-            }
-            
-            Text(
-                text = displayMessage,
-                fontSize = 13.sp,
-                color = if (conversation.isTyping) AccentGreen else if (hasUnread) TextPrimary else TextMuted,
-                fontWeight = if (hasUnread) FontWeight.Medium else FontWeight.Normal,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
-        }
-        
-        // Right side
-        Column(
-            horizontalAlignment = Alignment.End
-        ) {
-            Text(
-                text = conversation.timestamp,
-                fontSize = 12.sp,
-                color = if (hasUnread) PrimaryPurple else TextMuted
-            )
-            
-            if (hasUnread) {
-                Spacer(modifier = Modifier.height(4.dp))
-                Box(
-                    modifier = Modifier
-                        .size(20.dp)
-                        .clip(CircleShape)
-                        .background(PrimaryPurple),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = "${conversation.unreadCount}",
-                        fontSize = 11.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.White
-                    )
-                }
-            }
-        }
+        Icon(
+            imageVector = icon,
+            contentDescription = null,
+            tint = iconTint,
+            modifier = Modifier.size(22.dp)
+        )
+        Spacer(modifier = Modifier.width(14.dp))
+        Text(
+            text = text,
+            fontSize = 15.sp,
+            color = TextPrimary,
+            fontWeight = FontWeight.Medium
+        )
     }
+}
+
+// Formatear preview del último mensaje para la lista de conversaciones
+private fun formatLastMessagePreview(message: String?): String {
+    if (message.isNullOrBlank()) return "Sin mensajes"
+    return when {
+        message.startsWith("[SHARED_POST]") -> {
+            try {
+                val jsonStr = message.removePrefix("[SHARED_POST]")
+                val json = org.json.JSONObject(jsonStr)
+                val ownerUsername = json.optString("ownerUsername", "")
+                if (ownerUsername.isNotEmpty()) {
+                    "Envió un post de ${ownerUsername.take(15)}${if (ownerUsername.length > 15) "..." else ""}"
+                } else {
+                    "Envió un post compartido"
+                }
+            } catch (_: Exception) {
+                "Envió un post compartido"
+            }
+        }
+        message.startsWith("[CONSULT_POST]") -> {
+            try {
+                val jsonStr = message.removePrefix("[CONSULT_POST]")
+                val json = org.json.JSONObject(jsonStr)
+                val type = json.optString("type", "inquiry")
+                val productTitle = json.optString("productTitle", "")
+                if (type == "offer") {
+                    "💰 Oferta: ${productTitle.take(20)}${if (productTitle.length > 20) "..." else ""}"
+                } else {
+                    "❓ Consulta: ${productTitle.take(20)}${if (productTitle.length > 20) "..." else ""}"
+                }
+            } catch (_: Exception) {
+                "❓ Consulta de producto"
+            }
+        }
+        message.startsWith("[SHARED_REND]") -> {
+            try {
+                val jsonStr = message.removePrefix("[SHARED_REND]")
+                val json = org.json.JSONObject(jsonStr)
+                val owner = json.optString("ownerUsername", "")
+                if (owner.isNotEmpty()) "🎬 Video de @$owner" else "🎬 Video compartido"
+            } catch (_: Exception) { "🎬 Video compartido" }
+        }
+        message.startsWith("[SHARED_USER]") -> {
+            try {
+                val jsonStr = message.removePrefix("[SHARED_USER]")
+                val json = org.json.JSONObject(jsonStr)
+                val username = json.optString("username", "")
+                if (username.isNotEmpty()) "👤 Compartió a @$username" else "👤 Compartió un usuario"
+            } catch (_: Exception) { "👤 Compartió un usuario" }
+        }
+        message.startsWith("[IMG]") -> "📷 Imagen"
+        message.startsWith("[VIDEO]") -> "🎬 Video"
+        message.startsWith("[AUDIO]") -> "🎤 Audio"
+        message.startsWith("[HANDSHAKE_STATUS]") -> {
+            try {
+                val jsonStr = message.removePrefix("[HANDSHAKE_STATUS]")
+                val json = org.json.JSONObject(jsonStr)
+                val type = json.optString("type", "")
+                val price = json.optDouble("agreedPrice", 0.0)
+                val priceStr = if (price > 0) " · \$${String.format("%.0f", price)}" else ""
+                when {
+                    type.contains("COMPLETED") || type.contains("TRANSACTION_COMPLETED") -> "✅ Transacción finalizada$priceStr"
+                    type.contains("CANCELLED") || type.contains("AGREEMENT_CANCELLED") -> "❌ Acuerdo cancelado"
+                    type.contains("REJECTED") -> "❌ Propuesta rechazada"
+                    type.contains("PROPOSED") -> "🤝 Nueva propuesta$priceStr"
+                    type.contains("ACCEPTED") -> "✅ Acuerdo aceptado$priceStr"
+                    type.contains("CONFIRMED") -> "⏳ Esperando confirmación$priceStr"
+                    else -> "🤝 Actualización de acuerdo"
+                }
+            } catch (_: Exception) { "🤝 Actualización de transacción" }
+        }
+        message.startsWith("[HANDSHAKE_INITIATED]") || message.startsWith("[HANDSHAKE]") -> "🤝 Propuesta de transacción"
+        message.startsWith("[LOCATION]") -> "📍 Ubicación"
+        message.startsWith("[FILE]") -> {
+            try {
+                val json = org.json.JSONObject(message.removePrefix("[FILE]"))
+                "📎 ${json.optString("name", "Archivo")}"
+            } catch (_: Exception) { "📎 Archivo" }
+        }
+        else -> message
+    }
+}
+
+// Obtener color especial para mensajes de handshake
+private fun getHandshakeMessageColor(message: String?): Color? {
+    if (message == null || !message.startsWith("[HANDSHAKE_STATUS]")) return null
+    return try {
+        val jsonStr = message.removePrefix("[HANDSHAKE_STATUS]")
+        val json = org.json.JSONObject(jsonStr)
+        val type = json.optString("type", "")
+        when {
+            type.contains("COMPLETED") || type.contains("TRANSACTION_COMPLETED") -> Color(0xFF22C55E) // green
+            type.contains("CANCELLED") || type.contains("AGREEMENT_CANCELLED") -> Color(0xFFEF4444) // red
+            type.contains("REJECTED") -> Color(0xFFEF4444) // red
+            type.contains("PROPOSED") -> Color(0xFFFF6B35) // orange
+            type.contains("ACCEPTED") -> Color(0xFF3B82F6) // blue
+            type.contains("CONFIRMED") -> Color(0xFFFF6B35) // orange
+            else -> null
+        }
+    } catch (_: Exception) { null }
+}
+
+// Formatear timestamp de mensaje como "ahora", "5m", "1h", "2d", etc.
+private fun formatMessageTimeAgo(timestamp: String?): String {
+    if (timestamp.isNullOrBlank()) return ""
+    return try {
+        val cleanTimestamp = timestamp
+            .replace(" ", "T")
+            .replace("+00:00", "Z")
+            .replace("+00", "Z")
+            .let { if (!it.endsWith("Z") && !it.contains("+")) "${it}Z" else it }
+        
+        val instant = try {
+            java.time.Instant.parse(cleanTimestamp)
+        } catch (_: Exception) {
+            java.time.OffsetDateTime.parse(cleanTimestamp).toInstant()
+        }
+        
+        val now = java.time.Instant.now()
+        val minutes = java.time.Duration.between(instant, now).toMinutes()
+        when {
+            minutes < 1 -> "ahora"
+            minutes < 60 -> "${minutes}m"
+            minutes < 1440 -> "${minutes / 60}h"
+            minutes < 10080 -> "${minutes / 1440}d"
+            else -> "${minutes / 10080}sem"
+        }
+    } catch (_: Exception) { "" }
 }

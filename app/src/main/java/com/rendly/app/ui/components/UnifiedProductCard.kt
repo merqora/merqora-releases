@@ -146,7 +146,8 @@ fun UnifiedProductCard(
     data: ProductCardData,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    imageHeight: Dp = 160.dp
+    imageHeight: Dp = 160.dp,
+    onSaveToggle: ((String, Boolean) -> Unit)? = null
 ) {
     var isSaved by remember { mutableStateOf(data.isSaved) }
     
@@ -185,8 +186,21 @@ fun UnifiedProductCard(
                         .fillMaxSize()
                         .clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp))
                 ) { page ->
+                    val context = androidx.compose.ui.platform.LocalContext.current
+                    val imageUrl = data.images.getOrNull(page) ?: ""
+                    
                     AsyncImage(
-                        model = data.images.getOrNull(page) ?: "",
+                        model = remember(imageUrl) {
+                            coil.request.ImageRequest.Builder(context)
+                                .data(imageUrl)
+                                .crossfade(true)
+                                .crossfade(400)
+                                .placeholder(android.R.drawable.progress_horizontal) // Placeholder nativo temporal
+                                .error(android.R.drawable.ic_menu_report_image) // Icono error nativo
+                                .diskCachePolicy(coil.request.CachePolicy.ENABLED)
+                                .memoryCachePolicy(coil.request.CachePolicy.ENABLED)
+                                .build()
+                        },
                         contentDescription = data.title,
                         contentScale = ContentScale.Crop,
                         modifier = Modifier.fillMaxSize()
@@ -241,7 +255,11 @@ fun UnifiedProductCard(
                         .size(28.dp)
                         .clip(CircleShape)
                         .background(Color.Black.copy(alpha = 0.45f))
-                        .clickable { isSaved = !isSaved },
+                        .clickable {
+                            val newSaved = !isSaved
+                            isSaved = newSaved
+                            onSaveToggle?.invoke(data.id, newSaved)
+                        },
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(

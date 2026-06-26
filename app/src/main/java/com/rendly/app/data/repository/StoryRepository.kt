@@ -119,6 +119,7 @@ object StoryRepository {
             val uploadResult = CloudflareService.uploadImage(
                 bitmap = bitmap,
                 folder = "stories/$userId",
+                mediaType = com.rendly.app.media.MediaOptimizer.MediaType.STORY,
                 onProgress = { progress ->
                     val adjustedProgress = progress * 0.7f // 0-70% para upload
                     _uploadState.value = _uploadState.value.copy(progress = adjustedProgress)

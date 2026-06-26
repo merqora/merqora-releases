@@ -9,6 +9,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.SerialName
 import java.util.UUID
 
 /**
@@ -35,6 +36,9 @@ object OrderRepository {
     private val _cachedSummary = MutableStateFlow(TransactionsSummary.empty())
     val cachedSummary: StateFlow<TransactionsSummary> = _cachedSummary
     
+    private val _cachedHandshakes = MutableStateFlow<List<HandshakeTransaction>>(emptyList())
+    val cachedHandshakes: StateFlow<List<HandshakeTransaction>> = _cachedHandshakes
+    
     private val _isCacheLoaded = MutableStateFlow(false)
     val isCacheLoaded: StateFlow<Boolean> = _isCacheLoaded
     
@@ -53,9 +57,11 @@ object OrderRepository {
             try {
                 val purchases = getMyOrders()
                 val sales = getMySales()
+                val handshakes = loadUserHandshakes()
                 _cachedPurchases.value = purchases
                 _cachedSales.value = sales
-                _cachedSummary.value = buildSummary(purchases, sales)
+                _cachedHandshakes.value = handshakes
+                _cachedSummary.value = buildSummary(purchases, sales, handshakes)
             } catch (_: Exception) {}
             _isRefreshing.value = false
             return
@@ -66,9 +72,11 @@ object OrderRepository {
         try {
             val purchases = getMyOrders()
             val sales = getMySales()
+            val handshakes = loadUserHandshakes()
             _cachedPurchases.value = purchases
             _cachedSales.value = sales
-            _cachedSummary.value = buildSummary(purchases, sales)
+            _cachedHandshakes.value = handshakes
+            _cachedSummary.value = buildSummary(purchases, sales, handshakes)
             _isCacheLoaded.value = true
         } catch (e: Exception) {
             Log.e(TAG, "Error cargando transacciones: ${e.message}")
@@ -76,19 +84,56 @@ object OrderRepository {
         _isRefreshing.value = false
     }
     
-    private fun buildSummary(purchases: List<Order>, sales: List<Order>): TransactionsSummary {
+    private fun buildSummary(purchases: List<Order>, sales: List<Order>, handshakes: List<HandshakeTransaction> = emptyList()): TransactionsSummary {
         val purchasesTotal = purchases.filter { it.status == OrderStatus.PAID || it.status == OrderStatus.COMPLETED || it.status == OrderStatus.DELIVERED }
             .sumOf { it.totalAmount }
         val salesTotal = sales.filter { it.status == OrderStatus.PAID || it.status == OrderStatus.COMPLETED || it.status == OrderStatus.DELIVERED }
             .sumOf { order -> order.items.sumOf { it.totalPrice } }
+        val handshakesTotal = handshakes.filter { it.getStatusEnum() == HandshakeStatus.COMPLETED }
+            .sumOf { it.agreedPrice }
+        val pendingHandshakes = handshakes.count { 
+            it.getStatusEnum() in listOf(HandshakeStatus.PROPOSED, HandshakeStatus.ACCEPTED, HandshakeStatus.IN_PROGRESS, HandshakeStatus.RENEGOTIATING)
+        }
         return TransactionsSummary(
             totalPurchases = purchases.size,
             totalPurchasesAmount = purchasesTotal,
             totalSales = sales.size,
             totalSalesAmount = salesTotal,
             pendingPurchases = purchases.count { it.status == OrderStatus.PENDING || it.status == OrderStatus.PAYMENT_PROCESSING },
-            pendingSales = sales.count { it.status == OrderStatus.PENDING || it.status == OrderStatus.PAYMENT_PROCESSING }
+            pendingSales = sales.count { it.status == OrderStatus.PENDING || it.status == OrderStatus.PAYMENT_PROCESSING },
+            totalHandshakes = handshakes.size,
+            totalHandshakesAmount = handshakesTotal,
+            pendingHandshakes = pendingHandshakes
         )
+    }
+    
+    /**
+     * Cargar todos los handshake transactions del usuario
+     */
+    private suspend fun loadUserHandshakes(): List<HandshakeTransaction> = withContext(Dispatchers.IO) {
+        try {
+            val currentUserId = SupabaseClient.auth.currentUserOrNull()?.id
+                ?: return@withContext emptyList()
+            
+            val handshakes = SupabaseClient.database
+                .from("handshake_transactions")
+                .select {
+                    filter {
+                        or {
+                            eq("initiator_id", currentUserId)
+                            eq("receiver_id", currentUserId)
+                        }
+                    }
+                }
+                .decodeList<HandshakeTransaction>()
+                .sortedByDescending { it.createdAt }
+            
+            Log.d(TAG, "Loaded ${handshakes.size} handshake transactions")
+            handshakes
+        } catch (e: Exception) {
+            Log.e(TAG, "Error loading handshakes: ${e.message}")
+            emptyList()
+        }
     }
     
     /**
@@ -96,6 +141,25 @@ object OrderRepository {
      */
     fun invalidateCache() {
         _isCacheLoaded.value = false
+    }
+    
+    /**
+     * Cargar handshake vinculado a una orden desde Supabase
+     */
+    suspend fun loadHandshakeForOrder(handshakeId: String): HandshakeTransaction? = withContext(Dispatchers.IO) {
+        try {
+            val result = SupabaseClient.database
+                .from("handshake_transactions")
+                .select {
+                    filter { eq("id", handshakeId) }
+                }
+                .decodeSingleOrNull<HandshakeTransaction>()
+            Log.d(TAG, "Loaded handshake for order: ${result?.id} status=${result?.status}")
+            result
+        } catch (e: Exception) {
+            Log.e(TAG, "Error loading handshake: ${e.message}")
+            null
+        }
     }
     
     /**
@@ -453,7 +517,7 @@ object OrderRepository {
     }
     
     /**
-     * Obtener estadísticas de un vendedor
+     * Obtener estadísticas de un vendedor - combina seller_stats + rating real de product_reviews + response time de messages
      */
     suspend fun getSellerStats(sellerId: String): SellerStats = withContext(Dispatchers.IO) {
         try {
@@ -464,11 +528,165 @@ object OrderRepository {
                 }
                 .decodeSingleOrNull<SellerStatsDB>()
             
-            statsDB?.let { SellerStats.fromDB(it) } ?: SellerStats.default(sellerId)
+            val baseStats = statsDB?.let { SellerStats.fromDB(it) } ?: SellerStats.default(sellerId)
+            
+            // Compute real reputation: read usuarios.reputation_score first (same as ProfileRepository),
+            // then fall back to FollowersRepository.getReputation()
+            val realReputation = try {
+                val userRow = SupabaseClient.database
+                    .from("usuarios")
+                    .select(columns = Columns.list("reputation_score")) {
+                        filter { eq("user_id", sellerId) }
+                    }
+                    .decodeSingleOrNull<UserReputationRow>()
+                userRow?.reputationScore?.toInt()
+                    ?: FollowersRepository.getReputation(sellerId)
+            } catch (e: Exception) {
+                Log.e(TAG, "Error computing real reputation: ${e.message}")
+                null
+            }
+            
+            // Compute real avg rating from product_reviews for all seller's posts
+            val realAvgRating = try {
+                // Get all post IDs and product IDs by this seller
+                val sellerPosts = SupabaseClient.database
+                    .from("posts")
+                    .select(columns = Columns.list("id", "product_id")) {
+                        filter { eq("user_id", sellerId) }
+                    }
+                    .decodeList<SellerPostRow>()
+                
+                val postIds = sellerPosts.map { it.id }
+                val productIds = sellerPosts.mapNotNull { it.productId }
+                
+                // Query reviews by source_id (post IDs) OR product_id
+                val allReviews = mutableListOf<ReviewRatingRow>()
+                if (postIds.isNotEmpty()) {
+                    val bySource = SupabaseClient.database
+                        .from("product_reviews")
+                        .select(columns = Columns.list("id", "rating")) {
+                            filter {
+                                isIn("source_id", postIds)
+                                neq("rating", 0)
+                            }
+                        }
+                        .decodeList<ReviewRatingRow>()
+                    allReviews.addAll(bySource)
+                }
+                if (productIds.isNotEmpty()) {
+                    val byProduct = SupabaseClient.database
+                        .from("product_reviews")
+                        .select(columns = Columns.list("id", "rating")) {
+                            filter {
+                                isIn("product_id", productIds)
+                                neq("rating", 0)
+                            }
+                        }
+                        .decodeList<ReviewRatingRow>()
+                    allReviews.addAll(byProduct)
+                }
+                // Deduplicate by review id
+                val uniqueReviews = allReviews.distinctBy { it.id }
+                if (uniqueReviews.isNotEmpty()) {
+                    uniqueReviews.mapNotNull { it.rating?.toDouble() }.average()
+                } else null
+            } catch (e: Exception) {
+                Log.e(TAG, "Error computing real avg rating: ${e.message}")
+                null
+            }
+            
+            // Compute response time from messages (avg time between buyer first msg and seller reply)
+            val realResponseTimeMinutes = try {
+                computeAvgResponseTime(sellerId)
+            } catch (e: Exception) {
+                Log.e(TAG, "Error computing response time: ${e.message}")
+                null
+            }
+            
+            // Merge real data with base stats
+            baseStats.copy(
+                reputationScore = realReputation ?: baseStats.reputationScore,
+                avgRating = realAvgRating ?: baseStats.avgRating,
+                avgResponseTimeMinutes = realResponseTimeMinutes ?: baseStats.avgResponseTimeMinutes
+            )
         } catch (e: Exception) {
             Log.e(TAG, "Error obteniendo stats del vendedor: ${e.message}")
             SellerStats.default(sellerId)
         }
+    }
+    
+    @kotlinx.serialization.Serializable
+    private data class ReviewRatingRow(
+        val id: String? = null,
+        val rating: Int? = null
+    )
+    
+    @kotlinx.serialization.Serializable
+    private data class SellerPostRow(
+        val id: String = "",
+        @kotlinx.serialization.SerialName("product_id") val productId: String? = null
+    )
+    
+    @kotlinx.serialization.Serializable
+    private data class UserReputationRow(
+        @kotlinx.serialization.SerialName("reputation_score") val reputationScore: Double? = null
+    )
+    
+    @kotlinx.serialization.Serializable
+    private data class MessageTimestampRow(
+        @kotlinx.serialization.SerialName("sender_id") val senderId: String = "",
+        @kotlinx.serialization.SerialName("created_at") val createdAt: String = "",
+        @kotlinx.serialization.SerialName("conversation_id") val conversationId: String = ""
+    )
+    
+    /**
+     * Compute average response time in minutes for a seller across their conversations
+     */
+    private suspend fun computeAvgResponseTime(sellerId: String): Int? {
+        // Get recent messages where seller replied and compute avg gap to previous buyer message
+        val recentReplies = SupabaseClient.database
+            .from("messages")
+            .select(columns = Columns.list("sender_id", "created_at", "conversation_id")) {
+                filter { eq("sender_id", sellerId) }
+                order("created_at", io.github.jan.supabase.postgrest.query.Order.DESCENDING)
+                limit(30)
+            }
+            .decodeList<MessageTimestampRow>()
+        
+        if (recentReplies.isEmpty()) return null
+        
+        val responseTimes = mutableListOf<Long>()
+        
+        for (reply in recentReplies.take(20)) {
+            try {
+                // Find the last message BEFORE this reply in the same conversation that wasn't from the seller
+                val previousMsg = SupabaseClient.database
+                    .from("messages")
+                    .select(columns = Columns.list("sender_id", "created_at", "conversation_id")) {
+                        filter {
+                            eq("conversation_id", reply.conversationId)
+                            neq("sender_id", sellerId)
+                            lt("created_at", reply.createdAt)
+                        }
+                        order("created_at", io.github.jan.supabase.postgrest.query.Order.DESCENDING)
+                        limit(1)
+                    }
+                    .decodeSingleOrNull<MessageTimestampRow>()
+                
+                if (previousMsg != null) {
+                    val replyTime = java.time.Instant.parse(reply.createdAt)
+                    val msgTime = java.time.Instant.parse(previousMsg.createdAt)
+                    val diffMinutes = java.time.Duration.between(msgTime, replyTime).toMinutes()
+                    if (diffMinutes in 0..14400) { // Max 10 days
+                        responseTimes.add(diffMinutes)
+                    }
+                }
+            } catch (_: Exception) { }
+        }
+        
+        return if (responseTimes.isNotEmpty()) {
+            responseTimes.average().toInt()
+        } else null
     }
     
     /**
@@ -618,9 +836,12 @@ data class TransactionsSummary(
     val totalSales: Int,
     val totalSalesAmount: Double,
     val pendingPurchases: Int,
-    val pendingSales: Int
+    val pendingSales: Int,
+    val totalHandshakes: Int = 0,
+    val totalHandshakesAmount: Double = 0.0,
+    val pendingHandshakes: Int = 0
 ) {
     companion object {
-        fun empty() = TransactionsSummary(0, 0.0, 0, 0.0, 0, 0)
+        fun empty() = TransactionsSummary(0, 0.0, 0, 0.0, 0, 0, 0, 0.0, 0)
     }
 }

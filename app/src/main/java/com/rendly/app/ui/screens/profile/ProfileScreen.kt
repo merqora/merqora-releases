@@ -96,7 +96,7 @@ private data class ProfileTab(
 
 private val profileTabs = listOf(
     ProfileTab("posts", Icons.Default.Menu, "Catálogo"),
-    ProfileTab("videos", Icons.Outlined.PlayArrow, "Rends"),
+    ProfileTab("videos", Icons.Outlined.PlayCircle, "Clips"),
     ProfileTab("details", Icons.Outlined.Info, "Detalles"),
     ProfileTab("points", Icons.Outlined.Star, "Puntos"),
     ProfileTab("saved", Icons.Outlined.BookmarkBorder, "Guardados")
@@ -127,17 +127,24 @@ fun ProfileScreen(
     // Estado para StoriesViewer de highlights
     var showHighlightViewer by remember { mutableStateOf(false) }
     var selectedHighlight by remember { mutableStateOf<HighlightedStory?>(null) }
+    var highlightRefreshKey by remember { mutableIntStateOf(0) }
     
     // Estado para modal de opciones de highlight (long press)
     var showHighlightOptionsModal by remember { mutableStateOf(false) }
     var highlightForOptions by remember { mutableStateOf<HighlightedStory?>(null) }
     var isDeletingHighlight by remember { mutableStateOf(false) }
+    var uploadingHighlightId by remember { mutableStateOf<String?>(null) }
     
     // Estado para Rendshop
     var showRendshop by remember { mutableStateOf(false) }
     
     // Estado para modal de ajustes
     var showSettingsModal by remember { mutableStateOf(false) }
+    var showPrivacySettings by remember { mutableStateOf(false) }
+    var showNotificationSettings by remember { mutableStateOf(false) }
+    var showSecuritySettings by remember { mutableStateOf(false) }
+    var showHelpCenter by remember { mutableStateOf(false) }
+    var showAbout by remember { mutableStateOf(false) }
     
     // Estado para ProductPage
     var selectedPost by remember { mutableStateOf<Post?>(null) }
@@ -184,6 +191,7 @@ fun ProfileScreen(
     // Posts del usuario desde el repositorio
     val userPosts by PostRepository.userPosts.collectAsState()
     val isLoadingUserPosts by PostRepository.isLoadingUserPosts.collectAsState()
+    var hasInitiallyLoadedPosts by remember { mutableStateOf(PostRepository.userPosts.value.isNotEmpty()) }
     
     // Stories del usuario para halo del avatar
     val myStories by StoryRepository.myStories.collectAsState()
@@ -200,6 +208,19 @@ fun ProfileScreen(
     
     // Estado de tab seleccionado (declarado antes de usarse en LaunchedEffect)
     var selectedTabIndex by remember { mutableIntStateOf(0) }
+    
+    // Marcar cuando los posts terminan de cargar por primera vez
+    LaunchedEffect(isLoadingUserPosts) {
+        if (!isLoadingUserPosts && !hasInitiallyLoadedPosts && profileFromRepo != null) {
+            hasInitiallyLoadedPosts = true
+        }
+    }
+    // También marcar si ya hay posts disponibles
+    LaunchedEffect(userPosts) {
+        if (userPosts.isNotEmpty()) {
+            hasInitiallyLoadedPosts = true
+        }
+    }
     
     // Cargar perfil, highlights, posts y rends del usuario al iniciar
     LaunchedEffect(Unit) {
@@ -346,7 +367,7 @@ fun ProfileScreen(
             
             // Banner con borderRadius
             item {
-                ProfileBanner(bannerUrl = profile.bannerUrl)
+                ProfileBanner(bannerUrl = profile.bannerUrl, username = profile.username)
             }
             
             // Header con avatar y stats
@@ -387,6 +408,7 @@ fun ProfileScreen(
                     },
                     onAddStory = { showAddHighlightModal = true },
                     canAddStories = true,
+                    uploadingHighlightId = uploadingHighlightId,
                     modifier = Modifier.padding(top = 8.dp, bottom = 8.dp)
                 )
                 
@@ -405,8 +427,11 @@ fun ProfileScreen(
             // Contenido de tabs
             item {
                 when (selectedTabIndex) {
-                    0 -> if (isLoadingUserPosts && userPosts.isEmpty()) {
-                        ProfileGridSkeleton(itemCount = 9)
+                    0 -> if (!hasInitiallyLoadedPosts || (isLoadingUserPosts && userPosts.isEmpty())) {
+                        // No mostrar empty state ni skeleton redundante:
+                        // solo un Box vacío mientras el skeleton general cubre la pantalla,
+                        // o nada si ya pasó el skeleton general
+                        Box(modifier = Modifier.fillMaxWidth())
                     } else {
                         PostsGrid(
                             posts = userPosts,
@@ -420,7 +445,36 @@ fun ProfileScreen(
                             }
                         )
                     }
-                    1 -> RendsGrid(rends = userRends)
+                    1 -> RendsGrid(
+                        rends = userRends.filter { it.userId == profile.userId },
+                        onRendClick = { rend ->
+                            // Convertir Rend a Post para ProductPage
+                            val rendAsPost = Post(
+                                id = rend.id,
+                                userId = rend.userId,
+                                username = rend.username,
+                                userAvatar = rend.userAvatar,
+                                userStoreName = rend.userStoreName,
+                                title = rend.productTitle ?: rend.title,
+                                description = rend.description,
+                                images = listOfNotNull(
+                                    rend.productImage,
+                                    rend.thumbnailUrl
+                                ).ifEmpty { listOf("https://via.placeholder.com/400") },
+                                price = rend.productPrice ?: 0.0,
+                                condition = "Nuevo",
+                                category = "",
+                                likesCount = rend.likesCount,
+                                reviewsCount = rend.reviewsCount,
+                                createdAt = System.currentTimeMillis().toString(),
+                                isLiked = false,
+                                isSaved = false,
+                                productId = rend.productId
+                            )
+                            selectedPost = rendAsPost
+                            showProductPage = true
+                        }
+                    )
                     2 -> DetailsSection(profile = profile)
                     3 -> PointsSection()
                     4 -> SavedPostsGrid(
@@ -459,8 +513,8 @@ fun ProfileScreen(
             var highlightStoriesList by remember { mutableStateOf<List<Story>>(emptyList()) }
             var isLoadingStories by remember { mutableStateOf(true) }
             
-            // Cargar stories del highlight desde Supabase
-            LaunchedEffect(selectedHighlight?.id) {
+            // Cargar stories del highlight desde Supabase (refreshKey forces reload after adding stories)
+            LaunchedEffect(selectedHighlight?.id, highlightRefreshKey) {
                 isLoadingStories = true
                 val stories = HighlightRepository.getHighlightStories(selectedHighlight!!.id)
                 highlightStoriesList = if (stories.isNotEmpty()) {
@@ -572,7 +626,8 @@ fun ProfileScreen(
             onAddImages = { uris ->
                 highlightForOptions?.let { highlight ->
                     scope.launch {
-                        android.util.Log.d("ProfileScreen", "Agregando ${uris.size} imágenes al highlight ${highlight.id}")
+                        uploadingHighlightId = highlight.id
+                        android.util.Log.d("ProfileScreen", "Agregando ${uris.size} historias al highlight ${highlight.id}")
                         uris.forEach { uri ->
                             try {
                                 // Cargar bitmap desde URI
@@ -588,7 +643,7 @@ fun ProfileScreen(
                                         mediaUrl = null
                                     )
                                     if (result.isSuccess) {
-                                        android.util.Log.d("ProfileScreen", "✅ Imagen agregada al highlight")
+                                        android.util.Log.d("ProfileScreen", "✅ Historia agregada al highlight")
                                     } else {
                                         android.util.Log.e("ProfileScreen", "❌ Error: ${result.exceptionOrNull()?.message}")
                                     }
@@ -599,6 +654,9 @@ fun ProfileScreen(
                         }
                         // Recargar highlights después de agregar todas las imágenes
                         HighlightRepository.loadHighlights()
+                        uploadingHighlightId = null
+                        // Incrementar refresh key para que el viewer recargue
+                        highlightRefreshKey++
                     }
                 }
             },
@@ -712,11 +770,11 @@ fun ProfileScreen(
         ProfileSettingsModal(
             isVisible = showSettingsModal,
             onDismiss = { showSettingsModal = false },
-            onPrivacySettings = { /* TODO */ },
-            onNotificationSettings = { /* TODO */ },
-            onSecuritySettings = { /* TODO */ },
-            onHelpCenter = { /* TODO */ },
-            onAbout = { /* TODO */ },
+            onPrivacySettings = { showSettingsModal = false; showPrivacySettings = true },
+            onNotificationSettings = { showSettingsModal = false; showNotificationSettings = true },
+            onSecuritySettings = { showSettingsModal = false; showSecuritySettings = true },
+            onHelpCenter = { showSettingsModal = false; showHelpCenter = true },
+            onAbout = { showSettingsModal = false; showAbout = true },
             onLogout = {
                 scope.launch {
                     try {
@@ -808,10 +866,15 @@ fun ProfileScreen(
         
         // Modal de confirmación para quitar de guardados (FUERA del LazyColumn para posicionarse correctamente)
         if (showUnsaveModal && postToUnsave != null) {
+            var isUnsaving by remember { mutableStateOf(false) }
             UnsaveConfirmationModal(
                 post = postToUnsave!!,
+                isLoading = isUnsaving,
                 onConfirm = {
-                    // Quitar de guardados en Supabase
+                    if (isUnsaving) return@UnsaveConfirmationModal
+                    // Capturar ID antes de nullear
+                    val postId = postToUnsave?.id ?: return@UnsaveConfirmationModal
+                    isUnsaving = true
                     scope.launch {
                         try {
                             val currentUserId = com.rendly.app.data.remote.SupabaseClient.auth.currentUserOrNull()?.id
@@ -821,12 +884,14 @@ fun ProfileScreen(
                                     .delete {
                                         filter {
                                             eq("user_id", currentUserId)
-                                            eq("post_id", postToUnsave!!.id)
+                                            eq("post_id", postId)
                                         }
                                     }
                             }
+                            // Spinner breve para feedback visual
+                            kotlinx.coroutines.delay(1200)
                             // Actualizar lista local
-                            savedPosts = savedPosts.filter { it.id != postToUnsave!!.id }
+                            savedPosts = savedPosts.filter { it.id != postId }
                             android.widget.Toast.makeText(
                                 context,
                                 "Publicación eliminada de guardados",
@@ -835,17 +900,57 @@ fun ProfileScreen(
                         } catch (e: Exception) {
                             android.util.Log.e("ProfileScreen", "Error al quitar de guardados: ${e.message}")
                         }
+                        isUnsaving = false
+                        showUnsaveModal = false
+                        postToUnsave = null
                     }
-                    showUnsaveModal = false
-                    postToUnsave = null
                 },
                 onDismiss = {
-                    showUnsaveModal = false
-                    postToUnsave = null
+                    if (!isUnsaving) {
+                        showUnsaveModal = false
+                        postToUnsave = null
+                    }
                 }
             )
         }
         
+        // Settings sub-screens
+        com.rendly.app.ui.components.settings.PrivacySettingsScreen(
+            isVisible = showPrivacySettings,
+            onDismiss = { showPrivacySettings = false }
+        )
+        
+        com.rendly.app.ui.components.settings.NotificationsSettingsScreen(
+            isVisible = showNotificationSettings,
+            userId = profileFromRepo?.userId ?: "",
+            onDismiss = { showNotificationSettings = false }
+        )
+        
+        com.rendly.app.ui.components.settings.SecuritySettingsScreen(
+            isVisible = showSecuritySettings,
+            onDismiss = { showSecuritySettings = false },
+            onLogout = {
+                showSecuritySettings = false
+                scope.launch {
+                    try {
+                        com.rendly.app.data.remote.SessionPersistence.clearSession()
+                        com.rendly.app.data.remote.SupabaseClient.auth.signOut()
+                        ProfileRepository.clearProfile()
+                        shouldLogout = true
+                    } catch (_: Exception) {}
+                }
+            }
+        )
+        
+        com.rendly.app.ui.components.settings.HelpCenterScreen(
+            isVisible = showHelpCenter,
+            onDismiss = { showHelpCenter = false }
+        )
+        
+        com.rendly.app.ui.components.settings.AboutScreen(
+            isVisible = showAbout,
+            onDismiss = { showAbout = false }
+        )
     }
 }
 
@@ -906,7 +1011,16 @@ private fun ProfileTopHeader(
 }
 
 @Composable
-private fun ProfileBanner(bannerUrl: String?) {
+private fun ProfileBanner(bannerUrl: String?, username: String = "") {
+    val context = androidx.compose.ui.platform.LocalContext.current
+    
+    // Construir URL completa si es necesario
+    val finalBannerUrl = remember(bannerUrl) {
+        if (bannerUrl.isNullOrBlank()) null
+        else if (bannerUrl.startsWith("http")) bannerUrl
+        else "https://wsiszffxlxupzbrgrklv.supabase.co/storage/v1/object/public/banners/$bannerUrl"
+    }
+
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -915,12 +1029,25 @@ private fun ProfileBanner(bannerUrl: String?) {
             .height(130.dp)
             .clip(RoundedCornerShape(20.dp))
     ) {
-        if (bannerUrl != null) {
+        if (finalBannerUrl != null) {
+            android.util.Log.d("ProfileScreen", "Intentando cargar Banner: $finalBannerUrl")
             AsyncImage(
-                model = bannerUrl,
+                model = remember(finalBannerUrl) {
+                    coil.request.ImageRequest.Builder(context)
+                        .data(finalBannerUrl)
+                        .crossfade(true)
+                        .memoryCachePolicy(coil.request.CachePolicy.ENABLED)
+                        .diskCachePolicy(coil.request.CachePolicy.ENABLED)
+                        .build()
+                },
                 contentDescription = "Banner",
                 contentScale = ContentScale.Crop,
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier.fillMaxSize(),
+                onSuccess = { android.util.Log.d("ProfileScreen", "✅ Banner cargado con éxito") },
+                onError = {
+                    android.util.Log.e("ProfileScreen", "❌ Error cargando banner de $username: $finalBannerUrl")
+                    android.util.Log.e("ProfileScreen", "Causa: ${it.result.throwable.message}")
+                }
             )
         } else {
             Box(
@@ -960,6 +1087,8 @@ private fun ProfileHeader(
     isLoadingStories: Boolean = false,
     onAvatarClick: () -> Unit = {}
 ) {
+    val context = androidx.compose.ui.platform.LocalContext.current
+
     // Animación de giro del halo (solo gira al cargar stories)
     val infiniteTransition = rememberInfiniteTransition(label = "profileHalo")
     val rotateRing by infiniteTransition.animateFloat(
@@ -1025,8 +1154,27 @@ private fun ProfileHeader(
                         .clip(CircleShape)
                         .background(HomeBg)
                 ) {
+                    val avatarToLoad = remember(profile.avatarUrl) {
+                        if (profile.avatarUrl.isNullOrBlank()) {
+                            "https://ui-avatars.com/api/?name=${profile.username}&background=A78BFA&color=fff"
+                        } else if (profile.avatarUrl.startsWith("http")) {
+                            profile.avatarUrl
+                        } else {
+                            "https://wsiszffxlxupzbrgrklv.supabase.co/storage/v1/object/public/avatars_new/${profile.avatarUrl}"
+                        }
+                    }
+                    
+                    android.util.Log.d("ProfileScreen", "Intentando cargar Avatar: $avatarToLoad")
                     AsyncImage(
-                        model = profile.avatarUrl ?: "https://ui-avatars.com/api/?name=${profile.username}&background=A78BFA&color=fff",
+                        model = remember(avatarToLoad) {
+                            coil.request.ImageRequest.Builder(context)
+                                .data(avatarToLoad)
+                                .crossfade(true)
+                                .memoryCachePolicy(coil.request.CachePolicy.ENABLED)
+                                .diskCachePolicy(coil.request.CachePolicy.ENABLED)
+                                .size(128) // Un poco más grande para perfil
+                                .build()
+                        },
                         contentDescription = "Avatar",
                         contentScale = ContentScale.Crop,
                         modifier = Modifier
@@ -1338,7 +1486,7 @@ private fun PostsGrid(
 }
 
 @Composable
-private fun RendsGrid(rends: List<Rend>) {
+private fun RendsGrid(rends: List<Rend>, onRendClick: (Rend) -> Unit = {}) {
     // Grilla NO scrollable - el scroll viene del LazyColumn padre
     if (rends.isEmpty()) {
         Box(
@@ -1349,20 +1497,20 @@ private fun RendsGrid(rends: List<Rend>) {
         ) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Icon(
-                    imageVector = Icons.Outlined.PlayArrow,
+                    imageVector = Icons.Outlined.VideoLibrary,
                     contentDescription = null,
                     tint = TextMuted,
                     modifier = Modifier.size(48.dp)
                 )
                 Spacer(modifier = Modifier.height(12.dp))
                 Text(
-                    text = "Sin Rends aún",
+                    text = "Sin clips aún",
                     color = TextPrimary,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.SemiBold
                 )
                 Text(
-                    text = "Tus videos cortos aparecerán aquí",
+                    text = "Tus clips aparecerán aquí",
                     color = TextMuted,
                     fontSize = 14.sp
                 )
@@ -1373,7 +1521,7 @@ private fun RendsGrid(rends: List<Rend>) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(2.dp),
+                .padding(horizontal = 2.dp),
             verticalArrangement = Arrangement.spacedBy(2.dp)
         ) {
             rends.chunked(3).forEach { rowRends ->
@@ -1382,29 +1530,22 @@ private fun RendsGrid(rends: List<Rend>) {
                     horizontalArrangement = Arrangement.spacedBy(2.dp)
                 ) {
                     rowRends.forEach { rend ->
-                        // Generar thumbnail del video si no hay uno
-                        val thumbnailToShow = rend.thumbnailUrl?.takeIf { it.isNotBlank() } 
-                            ?: rend.videoUrl.takeIf { it.isNotBlank() }?.let { videoUrl ->
-                                // Para ImageKit, agregar transformación de thumbnail
-                                if (videoUrl.contains("ik.imagekit.io")) {
-                                    videoUrl.replace("/rends/", "/rends/tr:so-1/") // Frame at 1 second
-                                } else videoUrl
-                            }
+                        // Generar thumbnail con ImageKit transformation (igual que TrendenciasScreen)
+                        val thumbnailToShow = if (rend.videoUrl.contains("ik.imagekit.io")) {
+                            "${rend.videoUrl}/ik-thumbnail.jpg"
+                        } else {
+                            rend.thumbnailUrl ?: rend.productImage ?: rend.videoUrl
+                        }
                         
                         Box(
                             modifier = Modifier
                                 .weight(1f)
                                 .aspectRatio(0.7f)
-                                .clip(RoundedCornerShape(4.dp))
-                                .background(
-                                    Brush.verticalGradient(
-                                        colors = listOf(
-                                            Color(0xFF0A3D62).copy(alpha = 0.3f),
-                                            Color(0xFFFF6B35).copy(alpha = 0.2f)
-                                        )
-                                    )
-                                )
+                                .clip(RoundedCornerShape(8.dp))
+                                .background(Color(0xFF1A1A2E))
+                                .clickable { onRendClick(rend) }
                         ) {
+                            // Thumbnail
                             AsyncImage(
                                 model = thumbnailToShow,
                                 contentDescription = rend.title,
@@ -1412,43 +1553,51 @@ private fun RendsGrid(rends: List<Rend>) {
                                 modifier = Modifier.fillMaxSize()
                             )
                             
-                            // Play icon overlay
+                            // Video icon en esquina superior derecha
                             Box(
                                 modifier = Modifier
-                                    .align(Alignment.Center)
-                                    .size(32.dp)
-                                    .clip(CircleShape)
-                                    .background(Color.Black.copy(alpha = 0.5f)),
+                                    .align(Alignment.TopEnd)
+                                    .padding(6.dp)
+                                    .size(24.dp)
+                                    .clip(RoundedCornerShape(6.dp))
+                                    .background(Color.Black.copy(alpha = 0.6f)),
                                 contentAlignment = Alignment.Center
                             ) {
                                 Icon(
-                                    imageVector = Icons.Default.PlayArrow,
+                                    imageVector = Icons.Outlined.Videocam,
                                     contentDescription = null,
                                     tint = Color.White,
-                                    modifier = Modifier.size(20.dp)
+                                    modifier = Modifier.size(14.dp)
                                 )
                             }
                             
-                            // Title at bottom
+                            // View count en esquina inferior izquierda
                             Box(
                                 modifier = Modifier
                                     .align(Alignment.BottomStart)
-                                    .fillMaxWidth()
-                                    .background(
-                                        Brush.verticalGradient(
-                                            colors = listOf(Color.Transparent, Color.Black.copy(alpha = 0.7f))
-                                        )
-                                    )
                                     .padding(6.dp)
                             ) {
-                                Text(
-                                    text = rend.title,
-                                    color = Color.White,
-                                    fontSize = 10.sp,
-                                    fontWeight = FontWeight.Medium,
-                                    maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis
-                                )
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.spacedBy(3.dp),
+                                    modifier = Modifier
+                                        .clip(RoundedCornerShape(4.dp))
+                                        .background(Color.Black.copy(alpha = 0.6f))
+                                        .padding(horizontal = 6.dp, vertical = 3.dp)
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Outlined.Visibility,
+                                        contentDescription = null,
+                                        tint = Color.White,
+                                        modifier = Modifier.size(12.dp)
+                                    )
+                                    Text(
+                                        text = formatViewCount(rend.viewsCount),
+                                        color = Color.White,
+                                        fontSize = 10.sp,
+                                        fontWeight = FontWeight.SemiBold
+                                    )
+                                }
                             }
                         }
                     }
@@ -1462,8 +1611,47 @@ private fun RendsGrid(rends: List<Rend>) {
     }
 }
 
+private fun formatViewCount(count: Int): String {
+    return when {
+        count >= 1_000_000 -> String.format("%.1fM", count / 1_000_000.0)
+        count >= 1_000 -> String.format("%.1fK", count / 1_000.0)
+        else -> count.toString()
+    }
+}
+
 @Composable
 private fun DetailsSection(profile: ProfileData) {
+    // Load real seller stats
+    var sellerStats by remember { mutableStateOf<com.rendly.app.data.model.SellerStats?>(null) }
+    LaunchedEffect(profile.userId) {
+        if (profile.userId.isNotEmpty()) {
+            sellerStats = com.rendly.app.data.repository.OrderRepository.getSellerStats(profile.userId)
+        }
+    }
+    
+    val reputation = profile.reputacion
+    val ratingValue = sellerStats?.avgRating?.let { String.format("%.1f", it) } ?: "N/A"
+    val responseValue = sellerStats?.formattedResponseTime ?: "N/A"
+    
+    // Trust level based on reputation
+    val trustLabel = when {
+        reputation >= 90 -> "Vendedor Excelente"
+        reputation >= 80 -> "Vendedor Confiable"
+        reputation >= 70 -> "Vendedor Activo"
+        else -> "Vendedor Nuevo"
+    }
+    val trustColor = when {
+        reputation >= 80 -> Color(0xFF2E8B57)
+        reputation >= 70 -> Color(0xFFFFA726)
+        else -> Color(0xFFEF5350)
+    }
+    val trustBadge = when {
+        reputation >= 90 -> "TOP"
+        reputation >= 80 -> "PRO"
+        else -> null
+    }
+    val verifiedText = if (profile.isVerified) " • Verificado" else ""
+    
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -1514,14 +1702,14 @@ private fun DetailsSection(profile: ProfileData) {
                     StatDivider()
                     StatColumn(
                         icon = Icons.Outlined.Star,
-                        value = "4.8",
+                        value = ratingValue,
                         label = "Valoración",
                         color = Color(0xFFFF6B35)
                     )
                     StatDivider()
                     StatColumn(
                         icon = Icons.Outlined.Speed,
-                        value = "< 1h",
+                        value = responseValue,
                         label = "Respuesta",
                         color = Color(0xFF1565A0)
                     )
@@ -1529,11 +1717,11 @@ private fun DetailsSection(profile: ProfileData) {
             }
         }
         
-        // Indicador de confianza mejorado
+        // Indicador de confianza mejorado (dinámico)
         Surface(
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(16.dp),
-            color = Color(0xFF2E8B57).copy(alpha = 0.08f)
+            color = trustColor.copy(alpha = 0.08f)
         ) {
             Row(
                 modifier = Modifier.padding(16.dp),
@@ -1543,41 +1731,43 @@ private fun DetailsSection(profile: ProfileData) {
                     modifier = Modifier
                         .size(48.dp)
                         .clip(CircleShape)
-                        .background(Color(0xFF2E8B57).copy(alpha = 0.15f)),
+                        .background(trustColor.copy(alpha = 0.15f)),
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
                         imageVector = Icons.Outlined.VerifiedUser,
                         contentDescription = null,
-                        tint = Color(0xFF2E8B57),
+                        tint = trustColor,
                         modifier = Modifier.size(24.dp)
                     )
                 }
                 Spacer(modifier = Modifier.width(14.dp))
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = "Vendedor Confiable",
+                        text = trustLabel,
                         color = TextPrimary,
                         fontSize = 15.sp,
                         fontWeight = FontWeight.SemiBold
                     )
                     Text(
-                        text = "92% de confianza • Verificado",
-                        color = Color(0xFF2E8B57),
+                        text = "${reputation}% de confianza$verifiedText",
+                        color = trustColor,
                         fontSize = 13.sp
                     )
                 }
-                Surface(
-                    shape = RoundedCornerShape(8.dp),
-                    color = Color(0xFF2E8B57)
-                ) {
-                    Text(
-                        text = "TOP",
-                        color = Color.White,
-                        fontSize = 11.sp,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp)
-                    )
+                if (trustBadge != null) {
+                    Surface(
+                        shape = RoundedCornerShape(8.dp),
+                        color = trustColor
+                    ) {
+                        Text(
+                            text = trustBadge,
+                            color = Color.White,
+                            fontSize = 11.sp,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp)
+                        )
+                    }
                 }
             }
         }
@@ -2180,6 +2370,7 @@ private fun SavedPostsGrid(
 @Composable
 private fun UnsaveConfirmationModal(
     post: Post,
+    isLoading: Boolean = false,
     onConfirm: () -> Unit,
     onDismiss: () -> Unit
 ) {
@@ -2309,6 +2500,7 @@ private fun UnsaveConfirmationModal(
                     // Botón Quitar
                     Button(
                         onClick = onConfirm,
+                        enabled = !isLoading,
                         modifier = Modifier
                             .weight(1f)
                             .height(50.dp),
@@ -2317,17 +2509,31 @@ private fun UnsaveConfirmationModal(
                             containerColor = Color(0xFFEF4444) // Rojo
                         )
                     ) {
-                        Icon(
-                            imageVector = Icons.Outlined.BookmarkRemove,
-                            contentDescription = null,
-                            modifier = Modifier.size(18.dp)
-                        )
-                        Spacer(modifier = Modifier.width(6.dp))
-                        Text(
-                            text = "Quitar",
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 15.sp
-                        )
+                        if (isLoading) {
+                            CircularProgressIndicator(
+                                color = Color.White,
+                                modifier = Modifier.size(18.dp),
+                                strokeWidth = 2.dp
+                            )
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Text(
+                                text = "Eliminando...",
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 15.sp
+                            )
+                        } else {
+                            Icon(
+                                imageVector = Icons.Outlined.BookmarkRemove,
+                                contentDescription = null,
+                                modifier = Modifier.size(18.dp)
+                            )
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Text(
+                                text = "Quitar",
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 15.sp
+                            )
+                        }
                     }
                 }
             }

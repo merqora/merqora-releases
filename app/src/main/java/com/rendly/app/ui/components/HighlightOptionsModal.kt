@@ -48,8 +48,8 @@ fun HighlightOptionsModal(
     val haptic = LocalHapticFeedback.current
     var showDeleteConfirm by remember { mutableStateOf(false) }
     
-    // Picker para múltiples imágenes
-    val multipleImagePicker = rememberLauncherForActivityResult(
+    // Picker para múltiples archivos (imágenes o videos)
+    val multipleMediaPicker = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetMultipleContents()
     ) { uris ->
         if (uris.isNotEmpty()) {
@@ -181,12 +181,12 @@ fun HighlightOptionsModal(
                                 // Agregar imágenes
                                 OptionRow(
                                     icon = Icons.Outlined.AddPhotoAlternate,
-                                    title = "Agregar imágenes",
-                                    subtitle = "Añade nuevas fotos a este highlight",
+                                    title = "Agregar historia",
+                                    subtitle = "Añade nuevas fotos o videos a este highlight",
                                     iconTint = AccentGreen,
                                     onClick = {
                                         haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                                        multipleImagePicker.launch("image/*")
+                                        multipleMediaPicker.launch("image/*")
                                     }
                                 )
                                 

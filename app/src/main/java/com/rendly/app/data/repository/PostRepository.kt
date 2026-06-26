@@ -273,6 +273,7 @@ object PostRepository {
                 val imageUrl = CloudinaryService.uploadImage(
                     bitmap = bitmap,
                     folder = "posts/$userId",
+                    mediaType = com.rendly.app.media.MediaOptimizer.MediaType.POST,
                     onProgress = { progress ->
                         val baseProgress = 0.15f + (index * progressPerImage)
                         val adjusted = baseProgress + (progress * progressPerImage)
@@ -438,6 +439,33 @@ object PostRepository {
     // ===============================
     suspend fun deletePost(postId: String): Result<Unit> = withContext(Dispatchers.IO) {
         try {
+            // 1. Obtener el post para extraer URLs de imágenes
+            val postDB = try {
+                SupabaseClient.database
+                    .from("posts")
+                    .select {
+                        filter { eq("id", postId) }
+                    }
+                    .decodeList<PostDB>()
+                    .firstOrNull()
+            } catch (e: Exception) {
+                Log.w(TAG, "No se pudo obtener post para eliminar imágenes de Cloudinary", e)
+                null
+            }
+            
+            // 2. Eliminar imágenes de Cloudinary (best-effort, no bloquea el delete)
+            postDB?.images?.let { imageUrls ->
+                if (imageUrls.isNotEmpty()) {
+                    Log.d(TAG, "Eliminando ${imageUrls.size} imágenes de Cloudinary...")
+                    try {
+                        CloudinaryService.deleteImagesFromUrls(imageUrls)
+                    } catch (e: Exception) {
+                        Log.w(TAG, "Error eliminando imágenes de Cloudinary (continuando con delete)", e)
+                    }
+                }
+            }
+            
+            // 3. Eliminar post de Supabase
             SupabaseClient.database
                 .from("posts")
                 .delete {

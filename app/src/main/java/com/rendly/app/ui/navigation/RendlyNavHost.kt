@@ -104,7 +104,7 @@ fun MerqoraNavHost(
         ) {
             MessagesScreen(
                 onBack = { navController.popBackStack() },
-                onConversationClick = { /* TODO: Open conversation */ }
+                onConversationClick = { usuario -> /* TODO: Open conversation with usuario */ }
             )
         }
         

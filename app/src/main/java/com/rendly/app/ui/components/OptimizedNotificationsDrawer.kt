@@ -441,65 +441,62 @@ private fun NotificationsContent(onClose: () -> Unit) {
             shadowElevation = 2.dp
         ) {
             if (isSelectionMode) {
-                // Header de selección múltiple
+                // Header de selección múltiple - compacto y profesional (acciones como iconos)
+                val allSelected = notifications.isNotEmpty() && selectedNotifications.size == notifications.size
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 12.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
+                        .padding(start = 6.dp, end = 6.dp, top = 10.dp, bottom = 10.dp),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    // Cerrar selección
+                    IconButton(
+                        onClick = {
+                            isSelectionMode = false
+                            selectedNotifications = emptySet()
+                        },
+                        modifier = Modifier.size(40.dp)
                     ) {
-                        // Botón cerrar selección
-                        IconButton(
-                            onClick = { 
-                                isSelectionMode = false
-                                selectedNotifications = emptySet()
-                            },
-                            modifier = Modifier.size(36.dp)
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Close,
-                                contentDescription = "Cancelar",
-                                tint = TextPrimary
-                            )
-                        }
-                        
-                        Text(
-                            text = "${selectedNotifications.size} seleccionadas",
-                            fontSize = 18.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = TextPrimary
+                        Icon(
+                            imageVector = Icons.Default.Close,
+                            contentDescription = "Cancelar",
+                            tint = TextPrimary
                         )
                     }
-                    
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        verticalAlignment = Alignment.CenterVertically
+
+                    Spacer(modifier = Modifier.width(6.dp))
+
+                    // Contador (toma el espacio flexible y se trunca si no cabe)
+                    Text(
+                        text = if (selectedNotifications.isEmpty()) "Seleccionar"
+                            else "${selectedNotifications.size} ${if (selectedNotifications.size == 1) "seleccionada" else "seleccionadas"}",
+                        fontSize = 17.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = TextPrimary,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.weight(1f)
+                    )
+
+                    // Seleccionar / deseleccionar todas (icono)
+                    IconButton(
+                        onClick = {
+                            selectedNotifications = if (allSelected) emptySet()
+                                else notifications.map { it.id }.toSet()
+                        },
+                        modifier = Modifier.size(40.dp)
                     ) {
-                        // Seleccionar todas
-                        TextButton(
-                            onClick = {
-                                selectedNotifications = if (selectedNotifications.size == notifications.size) {
-                                    emptySet()
-                                } else {
-                                    notifications.map { it.id }.toSet()
-                                }
-                            }
-                        ) {
-                            Text(
-                                text = if (selectedNotifications.size == notifications.size) "Ninguna" else "Todas",
-                                color = PrimaryPurple,
-                                fontWeight = FontWeight.SemiBold
-                            )
-                        }
-                        
-                        // Eliminar seleccionadas
-                        Button(
-                            onClick = {
+                        Icon(
+                            imageVector = Icons.Default.DoneAll,
+                            contentDescription = if (allSelected) "Deseleccionar todas" else "Seleccionar todas",
+                            tint = if (allSelected) PrimaryPurple else TextPrimary.copy(alpha = 0.7f)
+                        )
+                    }
+
+                    // Eliminar seleccionadas (icono rojo)
+                    IconButton(
+                        onClick = {
+                            if (selectedNotifications.isNotEmpty() && !isDeleting) {
                                 scope.launch {
                                     isDeleting = true
                                     selectedNotifications.forEach { id ->
@@ -509,28 +506,24 @@ private fun NotificationsContent(onClose: () -> Unit) {
                                     isSelectionMode = false
                                     selectedNotifications = emptySet()
                                 }
-                            },
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = Color(0xFFEF4444)
-                            ),
-                            enabled = selectedNotifications.isNotEmpty() && !isDeleting,
-                            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
-                        ) {
-                            if (isDeleting) {
-                                CircularProgressIndicator(
-                                    modifier = Modifier.size(16.dp),
-                                    color = Color.White,
-                                    strokeWidth = 2.dp
-                                )
-                            } else {
-                                Icon(
-                                    imageVector = Icons.Outlined.Delete,
-                                    contentDescription = null,
-                                    modifier = Modifier.size(18.dp)
-                                )
-                                Spacer(modifier = Modifier.width(6.dp))
-                                Text("Eliminar")
                             }
+                        },
+                        enabled = selectedNotifications.isNotEmpty() && !isDeleting,
+                        modifier = Modifier.size(40.dp)
+                    ) {
+                        if (isDeleting) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(18.dp),
+                                color = Color(0xFFEF4444),
+                                strokeWidth = 2.dp
+                            )
+                        } else {
+                            Icon(
+                                imageVector = Icons.Outlined.Delete,
+                                contentDescription = "Eliminar",
+                                tint = if (selectedNotifications.isNotEmpty()) Color(0xFFEF4444)
+                                    else TextPrimary.copy(alpha = 0.3f)
+                            )
                         }
                     }
                 }

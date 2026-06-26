@@ -91,7 +91,7 @@ data class UserToMessage(
 fun OptimizedMessagesDrawer(
     isVisible: Boolean,
     onDismiss: () -> Unit,
-    onOpenChat: (Usuario) -> Unit = {}, // Solo el usuario
+    onOpenChat: (Usuario, String?) -> Unit = { _, _ -> }, // Pasar usuario y conversación id
     modifier: Modifier = Modifier
 ) {
     val scope = rememberCoroutineScope()
@@ -134,12 +134,10 @@ fun OptimizedMessagesDrawer(
                     .pointerInput(Unit) {
                         detectHorizontalDragGestures(
                             onHorizontalDrag = { _, dragAmount ->
-                                if (dragAmount > 0) {
-                                    scope.launch {
-                                        offsetX.stop()
-                                        val newValue = (offsetX.value + dragAmount / size.width).coerceIn(0f, 1f)
-                                        offsetX.snapTo(newValue)
-                                    }
+                                scope.launch {
+                                    offsetX.stop()
+                                    val newValue = (offsetX.value + dragAmount / size.width).coerceIn(0f, 1f)
+                                    offsetX.snapTo(newValue)
                                 }
                             },
                             onDragEnd = {
@@ -183,7 +181,7 @@ fun OptimizedMessagesDrawer(
 @Composable
 private fun MessagesContent(
     onClose: () -> Unit,
-    onOpenChat: (Usuario) -> Unit = {}
+    onOpenChat: (Usuario, String?) -> Unit = { _, _ -> }
 ) {
     var searchQuery by remember { mutableStateOf("") }
     var showNewMessageModal by remember { mutableStateOf(false) }
@@ -314,7 +312,7 @@ private fun MessagesContent(
                             chat = chat,
                             onClick = { 
                                 conversationUserMap[chat.id]?.let { user ->
-                                    onOpenChat(user)
+                                    onOpenChat(user, chat.id)
                                 }
                             },
                             onLongClick = {
@@ -344,7 +342,7 @@ private fun MessagesContent(
             onDismiss = { showNewMessageModal = false },
             onSelectUser = { user ->
                 showNewMessageModal = false
-                onOpenChat(user)
+                onOpenChat(user, null)
             }
         )
     }
@@ -617,14 +615,6 @@ private fun ChatItemImproved(
                             )
                         }
                         
-                        if (chat.isMuted) {
-                            Icon(
-                                imageVector = Icons.Outlined.NotificationsOff,
-                                contentDescription = "Silenciado",
-                                tint = TextMuted,
-                                modifier = Modifier.size(13.dp)
-                            )
-                        }
                     }
                 }
 
@@ -677,14 +667,17 @@ private fun ChatItemImproved(
                     }
                 }
                 
-                // Etiquetas del chat (si tiene)
+                // Etiquetas del chat (si tiene) - carrusel horizontal
                 if (chat.labels.isNotEmpty()) {
                     Spacer(modifier = Modifier.height(4.dp))
                     Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .horizontalScroll(rememberScrollState()),
                         horizontalArrangement = Arrangement.spacedBy(4.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        chat.labels.take(3).forEach { label ->
+                        chat.labels.forEach { label ->
                             val labelColor = try { Color(android.graphics.Color.parseColor(label.color)) } catch (e: Exception) { PrimaryPurple }
                             Surface(
                                 shape = RoundedCornerShape(4.dp),
@@ -710,14 +703,6 @@ private fun ChatItemImproved(
                                     )
                                 }
                             }
-                        }
-                        if (chat.labels.size > 3) {
-                            Text(
-                                text = "+${chat.labels.size - 3}",
-                                fontSize = 10.sp,
-                                color = TextMuted,
-                                fontWeight = FontWeight.Medium
-                            )
                         }
                     }
                 }
@@ -1115,7 +1100,6 @@ private fun ChatOptionsModal(
 ) {
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
-    var isMuted by remember(chat?.id) { mutableStateOf(chat?.isMuted ?: false) }
     var isPinned by remember(chat?.id) { mutableStateOf(chat?.isPinned ?: false) }
     var showDeleteConfirm by remember { mutableStateOf(false) }
     var showLabelPicker by remember { mutableStateOf(false) }
@@ -1124,7 +1108,6 @@ private fun ChatOptionsModal(
     // Cargar estados reales al abrir
     LaunchedEffect(chat) {
         if (chat != null) {
-            isMuted = ChatRepository.isChatMuted(chat.id)
             isPinned = ChatRepository.isChatPinned(chat.id)
             showDeleteConfirm = false
             showLabelPicker = false
@@ -1220,11 +1203,14 @@ private fun ChatOptionsModal(
                                 }
                             }
                             
-                            // Etiquetas actuales del chat
+                            // Etiquetas actuales del chat - carrusel horizontal
                             if (c.labels.isNotEmpty()) {
                                 Spacer(modifier = Modifier.height(10.dp))
                                 Row(
-                                    modifier = Modifier.padding(horizontal = 4.dp),
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(horizontal = 4.dp)
+                                        .horizontalScroll(rememberScrollState()),
                                     horizontalArrangement = Arrangement.spacedBy(6.dp)
                                 ) {
                                     c.labels.forEach { label ->
@@ -1239,7 +1225,7 @@ private fun ChatOptionsModal(
                                                 horizontalArrangement = Arrangement.spacedBy(4.dp)
                                             ) {
                                                 Box(modifier = Modifier.size(8.dp).clip(CircleShape).background(lc))
-                                                Text(label.name, fontSize = 11.sp, fontWeight = FontWeight.SemiBold, color = lc)
+                                                Text(label.name, fontSize = 11.sp, fontWeight = FontWeight.SemiBold, color = lc, maxLines = 1)
                                             }
                                         }
                                     }
@@ -1286,23 +1272,7 @@ private fun ChatOptionsModal(
                             showLabelPicker = true
                         }
                         
-                        // 3. Silenciar / Activar
-                        ChatOptionItem(
-                            icon = if (isMuted) Icons.Outlined.Notifications else Icons.Outlined.NotificationsOff,
-                            title = if (isMuted) "Activar notificaciones" else "Silenciar notificaciones",
-                            subtitle = if (isMuted) "Volver a recibir notificaciones" else "No recibir notificaciones de este chat",
-                            iconColor = if (isMuted) Color(0xFF22C55E) else Color(0xFFFACC15)
-                        ) {
-                            chat?.let { c ->
-                                scope.launch {
-                                    val success = if (isMuted) ChatRepository.unmuteChat(c.id) else ChatRepository.muteChat(c.id)
-                                    if (success) isMuted = !isMuted
-                                    onDismiss()
-                                }
-                            }
-                        }
-                        
-                        // 4. Marcar como leído
+                        // 3. Marcar como leído
                         if (chat?.isUnread == true) {
                             ChatOptionItem(
                                 icon = Icons.Outlined.DoneAll,
@@ -1479,6 +1449,11 @@ private fun getMessagePreview(message: String?): MessagePreview? {
             iconColor = Color(0xFFFF6B35),
             text = "Artículo compartido"
         )
+        message.startsWith("[SHARED_REND]") -> MessagePreview(
+            icon = Icons.Outlined.Videocam,
+            iconColor = Color(0xFFA78BFA),
+            text = "Video compartido"
+        )
         message.startsWith("[CONSULT_POST]") -> {
             val isOffer = try {
                 val json = org.json.JSONObject(message.removePrefix("[CONSULT_POST]"))
@@ -1506,20 +1481,41 @@ private fun getMessagePreview(message: String?): MessagePreview? {
             )
         }
         message.startsWith("[HANDSHAKE_STATUS]") -> {
-            val type = try {
+            val (type, price) = try {
                 val json = org.json.JSONObject(message.removePrefix("[HANDSHAKE_STATUS]"))
-                json.optString("type", "")
-            } catch (_: Exception) { "" }
+                Pair(json.optString("type", ""), json.optDouble("agreedPrice", 0.0))
+            } catch (_: Exception) { Pair("", 0.0) }
+            val priceStr = if (price > 0) " · \$${String.format("%.0f", price)}" else ""
             when {
                 type.contains("COMPLETED") -> MessagePreview(
                     icon = Icons.Outlined.CheckCircle,
                     iconColor = Color(0xFF10B981),
-                    text = "Transacción completada"
+                    text = "Transacción completada$priceStr"
                 )
-                type.contains("CANCELLED") -> MessagePreview(
+                type.contains("CANCELLED") || type.contains("AGREEMENT_CANCELLED") -> MessagePreview(
                     icon = Icons.Outlined.Cancel,
                     iconColor = Color(0xFFEF4444),
-                    text = "Transacción cancelada"
+                    text = "Acuerdo cancelado"
+                )
+                type.contains("REJECTED") -> MessagePreview(
+                    icon = Icons.Outlined.Cancel,
+                    iconColor = Color(0xFFEF4444),
+                    text = "Propuesta rechazada"
+                )
+                type.contains("PROPOSED") -> MessagePreview(
+                    icon = Icons.Outlined.Handshake,
+                    iconColor = Color(0xFFFF6B35),
+                    text = "Propuesta de acuerdo$priceStr"
+                )
+                type.contains("ACCEPTED") -> MessagePreview(
+                    icon = Icons.Outlined.Handshake,
+                    iconColor = Color(0xFF3B82F6),
+                    text = "Acuerdo aceptado$priceStr"
+                )
+                type.contains("CONFIRMED") -> MessagePreview(
+                    icon = Icons.Outlined.Schedule,
+                    iconColor = Color(0xFFFF6B35),
+                    text = "Confirmación pendiente$priceStr"
                 )
                 else -> MessagePreview(
                     icon = Icons.Outlined.Handshake,
@@ -1565,6 +1561,7 @@ private fun formatLastMessagePreview(message: String?): String {
             } catch (_: Exception) { "Artículo compartido" }
         }
         message.startsWith("[ARTICLE_CARD]") -> "Artículo compartido"
+        message.startsWith("[SHARED_REND]") -> "Video compartido"
         message.startsWith("[CONSULT_POST]") -> {
             try {
                 val json = org.json.JSONObject(message.removePrefix("[CONSULT_POST]"))
@@ -1582,9 +1579,15 @@ private fun formatLastMessagePreview(message: String?): String {
             try {
                 val json = org.json.JSONObject(message.removePrefix("[HANDSHAKE_STATUS]"))
                 val type = json.optString("type", "")
+                val price = json.optDouble("agreedPrice", 0.0)
+                val priceStr = if (price > 0) " · \$${String.format("%.0f", price)}" else ""
                 when {
-                    type.contains("COMPLETED") -> "Transacción completada"
-                    type.contains("CANCELLED") -> "Transacción cancelada"
+                    type.contains("COMPLETED") -> "Transacción completada$priceStr"
+                    type.contains("CANCELLED") || type.contains("AGREEMENT_CANCELLED") -> "Acuerdo cancelado"
+                    type.contains("REJECTED") -> "Propuesta rechazada"
+                    type.contains("PROPOSED") -> "Propuesta de acuerdo$priceStr"
+                    type.contains("ACCEPTED") -> "Acuerdo aceptado$priceStr"
+                    type.contains("CONFIRMED") -> "Confirmación pendiente$priceStr"
                     else -> "Actualización de transacción"
                 }
             } catch (_: Exception) { "Actualización de transacción" }
@@ -1730,13 +1733,20 @@ private fun LabelPickerModal(
                                 .fillMaxWidth()
                                 .clip(RoundedCornerShape(10.dp))
                                 .clickable {
+                                    // Decidir acción ANTES de cambiar estado
+                                    val shouldAssign = !isAssigned
+                                    // Optimistic update: cambiar estado INMEDIATAMENTE
+                                    assignedIds = if (isAssigned) {
+                                        assignedIds - label.id
+                                    } else {
+                                        assignedIds + label.id
+                                    }
+                                    // Sincronizar con el servidor en background
                                     scope.launch {
-                                        if (isAssigned) {
-                                            ChatRepository.removeLabel(conversationId, label.id)
-                                            assignedIds = assignedIds - label.id
-                                        } else {
+                                        if (shouldAssign) {
                                             ChatRepository.assignLabel(conversationId, label.id)
-                                            assignedIds = assignedIds + label.id
+                                        } else {
+                                            ChatRepository.removeLabel(conversationId, label.id)
                                         }
                                     }
                                 }

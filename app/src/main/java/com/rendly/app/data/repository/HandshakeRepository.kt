@@ -28,6 +28,7 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.SerialName
 import java.util.UUID
+import java.util.concurrent.ConcurrentHashMap
 
 @Serializable
 data class ConfirmHandshakeParams(
@@ -65,6 +66,88 @@ object HandshakeRepository {
     private val _handshakeEvents = MutableSharedFlow<HandshakeEvent>()
     val handshakeEvents: Flow<HandshakeEvent> = _handshakeEvents.asSharedFlow()
     
+    // ══════════════════════════════════════════════════════════════════════
+    // CACHÉ IN-MEMORY: Persiste handshakes activos entre entradas/salidas
+    // del chat. Key = conversationId, Value = HandshakeTransaction
+    // Máximo ~1M entradas = ~200MB worst case, pero en la práctica serán
+    // decenas. Se limpia automáticamente cuando un handshake se completa/cancela.
+    // ══════════════════════════════════════════════════════════════════════
+    private val handshakeCache = ConcurrentHashMap<String, HandshakeTransaction>()
+    
+    /**
+     * Enviar mensaje de estado del handshake al chat.
+     * Se llama SOLO desde los métodos de acción (accept, reject, confirm, cancel)
+     * para que solo el usuario que ejecuta la acción envíe el mensaje (evita duplicados).
+     */
+    private suspend fun sendHandshakeStatusMessage(handshake: HandshakeTransaction, type: String) {
+        try {
+            val convId = handshake.conversationId
+            val statusJson = org.json.JSONObject().apply {
+                put("type", type)
+                put("productDescription", handshake.productDescription)
+                put("agreedPrice", handshake.agreedPrice)
+                put("initiatorConfirmed", handshake.initiatorConfirmed)
+                put("receiverConfirmed", handshake.receiverConfirmed)
+            }
+            ChatRepository.sendMessage(convId, "[HANDSHAKE_STATUS]$statusJson")
+            Log.d(TAG, ">>> Sent status message: $type for conv=$convId")
+            // Recargar conversaciones para que MessagesScreen refleje el cambio
+            try { ChatRepository.loadConversations() } catch (_: Exception) {}
+        } catch (e: Exception) {
+            Log.e(TAG, ">>> Error sending status message: ${e.message}")
+        }
+    }
+    
+    /**
+     * Obtener handshake cacheado para una conversación (instantáneo, sin red)
+     */
+    fun getCachedHandshake(conversationId: String): HandshakeTransaction? {
+        return handshakeCache[conversationId]
+    }
+    
+    /**
+     * Guardar handshake en caché (llamar al salir del chat o cuando cambia el estado)
+     */
+    private fun cacheHandshake(handshake: HandshakeTransaction?) {
+        val convId = handshake?.conversationId ?: return
+        val status = handshake.status
+        if (status in listOf("COMPLETED", "CANCELLED", "REJECTED")) {
+            // Limpiar del caché si está en estado terminal
+            handshakeCache.remove(convId)
+            Log.d(TAG, ">>> Cache REMOVED for conv=$convId (status=$status)")
+        } else {
+            // Limitar tamaño del caché
+            if (handshakeCache.size >= MAX_CACHE_SIZE && !handshakeCache.containsKey(convId)) {
+                handshakeCache.keys.firstOrNull()?.let { handshakeCache.remove(it) }
+            }
+            handshakeCache[convId] = handshake
+            Log.d(TAG, ">>> Cache SAVED for conv=$convId (status=$status)")
+        }
+    }
+    
+    /**
+     * Limpiar caché de una conversación específica
+     */
+    fun clearCacheForConversation(conversationId: String) {
+        handshakeCache.remove(conversationId)
+    }
+    
+    // Dedup: track which status messages THIS device has already sent
+    // Key = "${handshakeId}_${status}"
+    private val sentStatusKeys = ConcurrentHashMap.newKeySet<String>()
+    private const val MAX_SENT_KEYS = 500
+    private const val MAX_CACHE_SIZE = 100
+    
+    private fun trackSentKey(key: String) {
+        sentStatusKeys.add(key)
+        // Evitar crecimiento infinito: si supera el límite, limpiar las más antiguas
+        if (sentStatusKeys.size > MAX_SENT_KEYS) {
+            val toRemove = sentStatusKeys.take(sentStatusKeys.size - MAX_SENT_KEYS / 2)
+            toRemove.forEach { sentStatusKeys.remove(it) }
+            Log.d(TAG, ">>> Cleaned sentStatusKeys: removed ${toRemove.size}, remaining ${sentStatusKeys.size}")
+        }
+    }
+    
     // Canal de Realtime activo
     private var realtimeChannel: io.github.jan.supabase.realtime.RealtimeChannel? = null
     private var currentUserId: String? = null
@@ -77,9 +160,18 @@ object HandshakeRepository {
     }
     
     /**
-     * Suscribirse a cambios de handshake para un usuario
+     * Suscribirse a cambios de handshake para un usuario.
+     * IDEMPOTENTE: si ya está suscrito para el mismo usuario, solo recarga propuestas pendientes.
+     * Esto evita gaps en la cobertura Realtime al navegar entre ChatScreen y MessagesScreen.
      */
     suspend fun subscribeToHandshakes(userId: String) {
+        // Si ya estamos suscritos para este usuario, solo refrescar propuestas
+        if (currentUserId == userId && isSubscribed && realtimeChannel != null) {
+            Log.d(TAG, ">>> subscribeToHandshakes: Already subscribed for userId=$userId, refreshing proposals only")
+            loadPendingProposals(userId)
+            return
+        }
+        
         currentUserId = userId
         Log.d(TAG, ">>> subscribeToHandshakes START for userId=$userId")
         
@@ -87,7 +179,7 @@ object HandshakeRepository {
             // Cargar propuestas pendientes
             loadPendingProposals(userId)
             
-            // Cancelar suscripción anterior si existe
+            // Cancelar suscripción anterior si existe (solo si es para otro usuario)
             if (realtimeChannel != null) {
                 try {
                     realtimeChannel?.unsubscribe()
@@ -150,6 +242,9 @@ object HandshakeRepository {
                     if (handshake.initiatorId == userId || handshake.receiverId == userId) {
                         Log.d(TAG, ">>> INSERT is for us, processing...")
                         
+                        // Guardar en caché
+                        cacheHandshake(handshake)
+                        
                         // Si soy el receptor y está en PROPOSED, agregar a pendientes
                         if (handshake.receiverId == userId && handshake.status == "PROPOSED") {
                             _pendingProposals.value = _pendingProposals.value + handshake
@@ -174,6 +269,9 @@ object HandshakeRepository {
                     if (handshake.initiatorId == userId || handshake.receiverId == userId) {
                         Log.d(TAG, ">>> UPDATE is for us, processing status=${handshake.status}...")
                         
+                        // Actualizar caché
+                        cacheHandshake(handshake)
+                        
                         // Actualizar lista de pendientes
                         if (handshake.status != "PROPOSED") {
                             _pendingProposals.value = _pendingProposals.value.filter { it.id != handshake.id }
@@ -183,6 +281,26 @@ object HandshakeRepository {
                         val previousStatus = _activeHandshake.value?.status
                         _activeHandshake.value = handshake
                         Log.d(TAG, ">>> _activeHandshake UPDATED: $previousStatus → ${handshake.status}")
+                        
+                        // ═══ ENVIAR MENSAJE AL CHAT SI NO FUE ENVIADO POR ESTE DISPOSITIVO ═══
+                        // Esto cubre el caso donde admin-web u otro dispositivo cambió el estado
+                        // Funciona tanto si el usuario está en el chat como si está en MessagesScreen
+                        val messageType = when (handshake.status) {
+                            "ACCEPTED" -> "ACCEPTED"
+                            "IN_PROGRESS" -> "CONFIRMED"
+                            "COMPLETED" -> "TRANSACTION_COMPLETED"
+                            "CANCELLED" -> "AGREEMENT_CANCELLED"
+                            "REJECTED" -> "REJECTED"
+                            else -> null
+                        }
+                        if (messageType != null) {
+                            val dedupKey = "${handshake.id}_${messageType}"
+                            if (!sentStatusKeys.contains(dedupKey)) {
+                                Log.d(TAG, ">>> REALTIME: Sending missing chat message for $messageType (not sent by this device)")
+                                trackSentKey(dedupKey)
+                                sendHandshakeStatusMessage(handshake, messageType)
+                            }
+                        }
                         
                         // Si el handshake se canceló o rechazó, limpiar después de emitir evento
                         if (handshake.status in listOf("CANCELLED", "REJECTED")) {
@@ -260,12 +378,22 @@ object HandshakeRepository {
                 }
                 .decodeSingleOrNull<HandshakeTransaction>()
             
-            val previousStatus = _activeHandshake.value?.status
-            val newStatus = handshake?.status
+            val previous = _activeHandshake.value
+            // Compare full state: status, confirmations, id (covers all meaningful changes)
+            val changed = previous?.id != handshake?.id ||
+                          previous?.status != handshake?.status ||
+                          previous?.initiatorConfirmed != handshake?.initiatorConfirmed ||
+                          previous?.receiverConfirmed != handshake?.receiverConfirmed ||
+                          previous?.counterPrice != handshake?.counterPrice
             
-            if (previousStatus != newStatus) {
-                Log.d(TAG, ">>> POLL detected change: $previousStatus → $newStatus")
+            if (changed) {
+                Log.d(TAG, ">>> POLL detected change: ${previous?.status}→${handshake?.status} (initConf=${handshake?.initiatorConfirmed}, recvConf=${handshake?.receiverConfirmed})")
                 _activeHandshake.value = handshake
+                if (handshake != null) {
+                    cacheHandshake(handshake)
+                } else if (previous != null) {
+                    handshakeCache.remove(previous.conversationId)
+                }
                 return true // Changed
             }
             false // No change
@@ -328,6 +456,12 @@ object HandshakeRepository {
             
             Log.d(TAG, "Created handshake: ${result.id}")
             _activeHandshake.value = result
+            cacheHandshake(result)
+            
+            // Enviar mensaje de propuesta al chat para que quede registrado
+            trackSentKey("${result.id}_PROPOSED")
+            sendHandshakeStatusMessage(result, "PROPOSED")
+            
             result
             
         } catch (e: Exception) {
@@ -359,6 +493,10 @@ object HandshakeRepository {
             // Recargar desde DB para actualizar estado local inmediatamente
             reloadHandshake(handshakeId)
             
+            // Enviar mensaje de estado al chat
+            trackSentKey("${handshakeId}_ACCEPTED")
+            _activeHandshake.value?.let { sendHandshakeStatusMessage(it, "ACCEPTED") }
+            
             true
             
         } catch (e: Exception) {
@@ -383,6 +521,18 @@ object HandshakeRepository {
             
             Log.d(TAG, "Rejected handshake: $handshakeId")
             _pendingProposals.value = _pendingProposals.value.filter { it.id != handshakeId }
+            
+            // Enviar mensaje de estado al chat (fetch from DB since _activeHandshake may be null for proposals)
+            try {
+                val rejected = supabase.postgrest[TABLE_NAME]
+                    .select { filter { eq("id", handshakeId) } }
+                    .decodeSingleOrNull<HandshakeTransaction>()
+                if (rejected != null) {
+                    trackSentKey("${handshakeId}_REJECTED")
+                    sendHandshakeStatusMessage(rejected, "REJECTED")
+                }
+            } catch (_: Exception) {}
+            
             true
             
         } catch (e: Exception) {
@@ -460,6 +610,11 @@ object HandshakeRepository {
             // Recargar desde DB para actualizar estado local inmediatamente
             reloadHandshake(handshakeId)
             
+            // Enviar mensaje de estado al chat
+            val messageType = if (newStatus == "COMPLETED") "TRANSACTION_COMPLETED" else "CONFIRMED"
+            trackSentKey("${handshakeId}_${messageType}")
+            _activeHandshake.value?.let { sendHandshakeStatusMessage(it, messageType) }
+            
             true
             
         } catch (e: Exception) {
@@ -487,7 +642,11 @@ object HandshakeRepository {
             
             Log.d(TAG, ">>> Supabase update SUCCESS for handshake: $handshakeId")
             
-            if (_activeHandshake.value?.id == handshakeId) {
+            // Enviar mensaje de cancelación al chat ANTES de limpiar el estado
+            val cancelledHandshake = _activeHandshake.value
+            if (cancelledHandshake?.id == handshakeId && cancelledHandshake != null) {
+                trackSentKey("${handshakeId}_AGREEMENT_CANCELLED")
+                sendHandshakeStatusMessage(cancelledHandshake.copy(status = "CANCELLED"), "AGREEMENT_CANCELLED")
                 Log.d(TAG, ">>> Setting _activeHandshake to NULL")
                 _activeHandshake.value = null
             } else {
@@ -515,6 +674,7 @@ object HandshakeRepository {
             
             if (updated != null) {
                 _activeHandshake.value = updated
+                cacheHandshake(updated)
                 Log.d(TAG, ">>> Reloaded handshake from DB: ${updated.id} status=${updated.status}")
             }
         } catch (e: Exception) {
@@ -543,6 +703,10 @@ object HandshakeRepository {
                 .decodeSingleOrNull<HandshakeTransaction>()
             
             _activeHandshake.value = handshake
+            // Actualizar caché
+            if (handshake != null) {
+                cacheHandshake(handshake)
+            }
             Log.d(TAG, ">>> getActiveHandshakeForConversation: ${handshake?.id} status=${handshake?.status}")
             handshake
             
@@ -553,10 +717,157 @@ object HandshakeRepository {
     }
     
     /**
-     * Desuscribirse de Realtime
+     * Obtener el handshake MÁS RECIENTE de una conversación, INCLUYENDO estados terminales
+     * (COMPLETED, CANCELLED, REJECTED). Se usa al re-entrar al chat para reconciliar.
      */
+    suspend fun getLatestHandshakeForConversation(conversationId: String): HandshakeTransaction? {
+        return try {
+            val handshake = supabase.postgrest[TABLE_NAME]
+                .select {
+                    filter {
+                        eq("conversation_id", conversationId)
+                    }
+                    order("updated_at", io.github.jan.supabase.postgrest.query.Order.DESCENDING)
+                    limit(1L)
+                }
+                .decodeSingleOrNull<HandshakeTransaction>()
+            Log.d(TAG, ">>> getLatestHandshake: ${handshake?.id} status=${handshake?.status}")
+            handshake
+        } catch (e: Exception) {
+            Log.e(TAG, "Error getting latest handshake: ${e.message}", e)
+            null
+        }
+    }
+    
+    /**
+     * Reconciliar mensajes de handshake al re-entrar al chat.
+     * Busca mensajes DIRECTAMENTE desde la DB (no depende de estado en memoria)
+     * y envía los que faltan. Esto cubre el caso donde admin-web u otro
+     * dispositivo cambió el estado sin enviar mensajes al chat.
+     */
+    suspend fun reconcileHandshakeMessages(conversationId: String) {
+        try {
+            val latest = getLatestHandshakeForConversation(conversationId)
+            if (latest == null) {
+                Log.d(TAG, ">>> RECONCILE: No handshake found for conv=$conversationId")
+                return
+            }
+            Log.d(TAG, ">>> RECONCILE START: handshake=${latest.id} status=${latest.status}")
+            
+            // Mapear status actual a los tipos de mensaje que DEBERÍAN existir en el chat
+            val expectedTypes = mutableListOf<String>()
+            when (latest.status) {
+                "COMPLETED" -> {
+                    expectedTypes.add("ACCEPTED")
+                    expectedTypes.add("TRANSACTION_COMPLETED")
+                }
+                "CANCELLED" -> {
+                    expectedTypes.add("AGREEMENT_CANCELLED")
+                }
+                "REJECTED" -> {
+                    expectedTypes.add("REJECTED")
+                }
+                "ACCEPTED", "IN_PROGRESS" -> {
+                    expectedTypes.add("ACCEPTED")
+                    if (latest.initiatorConfirmed || latest.receiverConfirmed) {
+                        expectedTypes.add("CONFIRMED")
+                    }
+                }
+            }
+            
+            if (expectedTypes.isEmpty()) {
+                Log.d(TAG, ">>> RECONCILE: No expected messages for status=${latest.status}")
+                return
+            }
+            
+            // Buscar mensajes HANDSHAKE_STATUS directamente en la DB (no depender de memoria)
+            // Esto es más robusto que leer ChatRepository.currentMessages que puede estar vacío
+            // Buscamos los últimos 50 mensajes de la conversación y filtramos client-side
+            val existingHandshakeMessages = try {
+                com.rendly.app.data.remote.SupabaseClient.database
+                    .from("messages")
+                    .select {
+                        filter {
+                            eq("conversation_id", conversationId)
+                        }
+                        order("created_at", io.github.jan.supabase.postgrest.query.Order.DESCENDING)
+                        limit(50)
+                    }
+                    .decodeList<MessageDB>()
+                    .map { it.content }
+                    .filter { it.startsWith("[HANDSHAKE_STATUS]") }
+            } catch (e: Exception) {
+                Log.e(TAG, ">>> RECONCILE: Error fetching messages from DB: ${e.message}")
+                // Fallback a mensajes en memoria
+                ChatRepository.currentMessages.value
+                    .map { it.content }
+                    .filter { it.startsWith("[HANDSHAKE_STATUS]") }
+            }
+            Log.d(TAG, ">>> RECONCILE: Found ${existingHandshakeMessages.size} handshake msgs in DB")
+            
+            var sentCount = 0
+            for (messageType in expectedTypes) {
+                val key = "${latest.id}_${messageType}"
+                
+                // Verificar si ya existe en la DB
+                val alreadyExists = existingHandshakeMessages.any { content ->
+                    try {
+                        val jsonStr = content.removePrefix("[HANDSHAKE_STATUS]")
+                        val json = org.json.JSONObject(jsonStr)
+                        json.optString("type", "").contains(messageType)
+                    } catch (_: Exception) { false }
+                }
+                
+                if (!alreadyExists && !sentStatusKeys.contains(key)) {
+                    Log.d(TAG, ">>> RECONCILE: SENDING missing message: $messageType")
+                    trackSentKey(key)
+                    sendHandshakeStatusMessage(latest, messageType)
+                    sentCount++
+                } else {
+                    Log.d(TAG, ">>> RECONCILE: $messageType already exists (inDB=$alreadyExists, inSent=${sentStatusKeys.contains(key)})")
+                }
+            }
+            
+            Log.d(TAG, ">>> RECONCILE DONE: sent $sentCount missing messages")
+            
+            // Si se enviaron mensajes, recargar la lista de mensajes del chat para mostrarlos
+            if (sentCount > 0) {
+                delay(300) // Breve delay para que Supabase procese los inserts
+                try {
+                    ChatRepository.loadMessages(conversationId)
+                    Log.d(TAG, ">>> RECONCILE: Messages reloaded after sending $sentCount")
+                } catch (e: Exception) {
+                    Log.e(TAG, ">>> RECONCILE: Error reloading messages: ${e.message}")
+                }
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Error reconciling handshake messages: ${e.message}", e)
+        }
+    }
+    
+    /**
+     * Suspender la suscripción al salir del chat.
+     * Guarda el handshake activo en caché ANTES de limpiar el estado.
+     */
+    suspend fun suspendForConversation(conversationId: String) {
+        // Guardar en caché antes de limpiar
+        val current = _activeHandshake.value
+        if (current != null && current.conversationId == conversationId) {
+            cacheHandshake(current)
+            Log.d(TAG, ">>> Suspended handshake for conv=$conversationId (status=${current.status})")
+        }
+        // Limpiar estado activo sin borrar caché
+        _activeHandshake.value = null
+    }
+    
     suspend fun unsubscribe() {
         try {
+            // Guardar handshake activo en caché antes de desuscribirse
+            val current = _activeHandshake.value
+            if (current != null) {
+                cacheHandshake(current)
+            }
+            
             realtimeChannel?.let {
                 try { it.unsubscribe() } catch (_: Exception) {}
                 supabase.realtime.removeChannel(it)

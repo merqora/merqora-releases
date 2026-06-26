@@ -28,9 +28,13 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonNull
+import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import kotlinx.serialization.json.put
@@ -173,6 +177,10 @@ object ChatRepository {
     private val _conversations = MutableStateFlow<List<Conversation>>(emptyList())
     val conversations: StateFlow<List<Conversation>> = _conversations.asStateFlow()
     
+    // Track pending optimistic mute/pin changes to preserve during polling
+    private data class OptimisticState(val isMuted: Boolean? = null, val isPinned: Boolean? = null)
+    private val pendingOptimisticChanges = mutableMapOf<String, OptimisticState>()
+    
     private val _currentMessages = MutableStateFlow<List<Message>>(emptyList())
     val currentMessages: StateFlow<List<Message>> = _currentMessages.asStateFlow()
     
@@ -202,50 +210,120 @@ object ChatRepository {
     }
     
     // ═══════════════════════════════════════════════════════════════
-    // CACHE DE MENSAJES EN MEMORIA
+    // CACHE DE MENSAJES EN MEMORIA + DISCO
     // ═══════════════════════════════════════════════════════════════
     private val messagesCache = mutableMapOf<String, List<Message>>()
-    private val MAX_CACHED_CONVERSATIONS = 20 // Límite de conversaciones en cache
+    private val MAX_CACHED_CONVERSATIONS = 20
+    private const val DISK_CACHE_PREFS = "rendly_msg_cache"
+    private const val DISK_CACHE_KEY_PREFIX = "msg_"
+    private const val DISK_CACHE_MAX_MESSAGES = 30 // Últimos N mensajes por conversación en disco
     
-    /**
-     * Obtiene mensajes del cache si existen
-     */
     fun getCachedMessages(conversationId: String): List<Message>? {
-        return messagesCache[conversationId]
+        // Primero memoria, luego disco
+        messagesCache[conversationId]?.let { return it }
+        // Intentar cargar de disco
+        val fromDisk = loadMessagesFromDisk(conversationId)
+        if (fromDisk != null && fromDisk.isNotEmpty()) {
+            messagesCache[conversationId] = fromDisk
+            return fromDisk
+        }
+        return null
     }
     
-    /**
-     * Guarda mensajes en cache
-     */
     private fun cacheMessages(conversationId: String, messages: List<Message>) {
-        // Limitar tamaño del cache
         if (messagesCache.size >= MAX_CACHED_CONVERSATIONS && !messagesCache.containsKey(conversationId)) {
-            // Eliminar la conversación más antigua
             messagesCache.keys.firstOrNull()?.let { messagesCache.remove(it) }
         }
         messagesCache[conversationId] = messages
+        // Persistir a disco (últimos N mensajes)
+        saveMessagesToDisk(conversationId, messages)
     }
     
-    /**
-     * Actualiza cache con nuevo mensaje
-     */
     private fun updateCacheWithNewMessage(conversationId: String, message: Message) {
         val cached = messagesCache[conversationId]?.toMutableList() ?: return
         if (cached.none { it.id == message.id }) {
             cached.add(message)
             messagesCache[conversationId] = cached
+            saveMessagesToDisk(conversationId, cached)
         }
     }
     
-    /**
-     * Indica si la conversación tiene cache disponible
-     */
     fun hasCachedMessages(conversationId: String): Boolean {
-        return messagesCache.containsKey(conversationId) && messagesCache[conversationId]?.isNotEmpty() == true
+        if (messagesCache.containsKey(conversationId) && messagesCache[conversationId]?.isNotEmpty() == true) return true
+        // Check disk
+        val prefs = appContext?.getSharedPreferences(DISK_CACHE_PREFS, Context.MODE_PRIVATE) ?: return false
+        return prefs.contains("$DISK_CACHE_KEY_PREFIX$conversationId")
+    }
+    
+    // ── Serialización JSON para persistencia en disco ──
+    
+    private fun saveMessagesToDisk(conversationId: String, messages: List<Message>) {
+        try {
+            val prefs = appContext?.getSharedPreferences(DISK_CACHE_PREFS, Context.MODE_PRIVATE) ?: return
+            val lastN = messages.takeLast(DISK_CACHE_MAX_MESSAGES)
+            val jsonArray = org.json.JSONArray()
+            for (msg in lastN) {
+                val obj = org.json.JSONObject().apply {
+                    put("id", msg.id)
+                    put("conversationId", msg.conversationId)
+                    put("senderId", msg.senderId)
+                    put("content", msg.content)
+                    put("createdAt", msg.createdAt)
+                    put("isRead", msg.isRead)
+                    put("isFromMe", msg.isFromMe)
+                    put("status", msg.status.name)
+                    // Persistir reacciones como JSON string
+                    if (msg.reactions.isNotEmpty()) {
+                        val reactionsObj = org.json.JSONObject()
+                        msg.reactions.forEach { (emoji, users) ->
+                            val usersArr = org.json.JSONArray()
+                            users.forEach { userId -> usersArr.put(userId) }
+                            reactionsObj.put(emoji, usersArr)
+                        }
+                        put("reactions", reactionsObj.toString())
+                    }
+                }
+                jsonArray.put(obj)
+            }
+            prefs.edit().putString("$DISK_CACHE_KEY_PREFIX$conversationId", jsonArray.toString()).apply()
+        } catch (e: Exception) {
+            Log.e(TAG, "Error saving messages to disk cache: ${e.message}")
+        }
+    }
+    
+    private fun loadMessagesFromDisk(conversationId: String): List<Message>? {
+        try {
+            val prefs = appContext?.getSharedPreferences(DISK_CACHE_PREFS, Context.MODE_PRIVATE) ?: return null
+            val json = prefs.getString("$DISK_CACHE_KEY_PREFIX$conversationId", null) ?: return null
+            val jsonArray = org.json.JSONArray(json)
+            val result = mutableListOf<Message>()
+            for (i in 0 until jsonArray.length()) {
+                val obj = jsonArray.getJSONObject(i)
+                val reactionsRaw = if (obj.has("reactions")) obj.getString("reactions") else null
+                result.add(Message(
+                    id = obj.getString("id"),
+                    conversationId = obj.getString("conversationId"),
+                    senderId = obj.getString("senderId"),
+                    content = obj.getString("content"),
+                    createdAt = obj.getString("createdAt"),
+                    isRead = obj.getBoolean("isRead"),
+                    isFromMe = obj.getBoolean("isFromMe"),
+                    status = try { MessageStatus.valueOf(obj.getString("status")) } catch (_: Exception) { MessageStatus.SENT },
+                    reactions = parseReactionsJson(reactionsRaw)
+                ))
+            }
+            return result
+        } catch (e: Exception) {
+            Log.e(TAG, "Error loading messages from disk cache: ${e.message}")
+            return null
+        }
     }
     
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
+    
+    // Flag para que el skeleton solo se muestre en la primera carga
+    private var hasLoadedConversationsOnce = false
     
     // Estados para typing y online
     private val _isOtherUserTyping = MutableStateFlow(false)
@@ -319,7 +397,10 @@ object ChatRepository {
     
     // Cargar conversaciones del usuario actual
     suspend fun loadConversations() {
-        _isLoading.value = true
+        // Solo mostrar skeleton en la primera carga - recargas posteriores son silenciosas
+        if (!hasLoadedConversationsOnce) {
+            _isLoading.value = true
+        }
         try {
             val currentUserId = SupabaseClient.auth.currentUserOrNull()?.id ?: return
             
@@ -415,14 +496,16 @@ object ChatRepository {
                     ?: emptyList()
                 
                 if (otherUser != null) {
+                    // Preserve pending optimistic changes if any
+                    val optimistic = pendingOptimisticChanges[conv.id]
                     Conversation(
                         id = conv.id,
                         otherUser = otherUser,
                         lastMessage = conv.lastMessage,
                         lastMessageAt = conv.lastMessageAt,
                         unreadCount = myParticipation?.unreadCount ?: 0,
-                        isMuted = conv.id in mutedChats,
-                        isPinned = conv.id in pinnedIds,
+                        isMuted = optimistic?.isMuted ?: (conv.id in mutedChats),
+                        isPinned = optimistic?.isPinned ?: (conv.id in pinnedIds),
                         labels = convLabels
                     )
                 } else null
@@ -433,6 +516,7 @@ object ChatRepository {
             BadgeCountCache.setMessageCount(_totalUnreadCount.value)
             
             Log.d(TAG, "Loaded ${_conversations.value.size} conversations, total unread: ${_totalUnreadCount.value}")
+            hasLoadedConversationsOnce = true
             
         } catch (e: Exception) {
             Log.e(TAG, "Error loading conversations: ${e.message}", e)
@@ -444,6 +528,13 @@ object ChatRepository {
     // Obtener o crear conversación con un usuario
     suspend fun getOrCreateConversation(otherUserId: String): String? {
         _lastError.value = null
+        
+        // Optimización local: Buscar en las conversaciones cargadas en memoria primero
+        val localId = _conversations.value.find { it.otherUser.userId == otherUserId }?.id
+        if (localId != null) {
+            Log.d(TAG, "✓ Conversación encontrada localmente en caché de memoria: $localId")
+            return localId
+        }
         
         try {
             val currentUserId = SupabaseClient.auth.currentUserOrNull()?.id
@@ -540,7 +631,7 @@ object ChatRepository {
     }
     
     private var hasMoreMessages = true
-    private val INITIAL_MESSAGE_LIMIT = 15 // Mensajes iniciales (los que caben en pantalla + 2-3)
+    private val INITIAL_MESSAGE_LIMIT = 30 // Mensajes iniciales (suficientes para llenar pantalla + scroll)
     private val LOAD_MORE_LIMIT = 12 // Mensajes adicionales al hacer scroll arriba
     private var oldestLoadedMessageDate: String? = null // Cursor para paginación
     
@@ -552,12 +643,25 @@ object ChatRepository {
     private val _isLoadingMore = MutableStateFlow(false)
     val isLoadingMore: StateFlow<Boolean> = _isLoadingMore.asStateFlow()
     
+    // Flag que indica si la carga inicial de mensajes ya terminó
+    private val _initialLoadDone = MutableStateFlow(false)
+    val initialLoadDone: StateFlow<Boolean> = _initialLoadDone.asStateFlow()
+    
+    // Flag que indica si la carga de red inicial ya terminó
+    private val _serverLoadDone = MutableStateFlow(false)
+    val serverLoadDone: StateFlow<Boolean> = _serverLoadDone.asStateFlow()
+    
     // Cargar mensajes INICIALES de una conversación (últimos N mensajes)
     suspend fun loadMessages(conversationId: String) {
         Log.d(TAG, "╔════════════════════════════════════════════╗")
         Log.d(TAG, "║       LOAD MESSAGES INICIADO               ║")
         Log.d(TAG, "╚════════════════════════════════════════════╝")
         Log.d(TAG, "ConversationId: $conversationId")
+        
+        // Si no hay mensajes cargados (caché), marcamos que no está listo
+        if (_currentMessages.value.isEmpty()) {
+            _initialLoadDone.value = false
+        }
         
         try {
             currentConversationId = conversationId
@@ -568,6 +672,7 @@ object ChatRepository {
             if (currentUserId == null) {
                 Log.e(TAG, "ERROR: No hay usuario autenticado en loadMessages")
                 _lastError.value = "LOAD: No hay usuario autenticado"
+                _initialLoadDone.value = true
                 return
             }
             
@@ -626,7 +731,8 @@ object ChatRepository {
                         msg.status == "read" -> MessageStatus.READ
                         msg.status == "delivered" -> MessageStatus.DELIVERED
                         else -> MessageStatus.SENT
-                    }
+                    },
+                    reactions = parseReactionsJson(msg.reactions)
                 )
             }
             
@@ -642,6 +748,9 @@ object ChatRepository {
         } catch (e: Exception) {
             Log.e(TAG, "ERROR en loadMessages: ${e.message}", e)
             _lastError.value = "LOAD ERROR: ${e.message}"
+        } finally {
+            _initialLoadDone.value = true
+            _serverLoadDone.value = true
         }
     }
     
@@ -707,7 +816,8 @@ object ChatRepository {
                         msg.status == "read" -> MessageStatus.READ
                         msg.status == "delivered" -> MessageStatus.DELIVERED
                         else -> MessageStatus.SENT
-                    }
+                    },
+                    reactions = parseReactionsJson(msg.reactions)
                 )
             }
             
@@ -916,25 +1026,72 @@ object ChatRepository {
         }
     }
     
-    // Subir y enviar imagen/video al chat
-    suspend fun uploadAndSendMedia(context: Context, conversationId: String, mediaUri: Uri): String? {
+    // Enviar respuesta (reply) a un mensaje
+    suspend fun sendReply(conversationId: String, content: String, replyingTo: Message): Boolean {
+        val replyJson = buildJsonObject {
+            put("replyId", replyingTo.id)
+            put("senderId", replyingTo.senderId)
+            put("text", replyingTo.content)
+            put("reply", content)
+        }
+        val replyContent = "[REPLY]$replyJson"
+        return sendMessage(conversationId, replyContent)
+    }
+    
+    // Subir y enviar imagen/video al chat con optimistic update
+    suspend fun uploadAndSendMedia(context: Context, conversationId: String, mediaUri: Uri, caption: String = ""): String? {
         Log.d(TAG, "=== SUBIENDO MEDIA AL CHAT ===")
         _lastError.value = null
+        
+        // Determinar tipo de media antes de mostrar optimistic update
+        val mimeType = context.contentResolver.getType(mediaUri) ?: "image/jpeg"
+        val isVideo = mimeType.startsWith("video")
+        val mediaPrefix = if (isVideo) "[VIDEO]" else "[IMG]"
+        
+        // Generar ID temporal para el mensaje optimista
+        val clientTempId = java.util.UUID.randomUUID().toString()
+        val currentUserId = SupabaseClient.auth.currentUserOrNull()?.id ?: return null
+        
+        // Formato de fecha
+        val isoFormat = java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", java.util.Locale.US)
+        isoFormat.timeZone = java.util.TimeZone.getTimeZone("UTC")
+        val now = isoFormat.format(java.util.Date())
+        
+        // Mostrar imagen optimista inmediatamente con la URI local (incluir caption si existe)
+        val optimisticContent = if (caption.isNotEmpty() && !isVideo) {
+            val imgJson = org.json.JSONObject().apply {
+                put("url", mediaUri.toString())
+                put("caption", caption)
+            }
+            "$mediaPrefix$imgJson"
+        } else {
+            "$mediaPrefix$mediaUri"
+        }
+        val optimisticMessage = Message(
+            id = clientTempId,
+            conversationId = conversationId,
+            senderId = currentUserId,
+            content = optimisticContent,
+            createdAt = now,
+            isRead = false,
+            isFromMe = true,
+            status = MessageStatus.SENDING
+        )
+        _currentMessages.value = _currentMessages.value + optimisticMessage
+        Log.d(TAG, "Mensaje optimista de media agregado: $clientTempId")
         
         try {
             // Leer bytes del archivo
             val inputStream = context.contentResolver.openInputStream(mediaUri)
                 ?: run {
                     _lastError.value = "No se pudo abrir el archivo"
+                    // Remover mensaje optimista si falla
+                    _currentMessages.value = _currentMessages.value.filter { it.id != clientTempId }
                     return null
                 }
             
             val mediaBytes = inputStream.use { it.readBytes() }
             Log.d(TAG, "Media size: ${mediaBytes.size / 1024}KB")
-            
-            // Determinar tipo de media
-            val mimeType = context.contentResolver.getType(mediaUri) ?: "image/jpeg"
-            val isVideo = mimeType.startsWith("video")
             
             // Subir a ImageKit
             val uploadResult = if (isVideo) {
@@ -945,22 +1102,75 @@ object ChatRepository {
             
             if (uploadResult.isFailure) {
                 _lastError.value = "Error subiendo: ${uploadResult.exceptionOrNull()?.message}"
+                // Remover mensaje optimista si falla
+                _currentMessages.value = _currentMessages.value.filter { it.id != clientTempId }
                 return null
             }
             
-            val mediaUrl = uploadResult.getOrNull() ?: return null
+            val mediaUrl = uploadResult.getOrNull() ?: run {
+                _currentMessages.value = _currentMessages.value.filter { it.id != clientTempId }
+                return null
+            }
             Log.d(TAG, "Media subida: $mediaUrl")
             
-            // Enviar mensaje con la URL de la imagen
-            val mediaPrefix = if (isVideo) "[VIDEO]" else "[IMG]"
-            val messageContent = "$mediaPrefix$mediaUrl"
+            // Construir contenido del mensaje con caption embebido si existe
+            val messageContent = if (caption.isNotEmpty() && !isVideo) {
+                val imgJson = org.json.JSONObject().apply {
+                    put("url", mediaUrl)
+                    put("caption", caption)
+                }
+                "$mediaPrefix$imgJson"
+            } else {
+                "$mediaPrefix$mediaUrl"
+            }
             
-            val sent = sendMessage(conversationId, messageContent)
-            return if (sent) mediaUrl else null
+            // Actualizar status y content con URL remota + caption
+            _currentMessages.value = _currentMessages.value.map { msg ->
+                if (msg.id == clientTempId) {
+                    msg.copy(status = MessageStatus.SENT, content = messageContent)
+                } else msg
+            }
+            
+            // Insertar en DB directamente sin duplicar optimistic update
+            val messageJson = buildJsonObject {
+                put("conversation_id", conversationId)
+                put("sender_id", currentUserId)
+                put("content", messageContent)
+                put("client_temp_id", clientTempId)
+            }
+            
+            val insertResult = runCatching {
+                SupabaseClient.database
+                    .from("messages")
+                    .insert(messageJson)
+            }
+            
+            if (insertResult.isFailure) {
+                Log.e(TAG, "Error insertando mensaje de media: ${insertResult.exceptionOrNull()?.message}")
+                _currentMessages.value = _currentMessages.value.filter { it.id != clientTempId }
+                return null
+            }
+            
+            // Actualizar conversación
+            val updateConvJson = buildJsonObject {
+                put("last_message", messageContent)
+                put("last_message_at", now)
+            }
+            runCatching {
+                SupabaseClient.database
+                    .from("conversations")
+                    .update(updateConvJson) {
+                        filter { eq("id", conversationId) }
+                    }
+            }
+            
+            return mediaUrl
             
         } catch (e: Exception) {
             Log.e(TAG, "Error en uploadAndSendMedia: ${e.message}", e)
             _lastError.value = "Error: ${e.message}"
+            // Remover mensaje optimista si falla
+            _currentMessages.value = _currentMessages.value.filter { it.id != clientTempId }
             return null
         }
     }
@@ -1003,64 +1213,65 @@ object ChatRepository {
         }
     }
     
-    // Agregar o quitar reacción a un mensaje
+    // Agregar o quitar reacción a un mensaje (atómico via RPC + optimistic update)
     suspend fun toggleReaction(messageId: String, emoji: String): Boolean {
         try {
             val currentUserId = SupabaseClient.auth.currentUserOrNull()?.id ?: return false
             Log.d(TAG, "Toggle reaction $emoji en mensaje $messageId")
             
-            // Obtener mensaje actual
+            // 1. Optimistic update: actualizar UI instantáneamente
             val message = _currentMessages.value.find { it.id == messageId } ?: return false
-            val currentReactions = message.reactions.toMutableMap()
-            
-            // Toggle: agregar o quitar usuario de la lista
-            val usersForEmoji = currentReactions[emoji]?.toMutableList() ?: mutableListOf()
+            val optimisticReactions = message.reactions.toMutableMap()
+            val usersForEmoji = optimisticReactions[emoji]?.toMutableList() ?: mutableListOf()
             if (currentUserId in usersForEmoji) {
                 usersForEmoji.remove(currentUserId)
-                if (usersForEmoji.isEmpty()) {
-                    currentReactions.remove(emoji)
-                } else {
-                    currentReactions[emoji] = usersForEmoji
-                }
+                if (usersForEmoji.isEmpty()) optimisticReactions.remove(emoji)
+                else optimisticReactions[emoji] = usersForEmoji
             } else {
                 usersForEmoji.add(currentUserId)
-                currentReactions[emoji] = usersForEmoji
+                optimisticReactions[emoji] = usersForEmoji
             }
-            
-            // Convertir a JSON string
-            val reactionsJson = if (currentReactions.isEmpty()) {
-                null
-            } else {
-                val jsonObj = org.json.JSONObject()
-                currentReactions.forEach { (emoji, users) ->
-                    val jsonArray = org.json.JSONArray()
-                    users.forEach { userId -> jsonArray.put(userId) }
-                    jsonObj.put(emoji, jsonArray)
-                }
-                jsonObj.toString()
-            }
-            
-            // Actualizar en Supabase
-            val updateJson = buildJsonObject {
-                if (reactionsJson != null) {
-                    put("reactions", reactionsJson)
-                } else {
-                    put("reactions", JsonNull)
-                }
-            }
-            
-            SupabaseClient.database
-                .from("messages")
-                .update(updateJson) {
-                    filter { eq("id", messageId) }
-                }
-            
-            // Actualizar localmente
             _currentMessages.value = _currentMessages.value.map {
-                if (it.id == messageId) it.copy(reactions = currentReactions) else it
+                if (it.id == messageId) it.copy(reactions = optimisticReactions) else it
             }
             
-            Log.d(TAG, "✓ Reacción actualizada")
+            // 2. Llamar RPC atómica: evita race conditions y bypassa RLS
+            try {
+                SupabaseClient.database.rpc(
+                    "toggle_message_reaction",
+                    buildJsonObject {
+                        put("p_message_id", messageId)
+                        put("p_user_id", currentUserId)
+                        put("p_emoji", emoji)
+                    }
+                )
+                Log.d(TAG, "✓ RPC toggle_message_reaction ejecutada")
+            } catch (rpcError: Exception) {
+                // Si la RPC falla (ej: no existe aún), fallback al método directo
+                Log.w(TAG, "RPC no disponible, usando fallback directo: ${rpcError.message}")
+                val reactionsJson = if (optimisticReactions.isEmpty()) null else {
+                    val jsonObj = org.json.JSONObject()
+                    optimisticReactions.forEach { (e, users) ->
+                        val arr = org.json.JSONArray()
+                        users.forEach { u -> arr.put(u) }
+                        jsonObj.put(e, arr)
+                    }
+                    jsonObj.toString()
+                }
+                val updateJson = buildJsonObject {
+                    if (reactionsJson != null) put("reactions", reactionsJson)
+                    else put("reactions", JsonNull)
+                }
+                SupabaseClient.database
+                    .from("messages")
+                    .update(updateJson) { filter { eq("id", messageId) } }
+            }
+            
+            // 3. El UPDATE (dentro de la RPC o fallback) dispara Realtime,
+            //    y el messageUpdateFlow actualiza con el estado autoritativo del servidor.
+            //    El otro usuario lo ve instantáneamente.
+            
+            Log.d(TAG, "✓ Reacción $emoji procesada para mensaje $messageId")
             return true
             
         } catch (e: Exception) {
@@ -1184,26 +1395,31 @@ object ChatRepository {
         Log.d(TAG, "=== ABRIENDO CHAT ===")
         Log.d(TAG, "ConversationId: $conversationId, otherUser: $otherUserName")
         
+        _serverLoadDone.value = false // Resetear estado de carga de servidor
+        
         // Guardar nombre del otro usuario para notificaciones
         if (otherUserName != null) {
             currentOtherUserName = otherUserName
         }
         
         // 1. Limpiar estado anterior si es otra conversación
-        if (currentConversationId != conversationId) {
-            // NO limpiar los mensajes si hay cache - mostrar cache instantáneamente
+        val isSameConversation = currentConversationId == conversationId
+        if (!isSameConversation) {
             currentConversationId = conversationId
             currentOtherUserId = null
             _isOtherUserOnline.value = false
             _isOtherUserTyping.value = false
+            _currentMessages.value = emptyList()
         }
         
-        // 2. CARGAR CACHE INSTANTÁNEAMENTE si existe
-        val cachedMessages = getCachedMessages(conversationId)
-        if (cachedMessages != null && cachedMessages.isNotEmpty()) {
-            val filtered = filterByClearedAt(cachedMessages, conversationId)
-            Log.d(TAG, "✓ Cache encontrado: ${cachedMessages.size} mensajes (${filtered.size} después de filtro cleared_at)")
-            _currentMessages.value = filtered
+        // 2. Cargar cache instantáneamente (memoria o disco)
+        val cached = getCachedMessages(conversationId)
+        if (cached != null && cached.isNotEmpty()) {
+            _currentMessages.value = filterByClearedAt(cached, conversationId)
+            _initialLoadDone.value = true
+            Log.d(TAG, "⚡ Mensajes cargados desde cache: ${cached.size}")
+        } else {
+            _initialLoadDone.value = false
         }
         
         // Cancelar notificaciones de este chat al abrirlo
@@ -1212,7 +1428,7 @@ object ChatRepository {
         // 3. Suscribirse al canal realtime
         subscribeToMessages(conversationId)
         
-        // 4. Cargar mensajes frescos del servidor (actualizará el cache)
+        // 4. Cargar mensajes frescos del servidor (actualiza cache)
         loadMessages(conversationId)
     }
     
@@ -1343,14 +1559,13 @@ object ChatRepository {
                         val msgId = record["id"]?.jsonPrimitive?.content ?: ""
                         val msgStatus = record["status"]?.jsonPrimitive?.content ?: "sent"
                         val msgConversationId = record["conversation_id"]?.jsonPrimitive?.content ?: ""
-                        val reactionsRaw = record["reactions"]?.let { if (it is JsonNull) null else it.jsonPrimitive.content }
                         
                         if (msgConversationId != conversationId) return@onEach
                         
-                        Log.d(TAG, "UPDATE recibido - msgId: $msgId, reactions: $reactionsRaw")
+                        // Parsear reacciones: JSONB viene como JsonObject desde Realtime
+                        val reactions = parseReactionsFromJsonElement(record["reactions"])
                         
-                        // Parsear reacciones si existen
-                        val reactions = parseReactionsJson(reactionsRaw)
+                        Log.d(TAG, "UPDATE recibido - msgId: $msgId, reactions: $reactions")
                         
                         // Actualizar status Y reacciones del mensaje local
                         _currentMessages.value = _currentMessages.value.map { msg ->
@@ -1414,8 +1629,13 @@ object ChatRepository {
                         val isAfterClear = clearedAt == null || msgCreatedAt > clearedAt
                         
                         if (optimisticIndex >= 0) {
+                            // Preservar id, content y createdAt para evitar parpadeo de imágenes
+                            // El content ya tiene la URI local que AsyncImage muestra sin flicker
+                            val existingMsg = _currentMessages.value[optimisticIndex]
                             _currentMessages.value = _currentMessages.value.toMutableList().apply {
-                                set(optimisticIndex, newMessage)
+                                set(optimisticIndex, existingMsg.copy(
+                                    status = MessageStatus.SENT
+                                ))
                             }
                             _realtimeStatus.value = "✓ Confirmado"
                         } else if (isAfterClear) {
@@ -1641,6 +1861,41 @@ object ChatRepository {
         }
     }
     
+    /**
+     * Parsear reacciones desde JsonElement (Realtime entrega JSONB como JsonObject, no como string)
+     */
+    private fun parseReactionsFromJsonElement(element: JsonElement?): Map<String, List<String>> {
+        if (element == null || element is JsonNull) return emptyMap()
+        
+        return try {
+            // Caso 1: Viene como JsonObject directo (lo normal desde Realtime con JSONB)
+            if (element is JsonObject) {
+                val result = mutableMapOf<String, List<String>>()
+                for ((emoji, usersElement) in element) {
+                    if (usersElement is JsonArray) {
+                        val users = usersElement.mapNotNull { 
+                            (it as? JsonPrimitive)?.content 
+                        }
+                        if (users.isNotEmpty()) {
+                            result[emoji] = users
+                        }
+                    }
+                }
+                return result
+            }
+            
+            // Caso 2: Viene como JsonPrimitive string (fallback)
+            if (element is JsonPrimitive && element.isString) {
+                return parseReactionsJson(element.content)
+            }
+            
+            emptyMap()
+        } catch (e: Exception) {
+            Log.e(TAG, "Error parseando reacciones desde JsonElement: ${e.message}")
+            emptyMap()
+        }
+    }
+    
     // ═══════════════════════════════════════════════════════════════
     // SUSCRIPCIÓN GLOBAL PARA BADGE DE MENSAJES EN HOME
     // ═══════════════════════════════════════════════════════════════
@@ -1855,6 +2110,120 @@ object ChatRepository {
         }
     }
     
+    /** Silenciar/Activar notificaciones de una conversación */
+    suspend fun toggleMuteConversation(conversationId: String, mute: Boolean): Boolean {
+        // Track optimistic change to preserve during polling
+        val current = pendingOptimisticChanges[conversationId] ?: OptimisticState()
+        pendingOptimisticChanges[conversationId] = current.copy(isMuted = mute)
+        
+        // Optimistic update - actualizar UI inmediatamente
+        _conversations.value = _conversations.value.map {
+            if (it.id == conversationId) it.copy(isMuted = mute) else it
+        }
+        return withContext(Dispatchers.IO) {
+            try {
+                val currentUserId = SupabaseClient.auth.currentUserOrNull()?.id ?: return@withContext false
+                if (mute) {
+                    SupabaseClient.database
+                        .from("muted_chats")
+                        .upsert(buildJsonObject {
+                            put("user_id", currentUserId)
+                            put("conversation_id", conversationId)
+                        })
+                } else {
+                    SupabaseClient.database
+                        .from("muted_chats")
+                        .delete {
+                            filter {
+                                eq("user_id", currentUserId)
+                                eq("conversation_id", conversationId)
+                            }
+                        }
+                }
+                // Clear optimistic tracking after successful DB write
+                val updated = pendingOptimisticChanges[conversationId]
+                if (updated?.isPinned == null) {
+                    pendingOptimisticChanges.remove(conversationId)
+                } else {
+                    pendingOptimisticChanges[conversationId] = updated.copy(isMuted = null)
+                }
+                Log.d(TAG, "✅ Conversación ${if (mute) "silenciada" else "activada"}: $conversationId")
+                true
+            } catch (e: Exception) {
+                // Rollback optimistic change
+                val updated = pendingOptimisticChanges[conversationId]
+                if (updated?.isPinned == null) {
+                    pendingOptimisticChanges.remove(conversationId)
+                } else {
+                    pendingOptimisticChanges[conversationId] = updated.copy(isMuted = null)
+                }
+                // Rollback UI
+                _conversations.value = _conversations.value.map {
+                    if (it.id == conversationId) it.copy(isMuted = !mute) else it
+                }
+                Log.e(TAG, "Error toggle mute: ${e.message}")
+                false
+            }
+        }
+    }
+    
+    /** Fijar/Desfijar una conversación */
+    suspend fun togglePinConversation(conversationId: String, pin: Boolean): Boolean {
+        // Track optimistic change to preserve during polling
+        val current = pendingOptimisticChanges[conversationId] ?: OptimisticState()
+        pendingOptimisticChanges[conversationId] = current.copy(isPinned = pin)
+        
+        // Optimistic update - actualizar UI inmediatamente
+        _conversations.value = _conversations.value.map {
+            if (it.id == conversationId) it.copy(isPinned = pin) else it
+        }.sortedWith(compareByDescending<Conversation> { it.isPinned }.thenByDescending { it.lastMessageAt })
+        return withContext(Dispatchers.IO) {
+            try {
+                val currentUserId = SupabaseClient.auth.currentUserOrNull()?.id ?: return@withContext false
+                if (pin) {
+                    SupabaseClient.database
+                        .from("pinned_chats")
+                        .insert(buildJsonObject {
+                            put("user_id", currentUserId)
+                            put("conversation_id", conversationId)
+                        })
+                } else {
+                    SupabaseClient.database
+                        .from("pinned_chats")
+                        .delete {
+                            filter {
+                                eq("user_id", currentUserId)
+                                eq("conversation_id", conversationId)
+                            }
+                        }
+                }
+                // Clear optimistic tracking after successful DB write
+                val updated = pendingOptimisticChanges[conversationId]
+                if (updated?.isMuted == null) {
+                    pendingOptimisticChanges.remove(conversationId)
+                } else {
+                    pendingOptimisticChanges[conversationId] = updated.copy(isPinned = null)
+                }
+                Log.d(TAG, "✅ Conversación ${if (pin) "fijada" else "desfijada"}: $conversationId")
+                true
+            } catch (e: Exception) {
+                // Rollback optimistic change
+                val updated = pendingOptimisticChanges[conversationId]
+                if (updated?.isMuted == null) {
+                    pendingOptimisticChanges.remove(conversationId)
+                } else {
+                    pendingOptimisticChanges[conversationId] = updated.copy(isPinned = null)
+                }
+                // Rollback UI
+                _conversations.value = _conversations.value.map {
+                    if (it.id == conversationId) it.copy(isPinned = !pin) else it
+                }.sortedWith(compareByDescending<Conversation> { it.isPinned }.thenByDescending { it.lastMessageAt })
+                Log.e(TAG, "Error toggle pin: ${e.message}")
+                false
+            }
+        }
+    }
+    
     /** Buscar mensajes en una conversación */
     suspend fun searchMessages(conversationId: String, query: String): List<Message> = withContext(Dispatchers.IO) {
         try {
@@ -1889,7 +2258,8 @@ object ChatRepository {
                         msg.status == "read" -> MessageStatus.READ
                         msg.status == "delivered" -> MessageStatus.DELIVERED
                         else -> MessageStatus.SENT
-                    }
+                    },
+                    reactions = parseReactionsJson(msg.reactions)
                 )
             }
         } catch (e: Exception) {
@@ -2088,7 +2458,15 @@ object ChatRepository {
                     "Archivo: $name"
                 } catch (e: Exception) { "Archivo adjunto" }
             }
-            content.startsWith("[IMAGE]") -> "Imagen"
+            content.startsWith("[IMG]") || content.startsWith("[IMAGE]") -> "Imagen"
+            content.startsWith("[VIDEO]") -> "Video"
+            content.startsWith("[ARTICLE_CARD]") -> "Artículo compartido"
+            content.startsWith("[REPLY]") -> try {
+                val json = kotlinx.serialization.json.Json.parseToJsonElement(
+                    content.removePrefix("[REPLY]")
+                ).jsonObject
+                json["reply"]?.jsonPrimitive?.content?.takeIf { it.isNotBlank() } ?: "Respuesta"
+            } catch (e: Exception) { "Respuesta" }
             content.startsWith("[SHARED_USER]") -> {
                 try {
                     val json = kotlinx.serialization.json.Json.parseToJsonElement(

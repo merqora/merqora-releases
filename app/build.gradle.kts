@@ -5,7 +5,7 @@ plugins {
     id("androidx.baselineprofile")
     id("com.google.gms.google-services")
     kotlin("kapt")
-    kotlin("plugin.serialization") version "1.9.0"
+    kotlin("plugin.serialization") version "1.9.22"
 }
 
 android {
@@ -20,6 +20,24 @@ android {
         versionName = "1.0.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        
+        // NDK - C++ Media Optimizer Engine
+        ndk {
+            abiFilters += listOf("armeabi-v7a", "arm64-v8a", "x86", "x86_64")
+        }
+        externalNativeBuild {
+            cmake {
+                cppFlags += "-std=c++17 -O3 -ffast-math"
+                arguments += "-DANDROID_STL=c++_shared"
+            }
+        }
+    }
+    
+    externalNativeBuild {
+        cmake {
+            path = file("src/main/cpp/CMakeLists.txt")
+            version = "3.22.1"
+        }
     }
 
     signingConfigs {
@@ -51,6 +69,7 @@ android {
             buildConfigField("String", "CLOUDINARY_CLOUD_NAME", "\"dz0clge3s\"")
             buildConfigField("String", "IMAGEKIT_URL_ENDPOINT", "\"https://ik.imagekit.io/4z6ezuoeb\"")
             buildConfigField("String", "MAPBOX_ACCESS_TOKEN", "\"${project.findProperty("MAPBOX_ACCESS_TOKEN") ?: ""}\"")
+            buildConfigField("String", "GOOGLE_MAPS_API_KEY", "\"${project.findProperty("GOOGLE_MAPS_API_KEY") ?: ""}\"")
             // Mercado Pago Checkout API
             buildConfigField("String", "MP_PUBLIC_KEY", "\"${project.findProperty("MP_PUBLIC_KEY") ?: "APP_USR-f317b894-f344-4a2d-a430-5879dbd9cef2"}\"")
             buildConfigField("String", "MP_ACCESS_TOKEN", "\"${project.findProperty("MP_ACCESS_TOKEN") ?: "APP_USR-5371485033290040-020723-f545050d5138976f10770ec01b67ad38-1622183330"}\"")
@@ -69,6 +88,7 @@ android {
             buildConfigField("String", "CLOUDINARY_CLOUD_NAME", "\"dz0clge3s\"")
             buildConfigField("String", "IMAGEKIT_URL_ENDPOINT", "\"https://ik.imagekit.io/4z6ezuoeb\"")
             buildConfigField("String", "MAPBOX_ACCESS_TOKEN", "\"${project.findProperty("MAPBOX_ACCESS_TOKEN") ?: ""}\"")
+            buildConfigField("String", "GOOGLE_MAPS_API_KEY", "\"${project.findProperty("GOOGLE_MAPS_API_KEY") ?: ""}\"")
             // Mercado Pago Checkout API - DEBUG usa credenciales TEST para tarjetas de prueba
             // Para obtener credenciales TEST: https://www.mercadopago.com.uy/developers/panel/app -> Credenciales de prueba
             // Agregar MP_TEST_PUBLIC_KEY y MP_TEST_ACCESS_TOKEN en gradle.properties
@@ -98,7 +118,7 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.4"
+        kotlinCompilerExtensionVersion = "1.5.8"
     }
 
     packaging {

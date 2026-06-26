@@ -1,13 +1,20 @@
 package com.rendly.app.ui.screens.profile
 
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.awaitEachGesture
+import androidx.compose.foundation.gestures.awaitFirstDown
+import androidx.compose.foundation.gestures.calculatePan
+import androidx.compose.foundation.gestures.calculateZoom
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -22,12 +29,19 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.VisualTransformation
@@ -36,6 +50,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.rendly.app.ui.theme.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 data class EditProfileData(
     var nombre: String = "",
@@ -66,6 +86,8 @@ fun EditProfileScreen(
     modifier: Modifier = Modifier
 ) {
     val scrollState = rememberScrollState()
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
     var profileData by remember { mutableStateOf(initialData) }
     var hasImageChanges by remember { mutableStateOf(false) }
     
@@ -74,6 +96,12 @@ fun EditProfileScreen(
     
     // Estado para modal de información personal
     var showPersonalInfoModal by remember { mutableStateOf(false) }
+    
+    // Estado para modal de posición de imagen
+    var showImagePositionModal by remember { mutableStateOf(false) }
+    var imagePositionMode by remember { mutableStateOf("avatar") } // "avatar" o "banner"
+    var pendingImageUri by remember { mutableStateOf<Uri?>(null) }
+    var pendingImageBitmap by remember { mutableStateOf<Bitmap?>(null) }
     
     // Detectar cambios usando derivedStateOf para reactividad correcta
     val hasChanges by remember {
@@ -99,8 +127,18 @@ fun EditProfileScreen(
         contract = ActivityResultContracts.GetContent()
     ) { uri ->
         uri?.let {
-            selectedAvatarUri = it
-            hasImageChanges = true
+            pendingImageUri = it
+            imagePositionMode = "avatar"
+            scope.launch {
+                pendingImageBitmap = withContext(Dispatchers.IO) {
+                    try {
+                        context.contentResolver.openInputStream(it)?.use { stream ->
+                            BitmapFactory.decodeStream(stream)
+                        }
+                    } catch (e: Exception) { null }
+                }
+                showImagePositionModal = true
+            }
         }
     }
     
@@ -108,8 +146,18 @@ fun EditProfileScreen(
         contract = ActivityResultContracts.GetContent()
     ) { uri ->
         uri?.let {
-            selectedBannerUri = it
-            hasImageChanges = true
+            pendingImageUri = it
+            imagePositionMode = "banner"
+            scope.launch {
+                pendingImageBitmap = withContext(Dispatchers.IO) {
+                    try {
+                        context.contentResolver.openInputStream(it)?.use { stream ->
+                            BitmapFactory.decodeStream(stream)
+                        }
+                    } catch (e: Exception) { null }
+                }
+                showImagePositionModal = true
+            }
         }
     }
     
@@ -455,8 +503,26 @@ fun EditProfileScreen(
             onUbicacionChange = { profileData = profileData.copy(ubicacion = it) },
             telefono = profileData.telefono,
             onTelefonoChange = { profileData = profileData.copy(telefono = it) },
-            fechaNacimiento = "", // TODO: Cargar desde datos del usuario
-            onFechaNacimientoChange = { /* TODO: Guardar fecha de nacimiento */ }
+            fechaNacimiento = "",
+            onFechaNacimientoChange = { }
+        )
+        
+        // Modal de posición de imagen (avatar o banner)
+        ImagePositionModal(
+            isVisible = showImagePositionModal,
+            bitmap = pendingImageBitmap,
+            mode = imagePositionMode,
+            onConfirm = { uri ->
+                if (imagePositionMode == "avatar") {
+                    selectedAvatarUri = uri
+                } else {
+                    selectedBannerUri = uri
+                }
+                hasImageChanges = true
+                showImagePositionModal = false
+            },
+            onDismiss = { showImagePositionModal = false },
+            imageUri = pendingImageUri
         )
     }
 }
@@ -1320,6 +1386,9 @@ private fun PersonalInfoModal(
     fechaNacimiento: String = "",
     onFechaNacimientoChange: (String) -> Unit = {}
 ) {
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+    
     // Estados locales para los campos
     var birthDate by remember(fechaNacimiento) { mutableStateOf(fechaNacimiento) }
     var localUbicacion by remember(ubicacion) { mutableStateOf(ubicacion) }
@@ -1329,6 +1398,54 @@ private fun PersonalInfoModal(
     var showCountryPicker by remember { mutableStateOf(false) }
     var showLanguagePicker by remember { mutableStateOf(false) }
     var showDatePicker by remember { mutableStateOf(false) }
+    var isLoadingLocation by remember { mutableStateOf(false) }
+    
+    // Material3 DatePicker
+    if (showDatePicker) {
+        val datePickerState = rememberDatePickerState()
+        DatePickerDialog(
+            onDismissRequest = { showDatePicker = false },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        datePickerState.selectedDateMillis?.let { millis ->
+                            val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+                            birthDate = sdf.format(Date(millis))
+                        }
+                        showDatePicker = false
+                    }
+                ) {
+                    Text("Aceptar", color = PrimaryPurple)
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDatePicker = false }) {
+                    Text("Cancelar", color = TextMuted)
+                }
+            },
+            colors = DatePickerDefaults.colors(
+                containerColor = HomeBg
+            )
+        ) {
+            DatePicker(
+                state = datePickerState,
+                colors = DatePickerDefaults.colors(
+                    containerColor = HomeBg,
+                    titleContentColor = TextPrimary,
+                    headlineContentColor = TextPrimary,
+                    weekdayContentColor = TextMuted,
+                    dayContentColor = TextPrimary,
+                    selectedDayContainerColor = PrimaryPurple,
+                    selectedDayContentColor = Color.White,
+                    todayContentColor = PrimaryPurple,
+                    todayDateBorderColor = PrimaryPurple,
+                    yearContentColor = TextPrimary,
+                    selectedYearContainerColor = PrimaryPurple,
+                    selectedYearContentColor = Color.White
+                )
+            )
+        }
+    }
     
     // Backdrop
     if (isVisible) {
@@ -1517,6 +1634,77 @@ private fun PersonalInfoModal(
                                 shape = RoundedCornerShape(12.dp),
                                 singleLine = true
                             )
+                            
+                            Spacer(modifier = Modifier.height(8.dp))
+                            
+                            // Botón "Usar ubicación actual" (mismo que en RendScreen)
+                            Surface(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clip(RoundedCornerShape(12.dp))
+                                    .clickable(enabled = !isLoadingLocation) {
+                                        isLoadingLocation = true
+                                        scope.launch {
+                                            try {
+                                                val fusedLocationClient = com.google.android.gms.location.LocationServices.getFusedLocationProviderClient(context)
+                                                if (context.checkSelfPermission(android.Manifest.permission.ACCESS_FINE_LOCATION) == android.content.pm.PackageManager.PERMISSION_GRANTED) {
+                                                    fusedLocationClient.lastLocation.addOnSuccessListener { location ->
+                                                        location?.let {
+                                                            val geocoder = android.location.Geocoder(context)
+                                                            val addresses = geocoder.getFromLocation(it.latitude, it.longitude, 1)
+                                                            if (!addresses.isNullOrEmpty()) {
+                                                                val address = addresses[0]
+                                                                val locality = address.locality ?: ""
+                                                                val country = address.countryName ?: ""
+                                                                localUbicacion = "$locality, $country".trim().trim(',')
+                                                            }
+                                                        }
+                                                        isLoadingLocation = false
+                                                    }.addOnFailureListener {
+                                                        isLoadingLocation = false
+                                                    }
+                                                } else {
+                                                    android.widget.Toast.makeText(context, "Permiso de ubicación requerido", android.widget.Toast.LENGTH_SHORT).show()
+                                                    isLoadingLocation = false
+                                                }
+                                            } catch (e: Exception) {
+                                                android.widget.Toast.makeText(context, "Error obteniendo ubicación", android.widget.Toast.LENGTH_SHORT).show()
+                                                isLoadingLocation = false
+                                            }
+                                        }
+                                    },
+                                color = Color(0xFF1DA1F2).copy(alpha = 0.08f),
+                                shape = RoundedCornerShape(12.dp)
+                            ) {
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(14.dp),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    if (isLoadingLocation) {
+                                        CircularProgressIndicator(
+                                            modifier = Modifier.size(20.dp),
+                                            color = Color(0xFF1DA1F2),
+                                            strokeWidth = 2.dp
+                                        )
+                                    } else {
+                                        Icon(
+                                            Icons.Filled.MyLocation,
+                                            null,
+                                            tint = Color(0xFF1DA1F2),
+                                            modifier = Modifier.size(20.dp)
+                                        )
+                                    }
+                                    Spacer(modifier = Modifier.width(10.dp))
+                                    Text(
+                                        "Usar ubicación actual",
+                                        color = Color(0xFF1DA1F2),
+                                        fontSize = 14.sp,
+                                        fontWeight = FontWeight.Medium
+                                    )
+                                }
+                            }
                             
                             Text(
                                 text = "Se mostrará en tu perfil público",
@@ -1788,6 +1976,251 @@ private fun PersonalInfoSection(
     }
 }
 
+// ═══════════════════════════════════════════════════════════════════════════════
+// IMAGE POSITION MODAL - Pan/Zoom para avatar y banner (reutiliza sistema de PublicationScreen)
+// ═══════════════════════════════════════════════════════════════════════════════
+@Composable
+private fun ImagePositionModal(
+    isVisible: Boolean,
+    bitmap: Bitmap?,
+    mode: String, // "avatar" o "banner"
+    imageUri: Uri?,
+    onConfirm: (Uri) -> Unit,
+    onDismiss: () -> Unit
+) {
+    val density = LocalDensity.current
+    
+    // Pan/zoom state
+    var imageOffsetX by remember(isVisible) { mutableStateOf(0f) }
+    var imageOffsetY by remember(isVisible) { mutableStateOf(0f) }
+    var imageScale by remember(isVisible) { mutableStateOf(1f) }
+    
+    // Dimensiones para clamping
+    var containerWidthPx by remember { mutableStateOf(0f) }
+    var containerHeightPx by remember { mutableStateOf(0f) }
+    var imageWidthPx by remember { mutableStateOf(0f) }
+    var imageHeightPx by remember { mutableStateOf(0f) }
+    var baseCoverScaleState by remember { mutableStateOf(1f) }
+    
+    fun clampOffsets(newOffsetX: Float, newOffsetY: Float, scale: Float): Pair<Float, Float> {
+        if (containerWidthPx <= 0 || containerHeightPx <= 0 || imageWidthPx <= 0 || imageHeightPx <= 0) {
+            return Pair(newOffsetX, newOffsetY)
+        }
+        val finalScale = baseCoverScaleState * scale
+        val scaledImageW = imageWidthPx * finalScale
+        val scaledImageH = imageHeightPx * finalScale
+        val maxOffsetX = maxOf(0f, (scaledImageW - containerWidthPx) / 2f)
+        val maxOffsetY = maxOf(0f, (scaledImageH - containerHeightPx) / 2f)
+        return Pair(
+            newOffsetX.coerceIn(-maxOffsetX, maxOffsetX),
+            newOffsetY.coerceIn(-maxOffsetY, maxOffsetY)
+        )
+    }
+    
+    AnimatedVisibility(
+        visible = isVisible && bitmap != null,
+        enter = fadeIn(tween(200)),
+        exit = fadeOut(tween(200)),
+        modifier = Modifier.fillMaxSize()
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Black.copy(alpha = 0.95f))
+                .systemBarsPadding()
+        ) {
+            Column(modifier = Modifier.fillMaxSize()) {
+                // Header
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 12.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    TextButton(onClick = onDismiss) {
+                        Text("Cancelar", color = TextMuted, fontSize = 14.sp)
+                    }
+                    
+                    Text(
+                        text = if (mode == "avatar") "Ajustar foto de perfil" else "Ajustar portada",
+                        color = Color.White,
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                    
+                    TextButton(
+                        onClick = { imageUri?.let { onConfirm(it) } }
+                    ) {
+                        Text(
+                            "Aplicar",
+                            color = PrimaryPurple,
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                }
+                
+                Spacer(modifier = Modifier.weight(1f))
+                
+                // Preview area - diferente forma según modo
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = if (mode == "avatar") 80.dp else 16.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    val previewModifier = if (mode == "avatar") {
+                        Modifier
+                            .aspectRatio(1f)
+                            .clip(CircleShape)
+                    } else {
+                        Modifier
+                            .fillMaxWidth()
+                            .height(180.dp)
+                            .clip(RoundedCornerShape(24.dp))
+                    }
+                    
+                    BoxWithConstraints(
+                        modifier = previewModifier
+                            .clipToBounds()
+                            .background(Color(0xFF1A1A2E))
+                            .pointerInput(Unit) {
+                                awaitEachGesture {
+                                    awaitFirstDown(requireUnconsumed = false)
+                                    do {
+                                        val event = awaitPointerEvent()
+                                        val pan = event.calculatePan()
+                                        val zoom = event.calculateZoom()
+                                        val newScale = (imageScale * zoom).coerceIn(1f, 3f)
+                                        imageScale = newScale
+                                        val newOffsetX = imageOffsetX + pan.x
+                                        val newOffsetY = imageOffsetY + pan.y
+                                        val (cx, cy) = clampOffsets(newOffsetX, newOffsetY, newScale)
+                                        imageOffsetX = cx
+                                        imageOffsetY = cy
+                                        event.changes.forEach { it.consume() }
+                                    } while (event.changes.any { it.pressed })
+                                }
+                            },
+                        contentAlignment = Alignment.Center
+                    ) {
+                        val containerWidth = maxWidth
+                        val containerHeight = maxHeight
+                        
+                        LaunchedEffect(containerWidth, containerHeight) {
+                            with(density) {
+                                containerWidthPx = containerWidth.toPx()
+                                containerHeightPx = containerHeight.toPx()
+                            }
+                        }
+                        
+                        bitmap?.let { bmp ->
+                            val imgWidth = bmp.width.toFloat()
+                            val imgHeight = bmp.height.toFloat()
+                            
+                            LaunchedEffect(bmp) {
+                                imageWidthPx = imgWidth
+                                imageHeightPx = imgHeight
+                            }
+                            
+                            val containerW = with(density) { containerWidth.toPx() }
+                            val containerH = with(density) { containerHeight.toPx() }
+                            
+                            val scaleToFillWidth = containerW / imgWidth
+                            val scaleToFillHeight = containerH / imgHeight
+                            val baseCoverScale = maxOf(scaleToFillWidth, scaleToFillHeight)
+                            
+                            LaunchedEffect(baseCoverScale) {
+                                baseCoverScaleState = baseCoverScale
+                            }
+                            
+                            val finalScale = baseCoverScale * imageScale
+                            val (clampedX, clampedY) = clampOffsets(imageOffsetX, imageOffsetY, imageScale)
+                            val scaledWidth = with(density) { (imgWidth * finalScale).toDp() }
+                            val scaledHeight = with(density) { (imgHeight * finalScale).toDp() }
+                            
+                            Image(
+                                bitmap = bmp.asImageBitmap(),
+                                contentDescription = "Posicionar imagen",
+                                contentScale = ContentScale.FillBounds,
+                                modifier = Modifier
+                                    .requiredSize(scaledWidth, scaledHeight)
+                                    .graphicsLayer {
+                                        translationX = clampedX
+                                        translationY = clampedY
+                                    }
+                            )
+                        }
+                    }
+                }
+                
+                Spacer(modifier = Modifier.height(24.dp))
+                
+                // Hint text
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 32.dp),
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        imageVector = Icons.Outlined.TouchApp,
+                        contentDescription = null,
+                        tint = TextMuted,
+                        modifier = Modifier.size(18.dp)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = "Arrastra para mover • Pellizca para zoom",
+                        color = TextMuted,
+                        fontSize = 13.sp,
+                        textAlign = TextAlign.Center
+                    )
+                }
+                
+                Spacer(modifier = Modifier.height(16.dp))
+                
+                // Reset button
+                Surface(
+                    modifier = Modifier
+                        .align(Alignment.CenterHorizontally)
+                        .clip(RoundedCornerShape(20.dp))
+                        .clickable {
+                            imageOffsetX = 0f
+                            imageOffsetY = 0f
+                            imageScale = 1f
+                        },
+                    shape = RoundedCornerShape(20.dp),
+                    color = Surface
+                ) {
+                    Row(
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = Icons.Outlined.CenterFocusStrong,
+                            contentDescription = null,
+                            tint = TextPrimary,
+                            modifier = Modifier.size(16.dp)
+                        )
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text(
+                            text = "Centrar",
+                            color = TextPrimary,
+                            fontSize = 13.sp,
+                            fontWeight = FontWeight.Medium
+                        )
+                    }
+                }
+                
+                Spacer(modifier = Modifier.weight(1f))
+            }
+        }
+    }
+}
+
 @Composable
 private fun PickerModal(
     title: String,
@@ -1806,7 +2239,8 @@ private fun PickerModal(
         Surface(
             modifier = Modifier
                 .fillMaxWidth()
-                .fillMaxHeight(0.5f)
+                .fillMaxHeight()
+                .statusBarsPadding()
                 .clickable(enabled = false) { },
             shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp),
             color = HomeBg

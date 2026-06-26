@@ -815,6 +815,492 @@ private data class PriceStrings(
     val descuentoText: String
 )
 
+// ═══════════════════════════════════════════════════════════════════════════════
+// VIDEO POST ITEM - Rend (vertical video) shown inline in the Home feed
+// ═══════════════════════════════════════════════════════════════════════════════
+
+@Composable
+fun VideoPostItem(
+    rend: com.rendly.app.data.model.Rend,
+    onLikeClick: () -> Unit,
+    onSaveClick: () -> Unit,
+    onRendClick: () -> Unit,
+    onProfileClick: () -> Unit = {},
+    onShareClick: () -> Unit = {},
+    onConsultClick: () -> Unit = {},
+    onCommentClick: () -> Unit = {},
+    onOptionsClick: () -> Unit = {},
+    isUserVerified: Boolean = false,
+    isVisible: Boolean = true,
+    modifier: Modifier = Modifier
+) {
+    val context = LocalContext.current
+    val haptic = LocalHapticFeedback.current
+    
+    var isPlaying by remember { mutableStateOf(false) }
+    var isVideoReady by remember { mutableStateOf(false) }
+    var showPlayButton by remember { mutableStateOf(true) }
+    var videoEnded by remember { mutableStateOf(false) }
+    
+    val thumbnailUrl = remember(rend.videoUrl) {
+        rend.thumbnailUrl?.takeIf { it.isNotBlank() }
+            ?: "${rend.videoUrl}/ik-thumbnail.jpg"
+    }
+    val avatarUrl = remember(rend.userAvatar) {
+        if (rend.userAvatar.startsWith("http")) rend.userAvatar
+        else "https://wsiszffxlxupzbrgrklv.supabase.co/storage/v1/object/public/avatars_new/${rend.userAvatar}"
+    }
+    
+    // ExoPlayer - NO repeat, detect end
+    val exoPlayer = remember {
+        androidx.media3.exoplayer.ExoPlayer.Builder(context).build().apply {
+            repeatMode = androidx.media3.common.Player.REPEAT_MODE_OFF
+            volume = 1f
+        }
+    }
+    
+    var isPrepared by remember { mutableStateOf(false) }
+    
+    DisposableEffect(rend.videoUrl) {
+        val listener = object : androidx.media3.common.Player.Listener {
+            override fun onPlaybackStateChanged(state: Int) {
+                when (state) {
+                    androidx.media3.common.Player.STATE_READY -> isVideoReady = true
+                    androidx.media3.common.Player.STATE_ENDED -> {
+                        videoEnded = true
+                        isPlaying = false
+                        showPlayButton = false
+                    }
+                }
+            }
+        }
+        exoPlayer.addListener(listener)
+        
+        onDispose {
+            exoPlayer.removeListener(listener)
+            exoPlayer.release()
+        }
+    }
+    
+    // Auto-play/pause based on scroll visibility
+    LaunchedEffect(isVisible) {
+        if (isVisible && !videoEnded) {
+            if (!isPrepared) {
+                val mediaItem = androidx.media3.common.MediaItem.fromUri(rend.videoUrl)
+                exoPlayer.setMediaItem(mediaItem)
+                exoPlayer.prepare()
+                isPrepared = true
+            }
+            exoPlayer.play()
+            isPlaying = true
+            showPlayButton = false
+        } else {
+            if (isPrepared && isPlaying) {
+                exoPlayer.pause()
+                isPlaying = false
+            }
+        }
+    }
+    
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .background(HomeBg)
+            .padding(top = 8.dp)
+    ) {
+        // ═══════════════════════════════════════════════════════════════
+        // HEADER: Avatar + Username + Verified badge | Options icon
+        // ═══════════════════════════════════════════════════════════════
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 12.dp, vertical = 8.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Row(
+                modifier = Modifier.clickable(onClick = onProfileClick),
+                horizontalArrangement = Arrangement.spacedBy(10.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                AsyncImage(
+                    model = remember(avatarUrl) {
+                        ImageRequest.Builder(context)
+                            .data(avatarUrl)
+                            .crossfade(100)
+                            .memoryCachePolicy(CachePolicy.ENABLED)
+                            .diskCachePolicy(CachePolicy.ENABLED)
+                            .size(96)
+                            .build()
+                    },
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .size(36.dp)
+                        .clip(CircleShape)
+                )
+                Column {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(4.dp)
+                    ) {
+                        Text(
+                            text = rend.username,
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            color = TextPrimary
+                        )
+                        if (isUserVerified) {
+                            VerifiedBadge(size = 14.dp)
+                        }
+                    }
+                    if (rend.title.isNotBlank()) {
+                        Text(
+                            text = rend.title,
+                            fontSize = 12.sp,
+                            color = TextSecondary,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    }
+                }
+            }
+            
+            // Options icon (same as image posts)
+            IconButton(
+                onClick = onOptionsClick,
+                modifier = Modifier.size(32.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Outlined.MoreVert,
+                    contentDescription = "Opciones",
+                    tint = TextSecondary,
+                    modifier = Modifier.size(20.dp)
+                )
+            }
+        }
+        
+        // ═══════════════════════════════════════════════════════════════
+        // VIDEO PLAYER - Reels-like height (520dp)
+        // ═══════════════════════════════════════════════════════════════
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(520.dp)
+                .clip(RoundedCornerShape(0.dp))
+                .background(Color.Black)
+                .clickable {
+                    // Tap en el video navega a RendScreen para ver en pantalla completa
+                    onRendClick()
+                }
+        ) {
+            // ExoPlayer view
+            if (isPrepared) {
+                androidx.compose.ui.viewinterop.AndroidView(
+                    factory = { ctx ->
+                        androidx.media3.ui.PlayerView(ctx).apply {
+                            player = exoPlayer
+                            useController = false
+                            controllerAutoShow = false
+                            resizeMode = androidx.media3.ui.AspectRatioFrameLayout.RESIZE_MODE_FIT
+                            setShowBuffering(androidx.media3.ui.PlayerView.SHOW_BUFFERING_NEVER)
+                        }
+                    },
+                    modifier = Modifier.fillMaxSize()
+                )
+            }
+            
+            // Thumbnail on top until video plays
+            if (!isVideoReady || !isPlaying) {
+                if (!videoEnded) {
+                    AsyncImage(
+                        model = thumbnailUrl,
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier.fillMaxSize()
+                    )
+                }
+            }
+            
+            // Play button overlay (only when paused, not when ended)
+            if (showPlayButton && !videoEnded) {
+                Box(
+                    modifier = Modifier
+                        .align(Alignment.Center)
+                        .size(64.dp)
+                        .clip(CircleShape)
+                        .background(Color.Black.copy(alpha = 0.5f)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        Icons.Filled.PlayArrow,
+                        "Reproducir",
+                        tint = Color.White,
+                        modifier = Modifier.size(36.dp)
+                    )
+                }
+            }
+            
+            // END OF VIDEO overlay
+            if (videoEnded) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(Color.Black.copy(alpha = 0.6f)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(20.dp)
+                    ) {
+                        // "Ver más rends" button - palette-matching design
+                        Surface(
+                            onClick = onRendClick,
+                            shape = RoundedCornerShape(24.dp),
+                            color = PrimaryPurple
+                        ) {
+                            Row(
+                                modifier = Modifier.padding(horizontal = 28.dp, vertical = 13.dp),
+                                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Icon(
+                                    Icons.Filled.PlayCircle,
+                                    null,
+                                    tint = Color.White,
+                                    modifier = Modifier.size(20.dp)
+                                )
+                                Text(
+                                    "Ver más rends",
+                                    fontSize = 14.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color.White
+                                )
+                            }
+                        }
+                        
+                        // "Ver de nuevo" - just text + icon, no background
+                        Row(
+                            modifier = Modifier
+                                .clickable {
+                                    exoPlayer.seekTo(0)
+                                    videoEnded = false
+                                    exoPlayer.play()
+                                    isPlaying = true
+                                    showPlayButton = false
+                                }
+                                .padding(horizontal = 16.dp, vertical = 8.dp),
+                            horizontalArrangement = Arrangement.spacedBy(6.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                Icons.Filled.Replay,
+                                null,
+                                tint = Color.White.copy(alpha = 0.8f),
+                                modifier = Modifier.size(18.dp)
+                            )
+                            Text(
+                                "Ver de nuevo",
+                                fontSize = 13.sp,
+                                fontWeight = FontWeight.Medium,
+                                color = Color.White.copy(alpha = 0.8f)
+                            )
+                        }
+                    }
+                }
+            }
+        }
+        
+        // ═══════════════════════════════════════════════════════════════
+        // SOCIAL ACTIONS (Like + Save + Forward) + Consultar
+        // ═══════════════════════════════════════════════════════════════
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 8.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(4.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                ActionButton(
+                    icon = if (rend.isLiked) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
+                    count = rend.likesCount,
+                    isActive = rend.isLiked,
+                    activeColor = AccentGreen,
+                    onClick = {
+                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                        onLikeClick()
+                    }
+                )
+                ActionButton(
+                    icon = if (rend.isSaved) Icons.Filled.Bookmark else Icons.Outlined.BookmarkBorder,
+                    count = rend.savesCount,
+                    isActive = rend.isSaved,
+                    activeColor = AccentGold,
+                    onClick = {
+                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                        onSaveClick()
+                    }
+                )
+                ActionButton(
+                    icon = Icons.Outlined.Send,
+                    count = if (rend.sharesCount > 0) rend.sharesCount else null,
+                    isActive = false,
+                    activeColor = IconAccentBlue,
+                    inactiveColor = IconAccentBlue,
+                    onClick = {
+                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                        onShareClick()
+                    }
+                )
+            }
+            
+            // Consultar button (same as image posts)
+            Surface(
+                onClick = {
+                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                    onConsultClick()
+                },
+                shape = RoundedCornerShape(10.dp),
+                color = Color(0xFF333333),
+                border = BorderStroke(
+                    1.dp,
+                    Brush.linearGradient(
+                        colors = listOf(
+                            AccentGold.copy(alpha = 0.4f),
+                            Color(0xFF444444),
+                            AccentGold.copy(alpha = 0.2f)
+                        )
+                    )
+                )
+            ) {
+                Row(
+                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 7.dp),
+                    horizontalArrangement = Arrangement.spacedBy(5.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Send,
+                        contentDescription = "Consultar",
+                        modifier = Modifier.size(13.dp),
+                        tint = AccentGold
+                    )
+                    Text(
+                        text = "Consultar",
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = Color.White
+                    )
+                }
+            }
+        }
+        
+        // ═══════════════════════════════════════════════════════════════
+        // LINKED PRODUCT CARD (if rend has product info)
+        // ═══════════════════════════════════════════════════════════════
+        if (!rend.productTitle.isNullOrBlank() || (rend.productPrice != null && rend.productPrice > 0)) {
+            Surface(
+                onClick = onRendClick,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 12.dp)
+                    .padding(bottom = 8.dp),
+                shape = RoundedCornerShape(14.dp),
+                color = Surface,
+                tonalElevation = 2.dp
+            ) {
+                Row(
+                    modifier = Modifier.padding(10.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    val productImg = remember(rend) { rend.getProductImageUrl() ?: "" }
+                    AsyncImage(
+                        model = productImg,
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .size(56.dp)
+                            .clip(RoundedCornerShape(10.dp))
+                    )
+                    
+                    Column(modifier = Modifier.weight(1f)) {
+                        if (!rend.productTitle.isNullOrBlank()) {
+                            Text(
+                                text = rend.productTitle,
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.SemiBold,
+                                color = TextPrimary,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                        }
+                        if (rend.productPrice != null && rend.productPrice > 0) {
+                            Text(
+                                text = "$${String.format("%.2f", rend.productPrice)}",
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = AccentGreen
+                            )
+                        }
+                    }
+                    
+                    Icon(
+                        Icons.Filled.ChevronRight,
+                        "Ver producto",
+                        tint = TextMuted,
+                        modifier = Modifier.size(24.dp)
+                    )
+                }
+            }
+        }
+        
+        // ═══════════════════════════════════════════════════════════════
+        // COMMENTS SECTION - "Sé el primero en comentar"
+        // ═══════════════════════════════════════════════════════════════
+        Row(
+            modifier = Modifier
+                .clickable(
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = null
+                ) {
+                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                    onCommentClick()
+                }
+                .padding(horizontal = 16.dp, vertical = 6.dp),
+            horizontalArrangement = Arrangement.spacedBy(6.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                imageVector = Icons.Outlined.ChatBubbleOutline,
+                contentDescription = null,
+                modifier = Modifier.size(14.dp),
+                tint = TextMuted
+            )
+            Text(
+                text = if (rend.reviewsCount > 0) "Ver ${rend.reviewsCount} comentarios" else "Sé el primero en comentar",
+                fontSize = 12.sp,
+                fontWeight = FontWeight.Normal,
+                color = TextMuted
+            )
+        }
+        
+        // Espacio extra antes del separador
+        Spacer(modifier = Modifier.height(8.dp))
+        
+        // Separador sutil
+        Spacer(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(0.5.dp)
+                .background(BorderSubtle)
+        )
+    }
+}
+
 private fun formatTimeAgo(dateString: String): String {
     if (dateString.isEmpty()) return "Ahora"
     

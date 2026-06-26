@@ -10,6 +10,10 @@ import com.rendly.app.data.remote.SupabaseClient
 import com.rendly.app.data.repository.NotificationRepository
 import com.rendly.app.data.repository.PostRepository
 import com.rendly.app.data.repository.ProfileRepository
+import com.rendly.app.data.model.Rend
+import com.rendly.app.data.repository.RendRepository
+import com.rendly.app.feed.FeedItem
+import com.rendly.app.feed.FeedManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.github.jan.supabase.postgrest.from
 import io.github.jan.supabase.postgrest.query.Order
@@ -58,6 +62,10 @@ class HomeViewModel @Inject constructor() : ViewModel() {
     private val _allPosts = MutableStateFlow<List<Post>>(emptyList()) // Todos los posts cacheados
     private val _visiblePosts = MutableStateFlow<List<Post>>(emptyList()) // Posts visibles (paginados)
     val posts: StateFlow<List<Post>> = _visiblePosts.asStateFlow()
+    
+    // Feed Engine: C++ powered feed items
+    val feedItems: StateFlow<List<FeedItem>> = FeedManager.feedItems
+    val hasMoreFeed: StateFlow<Boolean> = FeedManager.hasMore
     
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
@@ -120,6 +128,7 @@ class HomeViewModel @Inject constructor() : ViewModel() {
     private val usersCache = mutableMapOf<String, Usuario>()
     
     init {
+        FeedManager.initialize()
         loadCurrentUser()
         loadInitialPosts()
         
@@ -324,11 +333,26 @@ class HomeViewModel @Inject constructor() : ViewModel() {
                 }
                 
                 _allPosts.value = allPostsList
-                // Mostrar solo 1 post inicial
+                // Mostrar solo 1 post inicial (legacy)
                 _visiblePosts.value = allPostsList.take(INITIAL_LOAD_COUNT)
                 _hasMorePosts.value = allPostsList.size > INITIAL_LOAD_COUNT
                 
                 Log.d("HomeViewModel", "Loaded ${allPostsList.size} posts, showing ${_visiblePosts.value.size}")
+                
+                // Feed Engine: load posts + rends into C++ engine
+                val allRends = try {
+                    RendRepository.rends.value.ifEmpty {
+                        RendRepository.loadRends()
+                        RendRepository.rends.value
+                    }
+                } catch (e: Exception) {
+                    Log.e("HomeViewModel", "Error loading rends for feed: ${e.message}")
+                    emptyList()
+                }
+                
+                FeedManager.loadContent(allPostsList, allRends)
+                FeedManager.generateInitialFeed()
+                Log.d("HomeViewModel", "Feed engine loaded: ${allPostsList.size} posts + ${allRends.size} rends")
                 
             } catch (e: Exception) {
                 Log.e("HomeViewModel", "Error loading posts: ${e.message}", e)
@@ -346,20 +370,24 @@ class HomeViewModel @Inject constructor() : ViewModel() {
         viewModelScope.launch {
             _isLoadingMore.value = true
             
-            // OPTIMIZADO: Reducido delay de 800ms a 50ms - suficiente para feedback visual sin lag
-            kotlinx.coroutines.delay(50)
-            
+            // Legacy posts pagination (for backward compat)
             val currentCount = _visiblePosts.value.size
             val newCount = (currentCount + LOAD_MORE_COUNT).coerceAtMost(_allPosts.value.size)
-            
             _visiblePosts.value = _allPosts.value.take(newCount)
             _hasMorePosts.value = newCount < _allPosts.value.size
             
-            Log.d("HomeViewModel", "Loaded more: now showing ${_visiblePosts.value.size}/${_allPosts.value.size}")
+            // C++ Feed Engine: generate exactly 4 more items
+            FeedManager.loadMoreFeed()
+            
+            Log.d("HomeViewModel", "Loaded more: legacy=${_visiblePosts.value.size}/${_allPosts.value.size}, feed=${FeedManager.feedItems.value.size}")
             
             _isLoadingMore.value = false
         }
     }
+    
+    // Feed Engine accessors
+    fun getFeedPost(index: Int): Post? = FeedManager.getPost(index)
+    fun getFeedRend(index: Int): Rend? = FeedManager.getRend(index)
     
     fun toggleLike(postId: String) {
         val currentList = _visiblePosts.value
@@ -524,6 +552,10 @@ class HomeViewModel @Inject constructor() : ViewModel() {
     
     fun navigateTo(route: String) {
         _currentRoute.value = route
+    }
+    
+    fun removePost(postId: String) {
+        _visiblePosts.value = _visiblePosts.value.filter { it.id != postId }
     }
     
     fun refreshPosts() {

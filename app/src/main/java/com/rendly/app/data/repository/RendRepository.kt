@@ -9,7 +9,10 @@ import com.rendly.app.data.model.Usuario
 import com.rendly.app.data.remote.ImageKitService
 import com.rendly.app.data.remote.SupabaseClient
 import io.github.jan.supabase.postgrest.from
+import io.github.jan.supabase.postgrest.rpc
 import kotlinx.coroutines.Dispatchers
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -38,6 +41,19 @@ object RendRepository {
     
     private val _errorMessage = MutableStateFlow<String?>(null)
     val errorMessage: StateFlow<String?> = _errorMessage.asStateFlow()
+    
+    private val _pendingRendId = MutableStateFlow<String?>(null)
+    val pendingRendId: StateFlow<String?> = _pendingRendId.asStateFlow()
+    
+    fun setPendingRendId(id: String?) {
+        _pendingRendId.value = id
+    }
+    
+    fun consumePendingRendId(): String? {
+        val id = _pendingRendId.value
+        _pendingRendId.value = null
+        return id
+    }
     
     fun clearError() {
         _errorMessage.value = null
@@ -118,6 +134,84 @@ object RendRepository {
         }
     }
     
+    // Rends de usuarios seguidos
+    private val _followingRends = MutableStateFlow<List<Rend>>(emptyList())
+    val followingRends: StateFlow<List<Rend>> = _followingRends.asStateFlow()
+    
+    private val _isLoadingFollowing = MutableStateFlow(false)
+    val isLoadingFollowing: StateFlow<Boolean> = _isLoadingFollowing.asStateFlow()
+    
+    /**
+     * Load rends only from users the current user follows
+     */
+    suspend fun loadFollowingRends() = withContext(Dispatchers.IO) {
+        try {
+            _isLoadingFollowing.value = true
+            val currentUserId = SupabaseClient.auth.currentUserOrNull()?.id ?: return@withContext
+            
+            // Get list of followed user IDs
+            val followedUsers = SupabaseClient.database
+                .from("followers")
+                .select(columns = io.github.jan.supabase.postgrest.query.Columns.list("followed_id")) {
+                    filter { eq("follower_id", currentUserId) }
+                }
+                .decodeList<FollowedIdRow>()
+                .map { it.followedId }
+            
+            if (followedUsers.isEmpty()) {
+                _followingRends.value = emptyList()
+                _isLoadingFollowing.value = false
+                return@withContext
+            }
+            
+            // Load rends from followed users
+            val rendsDB = SupabaseClient.database
+                .from("rends")
+                .select {
+                    filter { isIn("user_id", followedUsers) }
+                }
+                .decodeList<RendDB>()
+                .sortedByDescending { it.createdAt }
+            
+            // Load user data
+            val userIds = rendsDB.map { it.userId }.distinct()
+            val usersMap = mutableMapOf<String, Usuario>()
+            if (userIds.isNotEmpty()) {
+                try {
+                    val users = SupabaseClient.database
+                        .from("usuarios")
+                        .select()
+                        .decodeList<Usuario>()
+                        .filter { it.userId in userIds }
+                    users.forEach { usersMap[it.userId] = it }
+                } catch (e: Exception) {
+                    Log.e(TAG, "Error loading users for following rends: ${e.message}")
+                }
+            }
+            
+            _followingRends.value = rendsDB.map { db ->
+                val user = usersMap[db.userId]
+                Rend.fromDB(
+                    db = db,
+                    username = user?.username ?: "usuario",
+                    avatarUrl = user?.avatarUrl ?: "",
+                    storeName = user?.nombreTienda
+                )
+            }
+            
+            Log.d(TAG, "Loaded ${_followingRends.value.size} following rends from ${followedUsers.size} followed users")
+        } catch (e: Exception) {
+            Log.e(TAG, "Error loading following rends: ${e.message}", e)
+        } finally {
+            _isLoadingFollowing.value = false
+        }
+    }
+    
+    @Serializable
+    private data class FollowedIdRow(
+        @SerialName("followed_id") val followedId: String
+    )
+    
     /**
      * Create a new Rend with video upload to ImageKit
      */
@@ -128,9 +222,17 @@ object RendRepository {
         description: String? = null,
         productTitle: String? = null,
         productPrice: Double? = null,
-        productImage: String? = null, // Imagen del producto enlazado (Cloudinary URL)
-        productId: String? = null, // product_id del Post enlazado para unificar reviews
+        productImage: String? = null,
+        productId: String? = null,
         duration: Int = 0,
+        visibility: String = "public",
+        allowOpinions: Boolean = true,
+        allowConsults: Boolean = true,
+        allowDownloads: Boolean = false,
+        allowShares: Boolean = true,
+        hashtags: List<String> = emptyList(),
+        category: String? = null,
+        location: String? = null,
         onProgress: (Float) -> Unit = {}
     ): Result<Rend> = withContext(Dispatchers.IO) {
         try {
@@ -169,13 +271,47 @@ object RendRepository {
                 put("title", title)
                 put("video_url", videoUrl)
                 put("thumbnail_url", thumbnailUrl)
-                put("product_image", finalProductImage) // Imagen del producto (Cloudinary si enlazado, sino thumbnail)
+                put("product_image", finalProductImage)
                 put("duration", duration)
                 put("status", "active")
+                put("visibility", visibility)
+                put("allow_opinions", allowOpinions)
+                put("allow_consults", allowConsults)
+                put("allow_downloads", allowDownloads)
+                put("allow_shares", allowShares)
                 if (!description.isNullOrBlank()) put("description", description)
                 if (!productTitle.isNullOrBlank()) put("product_title", productTitle)
                 if (productPrice != null) put("product_price", productPrice)
-                if (!productId.isNullOrBlank()) put("product_id", productId) // Mismo product_id que el Post enlazado
+                if (!productId.isNullOrBlank()) put("product_id", productId)
+                if (hashtags.isNotEmpty()) {
+                    put("hashtags", kotlinx.serialization.json.JsonArray(hashtags.map { kotlinx.serialization.json.JsonPrimitive(it) }))
+                }
+                if (!category.isNullOrBlank()) put("category", category)
+                if (!location.isNullOrBlank()) put("location", location)
+            }
+            
+            // Actualizar stats de hashtags y categoría
+            if (hashtags.isNotEmpty()) {
+                try {
+                    SupabaseClient.database.rpc(
+                        "increment_hashtag_stats",
+                        buildJsonObject {
+                            put("p_tags", kotlinx.serialization.json.JsonArray(hashtags.map { kotlinx.serialization.json.JsonPrimitive(it) }))
+                        }
+                    )
+                } catch (e: Exception) {
+                    Log.w(TAG, "Error updating hashtag stats: ${e.message}")
+                }
+            }
+            if (!category.isNullOrBlank()) {
+                try {
+                    SupabaseClient.database.rpc(
+                        "increment_category_stats",
+                        buildJsonObject { put("p_category", category) }
+                    )
+                } catch (e: Exception) {
+                    Log.w(TAG, "Error updating category stats: ${e.message}")
+                }
             }
             
             Log.d(TAG, "=== INSERTANDO REND EN SUPABASE ===")
@@ -252,10 +388,64 @@ object RendRepository {
                     filter { eq("id", rendId) }
                 }
             
+            // Update local state immediately
+            _rends.value = _rends.value.map { r ->
+                if (r.id == rendId) r.copy(
+                    isLiked = !isLiked,
+                    likesCount = newLikeCount.coerceAtLeast(0)
+                ) else r
+            }
+            
             Log.d(TAG, "Like updated: $rendId -> $newLikeCount")
             Result.success(newLikeCount.coerceAtLeast(0))
         } catch (e: Exception) {
             Log.e(TAG, "Error updating like", e)
+            Result.failure(e)
+        }
+    }
+    
+    /**
+     * Toggle save on a Rend and update local state
+     */
+    suspend fun toggleSave(rendId: String, currentSavesCount: Int, isSaved: Boolean): Result<Unit> = withContext(Dispatchers.IO) {
+        try {
+            val uid = SupabaseClient.auth.currentUserOrNull()?.id ?: throw Exception("No auth")
+            if (isSaved) {
+                // Remove save
+                SupabaseClient.database
+                    .from("user_interactions")
+                    .delete {
+                        filter {
+                            eq("user_id", uid)
+                            eq("target_id", rendId)
+                            eq("target_type", "rend")
+                            eq("interaction_type", "save")
+                        }
+                    }
+            } else {
+                // Add save
+                val data = buildJsonObject {
+                    put("user_id", uid)
+                    put("target_id", rendId)
+                    put("target_type", "rend")
+                    put("interaction_type", "save")
+                }
+                SupabaseClient.database
+                    .from("user_interactions")
+                    .upsert(data)
+            }
+            
+            // Update local state
+            _rends.value = _rends.value.map { r ->
+                if (r.id == rendId) r.copy(
+                    isSaved = !isSaved,
+                    savesCount = if (isSaved) (currentSavesCount - 1).coerceAtLeast(0) else currentSavesCount + 1
+                ) else r
+            }
+            
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Log.e(TAG, "Error toggling save", e)
             Result.failure(e)
         }
     }
@@ -307,4 +497,58 @@ object RendRepository {
             Result.failure(e)
         }
     }
+    
+    /**
+     * Get trending hashtags sorted by usage count
+     */
+    suspend fun getTrendingHashtags(limit: Int = 20): List<TrendingHashtag> = withContext(Dispatchers.IO) {
+        try {
+            val result = SupabaseClient.database
+                .from("rend_hashtag_stats")
+                .select {
+                    order("usage_count", io.github.jan.supabase.postgrest.query.Order.DESCENDING)
+                    limit(limit.toLong())
+                }
+                .decodeList<TrendingHashtagDB>()
+            result.map { TrendingHashtag(it.tag, it.usageCount) }
+        } catch (e: Exception) {
+            Log.e(TAG, "Error loading trending hashtags", e)
+            emptyList()
+        }
+    }
+    
+    /**
+     * Get popular categories sorted by usage count
+     */
+    suspend fun getPopularCategories(limit: Int = 12): List<PopularCategory> = withContext(Dispatchers.IO) {
+        try {
+            val result = SupabaseClient.database
+                .from("rend_category_stats")
+                .select {
+                    order("usage_count", io.github.jan.supabase.postgrest.query.Order.DESCENDING)
+                    limit(limit.toLong())
+                }
+                .decodeList<PopularCategoryDB>()
+            result.map { PopularCategory(it.category, it.usageCount) }
+        } catch (e: Exception) {
+            Log.e(TAG, "Error loading popular categories", e)
+            emptyList()
+        }
+    }
 }
+
+@kotlinx.serialization.Serializable
+data class TrendingHashtagDB(
+    val tag: String = "",
+    @kotlinx.serialization.SerialName("usage_count") val usageCount: Int = 0
+)
+
+data class TrendingHashtag(val tag: String, val usageCount: Int)
+
+@kotlinx.serialization.Serializable
+data class PopularCategoryDB(
+    val category: String = "",
+    @kotlinx.serialization.SerialName("usage_count") val usageCount: Int = 0
+)
+
+data class PopularCategory(val category: String, val usageCount: Int)

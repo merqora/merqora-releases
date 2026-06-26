@@ -85,6 +85,7 @@ fun DrawingOverlay(
     strokeWidth: Float,
     strokes: MutableList<DrawingStroke>,
     modifier: Modifier = Modifier,
+    showToolbar: Boolean = true,
     onToolChange: (DrawingTool) -> Unit,
     onUndo: () -> Unit,
     onApply: () -> Unit,
@@ -166,82 +167,84 @@ fun DrawingOverlay(
                 }
             }
             
-            // ═══════════════════════════════════════════════════════════════
-            // BOTÓN DESHACER - Esquina superior IZQUIERDA
-            // ═══════════════════════════════════════════════════════════════
-            if (strokes.isNotEmpty()) {
-                Box(
-                    modifier = Modifier
-                        .align(Alignment.TopStart)
-                        .padding(start = 16.dp, top = 16.dp)
-                        .size(40.dp)
-                        .clip(CircleShape)
-                        .background(Color.Black.copy(alpha = 0.5f))
-                        .clickable { onUndo() },
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        imageVector = Icons.Outlined.Undo,
-                        contentDescription = "Deshacer",
-                        tint = Color.White,
-                        modifier = Modifier.size(22.dp)
-                    )
+            if (showToolbar) {
+                // ═══════════════════════════════════════════════════════════════
+                // BOTÓN DESHACER - Esquina superior IZQUIERDA
+                // ═══════════════════════════════════════════════════════════════
+                if (strokes.isNotEmpty()) {
+                    Box(
+                        modifier = Modifier
+                            .align(Alignment.TopStart)
+                            .padding(start = 16.dp, top = 16.dp)
+                            .size(40.dp)
+                            .clip(CircleShape)
+                            .background(Color.Black.copy(alpha = 0.5f))
+                            .clickable { onUndo() },
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            imageVector = Icons.Outlined.Undo,
+                            contentDescription = "Deshacer",
+                            tint = Color.White,
+                            modifier = Modifier.size(22.dp)
+                        )
+                    }
                 }
-            }
-            
-            // ═══════════════════════════════════════════════════════════════
-            // HERRAMIENTAS - Esquina superior DERECHA
-            // ═══════════════════════════════════════════════════════════════
-            Row(
-                modifier = Modifier
-                    .align(Alignment.TopEnd)
-                    .padding(end = 16.dp, top = 16.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                // Pluma
-                DrawingToolButtonIndividual(
-                    icon = Icons.Outlined.Edit,
-                    selected = selectedTool == DrawingTool.PEN,
-                    onClick = { onToolChange(DrawingTool.PEN) }
-                )
                 
-                // Marcador
-                DrawingToolButtonIndividual(
-                    icon = Icons.Outlined.Brush,
-                    selected = selectedTool == DrawingTool.MARKER,
-                    onClick = { onToolChange(DrawingTool.MARKER) }
-                )
-                
-                // Neón
-                DrawingToolButtonIndividual(
-                    icon = Icons.Outlined.AutoAwesome,
-                    selected = selectedTool == DrawingTool.NEON,
-                    onClick = { onToolChange(DrawingTool.NEON) }
-                )
-                
-                // Borrador
-                DrawingToolButtonIndividual(
-                    icon = Icons.Outlined.Delete,
-                    selected = selectedTool == DrawingTool.ERASER,
-                    onClick = { onToolChange(DrawingTool.ERASER) }
-                )
-                
-                // Botón Aplicar (Tick) - Mismo color que los demás
-                Box(
+                // ═══════════════════════════════════════════════════════════════
+                // HERRAMIENTAS - Esquina superior DERECHA
+                // ═══════════════════════════════════════════════════════════════
+                Row(
                     modifier = Modifier
-                        .size(40.dp)
-                        .clip(CircleShape)
-                        .background(Color.Black.copy(alpha = 0.5f))
-                        .clickable { onApply() },
-                    contentAlignment = Alignment.Center
+                        .align(Alignment.TopEnd)
+                        .padding(end = 16.dp, top = 16.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Icon(
-                        imageVector = Icons.Filled.Check,
-                        contentDescription = "Aplicar",
-                        tint = Color.White,
-                        modifier = Modifier.size(22.dp)
+                    // Pluma
+                    DrawingToolButtonIndividual(
+                        icon = Icons.Outlined.Edit,
+                        selected = selectedTool == DrawingTool.PEN,
+                        onClick = { onToolChange(DrawingTool.PEN) }
                     )
+                    
+                    // Marcador
+                    DrawingToolButtonIndividual(
+                        icon = Icons.Outlined.Brush,
+                        selected = selectedTool == DrawingTool.MARKER,
+                        onClick = { onToolChange(DrawingTool.MARKER) }
+                    )
+                    
+                    // Neón
+                    DrawingToolButtonIndividual(
+                        icon = Icons.Outlined.AutoAwesome,
+                        selected = selectedTool == DrawingTool.NEON,
+                        onClick = { onToolChange(DrawingTool.NEON) }
+                    )
+                    
+                    // Borrador
+                    DrawingToolButtonIndividual(
+                        icon = Icons.Outlined.Delete,
+                        selected = selectedTool == DrawingTool.ERASER,
+                        onClick = { onToolChange(DrawingTool.ERASER) }
+                    )
+                    
+                    // Botón Aplicar (Tick) - Mismo color que los demás
+                    Box(
+                        modifier = Modifier
+                            .size(40.dp)
+                            .clip(CircleShape)
+                            .background(Color.Black.copy(alpha = 0.5f))
+                            .clickable { onApply() },
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.Check,
+                            contentDescription = "Aplicar",
+                            tint = Color.White,
+                            modifier = Modifier.size(22.dp)
+                        )
+                    }
                 }
             }
         }

@@ -124,39 +124,37 @@ fun ProfileSettingsModal(
                     .statusBarsPadding()
                     .navigationBarsPadding()
             ) {
-                // Header con Botón X
+                // Header con ArrowBack a la izquierda
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(16.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
+                        .padding(horizontal = 8.dp, vertical = 12.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
+                    IconButton(
+                        onClick = onDismiss,
+                        modifier = Modifier.size(40.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.ArrowBack,
+                            contentDescription = "Volver",
+                            tint = TextPrimary
+                        )
+                    }
+                    
+                    Spacer(modifier = Modifier.width(4.dp))
+                    
                     Column {
                         Text(
                             text = "Configuración",
-                            fontSize = 22.sp,
+                            fontSize = 20.sp,
                             fontWeight = FontWeight.Bold,
                             color = TextPrimary
                         )
                         Text(
                             text = "Administra tu cuenta y preferencias",
-                            fontSize = 13.sp,
+                            fontSize = 12.sp,
                             color = TextSecondary
-                        )
-                    }
-                    
-                    IconButton(
-                        onClick = onDismiss,
-                        modifier = Modifier
-                            .size(40.dp)
-                            .clip(CircleShape)
-                            .background(Surface)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Close,
-                            contentDescription = "Cerrar",
-                            tint = TextPrimary
                         )
                     }
                 }

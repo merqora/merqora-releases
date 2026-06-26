@@ -282,43 +282,40 @@ fun PublicationScreen(
                         },
                         onPublishClick = { productTitle, productPrice, productCondition, productCategory, allowOffers, freeShipping ->
                             isPublishing = true
-                            scope.launch {
-                                kotlinx.coroutines.delay(1500)
-                                scope.launch {
-                                    try {
-                                        // Usar el bitmap editado si existe, sino cargar de URI
-                                        val bitmapsToUpload = if (editedBitmap != null && selectedImageUris.size <= 1) {
-                                            // Si hay bitmap editado y es una sola imagen, usar el editado
-                                            listOf(editedBitmap!!)
-                                        } else if (selectedImageUris.isNotEmpty()) {
-                                            selectedImageUris.mapNotNull { uri ->
-                                                loadBitmapFromUri(context, uri)
-                                            }
-                                        } else {
-                                            // Fallback: usar el bitmap único si no hay múltiples
-                                            listOfNotNull(editedBitmap ?: selectedBitmap)
+                            // Use MainScope so it survives composition disposal
+                            kotlinx.coroutines.MainScope().launch {
+                                try {
+                                    // Usar el bitmap editado si existe, sino cargar de URI
+                                    val bitmapsToUpload = if (editedBitmap != null && selectedImageUris.size <= 1) {
+                                        listOf(editedBitmap!!)
+                                    } else if (selectedImageUris.isNotEmpty()) {
+                                        selectedImageUris.mapNotNull { uri ->
+                                            loadBitmapFromUri(context, uri)
                                         }
-                                        
-                                        if (bitmapsToUpload.isNotEmpty()) {
-                                            val priceValue = productPrice.toDoubleOrNull()
-                                            PostRepository.createPost(
-                                                bitmaps = bitmapsToUpload,
-                                                caption = caption.ifEmpty { null },
-                                                title = productTitle.ifEmpty { null },
-                                                price = priceValue,
-                                                condition = productCondition.ifEmpty { null },
-                                                category = productCategory.ifEmpty { null },
-                                                allowOffers = allowOffers,
-                                                freeShipping = freeShipping
-                                            )
-                                            Log.d("PublicationScreen", "Post creado con ${bitmapsToUpload.size} imágenes, precio=$priceValue, titulo=$productTitle")
-                                        }
-                                    } catch (e: Exception) {
-                                        Log.e("PublicationScreen", "Error: ${e.message}", e)
+                                    } else {
+                                        listOfNotNull(editedBitmap ?: selectedBitmap)
                                     }
+                                    
+                                    if (bitmapsToUpload.isNotEmpty()) {
+                                        val priceValue = productPrice.toDoubleOrNull()
+                                        PostRepository.createPost(
+                                            bitmaps = bitmapsToUpload,
+                                            caption = caption.ifEmpty { null },
+                                            title = productTitle.ifEmpty { null },
+                                            price = priceValue,
+                                            condition = productCondition.ifEmpty { null },
+                                            category = productCategory.ifEmpty { null },
+                                            allowOffers = allowOffers,
+                                            freeShipping = freeShipping
+                                        )
+                                        Log.d("PublicationScreen", "Post creado con ${bitmapsToUpload.size} imágenes, precio=$priceValue, titulo=$productTitle")
+                                    }
+                                } catch (e: Exception) {
+                                    Log.e("PublicationScreen", "Error: ${e.message}", e)
                                 }
-                                onNavigateToHome()
                             }
+                            // Navigate home immediately - upload continues in background
+                            onNavigateToHome()
                         }
                     )
                 }

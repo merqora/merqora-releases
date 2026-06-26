@@ -45,13 +45,16 @@ import com.rendly.app.ui.components.ReportModal
 import com.rendly.app.ui.components.HiddenPostPlaceholder
 import com.rendly.app.ui.components.PostQrCodeModal
 import com.rendly.app.ui.components.FeaturedPostsSection
+import com.rendly.app.ui.components.VideoPostItem
+import com.rendly.app.ui.components.SuggestedAccountsCarousel
+// RendViewerScreen removed - navigation goes to videos section directly
 import com.rendly.app.data.repository.CartRepository
 import com.rendly.app.util.FCMHelper
 import com.rendly.app.data.repository.ChatRepository
 import com.rendly.app.data.repository.ExploreRepository
 import com.rendly.app.ui.screens.profile.UserProfileScreen
 import com.rendly.app.ui.screens.search.SearchResultsScreen
-import com.rendly.app.ui.screens.rends.RendScreen
+// RendScreen removed from HomeScreen - rendered in MainScreen's videos route
 import com.rendly.app.data.model.Post
 import com.rendly.app.data.model.Usuario
 import com.rendly.app.data.model.StoryUploadState
@@ -128,6 +131,13 @@ fun HomeContent(
     // Avatar desde ProfileRepository (más confiable)
     val profileFromRepo by ProfileRepository.currentProfile.collectAsState()
     val userAvatarUrl = profileFromRepo?.avatarUrl ?: currentUser?.avatarUrl
+    
+    // Asegurar que el perfil se carga si no existe para que se vean los avatares
+    LaunchedEffect(currentUser) {
+        if (profileFromRepo == null) {
+            ProfileRepository.loadCurrentProfile()
+        }
+    }
     
     // ═══════════════════════════════════════════════════════════════════
     // COLD START OPTIMIZATION V2: Carga ultra-diferida post-first-frame
@@ -295,14 +305,17 @@ fun HomeContent(
     var showUserProfile by remember { mutableStateOf(false) }
     var selectedUserId by remember { mutableStateOf<String?>(null) }
     
-    // RendScreen state - para abrir RendScreen al pulsar un rend
-    var showRendScreen by remember { mutableStateOf(false) }
-    var selectedRendId by remember { mutableStateOf<String?>(null) }
+    // Rend navigation - navigate to videos section with specific rend ID
+    // (handled via onNavNavigate callback to MainScreen)
     
     // PostOptionsModal state
     var showPostOptionsModal by remember { mutableStateOf(false) }
     var selectedPostForOptions by remember { mutableStateOf<Post?>(null) }
     var isSelectedPostOwn by remember { mutableStateOf(false) }
+    
+    // EditPostModal state
+    var showEditPostModal by remember { mutableStateOf(false) }
+    var editingPost by remember { mutableStateOf<Post?>(null) }
     
     // ReportModal state
     var showReportModal by remember { mutableStateOf(false) }
@@ -357,9 +370,36 @@ fun HomeContent(
     
     // OPTIMIZADO CRÍTICO: Memoizar listas de posts para evitar recreación en cada frame
     // NO filtrar posts ocultos de las listas - el renderer maneja placeholder/hidden inline
-    // Esto evita duplicate keys entre firstThreePosts y allRemainingPosts
-    val firstThreePosts = remember(posts) { posts.take(3) }
-    val remainingPosts = remember(posts) { if (posts.size >= 3) posts.drop(3) else posts }
+    // IMPORTANTE: distinctBy evita crash por duplicate keys en LazyColumn
+    val firstThreePosts = remember(posts) { posts.distinctBy { it.id }.take(3) }
+    val remainingPosts = remember(posts) { 
+        val uniquePosts = posts.distinctBy { it.id }
+        if (uniquePosts.size > 3) uniquePosts.drop(3) else emptyList() 
+    }
+    
+    // ═══════════════════════════════════════════════════════════════
+    // FEED ESTABLE: Pre-computar layout interleaved UNA SOLA VEZ
+    // Evita recomputar durante scroll y previene crashes por items shifting
+    // Se actualiza SOLO cuando posts o rends cambian (no en cada frame)
+    // ═══════════════════════════════════════════════════════════════
+    data class FeedEntry(val type: String, val id: String, val postIndex: Int = -1, val rendIndex: Int = -1)
+    
+    val stableFeed = remember(remainingPosts) {
+        val feed = mutableListOf<FeedEntry>()
+        val maxRendSlots = 5
+        var rendSlotIdx = 0
+        
+        remainingPosts.forEachIndexed { index, post ->
+            // Pre-allocar slots de rend en posiciones fijas (3, 7, 11, 15, 19)
+            // Estructura ESTABLE: no depende de rendsData para evitar shifts/crashes
+            if (index > 0 && index % 4 == 3 && rendSlotIdx < maxRendSlots) {
+                feed.add(FeedEntry("rend", "feed_rend_slot_$rendSlotIdx", rendIndex = rendSlotIdx))
+                rendSlotIdx++
+            }
+            feed.add(FeedEntry("post", post.id, postIndex = index))
+        }
+        feed.toList() // Inmutable - estructura fija desde el inicio
+    }
     
     // Post upload state
     val postUploadState by PostRepository.uploadState.collectAsState()
@@ -672,17 +712,16 @@ fun HomeContent(
                     
                     // Carrusel de Rends - aparece después de 3 posts
                     item(key = "rends_carousel", contentType = "rends_carousel") {
-                        // Callbacks para abrir RendScreen con el rend pulsado
+                        // Callbacks para navegar a la sección de videos con el rend pulsado
                         val onRendClickCallback = remember { 
                             { rend: com.rendly.app.data.model.Rend -> 
-                                selectedRendId = rend.id
-                                showRendScreen = true
+                                com.rendly.app.data.repository.RendRepository.setPendingRendId(rend.id)
+                                onNavNavigate("videos")
                             } 
                         }
                         val onViewAllCallback = remember { 
                             { 
-                                selectedRendId = null
-                                showRendScreen = true
+                                onNavNavigate("videos")
                             } 
                         }
                         RendsCarousel(
@@ -690,6 +729,16 @@ fun HomeContent(
                             isLoading = rendsLoading,
                             onRendClick = onRendClickCallback,
                             onViewAll = onViewAllCallback
+                        )
+                    }
+                    
+                    // Suggested Accounts Carousel - "Personas que quizás conozcas"
+                    item(key = "suggested_accounts", contentType = "suggested_accounts") {
+                        SuggestedAccountsCarousel(
+                            onProfileClick = { userId ->
+                                selectedUserId = userId
+                                showUserProfile = true
+                            }
                         )
                     }
                     
@@ -713,119 +762,141 @@ fun HomeContent(
                     }
                 }
                 
-                // Posts restantes - Incluir posts ocultos para mostrar placeholder en su lugar
-                // Nota: La lista se calcula directamente ya que remember no puede usarse en LazyListScope
-                val allRemainingPosts = if (posts.size >= 3) posts.drop(3) else posts
+                // ═══════════════════════════════════════════════════════════
+                // FEED ESTABLE: Usa lista pre-computada (no recomputa en scroll)
+                // Previene crashes por items shifting durante recomposición
+                // ═══════════════════════════════════════════════════════════
                 items(
-                    items = allRemainingPosts,
+                    items = stableFeed,
                     key = { it.id },
-                    contentType = { 
+                    contentType = { entry ->
                         when {
-                            it.id in fullyHiddenPostIds -> "fully_hidden"
-                            it.id in hiddenPostIds -> "hidden" 
-                            else -> "post" 
+                            entry.type == "rend" -> "video_rend"
+                            entry.id in fullyHiddenPostIds -> "fully_hidden"
+                            entry.id in hiddenPostIds -> "hidden"
+                            else -> "post"
                         }
                     }
-                ) { post ->
-                    // Si el post está completamente oculto (ya eligió una opción), no mostrar nada
-                    if (post.id in fullyHiddenPostIds) {
-                        // Espacio mínimo para evitar saltos - el post desapareció
-                        Spacer(modifier = Modifier.height(1.dp))
-                        return@items
-                    }
-                    // Si el post está oculto pero aún no eligió opción, mostrar placeholder
-                    if (post.id in hiddenPostIds) {
-                        HiddenPostPlaceholder(
-                            username = post.username,
-                            onReport = {
-                                reportPostId = post.id
-                                reportUsername = post.username
-                                showReportModal = true
-                                // Marcar como completamente oculto después de elegir opción
-                                fullyHiddenPostIds = fullyHiddenPostIds + post.id
-                                postWithHideOptions = null
-                            },
-                            onMuteUser = {
-                                scope.launch {
-                                    try {
-                                        val currentUserId = com.rendly.app.data.remote.SupabaseClient.auth.currentUserOrNull()?.id
-                                        if (currentUserId != null) {
-                                            com.rendly.app.data.remote.SupabaseClient.database
-                                                .from("muted_users")
-                                                .insert(mapOf(
-                                                    "muter_id" to currentUserId,
-                                                    "muted_id" to post.userId
-                                                ))
-                                            android.widget.Toast.makeText(context, "@${post.username} silenciado", android.widget.Toast.LENGTH_SHORT).show()
-                                        }
-                                    } catch (e: Exception) {
-                                        android.util.Log.e("HomeScreen", "Error al silenciar: ${e.message}")
-                                    }
-                                }
-                                // Marcar como completamente oculto
-                                fullyHiddenPostIds = fullyHiddenPostIds + post.id
-                                postWithHideOptions = null
-                            },
-                            onUnfollow = {
-                                scope.launch {
-                                    try {
-                                        val currentUserId = com.rendly.app.data.remote.SupabaseClient.auth.currentUserOrNull()?.id
-                                        if (currentUserId != null) {
-                                            com.rendly.app.data.remote.SupabaseClient.database
-                                                .from("followers")
-                                                .delete {
-                                                    filter {
-                                                        eq("follower_id", currentUserId)
-                                                        eq("followed_id", post.userId)
-                                                    }
-                                                }
-                                            android.widget.Toast.makeText(context, "Dejaste de seguir a @${post.username}", android.widget.Toast.LENGTH_SHORT).show()
-                                        }
-                                    } catch (e: Exception) {
-                                        android.util.Log.e("HomeScreen", "Error al dejar de seguir: ${e.message}")
-                                    }
-                                }
-                                // Marcar como completamente oculto
-                                fullyHiddenPostIds = fullyHiddenPostIds + post.id
-                                postWithHideOptions = null
-                            },
-                            onCancel = {
-                                // Deshacer - quitar de posts ocultos y mostrar post nuevamente
-                                hiddenPostIds = hiddenPostIds - post.id
-                                scope.launch {
-                                    try {
-                                        val currentUserId = com.rendly.app.data.remote.SupabaseClient.auth.currentUserOrNull()?.id
-                                        if (currentUserId != null) {
-                                            com.rendly.app.data.remote.SupabaseClient.database
-                                                .from("hidden_posts")
-                                                .delete {
-                                                    filter {
-                                                        eq("user_id", currentUserId)
-                                                        eq("post_id", post.id)
-                                                    }
-                                                }
-                                        }
-                                    } catch (e: Exception) {
-                                        android.util.Log.e("HomeScreen", "Error al deshacer: ${e.message}")
-                                    }
-                                }
-                                postWithHideOptions = null
-                            }
-                        )
+                ) { entry ->
+                    if (entry.type == "rend") {
+                        // Render Rend video - slot siempre existe, contenido se llena cuando rendsData carga
+                        val rend = rendsData.getOrNull(entry.rendIndex)
+                        if (rend != null) {
+                            StableVideoPostItem(
+                                rend = rend,
+                                currentUserId = currentUser?.id,
+                                onSelectUserId = { selectedUserId = it; showUserProfile = true },
+                                onNavigateToProfile = onNavigateToProfile,
+                                onRendClick = {
+                                    com.rendly.app.data.repository.RendRepository.setPendingRendId(rend.id)
+                                    onNavNavigate("videos")
+                                },
+                                onSelectForConsult = { selectedPostForConsult = it; showConsultModal = true },
+                                onSelectForComments = { selectedPostForComments = it; showCommentsSheet = true },
+                                onSelectForForward = { selectedPostForForward = it; showForwardModal = true },
+                                onSelectForOptions = { p, isOwn -> selectedPostForOptions = p; isSelectedPostOwn = isOwn; showPostOptionsModal = true },
+                                isVisible = true
+                            )
+                        } else {
+                            // Slot pre-allocado pero rend aún no cargado - colapsar sin espacio
+                            Spacer(modifier = Modifier.height(0.dp))
+                        }
                     } else {
-                        // Post normal visible
-                        StablePostItem(
-                            post = post,
-                            currentUserId = currentUser?.id,
-                            viewModel = viewModel,
-                            onSelectForComments = { selectedPostForComments = it; showCommentsSheet = true },
-                            onSelectForProduct = { selectedPostForProduct = it; showProductPage = true },
-                            onSelectForConsult = { selectedPostForConsult = it; showConsultModal = true },
-                            onSelectForForward = { selectedPostForForward = it; showForwardModal = true },
-                            onSelectUserId = { selectedUserId = it; showUserProfile = true },
-                            onNavigateToProfile = onNavigateToProfile,
-                            onSelectForOptions = { p, isOwn -> selectedPostForOptions = p; isSelectedPostOwn = isOwn; showPostOptionsModal = true }
-                        )
+                        // Render Post
+                        val post = remainingPosts.getOrNull(entry.postIndex) ?: return@items
+                        
+                        if (post.id in fullyHiddenPostIds) {
+                            Spacer(modifier = Modifier.height(1.dp))
+                            return@items
+                        }
+                        if (post.id in hiddenPostIds) {
+                            HiddenPostPlaceholder(
+                                username = post.username,
+                                onReport = {
+                                    reportPostId = post.id
+                                    reportUsername = post.username
+                                    showReportModal = true
+                                    fullyHiddenPostIds = fullyHiddenPostIds + post.id
+                                    postWithHideOptions = null
+                                },
+                                onMuteUser = {
+                                    scope.launch {
+                                        try {
+                                            val currentUserId = com.rendly.app.data.remote.SupabaseClient.auth.currentUserOrNull()?.id
+                                            if (currentUserId != null) {
+                                                com.rendly.app.data.remote.SupabaseClient.database
+                                                    .from("muted_users")
+                                                    .insert(mapOf(
+                                                        "muter_id" to currentUserId,
+                                                        "muted_id" to post.userId
+                                                    ))
+                                                android.widget.Toast.makeText(context, "@${post.username} silenciado", android.widget.Toast.LENGTH_SHORT).show()
+                                            }
+                                        } catch (e: Exception) {
+                                            android.util.Log.e("HomeScreen", "Error al silenciar: ${e.message}")
+                                        }
+                                    }
+                                    fullyHiddenPostIds = fullyHiddenPostIds + post.id
+                                    postWithHideOptions = null
+                                },
+                                onUnfollow = {
+                                    scope.launch {
+                                        try {
+                                            val currentUserId = com.rendly.app.data.remote.SupabaseClient.auth.currentUserOrNull()?.id
+                                            if (currentUserId != null) {
+                                                com.rendly.app.data.remote.SupabaseClient.database
+                                                    .from("followers")
+                                                    .delete {
+                                                        filter {
+                                                            eq("follower_id", currentUserId)
+                                                            eq("followed_id", post.userId)
+                                                        }
+                                                    }
+                                                android.widget.Toast.makeText(context, "Dejaste de seguir a @${post.username}", android.widget.Toast.LENGTH_SHORT).show()
+                                            }
+                                        } catch (e: Exception) {
+                                            android.util.Log.e("HomeScreen", "Error al dejar de seguir: ${e.message}")
+                                        }
+                                    }
+                                    fullyHiddenPostIds = fullyHiddenPostIds + post.id
+                                    postWithHideOptions = null
+                                },
+                                onCancel = {
+                                    hiddenPostIds = hiddenPostIds - post.id
+                                    scope.launch {
+                                        try {
+                                            val currentUserId = com.rendly.app.data.remote.SupabaseClient.auth.currentUserOrNull()?.id
+                                            if (currentUserId != null) {
+                                                com.rendly.app.data.remote.SupabaseClient.database
+                                                    .from("hidden_posts")
+                                                    .delete {
+                                                        filter {
+                                                            eq("user_id", currentUserId)
+                                                            eq("post_id", post.id)
+                                                        }
+                                                    }
+                                            }
+                                        } catch (e: Exception) {
+                                            android.util.Log.e("HomeScreen", "Error al deshacer: ${e.message}")
+                                        }
+                                    }
+                                    postWithHideOptions = null
+                                }
+                            )
+                        } else {
+                            StablePostItem(
+                                post = post,
+                                currentUserId = currentUser?.id,
+                                viewModel = viewModel,
+                                onSelectForComments = { selectedPostForComments = it; showCommentsSheet = true },
+                                onSelectForProduct = { selectedPostForProduct = it; showProductPage = true },
+                                onSelectForConsult = { selectedPostForConsult = it; showConsultModal = true },
+                                onSelectForForward = { selectedPostForForward = it; showForwardModal = true },
+                                onSelectUserId = { selectedUserId = it; showUserProfile = true },
+                                onNavigateToProfile = onNavigateToProfile,
+                                onSelectForOptions = { p, isOwn -> selectedPostForOptions = p; isSelectedPostOwn = isOwn; showPostOptionsModal = true }
+                            )
+                        }
                     }
                 }
                 
@@ -938,12 +1009,13 @@ fun HomeContent(
         
         // NavBar embebido - ANTES de todos los modales para que queden SOBRE él
         if (showNavBar) {
-            BottomNavBar(
-                currentRoute = currentNavRoute,
-                onNavigate = onNavNavigate,
-                onHomeReclick = onNavHomeReclick,
-                modifier = Modifier.align(Alignment.BottomCenter)
-            )
+                BottomNavBar(
+                    currentRoute = currentNavRoute,
+                    onNavigate = onNavNavigate,
+                    onHomeReclick = onNavHomeReclick,
+                    userAvatarUrl = userAvatarUrl, // Pasar el avatar calculado
+                    modifier = Modifier.align(Alignment.BottomCenter)
+                )
         }
         
         // Category Drawer - DESPUÉS del NavBar para overlay correcto (queda SOBRE la navbar)
@@ -1073,12 +1145,16 @@ fun HomeContent(
                             val conversationId = ChatRepository.getOrCreateConversation(post.userId)
                             if (conversationId != null) {
                                 // Formato especial para consultas: [CONSULT_POST]JSON
-                                val imagesArray = org.json.JSONArray(post.producto.imagenUrl)
+                                val consultImagesArray = org.json.JSONArray(post.producto.imagenUrl)
                                 val consultData = org.json.JSONObject().apply {
                                     put("postId", post.id)
                                     put("productTitle", post.producto.titulo)
                                     put("productPrice", post.producto.precio)
                                     put("productImage", post.producto.imagenUrl.firstOrNull() ?: "")
+                                    put("images", consultImagesArray)
+                                    put("ownerUsername", post.username)
+                                    put("ownerAvatar", post.userAvatar)
+                                    put("isOwnerVerified", post.isUserVerified)
                                     put("message", consultMessage)
                                     put("type", if (consultMessage.contains("💰 OFERTA")) "offer" else "inquiry")
                                 }
@@ -1127,6 +1203,7 @@ fun HomeContent(
                             put("price", post.producto.precio)
                             put("ownerUsername", post.username)
                             put("ownerAvatar", post.userAvatar)
+                            put("isOwnerVerified", post.isUserVerified)
                             put("customMessage", customMessage.trim())
                         }
                         val sharedPostMessage = "[SHARED_POST]${sharedPostData}"
@@ -1333,52 +1410,6 @@ fun HomeContent(
             }
         }
         
-        // RendScreen - overlay completo para reproducir Rends
-        if (showRendScreen) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(androidx.compose.ui.graphics.Color.Black)
-            ) {
-                RendScreen(
-                    initialRendId = selectedRendId,
-                    isScreenVisible = true,
-                    showNavBar = false,
-                    onNavigateToProfile = { userId ->
-                        showRendScreen = false
-                        selectedRendId = null
-                        selectedUserId = userId
-                        showUserProfile = true
-                    }
-                )
-                
-                // Botón de cerrar
-                Box(
-                    modifier = Modifier
-                        .align(Alignment.TopStart)
-                        .padding(16.dp)
-                        .systemBarsPadding()
-                        .size(40.dp)
-                        .background(
-                            androidx.compose.ui.graphics.Color.Black.copy(alpha = 0.5f),
-                            CircleShape
-                        )
-                        .clickable {
-                            showRendScreen = false
-                            selectedRendId = null
-                        },
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = "✕",
-                        color = androidx.compose.ui.graphics.Color.White,
-                        fontSize = 18.sp,
-                        fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
-                    )
-                }
-            }
-        }
-        
         // Product Page - AL FINAL para que esté por encima de todos los overlays
         val selectedProductId = selectedPostForProduct?.id
         val relatedPosts = remember(posts, selectedProductId) {
@@ -1405,13 +1436,27 @@ fun HomeContent(
                 // Este callback es solo para notificaciones/feedback adicional
             },
             onContactSeller = { post ->
-                // TODO: Implementar contactar vendedor
+                // Abrir chat con el vendedor
+                scope.launch {
+                    try {
+                        val conversationId = ChatRepository.getOrCreateConversation(post.userId)
+                        if (conversationId != null) {
+                            val users = com.rendly.app.data.cache.network.SupabaseDataSource.fetchUsers(listOf(post.userId))
+                            val seller = users.firstOrNull()
+                            if (seller != null) {
+                                onOpenChatFromProfile(seller)
+                            }
+                        }
+                    } catch (e: Exception) {
+                        android.util.Log.e("HomeScreen", "Error contactando vendedor: ${e.message}")
+                    }
+                }
             },
             onShare = { post ->
                 viewModel.incrementShareCount(post.id)
             },
             onFavorite = { post ->
-                // TODO: Implementar favorito
+                viewModel.toggleSave(post.id)
             },
             onViewAllReviews = { post ->
                 selectedPostForComments = post
@@ -1434,12 +1479,30 @@ fun HomeContent(
                 selectedPostForOptions = null
             },
             onEdit = {
+                selectedPostForOptions?.let { post ->
+                    editingPost = post
+                    showEditPostModal = true
+                }
                 showPostOptionsModal = false
-                // TODO: Abrir EditPostModal
             },
             onDelete = {
+                selectedPostForOptions?.let { post ->
+                    scope.launch {
+                        try {
+                            com.rendly.app.data.remote.SupabaseClient.database
+                                .from("posts")
+                                .delete {
+                                    filter { eq("id", post.id) }
+                                }
+                            viewModel.removePost(post.id)
+                            android.widget.Toast.makeText(context, "Publicación eliminada", android.widget.Toast.LENGTH_SHORT).show()
+                        } catch (e: Exception) {
+                            android.util.Log.e("HomeScreen", "Error eliminando post: ${e.message}")
+                            android.widget.Toast.makeText(context, "Error al eliminar", android.widget.Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
                 showPostOptionsModal = false
-                // TODO: Eliminar post
             },
             onShare = {
                 selectedPostForOptions?.let {
@@ -1536,6 +1599,62 @@ fun HomeContent(
                     }
                 }
                 showPostOptionsModal = false
+            }
+        )
+        
+        // EditPostModal
+        com.rendly.app.ui.components.EditPostModal(
+            isVisible = showEditPostModal,
+            post = editingPost,
+            onDismiss = {
+                showEditPostModal = false
+                editingPost = null
+            },
+            onSave = { editData ->
+                editingPost?.let { post ->
+                    scope.launch {
+                        try {
+                            com.rendly.app.data.remote.SupabaseClient.database
+                                .from("posts")
+                                .update({
+                                    set("title", editData.title)
+                                    set("description", editData.description)
+                                    set("price", editData.price)
+                                    set("previous_price", editData.originalPrice)
+                                    set("category", editData.category)
+                                    set("condition", editData.condition)
+                                }) {
+                                    filter { eq("id", post.id) }
+                                }
+                            viewModel.refreshPosts()
+                            android.widget.Toast.makeText(context, "Publicación actualizada", android.widget.Toast.LENGTH_SHORT).show()
+                        } catch (e: Exception) {
+                            android.util.Log.e("HomeScreen", "Error actualizando post: ${e.message}")
+                            android.widget.Toast.makeText(context, "Error al actualizar", android.widget.Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
+                showEditPostModal = false
+                editingPost = null
+            },
+            onDelete = {
+                editingPost?.let { post ->
+                    scope.launch {
+                        try {
+                            com.rendly.app.data.remote.SupabaseClient.database
+                                .from("posts")
+                                .delete {
+                                    filter { eq("id", post.id) }
+                                }
+                            viewModel.removePost(post.id)
+                            android.widget.Toast.makeText(context, "Publicación eliminada", android.widget.Toast.LENGTH_SHORT).show()
+                        } catch (e: Exception) {
+                            android.util.Log.e("HomeScreen", "Error eliminando post: ${e.message}")
+                        }
+                    }
+                }
+                showEditPostModal = false
+                editingPost = null
             }
         )
     }
@@ -1651,6 +1770,106 @@ private fun StablePostItem(
         onProfileClick = onProfile,
         onOptionsClick = onOptions,
         onShareClick = onShare
+    )
+}
+
+/**
+ * Stable wrapper for VideoPostItem (Rend) - same pattern as StablePostItem
+ */
+@Composable
+private fun StableVideoPostItem(
+    rend: com.rendly.app.data.model.Rend,
+    currentUserId: String?,
+    onSelectUserId: (String) -> Unit,
+    onNavigateToProfile: () -> Unit,
+    onRendClick: () -> Unit,
+    onSelectForConsult: (Post) -> Unit = {},
+    onSelectForComments: (Post) -> Unit = {},
+    onSelectForForward: (Post) -> Unit = {},
+    onSelectForOptions: (Post, Boolean) -> Unit = { _, _ -> },
+    isVisible: Boolean = false
+) {
+    val rendId = rend.id
+    val rendUserId = rend.userId
+    
+    val currentRend by rememberUpdatedState(rend)
+    
+    // Convert Rend to Post for reuse with existing modals
+    val rendAsPost = remember(rendId) {
+        Post(
+            id = rendId,
+            userId = rend.userId,
+            username = rend.username,
+            userAvatar = rend.userAvatar,
+            userStoreName = rend.userStoreName,
+            title = rend.productTitle ?: rend.title,
+            description = rend.description,
+            images = listOfNotNull(rend.productImage, rend.thumbnailUrl).ifEmpty { listOf("") },
+            price = rend.productPrice ?: 0.0,
+            condition = "Nuevo",
+            category = "",
+            likesCount = rend.likesCount,
+            reviewsCount = rend.reviewsCount,
+            createdAt = rend.createdAt,
+            isLiked = rend.isLiked,
+            isSaved = rend.isSaved,
+            productId = rend.productId
+        )
+    }
+    
+    // Check if user is verified
+    var isUserVerified by remember { mutableStateOf(false) }
+    LaunchedEffect(rend.userId) {
+        isUserVerified = com.rendly.app.data.repository.VerificationRepository.isUserVerified(rend.userId)
+    }
+    
+    val onLike = remember(rendId) {
+        {
+            kotlinx.coroutines.MainScope().launch {
+                com.rendly.app.data.repository.RendRepository.toggleLike(
+                    rendId,
+                    currentRend.likesCount,
+                    currentRend.isLiked
+                )
+            }
+            Unit
+        }
+    }
+    val onSave = remember(rendId) {
+        {
+            kotlinx.coroutines.MainScope().launch {
+                com.rendly.app.data.repository.RendRepository.toggleSave(
+                    rendId,
+                    currentRend.savesCount,
+                    currentRend.isSaved
+                )
+            }
+            Unit
+        }
+    }
+    
+    val onProfile = remember(rendId, rendUserId) {
+        {
+            if (rendUserId == currentUserId) {
+                onNavigateToProfile()
+            } else {
+                onSelectUserId(rendUserId)
+            }
+        }
+    }
+    
+    VideoPostItem(
+        rend = rend,
+        onLikeClick = onLike,
+        onSaveClick = onSave,
+        onRendClick = onRendClick,
+        onProfileClick = onProfile,
+        onShareClick = { onSelectForForward(rendAsPost) },
+        onConsultClick = { onSelectForConsult(rendAsPost) },
+        onCommentClick = { onSelectForComments(rendAsPost) },
+        onOptionsClick = { onSelectForOptions(rendAsPost, rendUserId == currentUserId) },
+        isUserVerified = isUserVerified,
+        isVisible = isVisible
     )
 }
 

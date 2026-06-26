@@ -14,6 +14,7 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import kotlinx.coroutines.launch
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.onFocusChanged
@@ -25,6 +26,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.rendly.app.ui.theme.*
+import kotlinx.coroutines.delay
 
 @OptIn(androidx.compose.ui.ExperimentalComposeUiApi::class)
 @Composable
@@ -38,6 +40,8 @@ fun SearchBar(
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
     var isFocused by remember { mutableStateOf(false) }
+    var isSearching by remember { mutableStateOf(false) }
+    val scope = rememberCoroutineScope()
     
     Surface(
         modifier = modifier
@@ -51,7 +55,8 @@ fun SearchBar(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 14.dp, vertical = 12.dp),
+                .height(44.dp)
+                .padding(horizontal = 14.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
@@ -89,10 +94,15 @@ fun SearchBar(
                     ),
                     keyboardActions = KeyboardActions(
                         onSearch = {
-                            if (query.isNotBlank()) {
+                            if (query.isNotBlank() && !isSearching) {
                                 keyboardController?.hide()
                                 isFocused = false
-                                onSearch?.invoke(query.trim())
+                                isSearching = true
+                                scope.launch {
+                                    delay(1500L)
+                                    isSearching = false
+                                    onSearch?.invoke(query.trim())
+                                }
                             }
                         }
                     ),
@@ -104,25 +114,40 @@ fun SearchBar(
                 )
             }
             
-            // Botón buscar solo icono (sin fondo verde, más grande)
+            // Botón buscar (sin padding extra, spinner de carga breve)
             if (query.isNotEmpty()) {
                 Spacer(modifier = Modifier.width(8.dp))
-                IconButton(
-                    onClick = { 
-                        if (query.isNotBlank()) {
-                            keyboardController?.hide()
-                            isFocused = false
-                            onSearch?.invoke(query.trim())
-                        }
-                    },
-                    modifier = Modifier.size(28.dp)
+                Box(
+                    modifier = Modifier
+                        .size(20.dp)
+                        .clickable(enabled = !isSearching) {
+                            if (query.isNotBlank() && !isSearching) {
+                                keyboardController?.hide()
+                                isFocused = false
+                                isSearching = true
+                                scope.launch {
+                                    delay(1500L) // 1.5 segundos de spinner
+                                    isSearching = false
+                                    onSearch?.invoke(query.trim())
+                                }
+                            }
+                        },
+                    contentAlignment = Alignment.Center
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.Search,
-                        contentDescription = "Buscar",
-                        tint = PrimaryPurple,
-                        modifier = Modifier.size(22.dp)
-                    )
+                    if (isSearching) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(16.dp),
+                            color = PrimaryPurple,
+                            strokeWidth = 2.dp
+                        )
+                    } else {
+                        Icon(
+                            imageVector = Icons.Default.Search,
+                            contentDescription = "Buscar",
+                            tint = PrimaryPurple,
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
                 }
             }
         }

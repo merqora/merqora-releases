@@ -25,6 +25,8 @@ import java.util.Locale
 import java.util.concurrent.Executor
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -32,10 +34,13 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.outlined.*
@@ -51,6 +56,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -65,6 +71,7 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import com.rendly.app.data.repository.RendRepository
+import com.rendly.app.ui.components.toProductCardData
 import com.rendly.app.ui.theme.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -86,9 +93,20 @@ data class GalleryVideo(
     val dateAdded: Long
 )
 
+data class RendMeta(
+    val visibility: String = "public",
+    val allowOpinions: Boolean = true,
+    val allowConsults: Boolean = true,
+    val allowDownloads: Boolean = false,
+    val allowShares: Boolean = true,
+    val hashtags: List<String> = emptyList(),
+    val category: String? = null,
+    val location: String? = null
+)
+
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
-fun RendScreen(
+fun ClipScreen(
     onClose: () -> Unit,
     onModeSelected: (Int) -> Unit,
     currentModeIndex: Int,
@@ -163,7 +181,7 @@ fun RendScreen(
                     onRecordingChange = { isRecording = it },
                     onVideoSelected = { uri ->
                         selectedVideoUri = uri
-                        currentStep = RendStep.Edit
+                        currentStep = RendStep.Details
                     },
                     onShowGallery = { currentStep = RendStep.Gallery },
                     currentModeIndex = currentModeIndex,
@@ -178,19 +196,14 @@ fun RendScreen(
                     onVideoSelect = { selectedVideoUri = it },
                     onBack = { currentStep = RendStep.Camera },
                     onNext = {
-                        if (selectedVideoUri != null) currentStep = RendStep.Edit
+                        if (selectedVideoUri != null) currentStep = RendStep.Details
                     }
                 )
             }
             
             is RendStep.Edit -> {
-                selectedVideoUri?.let { uri ->
-                    RendVideoEditor(
-                        videoUri = uri,
-                        onBack = { currentStep = RendStep.Camera },
-                        onNext = { currentStep = RendStep.Details }
-                    )
-                }
+                // Editor deshabilitado temporalmente - se salta directo a Details
+                currentStep = RendStep.Details
             }
             
             is RendStep.Details -> {
@@ -205,8 +218,8 @@ fun RendScreen(
                     productPrice = productPrice,
                     onProductPriceChange = { productPrice = it },
                     isPublishing = uploadState.isUploading,
-                    onBack = { currentStep = RendStep.Edit },
-                    onPublish = { linkedPost ->
+                    onBack = { currentStep = RendStep.Camera },
+                    onPublish = { linkedPost, rendMeta ->
                         selectedVideoUri?.let { uri ->
                             scope.launch {
                                 // Obtener imagen del producto enlazado (Cloudinary) si existe
@@ -225,9 +238,17 @@ fun RendScreen(
                                     description = rendDescription.ifEmpty { null },
                                     productTitle = finalProductTitle,
                                     productPrice = finalProductPrice,
-                                    productImage = productImageUrl, // Imagen de Cloudinary del producto enlazado
-                                    productId = linkedPost?.productId, // Mismo product_id para unificar reviews
-                                    duration = 15
+                                    productImage = productImageUrl,
+                                    productId = linkedPost?.productId,
+                                    duration = 15,
+                                    visibility = rendMeta.visibility,
+                                    allowOpinions = rendMeta.allowOpinions,
+                                    allowConsults = rendMeta.allowConsults,
+                                    allowDownloads = rendMeta.allowDownloads,
+                                    allowShares = rendMeta.allowShares,
+                                    hashtags = rendMeta.hashtags,
+                                    category = rendMeta.category,
+                                    location = rendMeta.location
                                 )
                                 if (result.isSuccess) {
                                     android.widget.Toast.makeText(context, "¡Rend publicado!", android.widget.Toast.LENGTH_SHORT).show()
@@ -914,6 +935,35 @@ private fun VideoThumbnailItem(video: GalleryVideo, isSelected: Boolean, onClick
     }
 }
 
+// ═══════════════════════════════════════════════════════════════════════════════
+// REND CATEGORIES
+// ═══════════════════════════════════════════════════════════════════════════════
+private data class RendCategory(
+    val id: String,
+    val label: String,
+    val icon: androidx.compose.ui.graphics.vector.ImageVector,
+    val color: Color
+)
+
+private val REND_CATEGORIES = listOf(
+    RendCategory("entertainment", "Entretenimiento", Icons.Outlined.TheaterComedy, Color(0xFFFF6B35)),
+    RendCategory("fashion", "Moda", Icons.Outlined.Checkroom, Color(0xFFE91E63)),
+    RendCategory("tech", "Tecnología", Icons.Outlined.Devices, Color(0xFF2196F3)),
+    RendCategory("food", "Comida", Icons.Outlined.Restaurant, Color(0xFFFF9800)),
+    RendCategory("beauty", "Belleza", Icons.Outlined.Face, Color(0xFFE040FB)),
+    RendCategory("sports", "Deportes", Icons.Outlined.FitnessCenter, Color(0xFF4CAF50)),
+    RendCategory("education", "Educación", Icons.Outlined.School, Color(0xFF00BCD4)),
+    RendCategory("music", "Música", Icons.Outlined.MusicNote, Color(0xFF9C27B0)),
+    RendCategory("travel", "Viajes", Icons.Outlined.Flight, Color(0xFF009688)),
+    RendCategory("gaming", "Gaming", Icons.Outlined.SportsEsports, Color(0xFF673AB7)),
+    RendCategory("art", "Arte", Icons.Outlined.Palette, Color(0xFFFF5722)),
+    RendCategory("other", "Otro", Icons.Outlined.MoreHoriz, Color(0xFF607D8B))
+)
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// REND DETAILS VIEW - Pantalla profesional de configuración de Rend
+// ═══════════════════════════════════════════════════════════════════════════════
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun RendDetailsView(
     videoUri: Uri?,
@@ -927,9 +977,10 @@ private fun RendDetailsView(
     onProductPriceChange: (String) -> Unit,
     isPublishing: Boolean,
     onBack: () -> Unit,
-    onPublish: (linkedPost: com.rendly.app.data.model.Post?) -> Unit
+    onPublish: (linkedPost: com.rendly.app.data.model.Post?, meta: RendMeta) -> Unit
 ) {
     val context = LocalContext.current
+    val scope = rememberCoroutineScope()
     val scrollState = rememberScrollState()
     
     // Estado para enlazar post
@@ -937,246 +988,1011 @@ private fun RendDetailsView(
     var linkedPost by remember { mutableStateOf<com.rendly.app.data.model.Post?>(null) }
     val userPosts by com.rendly.app.data.repository.PostRepository.userPosts.collectAsState()
     
-    // Cargar posts del usuario
+    // Nuevos estados profesionales
+    var hashtags by remember { mutableStateOf(listOf<String>()) }
+    var hashtagInput by remember { mutableStateOf("") }
+    var selectedCategory by remember { mutableStateOf<RendCategory?>(null) }
+    var showCategoryPicker by remember { mutableStateOf(false) }
+    var visibility by remember { mutableStateOf("public") } // public, followers, private
+    var allowOpinions by remember { mutableStateOf(true) }
+    var allowShares by remember { mutableStateOf(true) }
+    var allowDownloads by remember { mutableStateOf(false) }
+    var allowConsults by remember { mutableStateOf(true) }
+    
+    // Trending hashtags y categorías populares
+    var trendingHashtags by remember { mutableStateOf<List<com.rendly.app.data.repository.TrendingHashtag>>(emptyList()) }
+    var popularCategories by remember { mutableStateOf<List<com.rendly.app.data.repository.PopularCategory>>(emptyList()) }
+    var locationTag by remember { mutableStateOf("") }
+    var showLocationInput by remember { mutableStateOf(false) }
+    var showAdvancedSettings by remember { mutableStateOf(false) }
+    
+    // Upload progress animation
+    val uploadProgress by RendRepository.uploadState.collectAsState()
+    val progressAnim by animateFloatAsState(
+        targetValue = if (isPublishing) uploadProgress.progress else 0f,
+        animationSpec = tween(300),
+        label = "uploadProgress"
+    )
+    
+    // Cargar posts del usuario y tendencias
     LaunchedEffect(Unit) {
         com.rendly.app.data.repository.PostRepository.loadUserPosts()
+        trendingHashtags = RendRepository.getTrendingHashtags()
+        popularCategories = RendRepository.getPopularCategories()
     }
     
-    Column(modifier = Modifier.fillMaxSize()) {
-        // Header con botón Publicar a la derecha
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 12.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                IconButton(
-                    onClick = onBack,
-                    enabled = !isPublishing,
-                    modifier = Modifier.size(40.dp).clip(CircleShape).background(OverlayMedium)
-                ) {
-                    Icon(Icons.Default.ArrowBack, "Volver", tint = TextPrimary)
-                }
-                Spacer(modifier = Modifier.width(12.dp))
-                Text("Detalles del Rend", color = TextPrimary, fontSize = 18.sp, fontWeight = FontWeight.Bold)
-            }
-            
-            // Botón Publicar en header
-            Button(
-                onClick = { onPublish(linkedPost) },
-                enabled = !isPublishing && title.isNotBlank(),
-                shape = RoundedCornerShape(12.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = AccentGold,
-                    disabledContainerColor = AccentGold.copy(alpha = 0.4f)
-                ),
-                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 10.dp)
-            ) {
-                if (isPublishing) {
-                    CircularProgressIndicator(color = Color.Black, modifier = Modifier.size(18.dp), strokeWidth = 2.dp)
-                } else {
-                    Icon(Icons.Default.Publish, null, tint = Color.Black, modifier = Modifier.size(18.dp))
-                    Spacer(modifier = Modifier.width(6.dp))
-                    Text("Publicar", color = Color.Black, fontWeight = FontWeight.Bold, fontSize = 14.sp)
-                }
-            }
-        }
-        
-        // Contenido scrolleable
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .verticalScroll(scrollState)
-                .padding(bottom = 24.dp)
-        ) {
-            // Preview del video
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color(0xFF0A0A0F))
+    ) {
+        Column(modifier = Modifier.fillMaxSize()) {
+            // ═══════════════════════════════════════════════════════════════
+            // HEADER PROFESIONAL
+            // ═══════════════════════════════════════════════════════════════
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
-                    .height(200.dp)
-                    .clip(RoundedCornerShape(16.dp))
-                    .background(Surface)
+                    .background(
+                        Brush.verticalGradient(
+                            listOf(Color(0xFF12121A), Color(0xFF0A0A0F))
+                        )
+                    )
             ) {
-                if (videoUri != null) {
-                    AsyncImage(
-                        model = ImageRequest.Builder(context).data(videoUri).crossfade(true).build(),
-                        contentDescription = null,
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier.fillMaxSize()
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .statusBarsPadding()
+                        .padding(horizontal = 12.dp, vertical = 10.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        IconButton(
+                            onClick = onBack,
+                            enabled = !isPublishing,
+                            modifier = Modifier
+                                .size(40.dp)
+                                .clip(CircleShape)
+                                .background(Color.White.copy(alpha = 0.08f))
+                        ) {
+                            Icon(Icons.Default.ArrowBack, "Volver", tint = Color.White, modifier = Modifier.size(22.dp))
+                        }
+                        Spacer(modifier = Modifier.width(12.dp))
+                        Column {
+                            Text(
+                                "Nuevo Clip",
+                                color = Color.White,
+                                fontSize = 18.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                            Text(
+                                "Configura tu video",
+                                color = TextMuted,
+                                fontSize = 12.sp
+                            )
+                        }
+                    }
+                    
+                    Button(
+                        onClick = { 
+                            onPublish(linkedPost, RendMeta(
+                                visibility = visibility,
+                                allowOpinions = allowOpinions,
+                                allowConsults = allowConsults,
+                                allowDownloads = allowDownloads,
+                                allowShares = allowShares,
+                                hashtags = hashtags,
+                                category = selectedCategory?.id,
+                                location = locationTag.ifBlank { null }
+                            ))
+                        },
+                        enabled = !isPublishing && title.isNotBlank(),
+                        shape = RoundedCornerShape(24.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = AccentGold,
+                            disabledContainerColor = AccentGold.copy(alpha = 0.3f)
+                        ),
+                        contentPadding = PaddingValues(horizontal = 20.dp, vertical = 10.dp),
+                        elevation = ButtonDefaults.buttonElevation(defaultElevation = 4.dp)
+                    ) {
+                        if (isPublishing) {
+                            CircularProgressIndicator(
+                                color = Color.Black,
+                                modifier = Modifier.size(18.dp),
+                                strokeWidth = 2.dp
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(
+                                "Publicando...",
+                                color = Color.Black,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 14.sp
+                            )
+                        } else {
+                            Icon(
+                                Icons.Default.Send,
+                                null,
+                                tint = Color.Black,
+                                modifier = Modifier.size(18.dp)
+                            )
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Text(
+                                "Publicar",
+                                color = Color.Black,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 14.sp
+                            )
+                        }
+                    }
+                }
+                
+                // Barra de progreso de upload
+                if (isPublishing) {
+                    LinearProgressIndicator(
+                        progress = progressAnim,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(3.dp)
+                            .align(Alignment.BottomCenter),
+                        color = AccentGold,
+                        trackColor = Color.Transparent
                     )
                 }
-                Box(
-                    modifier = Modifier
-                        .align(Alignment.TopEnd)
-                        .padding(12.dp)
-                        .clip(RoundedCornerShape(8.dp))
-                        .background(AccentGold)
-                        .padding(horizontal = 8.dp, vertical = 4.dp)
-                ) {
-                    Text("REND", color = Color.Black, fontSize = 11.sp, fontWeight = FontWeight.Bold)
-                }
             }
             
-            Spacer(modifier = Modifier.height(24.dp))
-            
-            // Título
-            RendSectionHeader(Icons.Default.Title, "Título")
-            OutlinedTextField(
-                value = title,
-                onValueChange = onTitleChange,
-                placeholder = { Text("Dale un título a tu Rend...", color = TextMuted) },
-                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
-                colors = rendFieldColors(),
-                shape = RoundedCornerShape(14.dp),
-                singleLine = true
-            )
-            
-            Spacer(modifier = Modifier.height(16.dp))
-            
-            // Descripción
-            RendSectionHeader(Icons.Default.Description, "Descripción")
-            OutlinedTextField(
-                value = description,
-                onValueChange = onDescriptionChange,
-                placeholder = { Text("Describe tu video...", color = TextMuted) },
-                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp).height(100.dp),
-                colors = rendFieldColors(),
-                shape = RoundedCornerShape(14.dp),
-                maxLines = 4
-            )
-            
-            Spacer(modifier = Modifier.height(24.dp))
-            Divider(color = Surface, modifier = Modifier.padding(horizontal = 16.dp))
-            Spacer(modifier = Modifier.height(20.dp))
-            
-            // Producto (opcional)
-            Row(
-                modifier = Modifier.padding(horizontal = 16.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Icon(Icons.Default.ShoppingBag, null, tint = AccentGold, modifier = Modifier.size(20.dp))
-                Spacer(modifier = Modifier.width(8.dp))
-                Text("Producto (opcional)", color = TextPrimary, fontSize = 15.sp, fontWeight = FontWeight.Bold)
-            }
-            Spacer(modifier = Modifier.height(12.dp))
-            
-            OutlinedTextField(
-                value = productTitle,
-                onValueChange = onProductTitleChange,
-                placeholder = { Text("Nombre del producto", color = TextMuted) },
-                leadingIcon = { Icon(Icons.Default.Inventory, null, tint = AccentGold) },
-                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
-                colors = rendFieldColors(),
-                shape = RoundedCornerShape(14.dp),
-                singleLine = true
-            )
-            
-            Spacer(modifier = Modifier.height(12.dp))
-            
-            OutlinedTextField(
-                value = productPrice,
-                onValueChange = onProductPriceChange,
-                placeholder = { Text("Precio (ej: 99.99)", color = TextMuted) },
-                leadingIcon = { 
-                    Text(
-                        "$", 
-                        color = AccentGold, 
-                        fontWeight = FontWeight.Bold, 
-                        modifier = Modifier.padding(start = 12.dp)
-                    ) 
-                },
-                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
-                colors = rendFieldColors(),
-                shape = RoundedCornerShape(14.dp),
-                singleLine = true
-            )
-            
-            Spacer(modifier = Modifier.height(24.dp))
-            Divider(color = Surface, modifier = Modifier.padding(horizontal = 16.dp))
-            Spacer(modifier = Modifier.height(20.dp))
-            
-            // Enlazar publicación (opcional)
-            Row(
-                modifier = Modifier.padding(horizontal = 16.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Icon(Icons.Default.Link, null, tint = PrimaryPurple, modifier = Modifier.size(20.dp))
-                Spacer(modifier = Modifier.width(8.dp))
-                Text("Enlazar publicación (opcional)", color = TextPrimary, fontSize = 15.sp, fontWeight = FontWeight.Bold)
-            }
-            Spacer(modifier = Modifier.height(12.dp))
-            
-            // Botón para enlazar post o mostrar post enlazado
-            Surface(
+            // ═══════════════════════════════════════════════════════════════
+            // CONTENIDO SCROLLEABLE
+            // ═══════════════════════════════════════════════════════════════
+            Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
-                    .clip(RoundedCornerShape(14.dp))
-                    .clickable { showPostLinkModal = true },
-                color = Surface.copy(alpha = 0.5f),
-                shape = RoundedCornerShape(14.dp)
+                    .fillMaxSize()
+                    .verticalScroll(scrollState)
+                    .padding(bottom = 40.dp)
             ) {
-                if (linkedPost != null) {
-                    // Mostrar post enlazado
-                    Row(
+                Spacer(modifier = Modifier.height(8.dp))
+                
+                // ─── VIDEO PREVIEW + TÍTULO INLINE ───
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp),
+                    horizontalArrangement = Arrangement.spacedBy(14.dp)
+                ) {
+                    // Thumbnail del video
+                    Box(
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(12.dp),
-                        verticalAlignment = Alignment.CenterVertically
+                            .width(110.dp)
+                            .height(160.dp)
+                            .clip(RoundedCornerShape(16.dp))
+                            .background(Surface)
                     ) {
-                        // Thumbnail del post
-                        AsyncImage(
-                            model = linkedPost?.images?.firstOrNull(),
-                            contentDescription = null,
-                            contentScale = ContentScale.Crop,
-                            modifier = Modifier
-                                .size(56.dp)
-                                .clip(RoundedCornerShape(8.dp))
-                                .background(Surface)
-                        )
-                        Spacer(modifier = Modifier.width(12.dp))
-                        Column(modifier = Modifier.weight(1f)) {
-                            Text(
-                                text = linkedPost?.title ?: "",
-                                color = TextPrimary,
-                                fontWeight = FontWeight.SemiBold,
-                                fontSize = 14.sp,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis
-                            )
-                            Text(
-                                text = linkedPost?.price?.let { "$$it" } ?: "Sin precio",
-                                color = AccentGold,
-                                fontSize = 13.sp
-                            )
+                        if (videoUri != null) {
+                            // Generar thumbnail desde el video usando MediaMetadataRetriever
+                            val thumbnailBitmap = remember(videoUri) {
+                                try {
+                                    val retriever = android.media.MediaMetadataRetriever()
+                                    retriever.setDataSource(context, videoUri)
+                                    retriever.getFrameAtTime(0L, android.media.MediaMetadataRetriever.OPTION_CLOSEST_SYNC)
+                                } catch (e: Exception) {
+                                    null
+                                }
+                            }
+                            
+                            if (thumbnailBitmap != null) {
+                                Image(
+                                    bitmap = thumbnailBitmap.asImageBitmap(),
+                                    contentDescription = null,
+                                    contentScale = ContentScale.Crop,
+                                    modifier = Modifier.fillMaxSize()
+                                )
+                            }
                         }
-                        IconButton(
-                            onClick = { linkedPost = null },
-                            modifier = Modifier.size(32.dp)
+                        // Overlay gradient
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(40.dp)
+                                .align(Alignment.BottomCenter)
+                                .background(
+                                    Brush.verticalGradient(
+                                        listOf(Color.Transparent, Color.Black.copy(alpha = 0.6f))
+                                    )
+                                )
+                        )
+                        // Badge CLIP
+                        Box(
+                            modifier = Modifier
+                                .align(Alignment.TopStart)
+                                .padding(8.dp)
+                                .clip(RoundedCornerShape(6.dp))
+                                .background(
+                                    Brush.horizontalGradient(
+                                        listOf(AccentGold, Color(0xFFFF8C00))
+                                    )
+                                )
+                                .padding(horizontal = 8.dp, vertical = 3.dp)
                         ) {
-                            Icon(Icons.Default.Close, "Quitar", tint = TextMuted, modifier = Modifier.size(18.dp))
+                            Text("CLIP", color = Color.Black, fontSize = 10.sp, fontWeight = FontWeight.ExtraBold)
+                        }
+                        // Play icon center
+                        Box(
+                            modifier = Modifier
+                                .align(Alignment.Center)
+                                .size(36.dp)
+                                .clip(CircleShape)
+                                .background(Color.Black.copy(alpha = 0.5f)),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                Icons.Filled.PlayArrow,
+                                null,
+                                tint = Color.White,
+                                modifier = Modifier.size(22.dp)
+                            )
                         }
                     }
-                } else {
-                    // Botón para seleccionar
-                    Row(
+                    
+                    // Título y Descripción al lado
+                    Column(
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp),
-                        horizontalArrangement = Arrangement.Center,
-                        verticalAlignment = Alignment.CenterVertically
+                            .weight(1f)
+                            .height(160.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        Icon(Icons.Outlined.AddLink, null, tint = PrimaryPurple, modifier = Modifier.size(22.dp))
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text("Seleccionar artículo", color = TextSecondary, fontSize = 14.sp)
+                        OutlinedTextField(
+                            value = title,
+                            onValueChange = { if (it.length <= 80) onTitleChange(it) },
+                            placeholder = { Text("Título de tu Clip...", color = TextMuted, fontSize = 14.sp) },
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = rendFieldColors(),
+                            shape = RoundedCornerShape(14.dp),
+                            singleLine = true,
+                            textStyle = TextStyle(
+                                fontWeight = FontWeight.SemiBold,
+                                fontSize = 15.sp,
+                                color = Color.White
+                            )
+                        )
+                        
+                        OutlinedTextField(
+                            value = description,
+                            onValueChange = { if (it.length <= 300) onDescriptionChange(it) },
+                            placeholder = { Text("Describe tu video...", color = TextMuted, fontSize = 13.sp) },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .weight(1f),
+                            colors = rendFieldColors(),
+                            shape = RoundedCornerShape(14.dp),
+                            maxLines = 3,
+                            textStyle = TextStyle(
+                                fontSize = 13.sp,
+                                color = Color.White.copy(alpha = 0.9f)
+                            )
+                        )
+                        
+                        // Contador de caracteres
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Text(
+                                "${title.length}/80",
+                                color = if (title.length > 70) Color(0xFFFF6B6B) else TextMuted,
+                                fontSize = 11.sp
+                            )
+                            Text(
+                                "${description.length}/300",
+                                color = if (description.length > 270) Color(0xFFFF6B6B) else TextMuted,
+                                fontSize = 11.sp
+                            )
+                        }
                     }
                 }
+                
+                Spacer(modifier = Modifier.height(20.dp))
+                
+                // ─── HASHTAGS ───
+                RendDetailCard(
+                    icon = Icons.Outlined.Tag,
+                    title = "Hashtags",
+                    subtitle = "Agrega hashtags para que más personas encuentren tu Clip",
+                    accentColor = Color(0xFF1DA1F2)
+                ) {
+                    // Input de hashtags
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        OutlinedTextField(
+                            value = hashtagInput,
+                            onValueChange = { input ->
+                                // Si termina en espacio o coma, agregar hashtag
+                                if (input.endsWith(" ") || input.endsWith(",")) {
+                                    val tag = input.trimEnd(' ', ',', '#').trim()
+                                    if (tag.isNotBlank() && hashtags.size < 15 && !hashtags.contains(tag)) {
+                                        hashtags = hashtags + tag
+                                    }
+                                    hashtagInput = ""
+                                } else {
+                                    hashtagInput = input
+                                }
+                            },
+                            placeholder = { Text("Escribe y presiona espacio...", color = TextMuted, fontSize = 13.sp) },
+                            modifier = Modifier.weight(1f),
+                            colors = rendFieldColors(),
+                            shape = RoundedCornerShape(12.dp),
+                            singleLine = true,
+                            textStyle = TextStyle(fontSize = 14.sp, color = Color.White),
+                            leadingIcon = {
+                                Text("#", color = Color(0xFF1DA1F2), fontWeight = FontWeight.Bold, fontSize = 16.sp,
+                                    modifier = Modifier.padding(start = 4.dp))
+                            }
+                        )
+                    }
+                    
+                    if (hashtags.isNotEmpty()) {
+                        Spacer(modifier = Modifier.height(10.dp))
+                        FlowRow(
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            hashtags.forEach { tag ->
+                                RendHashtagChip(
+                                    tag = tag,
+                                    onRemove = { hashtags = hashtags.filter { it != tag } }
+                                )
+                            }
+                        }
+                    }
+                    
+                    if (hashtags.isNotEmpty()) {
+                        Spacer(modifier = Modifier.height(6.dp))
+                        Text(
+                            "${hashtags.size}/15 hashtags",
+                            color = TextMuted,
+                            fontSize = 11.sp
+                        )
+                    }
+                    
+                    // Trending hashtags suggestions
+                    if (trendingHashtags.isNotEmpty() && hashtags.size < 15) {
+                        Spacer(modifier = Modifier.height(12.dp))
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(Icons.Outlined.TrendingUp, null, tint = Color(0xFF1DA1F2), modifier = Modifier.size(16.dp))
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Text("Tendencias", color = Color(0xFF1DA1F2), fontSize = 12.sp, fontWeight = FontWeight.SemiBold)
+                        }
+                        Spacer(modifier = Modifier.height(8.dp))
+                        FlowRow(
+                            horizontalArrangement = Arrangement.spacedBy(6.dp),
+                            verticalArrangement = Arrangement.spacedBy(6.dp)
+                        ) {
+                            trendingHashtags.filter { it.tag !in hashtags }.take(8).forEach { trend ->
+                                Surface(
+                                    modifier = Modifier
+                                        .clip(RoundedCornerShape(16.dp))
+                                        .clickable {
+                                            if (hashtags.size < 15 && trend.tag !in hashtags) {
+                                                hashtags = hashtags + trend.tag
+                                            }
+                                        },
+                                    color = Color.White.copy(alpha = 0.06f),
+                                    shape = RoundedCornerShape(16.dp)
+                                ) {
+                                    Row(
+                                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Text("#${trend.tag}", color = TextSecondary, fontSize = 12.sp)
+                                        Spacer(modifier = Modifier.width(4.dp))
+                                        Text("${trend.usageCount}", color = TextMuted, fontSize = 10.sp)
+                                        Spacer(modifier = Modifier.width(4.dp))
+                                        Icon(Icons.Outlined.Add, null, tint = Color(0xFF1DA1F2), modifier = Modifier.size(14.dp))
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                
+                Spacer(modifier = Modifier.height(12.dp))
+                
+                // ─── CATEGORÍA ───
+                RendDetailCard(
+                    icon = Icons.Outlined.Category,
+                    title = "Categoría",
+                    subtitle = "Clasifica tu contenido para llegar al público correcto",
+                    accentColor = Color(0xFFFF6B35)
+                ) {
+                    // Categoría seleccionada o botón para elegir
+                    Surface(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clip(RoundedCornerShape(12.dp))
+                            .clickable { showCategoryPicker = !showCategoryPicker },
+                        color = Color.White.copy(alpha = 0.06f),
+                        shape = RoundedCornerShape(12.dp)
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(14.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            if (selectedCategory != null) {
+                                Box(
+                                    modifier = Modifier
+                                        .size(36.dp)
+                                        .clip(RoundedCornerShape(10.dp))
+                                        .background(selectedCategory!!.color.copy(alpha = 0.15f)),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Icon(
+                                        selectedCategory!!.icon,
+                                        null,
+                                        tint = selectedCategory!!.color,
+                                        modifier = Modifier.size(20.dp)
+                                    )
+                                }
+                                Spacer(modifier = Modifier.width(12.dp))
+                                Text(
+                                    selectedCategory!!.label,
+                                    color = Color.White,
+                                    fontWeight = FontWeight.SemiBold,
+                                    fontSize = 14.sp
+                                )
+                            } else {
+                                Icon(
+                                    Icons.Outlined.Add,
+                                    null,
+                                    tint = TextMuted,
+                                    modifier = Modifier.size(22.dp)
+                                )
+                                Spacer(modifier = Modifier.width(10.dp))
+                                Text(
+                                    "Seleccionar categoría",
+                                    color = TextMuted,
+                                    fontSize = 14.sp
+                                )
+                            }
+                            Spacer(modifier = Modifier.weight(1f))
+                            Icon(
+                                if (showCategoryPicker) Icons.Default.KeyboardArrowUp 
+                                else Icons.Default.KeyboardArrowDown,
+                                null,
+                                tint = TextMuted,
+                                modifier = Modifier.size(22.dp)
+                            )
+                        }
+                    }
+                    
+                    // Grid de categorías expandible
+                    AnimatedVisibility(
+                        visible = showCategoryPicker,
+                        enter = expandVertically(tween(250)) + fadeIn(tween(200)),
+                        exit = shrinkVertically(tween(200)) + fadeOut(tween(150))
+                    ) {
+                        Column {
+                            Spacer(modifier = Modifier.height(10.dp))
+                            FlowRow(
+                                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                verticalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                REND_CATEGORIES.forEach { cat ->
+                                    val isSelected = selectedCategory?.id == cat.id
+                                    Surface(
+                                        modifier = Modifier
+                                            .clip(RoundedCornerShape(12.dp))
+                                            .clickable {
+                                                selectedCategory = if (isSelected) null else cat
+                                                showCategoryPicker = false
+                                            },
+                                        color = if (isSelected) cat.color.copy(alpha = 0.2f)
+                                        else Color.White.copy(alpha = 0.05f),
+                                        shape = RoundedCornerShape(12.dp),
+                                        border = if (isSelected) BorderStroke(
+                                            1.5.dp, cat.color.copy(alpha = 0.5f)
+                                        ) else null
+                                    ) {
+                                        Row(
+                                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
+                                            verticalAlignment = Alignment.CenterVertically,
+                                            horizontalArrangement = Arrangement.spacedBy(6.dp)
+                                        ) {
+                                            Icon(
+                                                cat.icon,
+                                                null,
+                                                tint = if (isSelected) cat.color else TextMuted,
+                                                modifier = Modifier.size(16.dp)
+                                            )
+                                            Text(
+                                                cat.label,
+                                                color = if (isSelected) cat.color else TextSecondary,
+                                                fontSize = 13.sp,
+                                                fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Normal
+                                            )
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                
+                Spacer(modifier = Modifier.height(12.dp))
+                
+                // ─── PRIVACIDAD Y VISIBILIDAD ───
+                RendDetailCard(
+                    icon = Icons.Outlined.Shield,
+                    title = "Privacidad",
+                    subtitle = "Controla quién puede ver tu Clip",
+                    accentColor = Color(0xFF4CAF50)
+                ) {
+                    // Opciones de visibilidad
+                    val visibilityOptions = listOf(
+                        Triple("public", "Público", Icons.Outlined.Public),
+                        Triple("followers", "Seguidores", Icons.Outlined.People),
+                        Triple("private", "Privado", Icons.Outlined.Lock)
+                    )
+                    
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        visibilityOptions.forEach { (id, label, icon) ->
+                            val isSelected = visibility == id
+                            Surface(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .clip(RoundedCornerShape(12.dp))
+                                    .clickable { visibility = id },
+                                color = if (isSelected) AccentGold.copy(alpha = 0.15f)
+                                else Color.White.copy(alpha = 0.05f),
+                                shape = RoundedCornerShape(12.dp),
+                                border = if (isSelected) BorderStroke(
+                                    1.5.dp, AccentGold.copy(alpha = 0.5f)
+                                ) else null
+                            ) {
+                                Column(
+                                    modifier = Modifier.padding(vertical = 14.dp),
+                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                    verticalArrangement = Arrangement.spacedBy(6.dp)
+                                ) {
+                                    Icon(
+                                        icon,
+                                        null,
+                                        tint = if (isSelected) AccentGold else TextMuted,
+                                        modifier = Modifier.size(24.dp)
+                                    )
+                                    Text(
+                                        label,
+                                        color = if (isSelected) AccentGold else TextSecondary,
+                                        fontSize = 12.sp,
+                                        fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+                
+                Spacer(modifier = Modifier.height(12.dp))
+                
+                // ─── INTERACCIONES ───
+                RendDetailCard(
+                    icon = Icons.Outlined.TouchApp,
+                    title = "Interacciones",
+                    subtitle = "Gestiona cómo otros interactúan con tu Clip",
+                    accentColor = Color(0xFFE040FB)
+                ) {
+                    RendToggleRow(
+                        icon = Icons.Outlined.RateReview,
+                        title = "Permitir opiniones",
+                        subtitle = "Los usuarios podrán dejar opiniones",
+                        isChecked = allowOpinions,
+                        onCheckedChange = { allowOpinions = it }
+                    )
+                    
+                    Divider(
+                        color = Color.White.copy(alpha = 0.05f),
+                        modifier = Modifier.padding(vertical = 4.dp)
+                    )
+                    
+                    RendToggleRow(
+                        icon = Icons.Outlined.Send,
+                        title = "Permitir reenvíos",
+                        subtitle = "Los usuarios pueden reenviar tu Clip",
+                        isChecked = allowShares,
+                        onCheckedChange = { allowShares = it }
+                    )
+                    
+                    Divider(
+                        color = Color.White.copy(alpha = 0.05f),
+                        modifier = Modifier.padding(vertical = 4.dp)
+                    )
+                    
+                    RendToggleRow(
+                        icon = Icons.Outlined.ContactMail,
+                        title = "Permitir consultas",
+                        subtitle = "Los usuarios pueden enviarte mensajes",
+                        isChecked = allowConsults,
+                        onCheckedChange = { allowConsults = it }
+                    )
+                    
+                    Divider(
+                        color = Color.White.copy(alpha = 0.05f),
+                        modifier = Modifier.padding(vertical = 4.dp)
+                    )
+                    
+                    RendToggleRow(
+                        icon = Icons.Outlined.Download,
+                        title = "Permitir descargas",
+                        subtitle = "Los usuarios podrán guardar el video",
+                        isChecked = allowDownloads,
+                        onCheckedChange = { allowDownloads = it }
+                    )
+                }
+                
+                Spacer(modifier = Modifier.height(12.dp))
+                
+                // ─── UBICACIÓN ───
+                RendDetailCard(
+                    icon = Icons.Outlined.LocationOn,
+                    title = "Ubicación",
+                    subtitle = "Agrega una ubicación a tu Clip",
+                    accentColor = Color(0xFFFF5252)
+                ) {
+                    Surface(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clip(RoundedCornerShape(12.dp))
+                            .clickable { showLocationInput = !showLocationInput },
+                        color = Color.White.copy(alpha = 0.06f),
+                        shape = RoundedCornerShape(12.dp)
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(14.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                if (locationTag.isNotBlank()) Icons.Filled.LocationOn 
+                                else Icons.Outlined.AddLocation,
+                                null,
+                                tint = if (locationTag.isNotBlank()) Color(0xFFFF5252) else TextMuted,
+                                modifier = Modifier.size(22.dp)
+                            )
+                            Spacer(modifier = Modifier.width(10.dp))
+                            Text(
+                                if (locationTag.isNotBlank()) locationTag else "Agregar ubicación",
+                                color = if (locationTag.isNotBlank()) Color.White else TextMuted,
+                                fontSize = 14.sp
+                            )
+                            if (locationTag.isNotBlank()) {
+                                Spacer(modifier = Modifier.weight(1f))
+                                Icon(
+                                    Icons.Default.Close,
+                                    "Quitar",
+                                    tint = TextMuted,
+                                    modifier = Modifier
+                                        .size(20.dp)
+                                        .clickable { locationTag = ""; showLocationInput = false }
+                                )
+                            }
+                        }
+                    }
+                    
+                    AnimatedVisibility(
+                        visible = showLocationInput && locationTag.isBlank(),
+                        enter = expandVertically(tween(200)) + fadeIn(),
+                        exit = shrinkVertically(tween(200)) + fadeOut()
+                    ) {
+                        Column {
+                            Spacer(modifier = Modifier.height(10.dp))
+                            
+                            var locationInput by remember { mutableStateOf("") }
+                            
+                            OutlinedTextField(
+                                value = locationInput,
+                                onValueChange = { locationInput = it },
+                                placeholder = { Text("Ej: Buenos Aires, Argentina", color = TextMuted, fontSize = 13.sp) },
+                                modifier = Modifier.fillMaxWidth(),
+                                colors = rendFieldColors(),
+                                shape = RoundedCornerShape(12.dp),
+                                singleLine = true,
+                                textStyle = TextStyle(fontSize = 14.sp, color = Color.White),
+                                trailingIcon = {
+                                    if (locationInput.isNotBlank()) {
+                                        IconButton(onClick = { 
+                                            locationTag = locationInput
+                                            showLocationInput = false 
+                                        }) {
+                                            Icon(Icons.Default.Check, null, tint = AccentGold, modifier = Modifier.size(20.dp))
+                                        }
+                                    }
+                                }
+                            )
+                            
+                            Spacer(modifier = Modifier.height(8.dp))
+                            
+                            // Botón de ubicación actual
+                            Surface(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clip(RoundedCornerShape(12.dp))
+                                    .clickable {
+                                        scope.launch {
+                                            try {
+                                                val fusedLocationClient = com.google.android.gms.location.LocationServices.getFusedLocationProviderClient(context)
+                                                if (context.checkSelfPermission(android.Manifest.permission.ACCESS_FINE_LOCATION) == android.content.pm.PackageManager.PERMISSION_GRANTED) {
+                                                    fusedLocationClient.lastLocation.addOnSuccessListener { location ->
+                                                        location?.let {
+                                                            val geocoder = android.location.Geocoder(context)
+                                                            val addresses = geocoder.getFromLocation(it.latitude, it.longitude, 1)
+                                                            if (!addresses.isNullOrEmpty()) {
+                                                                val address = addresses[0]
+                                                                val locality = address.locality ?: ""
+                                                                val country = address.countryName ?: ""
+                                                                locationTag = "$locality, $country".trim().trim(',')
+                                                                showLocationInput = false
+                                                            }
+                                                        }
+                                                    }
+                                                } else {
+                                                    android.widget.Toast.makeText(context, "Permiso de ubicación requerido", android.widget.Toast.LENGTH_SHORT).show()
+                                                }
+                                            } catch (e: Exception) {
+                                                android.widget.Toast.makeText(context, "Error obteniendo ubicación", android.widget.Toast.LENGTH_SHORT).show()
+                                            }
+                                        }
+                                    },
+                                color = Color.White.copy(alpha = 0.06f),
+                                shape = RoundedCornerShape(12.dp)
+                            ) {
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(14.dp),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Icon(
+                                        Icons.Filled.MyLocation,
+                                        null,
+                                        tint = Color(0xFF1DA1F2),
+                                        modifier = Modifier.size(20.dp)
+                                    )
+                                    Spacer(modifier = Modifier.width(10.dp))
+                                    Text(
+                                        "Usar ubicación actual",
+                                        color = Color(0xFF1DA1F2),
+                                        fontSize = 14.sp,
+                                        fontWeight = FontWeight.Medium
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+                
+                Spacer(modifier = Modifier.height(12.dp))
+                
+                // ─── PRODUCTO (OPCIONAL) ───
+                RendDetailCard(
+                    icon = Icons.Outlined.ShoppingBag,
+                    title = "Producto",
+                    subtitle = "Vincula un producto o ingresa los datos manualmente",
+                    accentColor = AccentGold
+                ) {
+                    // Enlazar publicación existente
+                    Surface(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clip(RoundedCornerShape(12.dp))
+                            .clickable { showPostLinkModal = true },
+                        color = Color.White.copy(alpha = 0.06f),
+                        shape = RoundedCornerShape(12.dp)
+                    ) {
+                        if (linkedPost != null) {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(12.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                AsyncImage(
+                                    model = linkedPost?.images?.firstOrNull(),
+                                    contentDescription = null,
+                                    contentScale = ContentScale.Crop,
+                                    modifier = Modifier
+                                        .size(52.dp)
+                                        .clip(RoundedCornerShape(10.dp))
+                                        .background(Surface)
+                                )
+                                Spacer(modifier = Modifier.width(12.dp))
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Text(
+                                        text = linkedPost?.title ?: "",
+                                        color = Color.White,
+                                        fontWeight = FontWeight.SemiBold,
+                                        fontSize = 14.sp,
+                                        maxLines = 1,
+                                        overflow = TextOverflow.Ellipsis
+                                    )
+                                    linkedPost?.price?.let { price ->
+                                        Text(
+                                            text = "$$price",
+                                            color = AccentGold,
+                                            fontSize = 13.sp,
+                                            fontWeight = FontWeight.Bold
+                                        )
+                                    }
+                                }
+                                IconButton(
+                                    onClick = { linkedPost = null },
+                                    modifier = Modifier.size(32.dp)
+                                ) {
+                                    Icon(Icons.Default.Close, "Quitar", tint = TextMuted, modifier = Modifier.size(18.dp))
+                                }
+                            }
+                        } else {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(14.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Icon(Icons.Outlined.Link, null, tint = AccentGold, modifier = Modifier.size(22.dp))
+                                Spacer(modifier = Modifier.width(10.dp))
+                                Column {
+                                    Text(
+                                        "Enlazar artículo publicado",
+                                        color = Color.White.copy(alpha = 0.8f),
+                                        fontSize = 14.sp,
+                                        fontWeight = FontWeight.Medium
+                                    )
+                                    Text(
+                                        "Selecciona uno de tus artículos",
+                                        color = TextMuted,
+                                        fontSize = 12.sp
+                                    )
+                                }
+                                Spacer(modifier = Modifier.weight(1f))
+                                Icon(Icons.Default.ChevronRight, null, tint = TextMuted, modifier = Modifier.size(22.dp))
+                            }
+                        }
+                    }
+                    
+                    // Divider con "o"
+                    if (linkedPost == null) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 10.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Divider(
+                                modifier = Modifier.weight(1f),
+                                color = Color.White.copy(alpha = 0.08f)
+                            )
+                            Text(
+                                "  o  ",
+                                color = TextMuted,
+                                fontSize = 12.sp
+                            )
+                            Divider(
+                                modifier = Modifier.weight(1f),
+                                color = Color.White.copy(alpha = 0.08f)
+                            )
+                        }
+                        
+                        // Campos manuales
+                        OutlinedTextField(
+                            value = productTitle,
+                            onValueChange = onProductTitleChange,
+                            placeholder = { Text("Nombre del producto", color = TextMuted, fontSize = 13.sp) },
+                            leadingIcon = {
+                                Icon(Icons.Outlined.Inventory2, null, tint = AccentGold, modifier = Modifier.size(20.dp))
+                            },
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = rendFieldColors(),
+                            shape = RoundedCornerShape(12.dp),
+                            singleLine = true,
+                            textStyle = TextStyle(fontSize = 14.sp, color = Color.White)
+                        )
+                        
+                        Spacer(modifier = Modifier.height(8.dp))
+                        
+                        OutlinedTextField(
+                            value = productPrice,
+                            onValueChange = onProductPriceChange,
+                            placeholder = { Text("Precio (ej: 99.99)", color = TextMuted, fontSize = 13.sp) },
+                            leadingIcon = {
+                                Text(
+                                    "$",
+                                    color = AccentGold,
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 16.sp,
+                                    modifier = Modifier.padding(start = 8.dp)
+                                )
+                            },
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = rendFieldColors(),
+                            shape = RoundedCornerShape(12.dp),
+                            singleLine = true,
+                            textStyle = TextStyle(fontSize = 14.sp, color = Color.White)
+                        )
+                    }
+                }
+                
+                Spacer(modifier = Modifier.height(20.dp))
+                
+                // ─── RESUMEN VISUAL ───
+                if (title.isNotBlank()) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp)
+                            .clip(RoundedCornerShape(16.dp))
+                            .background(
+                                Brush.horizontalGradient(
+                                    listOf(
+                                        AccentGold.copy(alpha = 0.08f),
+                                        Color(0xFFFF8C00).copy(alpha = 0.05f)
+                                    )
+                                )
+                            )
+                            .border(
+                                1.dp,
+                                AccentGold.copy(alpha = 0.15f),
+                                RoundedCornerShape(16.dp)
+                            )
+                            .padding(16.dp)
+                    ) {
+                        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Icon(
+                                    Icons.Outlined.Receipt,
+                                    null,
+                                    tint = AccentGold,
+                                    modifier = Modifier.size(18.dp)
+                                )
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text(
+                                    "Resumen",
+                                    color = AccentGold,
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 14.sp
+                                )
+                            }
+                            
+                            RendSummaryItem("Título", title)
+                            if (hashtags.isNotEmpty()) {
+                                RendSummaryItem("Hashtags", hashtags.joinToString(" ") { "#$it" })
+                            }
+                            if (selectedCategory != null) {
+                                RendSummaryItem("Categoría", selectedCategory!!.label)
+                            }
+                            RendSummaryItem("Visibilidad", when(visibility) {
+                                "public" -> "Público"
+                                "followers" -> "Solo seguidores"
+                                else -> "Privado"
+                            })
+                            if (locationTag.isNotBlank()) {
+                                RendSummaryItem("Ubicación", locationTag)
+                            }
+                            if (linkedPost != null) {
+                                RendSummaryItem("Producto", linkedPost?.title ?: "")
+                            } else if (productTitle.isNotBlank()) {
+                                RendSummaryItem("Producto", productTitle)
+                            }
+                        }
+                    }
+                }
+                
+                Spacer(modifier = Modifier.height(24.dp))
             }
-            
-            Spacer(modifier = Modifier.height(32.dp))
         }
     }
     
@@ -1190,6 +2006,152 @@ private fun RendDetailsView(
             showPostLinkModal = false
         }
     )
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// COMPONENTES AUXILIARES PROFESIONALES
+// ═══════════════════════════════════════════════════════════════════════════════
+
+@Composable
+private fun RendDetailCard(
+    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    title: String,
+    subtitle: String,
+    accentColor: Color,
+    content: @Composable ColumnScope.() -> Unit
+) {
+    Surface(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp),
+        color = Color.White.copy(alpha = 0.04f),
+        shape = RoundedCornerShape(18.dp),
+        border = BorderStroke(
+            1.dp, Color.White.copy(alpha = 0.06f)
+        )
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Box(
+                    modifier = Modifier
+                        .size(34.dp)
+                        .clip(RoundedCornerShape(10.dp))
+                        .background(accentColor.copy(alpha = 0.12f)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(icon, null, tint = accentColor, modifier = Modifier.size(19.dp))
+                }
+                Spacer(modifier = Modifier.width(12.dp))
+                Column {
+                    Text(
+                        title,
+                        color = Color.White,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 15.sp
+                    )
+                    Text(
+                        subtitle,
+                        color = TextMuted,
+                        fontSize = 11.sp,
+                        lineHeight = 14.sp
+                    )
+                }
+            }
+            Spacer(modifier = Modifier.height(14.dp))
+            content()
+        }
+    }
+}
+
+@Composable
+private fun RendHashtagChip(tag: String, onRemove: () -> Unit) {
+    Surface(
+        color = Color(0xFF1DA1F2).copy(alpha = 0.12f),
+        shape = RoundedCornerShape(20.dp),
+        border = BorderStroke(
+            1.dp, Color(0xFF1DA1F2).copy(alpha = 0.25f)
+        )
+    ) {
+        Row(
+            modifier = Modifier.padding(start = 10.dp, end = 4.dp, top = 4.dp, bottom = 4.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                "#$tag",
+                color = Color(0xFF1DA1F2),
+                fontSize = 13.sp,
+                fontWeight = FontWeight.SemiBold
+            )
+            Spacer(modifier = Modifier.width(2.dp))
+            IconButton(
+                onClick = onRemove,
+                modifier = Modifier.size(22.dp)
+            ) {
+                Icon(
+                    Icons.Default.Close,
+                    "Quitar",
+                    tint = Color(0xFF1DA1F2).copy(alpha = 0.7f),
+                    modifier = Modifier.size(14.dp)
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun RendToggleRow(
+    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    title: String,
+    subtitle: String,
+    isChecked: Boolean,
+    onCheckedChange: (Boolean) -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onCheckedChange(!isChecked) }
+            .padding(vertical = 8.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(icon, null, tint = TextMuted, modifier = Modifier.size(22.dp))
+        Spacer(modifier = Modifier.width(12.dp))
+        Column(modifier = Modifier.weight(1f)) {
+            Text(title, color = Color.White, fontSize = 14.sp, fontWeight = FontWeight.Medium)
+            Text(subtitle, color = TextMuted, fontSize = 11.sp)
+        }
+        Switch(
+            checked = isChecked,
+            onCheckedChange = onCheckedChange,
+            colors = SwitchDefaults.colors(
+                checkedThumbColor = Color.White,
+                checkedTrackColor = AccentGold,
+                uncheckedThumbColor = TextMuted,
+                uncheckedTrackColor = Color.White.copy(alpha = 0.1f),
+                uncheckedBorderColor = Color.Transparent
+            ),
+            modifier = Modifier.height(24.dp)
+        )
+    }
+}
+
+@Composable
+private fun RendSummaryItem(label: String, value: String) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Text(label, color = TextMuted, fontSize = 12.sp)
+        Text(
+            value,
+            color = Color.White.copy(alpha = 0.85f),
+            fontSize = 12.sp,
+            fontWeight = FontWeight.Medium,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.widthIn(max = 200.dp),
+            textAlign = TextAlign.End
+        )
+    }
 }
 
 @Composable
@@ -1209,6 +2171,21 @@ private fun PostLinkModal(
     onPostSelected: (com.rendly.app.data.model.Post) -> Unit
 ) {
     var searchQuery by remember { mutableStateOf("") }
+    val listState = androidx.compose.foundation.lazy.grid.rememberLazyGridState()
+    
+    // Scroll offset para animación del header
+    val scrollOffset = remember {
+        androidx.compose.runtime.derivedStateOf {
+            listState.firstVisibleItemScrollOffset
+        }
+    }
+    
+    // Header debe desaparecer al hacer scroll
+    val headerAlpha = remember {
+        androidx.compose.runtime.derivedStateOf {
+            (1f - (scrollOffset.value / 100f).coerceIn(0f, 1f))
+        }
+    }
     
     val filteredPosts = remember(posts, searchQuery) {
         if (searchQuery.isBlank()) posts
@@ -1247,205 +2224,132 @@ private fun PostLinkModal(
             ) {
                 Surface(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .fillMaxHeight(0.75f)
+                        .fillMaxSize()
+                        .statusBarsPadding()
                         .navigationBarsPadding()
                         .clickable(
                             interactionSource = remember { androidx.compose.foundation.interaction.MutableInteractionSource() },
                             indication = null,
                             onClick = { }
                         ),
-                    shape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp),
+                    shape = RectangleShape,
                     color = HomeBg
                 ) {
-                    Column(modifier = Modifier.fillMaxSize()) {
-                        // Handle bar
-                        Box(
-                            modifier = Modifier
-                                .align(Alignment.CenterHorizontally)
-                                .padding(top = 12.dp)
-                                .width(40.dp)
-                                .height(4.dp)
-                                .clip(RoundedCornerShape(2.dp))
-                                .background(TextMuted.copy(alpha = 0.3f))
-                        )
-                        
-                        // Header
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(16.dp),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                Icon(
-                                    imageVector = Icons.Default.Link,
-                                    contentDescription = null,
-                                    tint = PrimaryPurple,
-                                    modifier = Modifier.size(24.dp)
-                                )
-                                Spacer(modifier = Modifier.width(10.dp))
-                                Text(
-                                    text = "Enlazar artículo",
-                                    fontSize = 20.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    color = TextPrimary
-                                )
-                            }
-                            IconButton(onClick = onDismiss) {
-                                Icon(Icons.Default.Close, "Cerrar", tint = TextMuted)
-                            }
-                        }
-                        
-                        // Search bar
-                        OutlinedTextField(
-                            value = searchQuery,
-                            onValueChange = { searchQuery = it },
-                            placeholder = { Text("Buscar artículo...", color = TextMuted) },
-                            leadingIcon = { Icon(Icons.Default.Search, null, tint = TextMuted) },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 16.dp),
-                            colors = OutlinedTextFieldDefaults.colors(
-                                focusedBorderColor = PrimaryPurple,
-                                unfocusedBorderColor = Surface,
-                                focusedContainerColor = Surface.copy(alpha = 0.3f),
-                                unfocusedContainerColor = Surface.copy(alpha = 0.3f),
-                                cursorColor = PrimaryPurple,
-                                focusedTextColor = TextPrimary,
-                                unfocusedTextColor = TextPrimary
-                            ),
-                            shape = RoundedCornerShape(14.dp),
-                            singleLine = true
-                        )
-                        
-                        Spacer(modifier = Modifier.height(16.dp))
-                        
-                        // Posts list
-                        if (filteredPosts.isEmpty()) {
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .weight(1f),
-                                contentAlignment = Alignment.Center
+                    Box(modifier = Modifier.fillMaxSize()) {
+                        Column(modifier = Modifier.fillMaxSize()) {
+                            // Header animado
+                            androidx.compose.animation.AnimatedVisibility(
+                                visible = headerAlpha.value > 0.1f,
+                                enter = fadeIn() + expandVertically(),
+                                exit = fadeOut() + shrinkVertically()
                             ) {
-                                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                    Icon(
-                                        imageVector = Icons.Outlined.Inventory2,
-                                        contentDescription = null,
-                                        tint = TextMuted,
-                                        modifier = Modifier.size(48.dp)
-                                    )
-                                    Spacer(modifier = Modifier.height(12.dp))
-                                    Text(
-                                        text = if (searchQuery.isNotBlank()) "No se encontraron artículos" else "No tienes artículos publicados",
-                                        color = TextMuted,
-                                        fontSize = 14.sp
-                                    )
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(16.dp)
+                                        .graphicsLayer { alpha = headerAlpha.value },
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Row(verticalAlignment = Alignment.CenterVertically) {
+                                        Icon(
+                                            imageVector = Icons.Default.Link,
+                                            contentDescription = null,
+                                            tint = PrimaryPurple,
+                                            modifier = Modifier.size(24.dp)
+                                        )
+                                        Spacer(modifier = Modifier.width(10.dp))
+                                        Text(
+                                            text = "Enlazar artículo",
+                                            fontSize = 20.sp,
+                                            fontWeight = FontWeight.Bold,
+                                            color = TextPrimary
+                                        )
+                                    }
+                                    IconButton(onClick = onDismiss) {
+                                        Icon(Icons.Default.Close, "Cerrar", tint = TextMuted)
+                                    }
                                 }
                             }
-                        } else {
-                            LazyVerticalGrid(
-                                columns = GridCells.Fixed(2),
+                            
+                            // Search bar (siempre visible)
+                            OutlinedTextField(
+                                value = searchQuery,
+                                onValueChange = { searchQuery = it },
+                                placeholder = { Text("Buscar artículo...", color = TextMuted) },
+                                leadingIcon = { Icon(Icons.Default.Search, null, tint = TextMuted) },
+                                trailingIcon = {
+                                    if (headerAlpha.value <= 0.1f) {
+                                        IconButton(onClick = onDismiss) {
+                                            Icon(Icons.Default.Close, "Cerrar", tint = TextMuted)
+                                        }
+                                    }
+                                },
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .weight(1f)
-                                    .padding(horizontal = 12.dp),
-                                horizontalArrangement = Arrangement.spacedBy(10.dp),
-                                verticalArrangement = Arrangement.spacedBy(10.dp)
-                            ) {
-                                items(filteredPosts) { post ->
-                                    PostLinkItem(
-                                        post = post,
-                                        onClick = { onPostSelected(post) }
-                                    )
+                                    .padding(horizontal = 16.dp),
+                                colors = OutlinedTextFieldDefaults.colors(
+                                    focusedBorderColor = PrimaryPurple,
+                                    unfocusedBorderColor = Surface,
+                                    focusedContainerColor = Surface.copy(alpha = 0.3f),
+                                    unfocusedContainerColor = Surface.copy(alpha = 0.3f),
+                                    cursorColor = PrimaryPurple,
+                                    focusedTextColor = TextPrimary,
+                                    unfocusedTextColor = TextPrimary
+                                ),
+                                shape = RoundedCornerShape(14.dp),
+                                singleLine = true
+                            )
+                            
+                            Spacer(modifier = Modifier.height(16.dp))
+                        
+                            // Posts list con UnifiedProductCard
+                            if (filteredPosts.isEmpty()) {
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .weight(1f),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                        Icon(
+                                            imageVector = Icons.Outlined.Inventory2,
+                                            contentDescription = null,
+                                            tint = TextMuted,
+                                            modifier = Modifier.size(48.dp)
+                                        )
+                                        Spacer(modifier = Modifier.height(12.dp))
+                                        Text(
+                                            text = if (searchQuery.isNotBlank()) "No se encontraron artículos" else "No tienes artículos publicados",
+                                            color = TextMuted,
+                                            fontSize = 14.sp
+                                        )
+                                    }
+                                }
+                            } else {
+                                LazyVerticalGrid(
+                                    columns = GridCells.Fixed(2),
+                                    state = listState,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .weight(1f)
+                                        .padding(horizontal = 12.dp),
+                                    horizontalArrangement = Arrangement.spacedBy(10.dp),
+                                    verticalArrangement = Arrangement.spacedBy(10.dp),
+                                    contentPadding = PaddingValues(bottom = 16.dp)
+                                ) {
+                                    items(filteredPosts.size) { index ->
+                                        val post = filteredPosts[index]
+                                        com.rendly.app.ui.components.UnifiedProductCard(
+                                            data = post.toProductCardData(),
+                                            onClick = { onPostSelected(post) },
+                                            modifier = Modifier.fillMaxWidth()
+                                        )
+                                    }
                                 }
                             }
                         }
                     }
-                }
-            }
-        }
-    }
-}
-
-@Composable
-private fun PostLinkItem(
-    post: com.rendly.app.data.model.Post,
-    onClick: () -> Unit
-) {
-    Surface(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(12.dp))
-            .clickable { onClick() },
-        color = Surface,
-        shape = RoundedCornerShape(12.dp)
-    ) {
-        Column {
-            // Imagen del post
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .aspectRatio(1f)
-                    .clip(RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp))
-                    .background(Color.Black)
-            ) {
-                AsyncImage(
-                    model = post.images.firstOrNull(),
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier.fillMaxSize()
-                )
-                
-                // Badge de precio
-                post.price?.let { price ->
-                    Box(
-                        modifier = Modifier
-                            .align(Alignment.TopEnd)
-                            .padding(8.dp)
-                            .clip(RoundedCornerShape(6.dp))
-                            .background(AccentGold)
-                            .padding(horizontal = 6.dp, vertical = 3.dp)
-                    ) {
-                        Text(
-                            text = "$$price",
-                            color = Color.Black,
-                            fontSize = 11.sp,
-                            fontWeight = FontWeight.Bold
-                        )
-                    }
-                }
-            }
-            
-            // Info del post
-            Column(
-                modifier = Modifier.padding(10.dp)
-            ) {
-                Text(
-                    text = post.title,
-                    color = TextPrimary,
-                    fontSize = 13.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis,
-                    lineHeight = 16.sp
-                )
-                Spacer(modifier = Modifier.height(4.dp))
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(
-                        imageVector = Icons.Outlined.Favorite,
-                        contentDescription = null,
-                        tint = TextMuted,
-                        modifier = Modifier.size(12.dp)
-                    )
-                    Spacer(modifier = Modifier.width(4.dp))
-                    Text(
-                        text = "${post.likesCount}",
-                        color = TextMuted,
-                        fontSize = 11.sp
-                    )
                 }
             }
         }

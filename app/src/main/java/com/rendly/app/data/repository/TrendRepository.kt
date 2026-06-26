@@ -92,52 +92,60 @@ object TrendRepository {
                 }
             }
 
-            // 3. Mapear a TrendingPostItem (reusamos el modelo para Rends)
+            // 3. Mapear a TrendingPostItem con hashtags reales de cada rend
             val trendItems = popularRends.mapIndexed { index, rend ->
                 val user = usersMap[rend.userId]
-                val trendCategory = "fashion" // Default category para Rends
-                val firstTag = "#trending" // Default hashtag
-
-                run {
-                    // Para Rends (videos verticales), usar thumbnail de ImageKit
-                    // Formato correcto: {videoUrl}/ik-thumbnail.jpg
-                    val finalThumbnail = if (rend.videoUrl.contains("ik.imagekit.io")) {
-                        "${rend.videoUrl}/ik-thumbnail.jpg"
-                    } else {
-                        rend.productImage?.takeIf { it.isNotBlank() && !it.endsWith("/") }
-                            ?: rend.videoUrl
-                    }
-                    Log.d(TAG, "Rend ${rend.id.take(8)}: FINAL=$finalThumbnail")
-                    
-                    TrendingPostItem(
-                        id = rend.id,
-                        rank = index + 1,
-                        title = rend.description?.take(50) ?: "Rend",
-                        hashtag = firstTag,
-                        viewCount = rend.viewsCount,
-                        likesCount = rend.likesCount,
-                        growthPercent = if (rend.viewsCount > 0) {
-                            ((rend.likesCount.toDouble() / rend.viewsCount.coerceAtLeast(1)) * 100).toInt().coerceIn(10, 500)
-                        } else 10,
-                        thumbnailUrl = finalThumbnail,
-                        category = trendCategory,
-                        username = user?.username ?: "usuario",
-                        userAvatar = user?.avatarUrl ?: "",
-                        isHot = index < 3
-                    )
+                val trendCategory = categoryMap[rend.category] ?: "fashion"
+                // Usar el primer hashtag real del rend, o generar uno basado en descripción
+                val firstTag = if (rend.hashtags.isNotEmpty()) {
+                    val tag = rend.hashtags.first()
+                    if (tag.startsWith("#")) tag else "#$tag"
+                } else {
+                    "#trending"
                 }
+
+                val finalThumbnail = if (rend.videoUrl.contains("ik.imagekit.io")) {
+                    "${rend.videoUrl}/ik-thumbnail.jpg"
+                } else {
+                    rend.productImage?.takeIf { it.isNotBlank() && !it.endsWith("/") }
+                        ?: rend.videoUrl
+                }
+                
+                TrendingPostItem(
+                    id = rend.id,
+                    rank = index + 1,
+                    title = rend.description?.take(50) ?: "Rend",
+                    hashtag = firstTag,
+                    viewCount = rend.viewsCount,
+                    likesCount = rend.likesCount,
+                    growthPercent = if (rend.viewsCount > 0) {
+                        ((rend.likesCount.toDouble() / rend.viewsCount.coerceAtLeast(1)) * 100).toInt().coerceIn(10, 500)
+                    } else 10,
+                    thumbnailUrl = finalThumbnail,
+                    category = trendCategory,
+                    username = user?.username ?: "usuario",
+                    userAvatar = user?.avatarUrl ?: "",
+                    isHot = index < 3
+                )
             }
             _trendingPosts.value = trendItems
 
-            // 4. Crear trending hashtags basados en los rends más vistos
+            // 4. Crear trending hashtags reales agrupando rends por sus hashtags
             val tagMap = mutableMapOf<String, MutableList<RendDB>>()
-            // Agrupar rends por categoría genérica
             for (rend in popularRends) {
-                val tag = "trending"
-                tagMap.getOrPut(tag) { mutableListOf() }.add(rend)
+                if (rend.hashtags.isNotEmpty()) {
+                    // Agrupar por cada hashtag real del rend
+                    for (hashtag in rend.hashtags) {
+                        val cleanTag = hashtag.removePrefix("#").trim().lowercase()
+                        if (cleanTag.isNotBlank()) {
+                            tagMap.getOrPut(cleanTag) { mutableListOf() }.add(rend)
+                        }
+                    }
+                }
             }
 
             val trendTags = tagMap.entries
+                .filter { it.value.size >= 1 } // Al menos 1 video con ese hashtag
                 .sortedByDescending { entry -> entry.value.sumOf { it.viewsCount } }
                 .take(8)
                 .mapIndexed { index, (tag, rends) ->
@@ -146,8 +154,7 @@ object TrendRepository {
                         hashtag = "#$tag",
                         totalViews = rends.sumOf { it.viewsCount },
                         videoCount = rends.size,
-                        thumbnails = rends.take(3).map { rend ->
-                            // Formato correcto: {videoUrl}/ik-thumbnail.jpg
+                        thumbnails = rends.distinctBy { it.id }.take(3).map { rend ->
                             if (rend.videoUrl.contains("ik.imagekit.io")) {
                                 "${rend.videoUrl}/ik-thumbnail.jpg"
                             } else rend.videoUrl

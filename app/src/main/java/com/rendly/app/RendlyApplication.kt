@@ -69,13 +69,14 @@ class MerqoraApplication : Application() {
                     .diskCache {
                         DiskCache.Builder()
                             .directory(context.cacheDir.resolve("image_cache"))
-                            .maxSizeBytes(256 * 1024 * 1024) // 256 MB (reducido)
+                            .maxSizeBytes(1024 * 1024 * 1024) // 1 GB
                             .build()
                     }
                     .respectCacheHeaders(false)
                     .memoryCachePolicy(CachePolicy.ENABLED)
                     .diskCachePolicy(CachePolicy.ENABLED)
-                    .crossfade(150) // Reducido de 300ms
+                    .networkCachePolicy(CachePolicy.ENABLED)
+                    .crossfade(true)
                     .build()
                     .also { imageLoader = it }
             }

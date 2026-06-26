@@ -38,20 +38,29 @@ data class ExploreItem(
     val userAvatar: String,
     val storeName: String?,
     val isVerified: Boolean,
-    val reputationPercent: Int
+    val reputationPercent: Int,
+    val condition: String? = null,
+    val freeShipping: Boolean = false
 )
 
 object ExploreRepository {
     private const val TAG = "ExploreRepository"
-    
+
     private val _exploreItems = MutableStateFlow<List<ExploreItem>>(emptyList())
     val exploreItems: StateFlow<List<ExploreItem>> = _exploreItems.asStateFlow()
-    
+
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
-    
+
     private var isDataLoaded = false
-    
+    private val _categoryStats = MutableStateFlow<Map<String, Int>>(emptyMap())
+    val categoryStats: StateFlow<Map<String, Int>> = _categoryStats.asStateFlow()
+
+    // Constants moved out of companion object (object cannot have companion)
+    private const val PRELOAD_THRESHOLD = 100
+    private const val STATS_CACHE_DURATION = 30000L // 30 seconds
+    private var lastStatsUpdate = 0L
+
     suspend fun loadExploreItems(forceRefresh: Boolean = false) = withContext(Dispatchers.IO) {
         // Skip if already loaded and not forcing refresh
         if (isDataLoaded && !forceRefresh && _exploreItems.value.isNotEmpty()) {
@@ -115,7 +124,9 @@ object ExploreRepository {
                     userAvatar = user?.avatarUrl ?: "",
                     storeName = user?.nombreTienda,
                     isVerified = user?.isVerified ?: false,
-                    reputationPercent = reputation
+                    reputationPercent = reputation,
+                    condition = post.condition,
+                    freeShipping = post.freeShipping ?: false
                 )
             }
             
@@ -141,8 +152,58 @@ object ExploreRepository {
      */
     fun getCategoryCounts(): Map<String, Int> {
         val items = _exploreItems.value
-        return items.groupBy { normalizeCategory(it.category) }
+        val stats = items.groupBy { normalizeCategory(it.category) }
             .mapValues { it.value.size }
+        _categoryStats.value = stats
+        return stats
+    }
+
+    /**
+     * Pre-loads category stats for immediate display
+     * Returns cached stats if available and fresh (< 30 seconds)
+     */
+    suspend fun preloadCategoryStats() {
+        val now = System.currentTimeMillis()
+        val cachedStats = _categoryStats.value
+
+        // Return cached stats if fresh
+        if (cachedStats.isNotEmpty() && (now - lastStatsUpdate) < STATS_CACHE_DURATION) {
+            return
+        }
+
+        // Calculate and cache stats
+        val items = _exploreItems.value
+        if (items.isNotEmpty()) {
+            _categoryStats.value = items.groupBy { normalizeCategory(it.category) }
+                .mapValues { it.value.size }
+            lastStatsUpdate = now
+        }
+    }
+
+    /**
+     * Check if stats are already loaded (non-empty)
+     */
+    fun hasStatsLoaded(): Boolean {
+        return _categoryStats.value.isNotEmpty() || _exploreItems.value.isNotEmpty()
+    }
+
+    /**
+     * Check if we have cached data available
+     */
+    val hasCache: Boolean
+        get() = isDataLoaded || _exploreItems.value.isNotEmpty()
+
+    /**
+     * Preload next categories for smoother scrolling experience
+     */
+    suspend fun preloadNextCategories() {
+        // Background precomputation for next render pass
+        withContext(Dispatchers.IO) {
+            // Ensure we have all the data ready
+            if (_exploreItems.value.isEmpty()) {
+                loadExploreItems(forceRefresh = false)
+            }
+        }
     }
     
     /**

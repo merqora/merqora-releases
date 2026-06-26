@@ -1031,18 +1031,22 @@ fun HistoryScreen(
                                         if (adjustState.hasChanges()) {
                                             isApplying = true
                                             scope.launch {
-                                                // Aplicar en thread de IO para no bloquear UI
+                                                // Aplicar en thread Default para no bloquear UI
                                                 val adjusted = kotlinx.coroutines.withContext(Dispatchers.Default) {
-                                                    capturedBitmap?.let { bmp ->
+                                                    (filteredBitmapForAdjust ?: capturedBitmap)?.let { bmp ->
                                                         com.rendly.app.ui.components.ImageAdjustProcessor.applyForExport(bmp, adjustState)
                                                     }
                                                 }
                                                 // Actualizar bitmap y cerrar herramienta
                                                 adjusted?.let { capturedBitmap = it }
+                                                // Resetear filtro a Original: los ajustes ya incluyen el filtro baked-in
+                                                selectedFilter = com.rendly.app.ui.components.STORY_FILTERS.first()
+                                                filteredBitmapForAdjust = null
                                                 adjustState = com.rendly.app.ui.components.ImageAdjustState()
-                                                isApplying = false
+                                                // Cerrar inmediato sin esperar
                                                 showAdjustMode = false
                                                 selectedAdjustment = null
+                                                isApplying = false
                                             }
                                         } else {
                                             // Sin cambios, solo cerrar
@@ -1084,15 +1088,23 @@ fun HistoryScreen(
                             previewHeight = previewHeight,
                             onApply = { state ->
                                 adjustState = state
-                                capturedBitmap?.let { bmp ->
-                                    if (state.hasChanges()) {
-                                        val adjusted = com.rendly.app.ui.components.ImageAdjustProcessor.applyForExport(bmp, state)
-                                        capturedBitmap = adjusted
+                                scope.launch {
+                                    val sourceBmp = filteredBitmapForAdjust ?: capturedBitmap
+                                    sourceBmp?.let { bmp ->
+                                        if (state.hasChanges()) {
+                                            val adjusted = withContext(Dispatchers.Default) {
+                                                com.rendly.app.ui.components.ImageAdjustProcessor.applyForExport(bmp, state)
+                                            }
+                                            capturedBitmap = adjusted
+                                        }
                                     }
+                                    // Resetear filtro a Original: los ajustes ya incluyen el filtro baked-in
+                                    selectedFilter = com.rendly.app.ui.components.STORY_FILTERS.first()
+                                    filteredBitmapForAdjust = null
+                                    showAdjustMode = false
+                                    selectedAdjustment = null
+                                    adjustState = com.rendly.app.ui.components.ImageAdjustState()
                                 }
-                                showAdjustMode = false
-                                selectedAdjustment = null
-                                adjustState = com.rendly.app.ui.components.ImageAdjustState()
                             },
                             onDismiss = { 
                                 showAdjustMode = false

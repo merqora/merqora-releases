@@ -6,7 +6,7 @@ import android.graphics.BitmapFactory
 import android.net.Uri
 import android.util.Log
 import com.rendly.app.data.model.Usuario
-import com.rendly.app.data.remote.CloudflareService
+import com.rendly.app.data.remote.CloudinaryService
 import com.rendly.app.data.remote.SupabaseClient
 import com.rendly.app.ui.screens.profile.EditProfileData
 import com.rendly.app.ui.screens.profile.ProfileData
@@ -68,9 +68,17 @@ object ProfileRepository {
                 // Obtener conteos desde FollowersRepository y PostRepository
                 val seguidoresCount = FollowersRepository.getFollowersCount(it.userId)
                 val clientesCount = FollowersRepository.getClientsCount(it.userId)
-                val reputacionCalc = FollowersRepository.getReputation(it.userId)
+                val reputacionCalc = it.reputationScore?.toInt() 
+                    ?: FollowersRepository.getReputation(it.userId)
                 val publicacionesCount = PostRepository.getUserPostsCount(it.userId)
                 
+                // LOG DE DEPURACIÓN CRÍTICO PARA EL MODELO USUARIO (ENTRADA)
+                Log.d(TAG, "==== USUARIO DESDE DB ====")
+                Log.d(TAG, "ID: ${it.id}, UserID: ${it.userId}")
+                Log.d(TAG, "Avatar DB: ${it.avatarUrl}")
+                Log.d(TAG, "Banner DB: ${it.bannerUrl}")
+                Log.d(TAG, "==========================")
+
                 ProfileData(
                     userId = it.userId,
                     username = it.username,
@@ -88,6 +96,15 @@ object ProfileRepository {
                     reputacion = reputacionCalc,
                     isVerified = it.isVerified
                 )
+            }
+            
+            // LOG DE DEPURACIÓN CRÍTICO PARA EL MODELO PROFILE DATA (SALIDA)
+            if (profileData != null) {
+                Log.d(TAG, "==== PROFILE DATA MAPEADO ====")
+                Log.d(TAG, "User: ${profileData.username}")
+                Log.d(TAG, "Avatar UI: ${profileData.avatarUrl}")
+                Log.d(TAG, "Banner UI: ${profileData.bannerUrl}")
+                Log.d(TAG, "==============================")
             }
             
             _currentProfile.value = profileData
@@ -118,31 +135,63 @@ object ProfileRepository {
             var finalAvatarUrl = data.avatarUrl
             var finalBannerUrl = data.bannerUrl
             
-            // Subir avatar a Cloudflare si hay uno nuevo
+            // Subir avatar a Cloudinary si hay uno nuevo
             if (avatarUri != null) {
-                Log.d(TAG, "Subiendo nuevo avatar a Cloudflare...")
+                Log.d(TAG, "Subiendo nuevo avatar a Cloudinary...")
+                // Delete old avatar from Cloudinary (best-effort, non-blocking)
+                val oldAvatarUrl = data.avatarUrl
+                if (!oldAvatarUrl.isNullOrBlank() && oldAvatarUrl.contains("cloudinary.com")) {
+                    Log.d(TAG, "Eliminando avatar anterior de Cloudinary: $oldAvatarUrl")
+                    CloudinaryService.extractPublicIdFromUrl(oldAvatarUrl)?.let { 
+                        CloudinaryService.deleteImage(it)
+                    }
+                }
                 val bitmap = uriToBitmap(context, avatarUri)
                 if (bitmap != null) {
-                    val result = CloudflareService.uploadImage(
+                    val result = CloudinaryService.uploadImage(
                         bitmap = bitmap,
-                        folder = "avatars/$userId"
+                        folder = "profiles/avatars/$userId",
+                        mediaType = com.rendly.app.media.MediaOptimizer.MediaType.AVATAR
                     )
-                    finalAvatarUrl = result.getOrNull()
+                    if (result.isFailure) {
+                        Log.e(TAG, "Error subiendo avatar: ${result.exceptionOrNull()?.message}")
+                        throw Exception("Error al subir foto de perfil: ${result.exceptionOrNull()?.message}")
+                    }
+                    finalAvatarUrl = result.getOrThrow()
                     Log.d(TAG, "Avatar subido: $finalAvatarUrl")
+                } else {
+                    Log.e(TAG, "No se pudo convertir avatarUri a bitmap")
+                    throw Exception("Error al procesar la imagen de perfil")
                 }
             }
             
-            // Subir banner a Cloudflare si hay uno nuevo
+            // Subir banner a Cloudinary si hay uno nuevo
             if (bannerUri != null) {
-                Log.d(TAG, "Subiendo nuevo banner a Cloudflare...")
+                Log.d(TAG, "Subiendo nuevo banner a Cloudinary...")
+                // Delete old banner from Cloudinary (best-effort, non-blocking)
+                val oldBannerUrl = data.bannerUrl
+                if (!oldBannerUrl.isNullOrBlank() && oldBannerUrl.contains("cloudinary.com")) {
+                    Log.d(TAG, "Eliminando banner anterior de Cloudinary: $oldBannerUrl")
+                    CloudinaryService.extractPublicIdFromUrl(oldBannerUrl)?.let { 
+                        CloudinaryService.deleteImage(it)
+                    }
+                }
                 val bitmap = uriToBitmap(context, bannerUri)
                 if (bitmap != null) {
-                    val result = CloudflareService.uploadImage(
+                    val result = CloudinaryService.uploadImage(
                         bitmap = bitmap,
-                        folder = "banners/$userId"
+                        folder = "profiles/banners/$userId",
+                        mediaType = com.rendly.app.media.MediaOptimizer.MediaType.BANNER
                     )
-                    finalBannerUrl = result.getOrNull()
+                    if (result.isFailure) {
+                        Log.e(TAG, "Error subiendo banner: ${result.exceptionOrNull()?.message}")
+                        throw Exception("Error al subir banner: ${result.exceptionOrNull()?.message}")
+                    }
+                    finalBannerUrl = result.getOrThrow()
                     Log.d(TAG, "Banner subido: $finalBannerUrl")
+                } else {
+                    Log.e(TAG, "No se pudo convertir bannerUri a bitmap")
+                    throw Exception("Error al procesar la imagen del banner")
                 }
             }
             
@@ -171,8 +220,8 @@ object ProfileRepository {
                     filter { eq("user_id", userId) }
                 }
             
-            // Recargar perfil
-            val updatedProfile = loadCurrentProfile()
+            // Recargar perfil (forzar refresh para que no devuelva cache viejo)
+            val updatedProfile = loadCurrentProfile(forceRefresh = true)
             Log.d(TAG, "Perfil actualizado correctamente")
             
             Result.success(updatedProfile ?: throw Exception("Error al recargar perfil"))

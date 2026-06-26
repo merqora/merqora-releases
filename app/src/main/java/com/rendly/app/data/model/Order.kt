@@ -56,7 +56,8 @@ data class OrderDB(
     @SerialName("updated_at") val updatedAt: String = "",
     @SerialName("paid_at") val paidAt: String? = null,
     @SerialName("shipped_at") val shippedAt: String? = null,
-    @SerialName("delivered_at") val deliveredAt: String? = null
+    @SerialName("delivered_at") val deliveredAt: String? = null,
+    @SerialName("handshake_id") val handshakeId: String? = null
 )
 
 @Serializable
@@ -169,7 +170,9 @@ data class Order(
     val deliveredAt: String? = null,
     val trackingNumber: String? = null,
     val buyerUsername: String? = null,
-    val buyerAvatarUrl: String? = null
+    val buyerAvatarUrl: String? = null,
+    val handshakeId: String? = null,
+    val handshake: HandshakeTransaction? = null
 ) {
     val statusDisplayName: String
         get() = when (status) {
@@ -214,7 +217,8 @@ data class Order(
                 paidAt = db.paidAt,
                 shippedAt = db.shippedAt,
                 deliveredAt = db.deliveredAt,
-                trackingNumber = db.trackingNumber
+                trackingNumber = db.trackingNumber,
+                handshakeId = db.handshakeId
             )
         }
     }

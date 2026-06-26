@@ -4,10 +4,6 @@ import androidx.compose.animation.*
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -68,6 +64,8 @@ fun MainScreen(
     
     // Estado para chat activo - solo necesitamos el usuario
     var activeChatUser by remember { mutableStateOf<Usuario?>(null) }
+    // ID de conversación del chat activo
+    var activeChatConversationId by remember { mutableStateOf<String?>(null) }
     
     // Estado para ocultar navbar cuando se ve perfil de otro usuario, ForwardModal, CommentsSheet, ProductPage, CartModal, SettingsModal o SearchResults
     var isStoriesViewerVisible by remember { mutableStateOf(false) }
@@ -88,9 +86,7 @@ fun MainScreen(
     // Estado para TendenciasScreen
     var showTendenciasScreen by remember { mutableStateOf(false) }
     
-    // Estado para abrir RendScreen desde Tendencias con un rend específico
-    var showRendFromTendencias by remember { mutableStateOf(false) }
-    var rendIdFromTendencias by remember { mutableStateOf<String?>(null) }
+    // Navigation to videos section with specific rend is handled via RendRepository.setPendingRendId()
     
     // Estado para HashtagDetailScreen
     var showHashtagDetail by remember { mutableStateOf(false) }
@@ -339,8 +335,9 @@ fun MainScreen(
                     showMessagesDrawer = false 
                 }
             },
-            onOpenChat = { user ->
+            onOpenChat = { user, convId ->
                 activeChatUser = user
+                activeChatConversationId = convId
                 // NO cerramos el drawer, queda debajo del chat
             }
         )
@@ -381,12 +378,15 @@ fun MainScreen(
             currentChatUser?.let { user ->
                 ChatScreen(
                     otherUser = user,
+                    conversationId = activeChatConversationId,
                     onBack = {
                         activeChatUser = null
+                        activeChatConversationId = null
                     },
                     onOpenChatList = {
                         // Solo cerrar el chat - el drawer ya está visible debajo
                         activeChatUser = null
+                        activeChatConversationId = null
                     },
                     onOpenProduct = { postId ->
                         selectedPostIdFromChat = postId
@@ -457,53 +457,16 @@ fun MainScreen(
             TendenciasScreen(
                 onBack = { showTendenciasScreen = false },
                 onTrendClick = { trendItem ->
-                    // Navigate to RendScreen with this specific rend
-                    rendIdFromTendencias = trendItem.id
-                    showRendFromTendencias = true
+                    // Navigate to videos section with this specific rend
+                    showTendenciasScreen = false
+                    com.rendly.app.data.repository.RendRepository.setPendingRendId(trendItem.id)
+                    currentRoute = "videos"
                 },
                 onHashtagClick = { hashtagItem ->
                     selectedHashtagItem = hashtagItem
                     showHashtagDetail = true
                 }
             )
-        }
-    }
-    
-    // RendScreen desde Tendencias - abrir video específico
-    if (showRendFromTendencias) {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .zIndex(150f)
-                .background(HomeBg)
-        ) {
-            RendScreen(
-                onNavigateToProfile = { userId ->
-                    selectedUserIdFromChat = userId
-                    showUserProfileFromChat = true
-                },
-                onNavigateToTendencias = {},
-                isScreenVisible = true,
-                showNavBar = false,
-                initialRendId = rendIdFromTendencias
-            )
-            // Back button overlay
-            IconButton(
-                onClick = {
-                    showRendFromTendencias = false
-                    rendIdFromTendencias = null
-                },
-                modifier = Modifier
-                    .statusBarsPadding()
-                    .padding(8.dp)
-                    .size(40.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Default.ArrowBack,
-                    contentDescription = "Volver",
-                    tint = androidx.compose.ui.graphics.Color.White
-                )
-            }
         }
     }
     
@@ -522,8 +485,11 @@ fun MainScreen(
                     selectedHashtagItem = null
                 },
                 onVideoClick = { trendItem ->
-                    rendIdFromTendencias = trendItem.id
-                    showRendFromTendencias = true
+                    showHashtagDetail = false
+                    selectedHashtagItem = null
+                    showTendenciasScreen = false
+                    com.rendly.app.data.repository.RendRepository.setPendingRendId(trendItem.id)
+                    currentRoute = "videos"
                 }
             )
         }
@@ -544,16 +510,83 @@ fun MainScreen(
                     selectedPostIdFromChat = null
                     selectedPostFromChat = null
                 },
-                onBuyNow = { /* TODO */ },
-                onAddToCart = { /* TODO */ },
-                onContactSeller = { /* TODO */ },
-                onShare = { /* TODO */ },
-                onFavorite = { /* TODO */ },
-                onLike = { /* TODO */ },
-                onSave = { /* TODO */ },
-                onForward = { /* TODO */ },
-                onViewAllReviews = { /* TODO */ },
-                onRelatedPostClick = { /* TODO */ }
+                onBuyNow = { post ->
+                    navController.navigate(Screen.Checkout.route)
+                },
+                onAddToCart = { post ->
+                    // ProductPage ya agrega al carrito internamente
+                },
+                onContactSeller = { post ->
+                    // Abrir chat con el vendedor
+                    scope.launch {
+                        try {
+                            val users = SupabaseDataSource.fetchUsers(listOf(post.userId))
+                            val seller = users.firstOrNull()
+                            if (seller != null) {
+                                activeChatUser = seller
+                                showProductPageFromChat = false
+                                selectedPostIdFromChat = null
+                                selectedPostFromChat = null
+                            }
+                        } catch (_: Exception) {}
+                    }
+                },
+                onShare = { post ->
+                    scope.launch {
+                        try {
+                            val current = com.rendly.app.data.remote.SupabaseClient.database
+                                .from("posts")
+                                .select { filter { eq("id", post.id) } }
+                                .decodeSingleOrNull<com.rendly.app.data.model.PostDB>()
+                            val newCount = (current?.sharesCount ?: 0) + 1
+                            com.rendly.app.data.remote.SupabaseClient.database
+                                .from("posts")
+                                .update({ set("shares_count", newCount) }) {
+                                    filter { eq("id", post.id) }
+                                }
+                        } catch (_: Exception) {}
+                    }
+                },
+                onFavorite = { post ->
+                    scope.launch {
+                        try {
+                            val userId = com.rendly.app.data.remote.SupabaseClient.auth.currentUserOrNull()?.id ?: return@launch
+                            com.rendly.app.data.remote.SupabaseClient.database
+                                .from("post_saves")
+                                .insert(mapOf("user_id" to userId, "post_id" to post.id))
+                        } catch (_: Exception) {}
+                    }
+                },
+                onLike = { post ->
+                    scope.launch {
+                        try {
+                            val userId = com.rendly.app.data.remote.SupabaseClient.auth.currentUserOrNull()?.id ?: return@launch
+                            com.rendly.app.data.remote.SupabaseClient.database
+                                .from("post_likes")
+                                .insert(mapOf("user_id" to userId, "post_id" to post.id))
+                        } catch (_: Exception) {}
+                    }
+                },
+                onSave = { post ->
+                    scope.launch {
+                        try {
+                            val userId = com.rendly.app.data.remote.SupabaseClient.auth.currentUserOrNull()?.id ?: return@launch
+                            com.rendly.app.data.remote.SupabaseClient.database
+                                .from("post_saves")
+                                .insert(mapOf("user_id" to userId, "post_id" to post.id))
+                        } catch (_: Exception) {}
+                    }
+                },
+                onForward = { post ->
+                    // Forward se maneja internamente en ProductPage
+                },
+                onViewAllReviews = { post ->
+                    // Reviews se manejan internamente en ProductPage
+                },
+                onRelatedPostClick = { post ->
+                    selectedPostIdFromChat = post.id
+                    selectedPostFromChat = post
+                }
             )
         }
     }

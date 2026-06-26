@@ -13,6 +13,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.put
 import java.util.UUID
 
 object HighlightRepository {
@@ -77,6 +79,7 @@ object HighlightRepository {
                 val result = CloudflareService.uploadImage(
                     bitmap = coverBitmap,
                     folder = "highlights/$userId",
+                    mediaType = com.rendly.app.media.MediaOptimizer.MediaType.HIGHLIGHT,
                     onProgress = { progress -> onProgress(0.2f + progress * 0.6f) }
                 )
                 
@@ -130,6 +133,33 @@ object HighlightRepository {
             }
             
             Log.d(TAG, "✅ Highlight insertado exitosamente en Supabase!")
+            
+            // Also insert the cover as the first highlight_story so it shows in StoriesViewer
+            if (coverUrl != null) {
+                val firstStory = HighlightStory(
+                    id = UUID.randomUUID().toString(),
+                    highlightId = highlightId,
+                    storyId = null,
+                    mediaUrl = coverUrl,
+                    position = 0,
+                    createdAt = now
+                )
+                SupabaseClient.database
+                    .from("highlight_stories")
+                    .insert(firstStory)
+                
+                // Update stories_count to 1
+                val updateCount = buildJsonObject {
+                    put("stories_count", 1)
+                }
+                SupabaseClient.database
+                    .from("highlights")
+                    .update(updateCount) {
+                        filter { eq("id", highlightId) }
+                    }
+                Log.d(TAG, "✅ Cover insertada como primera highlight_story")
+            }
+            
             onProgress(1f)
             
             // Recargar lista
@@ -156,7 +186,8 @@ object HighlightRepository {
             val finalMediaUrl = mediaUrl ?: if (mediaBitmap != null) {
                 CloudflareService.uploadImage(
                     bitmap = mediaBitmap,
-                    folder = "highlights/stories"
+                    folder = "highlights/stories",
+                    mediaType = com.rendly.app.media.MediaOptimizer.MediaType.HIGHLIGHT
                 ).getOrThrow()
             } else {
                 throw Exception("Se requiere imagen o URL")
@@ -231,7 +262,47 @@ object HighlightRepository {
     
     suspend fun deleteHighlight(highlightId: String): Result<Unit> = withContext(Dispatchers.IO) {
         try {
-            // Eliminar stories del highlight primero
+            // 1. Obtener todas las stories para borrar media de Cloudflare R2
+            val stories = SupabaseClient.database
+                .from("highlight_stories")
+                .select {
+                    filter {
+                        eq("highlight_id", highlightId)
+                    }
+                }
+                .decodeList<HighlightStory>()
+            
+            // 2. Obtener el highlight para borrar su cover
+            val highlight = SupabaseClient.database
+                .from("highlights")
+                .select {
+                    filter {
+                        eq("id", highlightId)
+                    }
+                }
+                .decodeSingleOrNull<Highlight>()
+            
+            // 3. Borrar media de Cloudflare R2 (best-effort)
+            for (story in stories) {
+                if (story.mediaUrl.isNotBlank()) {
+                    try {
+                        CloudflareService.deleteImage(story.mediaUrl)
+                        Log.d(TAG, "✅ Deleted story media from R2: ${story.mediaUrl}")
+                    } catch (e: Exception) {
+                        Log.w(TAG, "Failed to delete story media from R2: ${e.message}")
+                    }
+                }
+            }
+            if (highlight?.coverUrl != null && highlight.coverUrl.isNotBlank()) {
+                try {
+                    CloudflareService.deleteImage(highlight.coverUrl)
+                    Log.d(TAG, "✅ Deleted cover from R2: ${highlight.coverUrl}")
+                } catch (e: Exception) {
+                    Log.w(TAG, "Failed to delete cover from R2: ${e.message}")
+                }
+            }
+            
+            // 4. Eliminar stories del highlight de Supabase
             SupabaseClient.database
                 .from("highlight_stories")
                 .delete {
@@ -240,7 +311,7 @@ object HighlightRepository {
                     }
                 }
             
-            // Eliminar highlight
+            // 5. Eliminar highlight de Supabase
             SupabaseClient.database
                 .from("highlights")
                 .delete {

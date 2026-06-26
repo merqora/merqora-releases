@@ -22,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
@@ -59,6 +60,7 @@ fun HighlightedStories(
     onStoryLongPress: (HighlightedStory) -> Unit = {},
     onAddStory: () -> Unit = {},
     canAddStories: Boolean = true,
+    uploadingHighlightId: String? = null,
     modifier: Modifier = Modifier
 ) {
     val scrollState = rememberScrollState()
@@ -80,7 +82,8 @@ fun HighlightedStories(
             HighlightItem(
                 story = story,
                 onClick = { onStoryPress(story) },
-                onLongClick = { onStoryLongPress(story) }
+                onLongClick = { onStoryLongPress(story) },
+                isUploading = story.id == uploadingHighlightId
             )
         }
     }
@@ -132,13 +135,36 @@ private fun AddHighlightButton(
 private fun HighlightItem(
     story: HighlightedStory,
     onClick: () -> Unit,
-    onLongClick: () -> Unit
+    onLongClick: () -> Unit,
+    isUploading: Boolean = false
 ) {
     var isPressed by remember { mutableStateOf(false) }
     val scale by animateFloatAsState(
         targetValue = if (isPressed) 0.95f else 1f,
         animationSpec = spring(stiffness = Spring.StiffnessHigh),
         label = "scale"
+    )
+    
+    // Animación de rotación para loading
+    val infiniteTransition = rememberInfiniteTransition(label = "upload_spin")
+    val uploadRotation by infiniteTransition.animateFloat(
+        initialValue = 0f,
+        targetValue = 360f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(1200, easing = LinearEasing),
+            repeatMode = RepeatMode.Restart
+        ),
+        label = "upload_rotation"
+    )
+    // Animación de pulso para el borde al subir
+    val uploadAlpha by infiniteTransition.animateFloat(
+        initialValue = 0.4f,
+        targetValue = 1f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(600, easing = FastOutSlowInEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "upload_alpha"
     )
     
     Column(
@@ -178,10 +204,32 @@ private fun HighlightItem(
                 }
             }
             
-            // Canvas para dibujar frame con estilos distintos
-            Canvas(modifier = Modifier.fillMaxSize()) {
+            // Canvas para dibujar frame con estilos distintos (o loading animation)
+            Canvas(modifier = Modifier.fillMaxSize().then(
+                if (isUploading) Modifier.graphicsLayer { rotationZ = uploadRotation } else Modifier
+            )) {
                 val radius = size.minDimension / 2f
                 val ctr = center
+                
+                if (isUploading) {
+                    // Loading animation: rotating dashed gradient arc
+                    val strokeW = with(density) { 3.dp.toPx() }
+                    drawArc(
+                        brush = Brush.sweepGradient(
+                            listOf(
+                                PrimaryPurple.copy(alpha = uploadAlpha),
+                                AccentPink.copy(alpha = uploadAlpha),
+                                PrimaryPurple.copy(alpha = 0.1f)
+                            )
+                        ),
+                        startAngle = 0f,
+                        sweepAngle = 270f,
+                        useCenter = false,
+                        topLeft = androidx.compose.ui.geometry.Offset(strokeW / 2, strokeW / 2),
+                        size = androidx.compose.ui.geometry.Size(size.width - strokeW, size.height - strokeW),
+                        style = Stroke(width = strokeW, cap = StrokeCap.Round)
+                    )
+                } else
                 when (story.frameStyle) {
                     HighlightFrameStyle.GLOW -> {
                         val neonColor = frameGradient.first()
@@ -257,8 +305,16 @@ private fun HighlightItem(
                 contentAlignment = Alignment.Center
             ) {
                 if (story.thumbnail != null) {
+                    val ctx = androidx.compose.ui.platform.LocalContext.current
                     AsyncImage(
-                        model = story.thumbnail,
+                        model = remember(story.thumbnail) {
+                            coil.request.ImageRequest.Builder(ctx)
+                                .data(story.thumbnail)
+                                .crossfade(100)
+                                .size(128) // Low quality for small thumbnail
+                                .memoryCachePolicy(coil.request.CachePolicy.ENABLED)
+                                .build()
+                        },
                         contentDescription = story.title,
                         modifier = Modifier
                             .fillMaxSize()

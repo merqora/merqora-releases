@@ -4,10 +4,13 @@ import android.net.Uri
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.Toast
+import androidx.compose.animation.*
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectHorizontalDragGestures
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.pager.VerticalPager
@@ -23,16 +26,22 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.graphics.asComposeRenderEffect
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -50,6 +59,7 @@ import com.rendly.app.data.model.Post
 import com.rendly.app.data.model.Rend
 import com.rendly.app.ui.components.CommentsSheet
 import com.rendly.app.ui.components.Comment
+import com.rendly.app.data.repository.ChatRepository
 import com.rendly.app.data.repository.RendRepository
 import com.rendly.app.data.repository.FollowersRepository
 import com.rendly.app.data.repository.FollowType
@@ -98,8 +108,35 @@ fun RendScreen(
     val scope = rememberCoroutineScope()
     
     val rends by RendRepository.rends.collectAsState()
+    val followingRends by RendRepository.followingRends.collectAsState()
     val isLoading by RendRepository.isLoading.collectAsState()
+    val isLoadingFollowing by RendRepository.isLoadingFollowing.collectAsState()
     val errorMessage by RendRepository.errorMessage.collectAsState()
+    
+    // Tab state: 0 = Tendencias, 1 = Recomendados (default), 2 = Siguiendo
+    var selectedTab by remember { mutableIntStateOf(1) }
+    
+    // Active rends based on selected tab
+    val activeRends = when (selectedTab) {
+        2 -> followingRends
+        else -> rends // Both Tendencias and Recomendados use all rends for now
+    }
+    val activeIsLoading = when (selectedTab) {
+        2 -> isLoadingFollowing
+        else -> isLoading
+    }
+    
+    // Consume pending rend ID from repository (set by HomeScreen navigation)
+    val pendingRendId by RendRepository.pendingRendId.collectAsState()
+    val effectiveInitialRendId = initialRendId ?: pendingRendId
+    
+    // Consume the pending ID once we've read it
+    LaunchedEffect(pendingRendId) {
+        if (pendingRendId != null) {
+            kotlinx.coroutines.delay(100)
+            RendRepository.setPendingRendId(null)
+        }
+    }
     
     // -------------------------------------------------------------------
     // ESTADOS LEVANTADOS - para que modales y ProductPage están FUERA del pager
@@ -197,6 +234,9 @@ fun RendScreen(
         }
     }
     
+    // Estado de velocidad 2x (levantado para controlar NavBar)
+    var isSpeedMode by remember { mutableStateOf(false) }
+    
     // Detectar si cualquier modal está abierto
     val isAnyModalOpen = showForwardModal || showConsultModal || showCommentsSheet || showCommentChoiceModal
     val isAnyOverlayOpen = isProductPageOpen || isAnyModalOpen
@@ -210,24 +250,32 @@ fun RendScreen(
     
     LaunchedEffect(Unit) {
         RendRepository.loadRends()
+        RendRepository.loadFollowingRends()
     }
     
-    // Calcular initialPage basado en initialRendId
-    val initialPage = remember(initialRendId, rends) {
-        if (initialRendId != null && rends.isNotEmpty()) {
-            rends.indexOfFirst { it.id == initialRendId }.takeIf { it >= 0 } ?: 0
+    // Reload following rends when tab changes to "Siguiendo"
+    LaunchedEffect(selectedTab) {
+        if (selectedTab == 2 && followingRends.isEmpty()) {
+            RendRepository.loadFollowingRends()
+        }
+    }
+    
+    // Calcular initialPage basado en effectiveInitialRendId
+    val initialPage = remember(effectiveInitialRendId, rends) {
+        if (effectiveInitialRendId != null && rends.isNotEmpty()) {
+            rends.indexOfFirst { it.id == effectiveInitialRendId }.takeIf { it >= 0 } ?: 0
         } else 0
     }
     
     val pagerState = rememberPagerState(
         initialPage = initialPage,
-        pageCount = { rends.size.coerceAtLeast(1) }
+        pageCount = { activeRends.size.coerceAtLeast(1) }
     )
     
-    // Scroll to initialPage when rends load and initialRendId is set
-    LaunchedEffect(initialRendId, rends) {
-        if (initialRendId != null && rends.isNotEmpty()) {
-            val targetIndex = rends.indexOfFirst { it.id == initialRendId }
+    // Scroll to initialPage when rends load and effectiveInitialRendId is set
+    LaunchedEffect(effectiveInitialRendId, activeRends) {
+        if (effectiveInitialRendId != null && activeRends.isNotEmpty()) {
+            val targetIndex = activeRends.indexOfFirst { it.id == effectiveInitialRendId }
             if (targetIndex >= 0 && pagerState.currentPage != targetIndex) {
                 pagerState.scrollToPage(targetIndex)
             }
@@ -235,11 +283,11 @@ fun RendScreen(
     }
     
     // Actualizar currentRendForModals cuando cambia la Página
-    LaunchedEffect(pagerState.currentPage, rends) {
-        if (rends.isNotEmpty() && pagerState.currentPage < rends.size) {
-            currentRendForModals = rends[pagerState.currentPage]
+    LaunchedEffect(pagerState.currentPage, activeRends) {
+        if (activeRends.isNotEmpty() && pagerState.currentPage < activeRends.size) {
+            currentRendForModals = activeRends[pagerState.currentPage]
             // VIEW TRACKING: Registrar vista del rend actual
-            ViewTracker.trackRendView(rends[pagerState.currentPage].id)
+            ViewTracker.trackRendView(activeRends[pagerState.currentPage].id)
         }
     }
     
@@ -247,10 +295,10 @@ fun RendScreen(
     val dummyPostForModals = remember(currentRendForModals) {
         currentRendForModals?.let { rend ->
             val imagesList = mutableListOf<String>()
-            rend.productImage?.takeIf { it.isNotBlank() }?.let { imagesList.add(it) }
-            if (imagesList.isEmpty()) {
-                rend.thumbnailUrl?.takeIf { it.isNotBlank() }?.let { imagesList.add(it) }
-            }
+            // Agregar video URL primero para que sea reproducible en ProductPage
+            rend.videoUrl.takeIf { it.isNotBlank() }?.let { imagesList.add(it) }
+            // Luego agregar imagen del producto si existe
+            rend.productImage?.takeIf { it.isNotBlank() && !it.contains("ik-thumbnail") }?.let { imagesList.add(it) }
             val finalImages = imagesList.ifEmpty { listOf("https://via.placeholder.com/400x400?text=Sin+imagen") }
             
             Post(
@@ -296,57 +344,97 @@ fun RendScreen(
                 .clipToBounds()
         ) {
             // Mostrar skeleton solo si está cargando Y no hay rends Aún
-            if (isLoading && rends.isEmpty()) {
+            if (activeIsLoading && activeRends.isEmpty()) {
                 RendSkeletonLoader()
-            } else if (!isLoading && rends.isEmpty()) {
-                EmptyRendsState(onReload = { scope.launch { RendRepository.loadRends() } })
+            } else if (!activeIsLoading && activeRends.isEmpty()) {
+                if (selectedTab == 2) {
+                    EmptyFollowingRendsState()
+                } else {
+                    EmptyRendsState(onReload = { scope.launch { RendRepository.loadRends() } })
+                }
             } else {
-                // Altura del NavBar para calcular el espacio disponible
-                val navBarHeight = 64.dp
+                // Detectar si el pager está siendo deslizado (para pausar video)
+                val isBeingSwiped by remember {
+                    derivedStateOf {
+                        pagerState.currentPageOffsetFraction != 0f
+                    }
+                }
+                
+                // NavBar ocupa ~56dp de contenido + padding
+                val navBarHeight = if (showNavBar) 56.dp else 0.dp
                 
                 VerticalPager(
                     state = pagerState,
                     modifier = Modifier
                         .fillMaxWidth()
                         .fillMaxHeight()
-                        .padding(bottom = navBarHeight) // Solo el video respeta el NavBar
+                        .padding(bottom = navBarHeight)
                         .clipToBounds(),
-                    userScrollEnabled = !isAnyOverlayOpen
+                    userScrollEnabled = !isAnyOverlayOpen,
+                    beyondBoundsPageCount = 0, // NO precargar páginas fuera de vista
+                    key = { if (it < activeRends.size) activeRends[it].id else "empty_$it" }
                 ) { page ->
-                    val isCurrentPage = pagerState.currentPage == page
-                    RendPageContent(
-                        rend = rends[page],
-                        isPlaying = isCurrentPage && !isProductPageOpen && isScreenVisible && !isAnyModalOpen,
-                        onUserClick = { userId -> onNavigateToProfile(userId) },
-                        onOpenProductPage = { 
-                            currentRendForModals = rends[page]
-                            isProductPageOpen = true 
-                        },
-                        onOpenCommentChoice = { 
-                            currentRendForModals = rends[page]
-                            showCommentChoiceModal = true 
-                        },
-                        onOpenForward = { 
-                            currentRendForModals = rends[page]
-                            showForwardModal = true 
-                        }
-                    )
+                    if (page < activeRends.size) {
+                        val isCurrentPage = pagerState.currentPage == page && !isBeingSwiped
+                        RendPageContent(
+                            rend = activeRends[page],
+                            isPlaying = isCurrentPage && !isProductPageOpen && isScreenVisible && !isAnyModalOpen,
+                            onUserClick = { userId -> onNavigateToProfile(userId) },
+                            onOpenProductPage = { 
+                                currentRendForModals = activeRends[page]
+                                isProductPageOpen = true 
+                            },
+                            onOpenCommentChoice = { 
+                                currentRendForModals = activeRends[page]
+                                val r = activeRends[page]
+                                when {
+                                    r.allowOpinions && r.allowConsults -> showCommentChoiceModal = true
+                                    r.allowOpinions && !r.allowConsults -> showCommentsSheet = true
+                                    !r.allowOpinions && r.allowConsults -> showConsultModal = true
+                                    // both false: button is hidden, shouldn't reach here
+                                }
+                            },
+                            onOpenForward = { 
+                                currentRendForModals = activeRends[page]
+                                showForwardModal = true 
+                            },
+                            onSpeedModeChanged = { speed -> isSpeedMode = speed }
+                        )
+                    }
                 }
             }
             
             // Header tabs
             if (!isProductPageOpen && !isAnyModalOpen) {
-                RendHeader(onNavigateToTendencias = onNavigateToTendencias)
+                RendHeader(
+                    selectedTab = selectedTab,
+                    onTabSelected = { tab -> selectedTab = tab },
+                    onNavigateToTendencias = onNavigateToTendencias
+                )
             }
             
-            // NavBar embebido
+            // NavBar embebido con overlay de velocidad
             if (showNavBar) {
-                BottomNavBar(
-                    currentRoute = currentNavRoute,
-                    onNavigate = onNavNavigate,
-                    onHomeReclick = onNavHomeReclick,
-                    modifier = Modifier.align(Alignment.BottomCenter)
-                )
+                Box(modifier = Modifier.align(Alignment.BottomCenter)) {
+                    // NavBar siempre presente como fondo
+                    BottomNavBar(
+                        currentRoute = currentNavRoute,
+                        onNavigate = onNavNavigate,
+                        onHomeReclick = onNavHomeReclick,
+                        modifier = Modifier.then(
+                            if (isSpeedMode) Modifier.graphicsLayer { alpha = 0f } else Modifier
+                        )
+                    )
+                    
+                    // Overlay de velocidad 2x sobre el NavBar
+                    AnimatedVisibility(
+                        visible = isSpeedMode,
+                        enter = fadeIn(animationSpec = tween(150)),
+                        exit = fadeOut(animationSpec = tween(150))
+                    ) {
+                        SpeedOverlay()
+                    }
+                }
             }
         }
         
@@ -358,7 +446,43 @@ fun RendScreen(
             isVisible = showForwardModal,
             post = dummyPostForModals,
             onDismiss = { showForwardModal = false },
-            onForwardToUser = { _, _, _ -> showForwardModal = false }
+            onForwardToUser = { user, post, customMessage ->
+                // Enviar el rend (video vertical) al usuario seleccionado via chat
+                scope.launch {
+                    val conversationId = ChatRepository.getOrCreateConversation(user.userId)
+                    if (conversationId != null) {
+                        val rend = currentRendForModals
+                        val videoUrl = rend?.videoUrl ?: post.images.firstOrNull() ?: ""
+                        val thumbnailUrl = if (videoUrl.contains("ik.imagekit.io")) "${videoUrl}/ik-thumbnail.jpg" else ""
+                        val productImg = rend?.productImage ?: post.images.getOrNull(1) ?: ""
+                        // Buscar estado de verificación del dueño del rend
+                        val ownerVerified = try {
+                            val ownerUser = SupabaseClient.database
+                                .from("usuarios")
+                                .select(columns = Columns.list("is_verified")) {
+                                    filter { eq("user_id", rend?.userId ?: post.userId) }
+                                }
+                                .decodeSingleOrNull<UserDataForComments>()
+                            ownerUser?.isVerified ?: false
+                        } catch (_: Exception) { false }
+                        
+                        val sharedRendJson = org.json.JSONObject().apply {
+                            put("rendId", post.id)
+                            put("videoUrl", videoUrl)
+                            put("thumbnailUrl", thumbnailUrl)
+                            put("productTitle", rend?.productTitle ?: post.title)
+                            put("productPrice", rend?.productPrice ?: post.price)
+                            put("productImage", productImg)
+                            put("ownerUsername", post.username)
+                            put("ownerAvatar", post.userAvatar)
+                            put("isOwnerVerified", ownerVerified)
+                            put("customMessage", customMessage.trim())
+                        }
+                        val sharedRendMessage = "[SHARED_REND]${sharedRendJson}"
+                        ChatRepository.sendMessage(conversationId, sharedRendMessage)
+                    }
+                }
+            }
         )
         
         ConsultModal(
@@ -494,7 +618,11 @@ fun RendScreen(
 }
 
 @Composable
-private fun RendHeader(onNavigateToTendencias: () -> Unit) {
+private fun RendHeader(
+    selectedTab: Int,
+    onTabSelected: (Int) -> Unit,
+    onNavigateToTendencias: () -> Unit
+) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -520,11 +648,14 @@ private fun RendHeader(onNavigateToTendencias: () -> Unit) {
         ) {
             Text(
                 text = "Tendencias",
-                color = Color.White.copy(alpha = 0.6f),
+                color = if (selectedTab == 0) Color.White else Color.White.copy(alpha = 0.6f),
                 fontSize = 15.sp,
-                fontWeight = FontWeight.Medium,
+                fontWeight = if (selectedTab == 0) FontWeight.Bold else FontWeight.Medium,
                 modifier = Modifier
-                    .clickable { onNavigateToTendencias() }
+                    .clickable {
+                        onTabSelected(0)
+                        onNavigateToTendencias()
+                    }
                     .padding(horizontal = 10.dp, vertical = 8.dp)
             )
             
@@ -532,21 +663,25 @@ private fun RendHeader(onNavigateToTendencias: () -> Unit) {
             
             Text(
                 text = "Recomendados",
-                color = Color.White,
+                color = if (selectedTab == 1) Color.White else Color.White.copy(alpha = 0.6f),
                 fontSize = 15.sp,
-                fontWeight = FontWeight.Bold,
+                fontWeight = if (selectedTab == 1) FontWeight.Bold else FontWeight.Medium,
                 maxLines = 1,
-                modifier = Modifier.padding(horizontal = 10.dp, vertical = 8.dp)
+                modifier = Modifier
+                    .clickable { onTabSelected(1) }
+                    .padding(horizontal = 10.dp, vertical = 8.dp)
             )
             
             Text(text = "|", color = Color.White.copy(alpha = 0.3f), fontSize = 15.sp)
             
             Text(
                 text = "Siguiendo",
-                color = Color.White.copy(alpha = 0.6f),
+                color = if (selectedTab == 2) Color.White else Color.White.copy(alpha = 0.6f),
                 fontSize = 15.sp,
-                fontWeight = FontWeight.Medium,
-                modifier = Modifier.padding(horizontal = 10.dp, vertical = 8.dp)
+                fontWeight = if (selectedTab == 2) FontWeight.Bold else FontWeight.Medium,
+                modifier = Modifier
+                    .clickable { onTabSelected(2) }
+                    .padding(horizontal = 10.dp, vertical = 8.dp)
             )
         }
     }
@@ -608,6 +743,49 @@ private fun EmptyRendsState(onReload: () -> Unit) {
     }
 }
 
+@Composable
+private fun EmptyFollowingRendsState() {
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.padding(32.dp)
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(100.dp)
+                    .clip(CircleShape)
+                    .background(PrimaryPurple.copy(alpha = 0.15f)),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    Icons.Outlined.People,
+                    null,
+                    tint = PrimaryPurple,
+                    modifier = Modifier.size(48.dp)
+                )
+            }
+            Spacer(modifier = Modifier.height(24.dp))
+            Text(
+                "Tu feed está vacío",
+                color = Color.White,
+                fontSize = 22.sp,
+                fontWeight = FontWeight.Bold
+            )
+            Spacer(modifier = Modifier.height(10.dp))
+            Text(
+                "Sigue a creadores y vendedores para descubrir sus últimos rends aquí",
+                color = Color.White.copy(alpha = 0.6f),
+                fontSize = 15.sp,
+                textAlign = TextAlign.Center,
+                lineHeight = 22.sp
+            )
+        }
+    }
+}
+
 @androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
 @Composable
 private fun RendPageContent(
@@ -616,7 +794,8 @@ private fun RendPageContent(
     onUserClick: (String) -> Unit,
     onOpenProductPage: () -> Unit,
     onOpenCommentChoice: () -> Unit,
-    onOpenForward: () -> Unit
+    onOpenForward: () -> Unit,
+    onSpeedModeChanged: (Boolean) -> Unit = {}
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -631,6 +810,16 @@ private fun RendPageContent(
     var isFollowing by remember { mutableStateOf(false) }
     var isFollowLoading by remember { mutableStateOf(false) }
     var showOptionsModal by remember { mutableStateOf(false) }
+    
+    // Progress bar state
+    var videoProgress by remember { mutableFloatStateOf(0f) }
+    var videoDuration by remember { mutableLongStateOf(0L) }
+    var isDraggingProgressBar by remember { mutableStateOf(false) }
+    var dragProgress by remember { mutableFloatStateOf(0f) }
+    
+    // 2x speed state
+    var isSpeedMode by remember { mutableStateOf(false) }
+    var containerSize by remember { mutableStateOf(IntSize.Zero) }
     
     LaunchedEffect(rend.userId) {
         val currentUserId = SupabaseClient.auth.currentUserOrNull()?.id
@@ -661,6 +850,29 @@ private fun RendPageContent(
         }
     }
     
+    // Actualizar progreso del video cada 16ms (60fps) para fluidez máxima
+    LaunchedEffect(isPlaying, isPaused) {
+        while (isPlaying && !isPaused) {
+            val duration = exoPlayer.duration
+            val position = exoPlayer.currentPosition
+            if (duration > 0 && !isDraggingProgressBar) {
+                videoDuration = duration
+                videoProgress = (position.toFloat() / duration.toFloat()).coerceIn(0f, 1f)
+            }
+            kotlinx.coroutines.delay(16L) // ~60fps update
+        }
+    }
+    
+    // Notificar cambio de speed mode al padre
+    LaunchedEffect(isSpeedMode) {
+        onSpeedModeChanged(isSpeedMode)
+        if (isSpeedMode) {
+            exoPlayer.setPlaybackSpeed(2f)
+        } else {
+            exoPlayer.setPlaybackSpeed(1f)
+        }
+    }
+    
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
             when (event) {
@@ -676,6 +888,39 @@ private fun RendPageContent(
         }
     }
     
+    // El pager ya tiene padding(bottom=navBarHeight) así que el contenido de cada página
+    // termina justo en el borde superior del NavBar. Progress bar pegado al borde inferior.
+    val bottomContentPadding = 20.dp  // Espacio mínimo sobre progress bar
+    val progressBarPadding = 0.dp     // Pegado al borde inferior como TikTok
+    
+    // Blur animado profesional al arrastrar progress bar
+    val blurOverlayAlpha by animateFloatAsState(
+        targetValue = if (isDraggingProgressBar) 0.35f else 0f,
+        animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing),
+        label = "blurOverlay"
+    )
+    
+    // Referencia al PlayerView nativo para aplicar RenderEffect directamente
+    var playerViewRef by remember { mutableStateOf<PlayerView?>(null) }
+    
+    // Aplicar blur nativo directamente en el PlayerView (Android S+)
+    LaunchedEffect(isDraggingProgressBar) {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+            playerViewRef?.let { view ->
+                if (isDraggingProgressBar) {
+                    view.setRenderEffect(
+                        android.graphics.RenderEffect.createBlurEffect(
+                            12f, 12f,
+                            android.graphics.Shader.TileMode.MIRROR
+                        )
+                    )
+                } else {
+                    view.setRenderEffect(null)
+                }
+            }
+        }
+    }
+    
     // -------------------------------------------------------------------
     // CONTENEDOR DEL VIDEO CON CLIPPING ESTRICTO
     // -------------------------------------------------------------------
@@ -683,16 +928,33 @@ private fun RendPageContent(
         modifier = Modifier
             .fillMaxSize()
             .clipToBounds()
-            .clickable(
-                interactionSource = remember { MutableInteractionSource() },
-                indication = null
-            ) {
-                isPaused = !isPaused
-                showPlayIcon = true
-                scope.launch {
-                    kotlinx.coroutines.delay(800)
-                    showPlayIcon = false
-                }
+            .onSizeChanged { containerSize = it }
+            .pointerInput(Unit) {
+                detectTapGestures(
+                    onPress = {
+                        // Esperar a que se suelte el dedo
+                        tryAwaitRelease()
+                        // Al soltar, siempre desactivar velocidad 2x
+                        if (isSpeedMode) {
+                            isSpeedMode = false
+                        }
+                    },
+                    onTap = {
+                        isPaused = !isPaused
+                        showPlayIcon = true
+                        scope.launch {
+                            kotlinx.coroutines.delay(800)
+                            showPlayIcon = false
+                        }
+                    },
+                    onLongPress = { offset ->
+                        // Activar 2x al mantener pulsado en los lados
+                        val width = containerSize.width.toFloat()
+                        if (width > 0 && (offset.x < width * 0.3f || offset.x > width * 0.7f)) {
+                            isSpeedMode = true
+                        }
+                    }
+                )
             }
     ) {
         // Video Player con clip Máximo
@@ -716,12 +978,18 @@ private fun RendPageContent(
             },
             modifier = Modifier
                 .fillMaxSize()
-                .clipToBounds()
-                .graphicsLayer {
-                    clip = true
-                    shape = RectangleShape
-                }
+                .clipToBounds(),
+            update = { view -> playerViewRef = view }
         )
+        
+        // Overlay oscuro animado (funciona en todos los API levels como complemento visual al blur)
+        if (blurOverlayAlpha > 0.01f) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.Black.copy(alpha = blurOverlayAlpha))
+            )
+        }
         
         // Play/Pause icon overlay
         if (showPlayIcon) {
@@ -767,7 +1035,7 @@ private fun RendPageContent(
         Column(
             modifier = Modifier
                 .align(Alignment.BottomStart)
-                .padding(start = 16.dp, end = 70.dp, bottom = 16.dp)
+                .padding(start = 16.dp, end = 70.dp, bottom = bottomContentPadding)
         ) {
             val currentUserId = SupabaseClient.auth.currentUserOrNull()?.id
             val isOwnVideo = currentUserId == rend.userId
@@ -886,7 +1154,7 @@ private fun RendPageContent(
         Column(
             modifier = Modifier
                 .align(Alignment.BottomEnd)
-                .padding(end = 10.dp, bottom = 16.dp),
+                .padding(end = 10.dp, bottom = bottomContentPadding),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
@@ -979,17 +1247,24 @@ private fun RendPageContent(
                 }
             )
             
-            RendActionButton(
-                icon = Icons.Outlined.ChatBubbleOutline,
-                count = rend.reviewsCount,
-                onClick = { onOpenCommentChoice() }
-            )
+            // Comment button: respect allowOpinions and allowConsults
+            // Both OFF → hide entirely, only opinions OFF → direct to consult, both ON → show choice modal
+            if (rend.allowOpinions || rend.allowConsults) {
+                RendActionButton(
+                    icon = Icons.Outlined.ChatBubbleOutline,
+                    count = rend.reviewsCount,
+                    onClick = { onOpenCommentChoice() }
+                )
+            }
             
-            RendActionButton(
-                icon = Icons.Outlined.Send,
-                count = rend.sharesCount,
-                onClick = { onOpenForward() }
-            )
+            // Forward button: respect allowShares
+            if (rend.allowShares) {
+                RendActionButton(
+                    icon = Icons.Outlined.Send,
+                    count = rend.sharesCount,
+                    onClick = { onOpenForward() }
+                )
+            }
             
             RendActionButton(
                 icon = if (isSaved) Icons.Filled.Bookmark else Icons.Outlined.BookmarkBorder,
@@ -1004,6 +1279,38 @@ private fun RendPageContent(
                 onClick = { showOptionsModal = true }
             )
         }
+        
+        // ---------------------------------------------------------------
+        // PROGRESS BAR estilo TikTok - fino, en la parte inferior del video
+        // Debe estar DESPUÉS de gradients/content para quedar encima (z-order)
+        // ---------------------------------------------------------------
+        TikTokProgressBar(
+            progress = if (isDraggingProgressBar) dragProgress else videoProgress,
+            isDragging = isDraggingProgressBar,
+            onDragStart = { fraction ->
+                isDraggingProgressBar = true
+                dragProgress = fraction
+                exoPlayer.pause()
+            },
+            onDrag = { fraction ->
+                dragProgress = fraction.coerceIn(0f, 1f)
+                val seekPos = (dragProgress * exoPlayer.duration).toLong()
+                exoPlayer.seekTo(seekPos)
+            },
+            onDragEnd = {
+                val seekPos = (dragProgress * exoPlayer.duration).toLong()
+                exoPlayer.seekTo(seekPos)
+                videoProgress = dragProgress
+                isDraggingProgressBar = false
+                if (isPlaying && !isPaused) {
+                    exoPlayer.play()
+                }
+            },
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .fillMaxWidth()
+                .padding(bottom = progressBarPadding)
+        )
         
         // Modal de opciones del video
         if (showOptionsModal) {
@@ -1072,6 +1379,155 @@ private fun formatCount(count: Int): String {
         count >= 1_000_000 -> String.format("%.1fM", count / 1_000_000.0)
         count >= 1_000 -> String.format("%.1fK", count / 1_000.0)
         else -> count.toString()
+    }
+}
+
+// ---------------------------------------------------------------
+// PROGRESS BAR estilo TikTok - fino y arrastrable
+// ---------------------------------------------------------------
+@Composable
+private fun TikTokProgressBar(
+    progress: Float,
+    isDragging: Boolean,
+    onDragStart: (Float) -> Unit,
+    onDrag: (Float) -> Unit,
+    onDragEnd: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val barHeight by animateDpAsState(
+        targetValue = if (isDragging) 6.dp else 4.dp,
+        animationSpec = tween(150),
+        label = "barHeight"
+    )
+    val thumbSize by animateDpAsState(
+        targetValue = if (isDragging) 16.dp else 0.dp,
+        animationSpec = tween(150),
+        label = "thumbSize"
+    )
+    
+    var barWidth by remember { mutableFloatStateOf(0f) }
+    val density = LocalDensity.current
+    
+    Box(
+        modifier = modifier
+            .height(28.dp) // Área táctil amplia (extiende hacia arriba)
+            .onSizeChanged { barWidth = it.width.toFloat() }
+            .pointerInput(Unit) {
+                detectHorizontalDragGestures(
+                    onDragStart = { offset ->
+                        if (barWidth > 0) {
+                            onDragStart((offset.x / barWidth).coerceIn(0f, 1f))
+                        }
+                    },
+                    onDragEnd = { onDragEnd() },
+                    onDragCancel = { onDragEnd() },
+                    onHorizontalDrag = { change, _ ->
+                        change.consume()
+                        if (barWidth > 0) {
+                            onDrag((change.position.x / barWidth).coerceIn(0f, 1f))
+                        }
+                    }
+                )
+            }
+            .pointerInput(Unit) {
+                detectTapGestures { offset ->
+                    if (barWidth > 0) {
+                        val fraction = (offset.x / barWidth).coerceIn(0f, 1f)
+                        onDragStart(fraction)
+                        onDragEnd()
+                    }
+                }
+            },
+        contentAlignment = Alignment.BottomStart
+    ) {
+        // Fondo de la barra - pegado al borde inferior
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(barHeight)
+                .background(Color.White.copy(alpha = 0.3f))
+        )
+        
+        // Progreso - pegado al borde inferior
+        Box(
+            modifier = Modifier
+                .fillMaxWidth(progress.coerceIn(0.001f, 1f))
+                .height(barHeight)
+                .background(Color.White)
+        )
+        
+        // Thumb/Handle - centrado sobre la barra
+        Box(
+            modifier = Modifier
+                .offset(
+                    x = with(density) {
+                        ((barWidth * progress.coerceIn(0f, 1f)) - (thumbSize.toPx() / 2)).toDp()
+                    },
+                    y = with(density) {
+                        ((thumbSize.toPx() / 2 - barHeight.toPx() / 2)).toDp()
+                    }
+                )
+                .size(thumbSize)
+                .clip(CircleShape)
+                .background(Color.White)
+        )
+    }
+}
+
+// ---------------------------------------------------------------
+// SPEED OVERLAY - Mensaje de velocidad 2x con animación
+// ---------------------------------------------------------------
+@Composable
+private fun SpeedOverlay() {
+    val infiniteTransition = rememberInfiniteTransition(label = "speedArrows")
+    val arrowAlpha by infiniteTransition.animateFloat(
+        initialValue = 0.4f,
+        targetValue = 1f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(400, easing = LinearEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "arrowAlpha"
+    )
+    val arrowOffset by infiniteTransition.animateFloat(
+        initialValue = 0f,
+        targetValue = 4f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(400, easing = LinearEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "arrowOffset"
+    )
+    
+    val navBarBg = themedNavBarBg()
+    
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(navBarBg)
+            .padding(vertical = 4.dp)
+            .navigationBarsPadding(),
+        contentAlignment = Alignment.Center
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center,
+            modifier = Modifier.padding(vertical = 12.dp)
+        ) {
+            Text(
+                text = "Velocidad: 2x ",
+                color = Color.White,
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Bold
+            )
+            Text(
+                text = ">>",
+                color = Color.White.copy(alpha = arrowAlpha),
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.offset(x = arrowOffset.dp)
+            )
+        }
     }
 }
 
@@ -1506,11 +1962,14 @@ private fun RendOptionsModal(
                         onClick = onCopyLink
                     )
                     
-                    OptionGridItem(
-                        icon = Icons.Outlined.Download,
-                        label = "Guardar\nvideo",
-                        onClick = onDownload
-                    )
+                    // Only show download if allowed
+                    if (rend.allowDownloads) {
+                        OptionGridItem(
+                            icon = Icons.Outlined.Download,
+                            label = "Guardar\nvideo",
+                            onClick = onDownload
+                        )
+                    }
                     
                     OptionGridItem(
                         icon = Icons.Outlined.QrCode2,

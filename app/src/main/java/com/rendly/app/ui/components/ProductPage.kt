@@ -36,6 +36,12 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.viewinterop.AndroidView
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.gestures.rememberTransformableState
+import androidx.compose.foundation.gestures.transformable
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.input.pointer.pointerInput
 import coil.compose.AsyncImage
 import com.rendly.app.data.model.Post
 import com.rendly.app.data.repository.CartRepository
@@ -94,17 +100,53 @@ fun ProductPage(
     var sellerStats by remember { mutableStateOf<com.rendly.app.data.model.SellerStats?>(null) }
     var isSellerVerified by remember { mutableStateOf(false) }
     
-    // Load seller stats
-    LaunchedEffect(post?.userId) {
+    // Comments sheet state (interno para mostrarse SOBRE ProductPage)
+    var showCommentsSheet by remember { mutableStateOf(false) }
+    
+    // Local review count that updates in real-time when CommentsSheet closes
+    var localReviewsCount by remember { mutableIntStateOf(post?.reviewsCount ?: 0) }
+    var realRatingDistribution by remember { mutableStateOf<RatingDistribution?>(null) }
+    var reviewsRefreshKey by remember { mutableIntStateOf(0) }
+    
+    // Load seller stats (reload when reviewsRefreshKey changes after posting a review)
+    LaunchedEffect(post?.userId, reviewsRefreshKey) {
         post?.userId?.let { sellerId ->
             sellerStats = com.rendly.app.data.repository.OrderRepository.getSellerStats(sellerId)
-            // Also check if seller is verified from post data
             isSellerVerified = post.isUserVerified
         }
     }
     
-    // Comments sheet state (interno para mostrarse SOBRE ProductPage)
-    var showCommentsSheet by remember { mutableStateOf(false) }
+    // Reload reviews count + real distribution when key changes (after posting a review)
+    LaunchedEffect(reviewsRefreshKey, post?.id) {
+        val productId = post?.productId 
+            ?: if (isFromRend) CommentRepository.getProductIdFromRendId(post?.id ?: "")
+               else CommentRepository.getProductIdFromPostId(post?.id ?: "")
+        if (productId != null) {
+            try {
+                val reviews = com.rendly.app.data.remote.SupabaseClient.database
+                    .from("product_reviews")
+                    .select(columns = io.github.jan.supabase.postgrest.query.Columns.list("rating")) {
+                        filter { eq("product_id", productId) }
+                    }
+                    .decodeList<ProductReviewRatingRow>()
+                
+                localReviewsCount = reviews.size
+                if (reviews.isNotEmpty()) {
+                    var s5 = 0; var s4 = 0; var s3 = 0; var s2 = 0; var s1 = 0
+                    reviews.forEach { r ->
+                        when (r.rating) {
+                            5 -> s5++; 4 -> s4++; 3 -> s3++; 2 -> s2++; 1 -> s1++
+                        }
+                    }
+                    realRatingDistribution = RatingDistribution(s5, s4, s3, s2, s1)
+                } else {
+                    realRatingDistribution = RatingDistribution()
+                }
+            } catch (e: Exception) {
+                android.util.Log.e("ProductPage", "Error loading review distribution: ${e.message}")
+            }
+        }
+    }
     
     // Datos del usuario actual para comentarios
     val currentAuthUser = com.rendly.app.data.remote.SupabaseClient.auth.currentUserOrNull()
@@ -207,14 +249,22 @@ fun ProductPage(
     
     AnimatedVisibility(
         visible = isVisible && post != null,
-        enter = fadeIn(tween(0)) + slideInVertically(
-            initialOffsetY = { it / 8 },
-            animationSpec = spring(dampingRatio = 1f, stiffness = 2000f)
-        ),
-        exit = fadeOut(tween(0)) + slideOutVertically(
-            targetOffsetY = { it / 6 },
-            animationSpec = tween(50)
-        )
+        enter = if (isFromRend) {
+            fadeIn(tween(0)) // Instant - no delay to avoid seeing video movement underneath
+        } else {
+            fadeIn(tween(0)) + slideInVertically(
+                initialOffsetY = { it / 8 },
+                animationSpec = spring(dampingRatio = 1f, stiffness = 2000f)
+            )
+        },
+        exit = if (isFromRend) {
+            fadeOut(tween(0)) // Instant exit to avoid weird movement
+        } else {
+            fadeOut(tween(0)) + slideOutVertically(
+                targetOffsetY = { it / 6 },
+                animationSpec = tween(50)
+            )
+        }
     ) {
         productData?.let { data ->
             Box(
@@ -246,7 +296,8 @@ fun ProductPage(
                     // ---------------------------------------------------------------
                     ProductTopInfo(
                         isNew = data.isNew,
-                        reviewsCount = data.reviewsCount // Usa datos reales
+                        reviewsCount = localReviewsCount,
+                        avgRating = (realRatingDistribution ?: RatingDistribution()).averageRating
                     )
                     
                     Spacer(modifier = Modifier.height(8.dp))
@@ -450,26 +501,9 @@ fun ProductPage(
                     SectionDivider()
                     
                     // ---------------------------------------------------------------
-                    // OPINIONES - Con ratings dinámicas (sin datos hardcodeados)
+                    // OPINIONES - Ratings reales de Supabase (product_reviews)
                     // ---------------------------------------------------------------
-                    // RatingDistribution basado en comentarios reales
-                    // Depende de data.reviewsCount para actualizarse correctamente
-                    val ratingDistribution = remember(post?.id, data.reviewsCount) {
-                        if (data.reviewsCount > 0) {
-                            // Distribución simulada basada en cantidad de comentarios
-                            // En producción esto vendráa del backend con ratings reales
-                            val total = data.reviewsCount
-                            RatingDistribution(
-                                fiveStars = (total * 0.60).toInt().coerceAtLeast(if (total > 0) 1 else 0),
-                                fourStars = (total * 0.25).toInt().coerceAtLeast(0),
-                                threeStars = (total * 0.10).toInt().coerceAtLeast(0),
-                                twoStars = (total * 0.03).toInt().coerceAtLeast(0),
-                                oneStar = (total * 0.02).toInt().coerceAtLeast(0)
-                            )
-                        } else {
-                            RatingDistribution() // vacío
-                        }
-                    }
+                    val ratingDistribution = realRatingDistribution ?: RatingDistribution()
                     
                     ReviewsSection(
                         ratingDistribution = ratingDistribution,
@@ -544,6 +578,8 @@ fun ProductPage(
                     onDismiss = { 
                         showCommentsSheet = false
                         CommentRepository.clearComments()
+                        // Trigger real-time refresh of reviews count + distribution
+                        reviewsRefreshKey++
                     },
                     onSendComment = { text, rating ->
                         post?.let { p ->
@@ -691,6 +727,11 @@ private data class ProductPageUserData(
     val username: String = "",
     @kotlinx.serialization.SerialName("avatar_url") val avatarUrl: String? = null,
     @kotlinx.serialization.SerialName("is_verified") val isVerified: Boolean = false
+)
+
+@kotlinx.serialization.Serializable
+private data class ProductReviewRatingRow(
+    val rating: Int = 0
 )
 
 private data class ProductDataV2(
@@ -843,15 +884,10 @@ private fun ProductSearchHeader(
 @Composable
 private fun ProductTopInfo(
     isNew: Boolean,
-    reviewsCount: Int = 0
+    reviewsCount: Int = 0,
+    avgRating: Float = 0f
 ) {
-    // Calcular rating dinámico basado en cantidad de reviews
-    // En producción esto vendráa del backend
-    val rating = if (reviewsCount > 0) {
-        // Simular rating basado en cantidad (Más reviews = Más confiable)
-        4.0f + (reviewsCount.coerceAtMost(100) / 100f) * 0.9f
-    } else 0f
-    
+    val rating = if (reviewsCount > 0 && avgRating > 0f) avgRating else 0f
     val hasReviews = reviewsCount > 0
     
     Row(
@@ -974,8 +1010,28 @@ private fun ProductBadgesRow(category: String) {
 }
 
 // -------------------------------------------------------------------------------
-// IMAGE GALLERY V2
+// IMAGE GALLERY V2 - Supports both images and video URLs
 // -------------------------------------------------------------------------------
+fun isVideoUrl(url: String): Boolean {
+    val lower = url.lowercase()
+    // Exclude thumbnail URLs from ImageKit
+    if (lower.contains("ik-thumbnail")) return false
+    // Check common video extensions
+    if (lower.contains(".mp4") || lower.contains(".mov") || lower.contains(".webm") || lower.contains(".m3u8")) return true
+    // ImageKit rend videos: ik.imagekit.io/.../rends/...
+    if (lower.contains("ik.imagekit.io") && lower.contains("/rends/")) return true
+    return false
+}
+
+fun videoUrlToThumbnail(url: String): String {
+    // ImageKit: append /ik-thumbnail.jpg to get a video frame (same as ProfileScreen Clips tab)
+    if (url.lowercase().contains("ik.imagekit.io")) {
+        val cleanUrl = url.split("?").first()
+        return "$cleanUrl/ik-thumbnail.jpg"
+    }
+    return url
+}
+
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun ProductImageGalleryV2(
@@ -990,11 +1046,11 @@ private fun ProductImageGalleryV2(
         pageCount = { displayImages.size }
     )
     val scope = rememberCoroutineScope()
+    val context = androidx.compose.ui.platform.LocalContext.current
     
     // Sincronizar pagerState con selectedIndex externo (sin animación de slide)
     LaunchedEffect(selectedIndex) {
         if (pagerState.currentPage != selectedIndex) {
-            // Usar scrollToPage sin animación para cambio instantáneo
             pagerState.scrollToPage(selectedIndex)
         }
     }
@@ -1016,12 +1072,21 @@ private fun ProductImageGalleryV2(
             state = pagerState,
             modifier = Modifier.fillMaxSize()
         ) { page ->
-            AsyncImage(
-                model = displayImages[page],
-                contentDescription = title,
-                contentScale = ContentScale.Crop,
-                modifier = Modifier.fillMaxSize()
-            )
+            val mediaUrl = displayImages[page]
+            if (isVideoUrl(mediaUrl)) {
+                // Video playback with ExoPlayer
+                ProductVideoPlayer(
+                    videoUrl = mediaUrl,
+                    isCurrentPage = pagerState.currentPage == page
+                )
+            } else {
+                AsyncImage(
+                    model = mediaUrl,
+                    contentDescription = title,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.fillMaxSize()
+                )
+            }
         }
         
         // Page indicator - ESQUINA SUPERIOR DERECHA
@@ -1033,12 +1098,159 @@ private fun ProductImageGalleryV2(
                 shape = RoundedCornerShape(12.dp),
                 color = Color.Black.copy(alpha = 0.6f)
             ) {
+                Row(
+                    modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
+                    if (isVideoUrl(displayImages[pagerState.currentPage])) {
+                        Icon(
+                            Icons.Filled.PlayCircle,
+                            null,
+                            tint = Color.White,
+                            modifier = Modifier.size(14.dp)
+                        )
+                    }
+                    Text(
+                        text = "${pagerState.currentPage + 1}/${displayImages.size}",
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = Color.White
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun ProductVideoPlayer(
+    videoUrl: String,
+    isCurrentPage: Boolean
+) {
+    val context = androidx.compose.ui.platform.LocalContext.current
+    var isPlaying by remember { mutableStateOf(false) }
+    var showPlayButton by remember { mutableStateOf(true) }
+    var isVideoReady by remember { mutableStateOf(false) }
+    
+    val exoPlayer = remember(videoUrl) {
+        androidx.media3.exoplayer.ExoPlayer.Builder(context).build().apply {
+            val mediaItem = androidx.media3.common.MediaItem.fromUri(videoUrl)
+            setMediaItem(mediaItem)
+            repeatMode = androidx.media3.common.Player.REPEAT_MODE_ONE
+            volume = 1f
+            addListener(object : androidx.media3.common.Player.Listener {
+                override fun onRenderedFirstFrame() {
+                    isVideoReady = true
+                }
+            })
+            prepare()
+        }
+    }
+    
+    // Pause when not on current page
+    LaunchedEffect(isCurrentPage) {
+        if (!isCurrentPage) {
+            exoPlayer.pause()
+            isPlaying = false
+            showPlayButton = true
+        }
+    }
+    
+    DisposableEffect(Unit) {
+        onDispose {
+            exoPlayer.release()
+        }
+    }
+    
+    // Thumbnail URL for poster
+    val thumbnailUrl = remember(videoUrl) { videoUrlToThumbnail(videoUrl) }
+    
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .clickable {
+                if (isPlaying) {
+                    exoPlayer.pause()
+                    isPlaying = false
+                    showPlayButton = true
+                } else {
+                    exoPlayer.play()
+                    isPlaying = true
+                    showPlayButton = false
+                }
+            }
+    ) {
+        AndroidView(
+            factory = { ctx ->
+                androidx.media3.ui.PlayerView(ctx).apply {
+                    player = exoPlayer
+                    useController = false
+                    controllerAutoShow = false
+                    resizeMode = androidx.media3.ui.AspectRatioFrameLayout.RESIZE_MODE_ZOOM
+                    setShowBuffering(androidx.media3.ui.PlayerView.SHOW_BUFFERING_NEVER)
+                }
+            },
+            modifier = Modifier.fillMaxSize()
+        )
+        
+        // Thumbnail poster ON TOP of PlayerView (visible until video is playing and ready)
+        if (!isVideoReady || !isPlaying) {
+            AsyncImage(
+                model = thumbnailUrl,
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.fillMaxSize()
+            )
+        }
+        
+        // Play button overlay
+        androidx.compose.animation.AnimatedVisibility(
+            visible = showPlayButton,
+            enter = fadeIn(),
+            exit = fadeOut(),
+            modifier = Modifier.align(Alignment.Center)
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(64.dp)
+                    .clip(CircleShape)
+                    .background(Color.Black.copy(alpha = 0.5f)),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    Icons.Filled.PlayArrow,
+                    "Reproducir",
+                    tint = Color.White,
+                    modifier = Modifier.size(36.dp)
+                )
+            }
+        }
+        
+        // Video badge
+        Surface(
+            modifier = Modifier
+                .align(Alignment.TopStart)
+                .padding(top = 12.dp, start = 12.dp),
+            shape = RoundedCornerShape(8.dp),
+            color = Color.Black.copy(alpha = 0.6f)
+        ) {
+            Row(
+                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                Icon(
+                    Icons.Filled.Videocam,
+                    null,
+                    tint = Color.White,
+                    modifier = Modifier.size(14.dp)
+                )
                 Text(
-                    text = "${pagerState.currentPage + 1}/${displayImages.size}",
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.SemiBold,
+                    "Video",
                     color = Color.White,
-                    modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp)
+                    fontSize = 11.sp,
+                    fontWeight = FontWeight.SemiBold
                 )
             }
         }
@@ -1141,13 +1353,29 @@ private fun ProductActionsRow(
                             )
                             .clickable { onImageSelect(index) }
                     ) {
-                        // Imagen de fondo
+                        // Imagen de fondo (para videos, usar thumbnail de ImageKit)
+                        val displayUrl = if (isVideoUrl(imageUrl)) videoUrlToThumbnail(imageUrl) else imageUrl
                         AsyncImage(
-                            model = imageUrl,
+                            model = displayUrl,
                             contentDescription = "Variante ${index + 1}",
                             contentScale = ContentScale.Crop,
                             modifier = Modifier.fillMaxSize()
                         )
+                        
+                        // Icono de play para videos
+                        if (isVideoUrl(imageUrl)) {
+                            Box(
+                                modifier = Modifier.fillMaxSize(),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Icon(
+                                    Icons.Filled.PlayCircle,
+                                    contentDescription = "Video",
+                                    tint = Color.White.copy(alpha = 0.85f),
+                                    modifier = Modifier.size(22.dp)
+                                )
+                            }
+                        }
                         
                         // Overlay gradient para datos
                         Box(
@@ -1951,9 +2179,11 @@ private fun ReviewsSection(
                 }
             }
         } else {
-            // Estado vacío cuando no hay opiniones
+            // Estado vacío cuando no hay opiniones - clickable para abrir CommentsSheet
             Surface(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { onViewAll() },
                 shape = RoundedCornerShape(12.dp),
                 color = SurfaceElevated
             ) {
@@ -1966,12 +2196,12 @@ private fun ReviewsSection(
                     Icon(
                         imageVector = Icons.Outlined.RateReview,
                         contentDescription = null,
-                        tint = TextMuted,
+                        tint = PrimaryPurple.copy(alpha = 0.6f),
                         modifier = Modifier.size(40.dp)
                     )
                     Spacer(modifier = Modifier.height(12.dp))
                     Text(
-                        text = "aún no hay opiniones",
+                        text = "Aún no hay opiniones",
                         fontSize = 15.sp,
                         fontWeight = FontWeight.SemiBold,
                         color = TextSecondary
@@ -1981,6 +2211,29 @@ private fun ReviewsSection(
                         fontSize = 13.sp,
                         color = TextMuted
                     )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Button(
+                        onClick = { onViewAll() },
+                        shape = RoundedCornerShape(12.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = PrimaryPurple
+                        ),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(44.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Outlined.Edit,
+                            contentDescription = null,
+                            modifier = Modifier.size(18.dp)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = "Escribir una opinión",
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    }
                 }
             }
         }
@@ -2402,22 +2655,100 @@ private fun ProductGalleryWithSKU(
     
     if (displayImages.isEmpty()) return
     
+    // Track which gallery video is currently playing (by index), -1 = none
+    var playingVideoIndex by remember { mutableIntStateOf(-1) }
+    
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp)
     ) {
-        // Imágenes grandes sin Título
+        // Imágenes grandes sin Título (con soporte para videos)
         displayImages.forEachIndexed { index, imageUrl ->
-            AsyncImage(
-                model = imageUrl,
-                contentDescription = "Imagen ${index + 1}",
-                contentScale = ContentScale.Crop,
+            val isVideo = isVideoUrl(imageUrl)
+            val displayUrl = if (isVideo) videoUrlToThumbnail(imageUrl) else imageUrl
+            
+            Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(320.dp) // más altas
+                    .height(320.dp)
                     .clip(RoundedCornerShape(12.dp))
-            )
+                    .background(Color(0xFF1A1A24))
+            ) {
+                if (isVideo && playingVideoIndex == index) {
+                    // Inline video player
+                    ProductVideoPlayer(
+                        videoUrl = imageUrl,
+                        isCurrentPage = true
+                    )
+                } else {
+                    AsyncImage(
+                        model = displayUrl,
+                        contentDescription = "Imagen ${index + 1}",
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .then(
+                                if (isVideo) Modifier.clickable { playingVideoIndex = index }
+                                else Modifier
+                            )
+                    )
+                    
+                    // Video overlay indicator
+                    if (isVideo) {
+                        // Play icon center
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .clickable { playingVideoIndex = index },
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .size(56.dp)
+                                    .clip(CircleShape)
+                                    .background(Color.Black.copy(alpha = 0.5f)),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Icon(
+                                    Icons.Filled.PlayArrow,
+                                    "Video",
+                                    tint = Color.White,
+                                    modifier = Modifier.size(32.dp)
+                                )
+                            }
+                        }
+                        
+                        // Video badge top-left
+                        Surface(
+                            modifier = Modifier
+                                .align(Alignment.TopStart)
+                                .padding(10.dp),
+                            shape = RoundedCornerShape(8.dp),
+                            color = Color.Black.copy(alpha = 0.6f)
+                        ) {
+                            Row(
+                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(4.dp)
+                            ) {
+                                Icon(
+                                    Icons.Filled.Videocam,
+                                    null,
+                                    tint = Color.White,
+                                    modifier = Modifier.size(14.dp)
+                                )
+                                Text(
+                                    "Video",
+                                    color = Color.White,
+                                    fontSize = 11.sp,
+                                    fontWeight = FontWeight.SemiBold
+                                )
+                            }
+                        }
+                    }
+                }
+            }
             if (index < displayImages.size - 1) {
                 Spacer(modifier = Modifier.height(12.dp))
             }
@@ -2486,7 +2817,7 @@ private fun ProductGalleryWithSKU(
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-private fun FullscreenGalleryModal(
+fun FullscreenGalleryModal(
     images: List<String>,
     title: String,
     onDismiss: () -> Unit
@@ -2506,23 +2837,78 @@ private fun FullscreenGalleryModal(
                 .fillMaxSize()
                 .background(Color.Black)
         ) {
-            // Imágenes centradas con pager
+            // Imágenes centradas con pager (con soporte para videos)
             HorizontalPager(
                 state = pagerState,
                 modifier = Modifier.fillMaxSize()
             ) { page ->
+                val mediaUrl = images[page]
+                val isVideo = isVideoUrl(mediaUrl)
+                
                 Box(
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
                 ) {
+                    var scale by remember { mutableFloatStateOf(1f) }
+                    var offsetX by remember { mutableFloatStateOf(0f) }
+                    var offsetY by remember { mutableFloatStateOf(0f) }
+                    
+                    val transformableState = rememberTransformableState { zoomChange, panChange, _ ->
+                        scale = (scale * zoomChange).coerceIn(1f, 5f)
+                        if (scale > 1f) {
+                            offsetX += panChange.x
+                            offsetY += panChange.y
+                        } else {
+                            offsetX = 0f
+                            offsetY = 0f
+                        }
+                    }
+                    
                     AsyncImage(
-                        model = images[page],
+                        model = if (isVideo) videoUrlToThumbnail(mediaUrl) else mediaUrl,
                         contentDescription = "Imagen ${page + 1}",
                         contentScale = ContentScale.Fit,
                         modifier = Modifier
                             .fillMaxWidth()
                             .fillMaxHeight(0.8f)
+                            .graphicsLayer {
+                                scaleX = scale
+                                scaleY = scale
+                                translationX = offsetX
+                                translationY = offsetY
+                            }
+                            .transformable(state = transformableState)
+                            .pointerInput(Unit) {
+                                detectTapGestures(
+                                    onDoubleTap = {
+                                        if (scale > 1f) {
+                                            scale = 1f
+                                            offsetX = 0f
+                                            offsetY = 0f
+                                        } else {
+                                            scale = 2.5f
+                                        }
+                                    }
+                                )
+                            }
                     )
+                    
+                    if (isVideo) {
+                        Box(
+                            modifier = Modifier
+                                .size(64.dp)
+                                .clip(CircleShape)
+                                .background(Color.Black.copy(alpha = 0.5f)),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                Icons.Filled.PlayArrow,
+                                "Video",
+                                tint = Color.White,
+                                modifier = Modifier.size(36.dp)
+                            )
+                        }
+                    }
                 }
             }
             
@@ -2565,14 +2951,15 @@ private fun FullscreenGalleryModal(
                 }
             }
             
-            // Dots indicadores - parte inferior
+            // Dots indicadores - parte inferior (centrados verticalmente)
             if (images.size > 1) {
                 Row(
                     modifier = Modifier
                         .align(Alignment.BottomCenter)
                         .navigationBarsPadding()
                         .padding(bottom = 24.dp),
-                    horizontalArrangement = Arrangement.Center
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     repeat(images.size) { index ->
                         Box(

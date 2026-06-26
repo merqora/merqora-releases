@@ -85,6 +85,7 @@ import com.rendly.app.R
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import com.rendly.app.ui.components.FullScreenMapModal
 import com.rendly.app.ui.components.MentionSuggestionPopup
 import com.rendly.app.ui.components.extractMentionQuery
 import com.rendly.app.ui.components.insertMention
@@ -270,6 +271,11 @@ fun ChatScreen(
     val fusedLocationClient = remember {
         com.google.android.gms.location.LocationServices.getFusedLocationProviderClient(context)
     }
+    
+    // Estado para modal de mapa a pantalla completa
+    var showFullScreenMap by remember { mutableStateOf(false) }
+    var mapModalLat by remember { mutableDoubleStateOf(0.0) }
+    var mapModalLng by remember { mutableDoubleStateOf(0.0) }
     
     // Función para obtener y enviar ubicación
     @Suppress("MissingPermission")
@@ -918,7 +924,12 @@ fun ChatScreen(
                         onSharedPostClick = { postId ->
                             onOpenProduct?.invoke(postId)
                         },
-                        onNavigateToUserProfile = onNavigateToUserProfile
+                        onNavigateToUserProfile = onNavigateToUserProfile,
+                        onOpenMapModal = { lat, lng ->
+                            mapModalLat = lat
+                            mapModalLng = lng
+                            showFullScreenMap = true
+                        }
                     )
                 }
             }
@@ -1512,6 +1523,14 @@ fun ChatScreen(
         )
     }
     
+    // Modal de mapa a pantalla completa
+    FullScreenMapModal(
+        isVisible = showFullScreenMap,
+        latitude = mapModalLat,
+        longitude = mapModalLng,
+        onDismiss = { showFullScreenMap = false }
+    )
+    
     // Mostrar banner de ESPERA cuando se inicia handshake (reemplaza el modal central)
     LaunchedEffect(isWaitingForAcceptance, pendingHandshakeId) {
         if (isWaitingForAcceptance && pendingHandshakeId != null) {
@@ -1840,7 +1859,8 @@ private fun MessageBubble(
     onLongPress: (Message) -> Unit = {},
     onForwardSharedPost: ((SharedPostData) -> Unit)? = null,
     onSharedPostClick: ((String) -> Unit)? = null,
-    onNavigateToUserProfile: ((String) -> Unit)? = null
+    onNavigateToUserProfile: ((String) -> Unit)? = null,
+    onOpenMapModal: ((Double, Double) -> Unit)? = null
 ) {
     // Paleta premium: grises elegantes
     val myMessageBg = Color(0xFF2D3748) // Gris oscuro elegante
@@ -2281,7 +2301,8 @@ private fun MessageBubble(
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .height(150.dp)
-                                        .clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)),
+                                        .clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp))
+                                        .clickable { onOpenMapModal?.invoke(lat, lng) },
                                     onError = { error ->
                                         android.util.Log.e("ChatScreen", "Error cargando mapa: ${error.result.throwable.message}")
                                         mapLoadError = true
@@ -2294,6 +2315,7 @@ private fun MessageBubble(
                                             .fillMaxWidth()
                                             .height(150.dp)
                                             .clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp))
+                                            .clickable { onOpenMapModal?.invoke(lat, lng) }
                                             .background(
                                                 Brush.verticalGradient(
                                                     colors = listOf(
@@ -2534,7 +2556,7 @@ private fun MessageBubble(
                     }
                     
                     // Hora y ticks - abajo derecha (NO mostrar para posts compartidos, audios, usuarios compartidos ni tarjetas de artículo)
-                    if (!isSharedPost && !isAudio && !isSharedUser && !isArticleCard) {
+                    if (!isSharedPost && !isAudio && !isSharedUser && !isArticleCard && !isConsultPost) {
                         Row(
                             modifier = Modifier
                                 .align(Alignment.End)

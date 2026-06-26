@@ -249,10 +249,18 @@ fun StoriesViewer(
                 )
             }
     ) {
-        // Story image
+        // Story image - full quality for viewer
         if (currentStory != null) {
+            val context = androidx.compose.ui.platform.LocalContext.current
             AsyncImage(
-                model = currentStory.imageUrl,
+                model = remember(currentStory.imageUrl) {
+                    coil.request.ImageRequest.Builder(context)
+                        .data(currentStory.imageUrl)
+                        .crossfade(200)
+                        .memoryCachePolicy(coil.request.CachePolicy.ENABLED)
+                        .diskCachePolicy(coil.request.CachePolicy.ENABLED)
+                        .build()
+                },
                 contentDescription = "Story",
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.fillMaxSize()

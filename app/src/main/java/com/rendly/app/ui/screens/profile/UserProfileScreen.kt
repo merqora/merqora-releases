@@ -652,12 +652,18 @@ private fun UserProfileHeader(
                 .clip(RoundedCornerShape(20.dp))
         ) {
             // Mostrar imagen del banner si existe, sino mostrar gradiente
-            if (!user.bannerUrl.isNullOrEmpty()) {
+            if (!user.bannerUrl.isNullOrBlank()) {
+                android.util.Log.d("UserProfileScreen", "Intentando cargar Banner: ${user.bannerUrl}")
                 AsyncImage(
                     model = user.bannerUrl,
                     contentDescription = "Banner",
                     contentScale = ContentScale.Crop,
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier.fillMaxSize(),
+                    onSuccess = { android.util.Log.d("UserProfileScreen", "✅ Banner cargado con éxito") },
+                    onError = {
+                        android.util.Log.e("UserProfileScreen", "Error cargando banner de ${user.username}: ${user.bannerUrl}")
+                        android.util.Log.e("UserProfileScreen", "Causa: ${it.result.throwable.message}")
+                    }
                 )
             } else {
                 Box(
@@ -716,13 +722,25 @@ private fun UserProfileHeader(
                             .clip(CircleShape)
                             .background(HomeBg)
                     ) {
+                        val avatarToLoad = if (!user.avatarUrl.isNullOrBlank()) {
+                            user.avatarUrl
+                        } else {
+                            "https://ui-avatars.com/api/?name=${user.username}&background=A78BFA&color=fff"
+                        }
+                        
+                        android.util.Log.d("UserProfileScreen", "Intentando cargar Avatar: $avatarToLoad")
                         AsyncImage(
-                            model = user.avatarUrl ?: "https://ui-avatars.com/api/?name=${user.username}&background=A78BFA&color=fff",
+                            model = avatarToLoad,
                             contentDescription = "Avatar",
                             contentScale = ContentScale.Crop,
                             modifier = Modifier
                                 .fillMaxSize()
-                                .clip(CircleShape)
+                                .clip(CircleShape),
+                            onSuccess = { android.util.Log.d("UserProfileScreen", "✅ Avatar cargado con éxito") },
+                            onError = {
+                                android.util.Log.e("UserProfileScreen", "Error cargando avatar de ${user.username}: $avatarToLoad")
+                                android.util.Log.e("UserProfileScreen", "Causa: ${it.result.throwable.message}")
+                            }
                         )
                     }
                 }

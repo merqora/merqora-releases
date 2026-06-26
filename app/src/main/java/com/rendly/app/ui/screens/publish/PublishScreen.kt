@@ -66,7 +66,7 @@ private val PUBLISH_MODES = listOf(
     ),
     PublishMode(
         id = "rend",
-        label = "Rend",
+        label = "Clip",
         icon = Icons.Outlined.PlayCircle,
         description = "Video corto",
         accentColor = Color(0xFFFF6B35)
@@ -150,7 +150,7 @@ fun PublishScreen(
                     )
                 }
                 "rend" -> {
-                    RendScreen(
+                    ClipScreen(
                         onClose = onClose,
                         onModeSelected = onModeSelectedCallback,
                         currentModeIndex = modeIndex

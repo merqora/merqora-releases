@@ -210,10 +210,9 @@ fun StoryTextEditor(
         modifier = modifier
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
-            // Altura de la barra de herramientas + carrusel de opciones
+            // Altura de la barra de herramientas (carrusel se integra en el mismo contenedor)
             val toolbarHeight = 52.dp
-            val carouselHeight = if (selectedTool != null && TEXT_TOOLS.find { it.type == selectedTool }?.hasCarousel == true) 70.dp else 0.dp
-            val totalToolsHeight = toolbarHeight + carouselHeight
+            val totalToolsHeight = toolbarHeight
             
             // ═══════════════════════════════════════════════════════════════
             // CÁLCULO DE CENTRO PERFECTO - FIJO
@@ -228,11 +227,12 @@ fun StoryTextEditor(
             // Centrar un poco más abajo para compensar el status bar
             val centerY = (availableHeight / 2).coerceAtLeast(60.dp) + 20.dp
             
-            // Campo de texto centrado
+            // Campo de texto centrado - misma alineación que el slider vertical
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = centerY) // Posición fija centrada
+                    .align(Alignment.Center)
+                    .padding(bottom = actualKeyboardHeight + totalToolsHeight)
                     .padding(horizontal = 32.dp),
                 contentAlignment = Alignment.Center
             ) {
@@ -299,12 +299,13 @@ fun StoryTextEditor(
                 )
             }
             
-            // Slider vertical de tamaño - lado izquierdo, centrado junto al texto
+            // Slider vertical de tamaño - lado izquierdo, centrado verticalmente
+            // entre el header y el borde superior del contenedor de sub-herramientas
+            // Mismo enfoque que HistoryScreen: Alignment.CenterStart + offset por teclado/tools
             Box(
                 modifier = Modifier
-                    .align(Alignment.TopStart)
-                    .padding(start = 16.dp)
-                    .padding(top = centerY - 40.dp) // Alineado con el centro del texto, posición fija
+                    .align(Alignment.CenterStart)
+                    .padding(start = 16.dp, bottom = actualKeyboardHeight + totalToolsHeight)
                     .height(140.dp)
             ) {
                 VerticalFontSizeSlider(
@@ -345,76 +346,82 @@ fun StoryTextEditor(
                     .align(Alignment.BottomCenter)
                     .imePadding() // Usa imePadding para pegarse perfectamente al teclado
             ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        // SIN padding bottom adicional - imePadding maneja todo
-                ) {
-                // Carrusel de opciones (si hay herramienta seleccionada con carrusel)
-                AnimatedVisibility(
-                    visible = selectedTool != null && TEXT_TOOLS.find { it.type == selectedTool }?.hasCarousel == true,
-                    enter = fadeIn(tween(150)) + slideInVertically { it },
-                    exit = fadeOut(tween(100)) + slideOutVertically { it }
-                ) {
-                    Box(
+                // Contenedor único integrado: herramientas principales O carrusel con botón volver
+                val showCarousel = selectedTool != null && TEXT_TOOLS.find { it.type == selectedTool }?.hasCarousel == true
+                
+                if (showCarousel) {
+                    // Modo carrusel: Arrow left + opciones de la herramienta seleccionada
+                    Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(bottom = 5.dp)
+                            .background(Color(0xFF1A1A1A))
+                            .padding(start = 4.dp, end = 8.dp, top = 8.dp, bottom = 8.dp),
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        when (selectedTool) {
-                            TextToolType.FONT -> FontCarousel(
-                                selected = textState.fontOption,
-                                onSelect = { textState = textState.copy(fontOption = it) }
+                        IconButton(
+                            onClick = { selectedTool = null },
+                            modifier = Modifier.size(40.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.ArrowBack,
+                                contentDescription = "Volver",
+                                tint = Color.White,
+                                modifier = Modifier.size(22.dp)
                             )
-                            TextToolType.COLOR -> ColorCarousel(
-                                selected = textState.color,
-                                onSelect = { textState = textState.copy(color = it) }
-                            )
-                            TextToolType.ANIMATION -> AnimationCarousel(
-                                selected = textState.animation,
-                                onSelect = { textState = textState.copy(animation = it) }
-                            )
-                            TextToolType.EFFECTS -> EffectsCarousel(
-                                selected = textState.effect,
-                                onSelect = { textState = textState.copy(effect = it) }
-                            )
-                            else -> {}
                         }
-                    }
-                }
-                
-                // Barra de herramientas principal
-                TextToolbar(
-                    selectedTool = selectedTool,
-                    alignment = textState.alignment,
-                    backgroundState = textState.backgroundState,
-                    onToolSelected = { tool ->
-                        when {
-                            tool.type == TextToolType.ALIGNMENT -> {
-                                // Toggle alignment
-                                val newAlign = when (textState.alignment) {
-                                    TextAlignOption.LEFT -> TextAlignOption.CENTER
-                                    TextAlignOption.CENTER -> TextAlignOption.RIGHT
-                                    TextAlignOption.RIGHT -> TextAlignOption.LEFT
-                                }
-                                textState = textState.copy(alignment = newAlign)
-                            }
-                            tool.type == TextToolType.BACKGROUND -> {
-                                // Ciclo de fondo: NONE -> BLACK -> WHITE -> NONE
-                                val newBg = when (textState.backgroundState) {
-                                    TextBackgroundState.NONE -> TextBackgroundState.BLACK
-                                    TextBackgroundState.BLACK -> TextBackgroundState.WHITE
-                                    TextBackgroundState.WHITE -> TextBackgroundState.NONE
-                                }
-                                textState = textState.copy(backgroundState = newBg)
-                            }
-                            else -> {
-                                // Toggle carrusel
-                                selectedTool = if (selectedTool == tool.type) null else tool.type
+                        
+                        Box(modifier = Modifier.weight(1f)) {
+                            when (selectedTool) {
+                                TextToolType.FONT -> FontCarousel(
+                                    selected = textState.fontOption,
+                                    onSelect = { textState = textState.copy(fontOption = it) }
+                                )
+                                TextToolType.COLOR -> ColorCarousel(
+                                    selected = textState.color,
+                                    onSelect = { textState = textState.copy(color = it) }
+                                )
+                                TextToolType.ANIMATION -> AnimationCarousel(
+                                    selected = textState.animation,
+                                    onSelect = { textState = textState.copy(animation = it) }
+                                )
+                                TextToolType.EFFECTS -> EffectsCarousel(
+                                    selected = textState.effect,
+                                    onSelect = { textState = textState.copy(effect = it) }
+                                )
+                                else -> {}
                             }
                         }
                     }
-                )
+                } else {
+                    // Modo principal: todas las herramientas
+                    TextToolbar(
+                        selectedTool = selectedTool,
+                        alignment = textState.alignment,
+                        backgroundState = textState.backgroundState,
+                        onToolSelected = { tool ->
+                            when {
+                                tool.type == TextToolType.ALIGNMENT -> {
+                                    val newAlign = when (textState.alignment) {
+                                        TextAlignOption.LEFT -> TextAlignOption.CENTER
+                                        TextAlignOption.CENTER -> TextAlignOption.RIGHT
+                                        TextAlignOption.RIGHT -> TextAlignOption.LEFT
+                                    }
+                                    textState = textState.copy(alignment = newAlign)
+                                }
+                                tool.type == TextToolType.BACKGROUND -> {
+                                    val newBg = when (textState.backgroundState) {
+                                        TextBackgroundState.NONE -> TextBackgroundState.BLACK
+                                        TextBackgroundState.BLACK -> TextBackgroundState.WHITE
+                                        TextBackgroundState.WHITE -> TextBackgroundState.NONE
+                                    }
+                                    textState = textState.copy(backgroundState = newBg)
+                                }
+                                else -> {
+                                    selectedTool = tool.type
+                                }
+                            }
+                        }
+                    )
                 }
             }
         }
@@ -473,6 +480,9 @@ private fun VerticalFontSizeSlider(
             modifier = Modifier
                 .weight(1f)
                 .width(36.dp)
+                .onGloballyPositioned { coordinates ->
+                    trackHeight = coordinates.size.height.toFloat()
+                }
                 .pointerInput(Unit) {
                     trackHeight = size.height.toFloat()
                     detectDragGestures(

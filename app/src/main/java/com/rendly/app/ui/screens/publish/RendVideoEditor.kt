@@ -32,7 +32,8 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.asComposeRenderEffect
-import androidx.compose.ui.input.pointer.awaitFirstDown
+import androidx.compose.foundation.gestures.awaitFirstDown
+import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onSizeChanged
@@ -2089,7 +2090,7 @@ private fun EffectsLayerTrack(
                             var prevX = down.position.x
                             try {
                                 while (true) {
-                                    val event = awaitPointerEvent()
+                                    val event = awaitPointerEvent(PointerEventPass.Initial)
                                     val pointer = event.changes.firstOrNull() ?: break
                                     if (!pointer.pressed) break
                                     pointer.consume()
@@ -2130,7 +2131,7 @@ private fun EffectsLayerTrack(
                             var prevX = down.position.x
                             try {
                                 while (true) {
-                                    val event = awaitPointerEvent()
+                                    val event = awaitPointerEvent(PointerEventPass.Initial)
                                     val pointer = event.changes.firstOrNull() ?: break
                                     if (!pointer.pressed) break
                                     pointer.consume()
@@ -2299,7 +2300,7 @@ private fun VideoLayerTrack(
                             var prevX = down.position.x
                             try {
                                 while (true) {
-                                    val event = awaitPointerEvent()
+                                    val event = awaitPointerEvent(PointerEventPass.Initial)
                                     val pointer = event.changes.firstOrNull() ?: break
                                     if (!pointer.pressed) break
                                     pointer.consume()
@@ -2353,7 +2354,7 @@ private fun VideoLayerTrack(
                             var prevX = down.position.x
                             try {
                                 while (true) {
-                                    val event = awaitPointerEvent()
+                                    val event = awaitPointerEvent(PointerEventPass.Initial)
                                     val pointer = event.changes.firstOrNull() ?: break
                                     if (!pointer.pressed) break
                                     pointer.consume()
@@ -2492,7 +2493,7 @@ private fun AudioLayerTrack(
                             var prevX = down.position.x
                             try {
                                 while (true) {
-                                    val event = awaitPointerEvent()
+                                    val event = awaitPointerEvent(PointerEventPass.Initial)
                                     val pointer = event.changes.firstOrNull() ?: break
                                     if (!pointer.pressed) break
                                     pointer.consume()
@@ -2546,7 +2547,7 @@ private fun AudioLayerTrack(
                             var prevX = down.position.x
                             try {
                                 while (true) {
-                                    val event = awaitPointerEvent()
+                                    val event = awaitPointerEvent(PointerEventPass.Initial)
                                     val pointer = event.changes.firstOrNull() ?: break
                                     if (!pointer.pressed) break
                                     pointer.consume()
