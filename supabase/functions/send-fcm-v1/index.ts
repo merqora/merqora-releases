@@ -1,5 +1,5 @@
-// ═══════════════════════════════════════════════════════════════════════════════
-// RENDLY - FCM HTTP v1 API Edge Function
+﻿// ═══════════════════════════════════════════════════════════════════════════════
+// MERCORA - FCM HTTP v1 API Edge Function
 // Envía notificaciones push de forma segura usando OAuth2
 // ═══════════════════════════════════════════════════════════════════════════════
 
@@ -7,7 +7,7 @@ import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
 // Configuración de Firebase - Se obtiene de variables de entorno de Supabase
-const FIREBASE_PROJECT_ID = Deno.env.get('FIREBASE_PROJECT_ID') || 'rendly-app'
+const FIREBASE_PROJECT_ID = Deno.env.get('FIREBASE_PROJECT_ID') || 'mercora-app'
 const FIREBASE_CLIENT_EMAIL = Deno.env.get('FIREBASE_CLIENT_EMAIL') || ''
 const FIREBASE_PRIVATE_KEY = Deno.env.get('FIREBASE_PRIVATE_KEY')?.replace(/\\n/g, '\n') || ''
 

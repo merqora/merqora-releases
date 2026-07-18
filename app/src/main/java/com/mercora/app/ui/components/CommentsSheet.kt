@@ -91,7 +91,7 @@ fun CommentsSheet(
 ) {
     // Fallback: si currentUserId es null, obtenerlo directamente de auth
     val resolvedCurrentUserId = currentUserId 
-        ?: com.vinzay.app.data.remote.SupabaseClient.auth.currentUserOrNull()?.id
+        ?: com.mercora.app.data.remote.SupabaseClient.auth.currentUserOrNull()?.id
     
     var commentText by remember { mutableStateOf("") }
     var selectedRating by remember { mutableIntStateOf(5) }
@@ -680,9 +680,9 @@ fun CommentsSheet(
                 // Enviar reporte a Supabase
                 scope.launch {
                     try {
-                        val reporterId = com.vinzay.app.data.remote.SupabaseClient.auth.currentUserOrNull()?.id
+                        val reporterId = com.mercora.app.data.remote.SupabaseClient.auth.currentUserOrNull()?.id
                         if (reporterId != null) {
-                            com.vinzay.app.data.remote.SupabaseClient.database
+                            com.mercora.app.data.remote.SupabaseClient.database
                                 .from("content_reports")
                                 .insert(kotlinx.serialization.json.buildJsonObject {
                                     put("reporter_id", kotlinx.serialization.json.JsonPrimitive(reporterId))
@@ -717,7 +717,7 @@ private fun OpinionItem(
         when {
             comment.avatarUrl.isNullOrEmpty() -> "https://ui-avatars.com/api/?name=${comment.username}&background=A78BFA&color=fff"
             comment.avatarUrl.startsWith("http") -> comment.avatarUrl
-            else -> "https://wsiszffxlxupzbrgrklv.supabase.co/storage/v1/object/public/avatars_new/${comment.avatarUrl}"
+            else -> "https://xyrpmmnegzjkbysoocpc.supabase.co/storage/v1/object/public/avatars_new/${comment.avatarUrl}"
         }
     }
     
@@ -873,7 +873,7 @@ private fun ReplyItemConnected(
         when {
             reply.avatarUrl.isNullOrEmpty() -> "https://ui-avatars.com/api/?name=${reply.username}&background=A78BFA&color=fff"
             reply.avatarUrl.startsWith("http") -> reply.avatarUrl
-            else -> "https://wsiszffxlxupzbrgrklv.supabase.co/storage/v1/object/public/avatars_new/${reply.avatarUrl}"
+            else -> "https://xyrpmmnegzjkbysoocpc.supabase.co/storage/v1/object/public/avatars_new/${reply.avatarUrl}"
         }
     }
     

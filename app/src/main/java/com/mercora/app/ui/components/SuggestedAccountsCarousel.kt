@@ -91,7 +91,7 @@ fun SuggestedAccountsCarousel(
                     .select {
                         filter { eq("follower_id", currentUserId) }
                     }
-                    .decodeList<com.vinzay.app.data.repository.FollowerRelation>()
+                    .decodeList<com.mercora.app.data.repository.FollowerRelation>()
                 val alreadyFollowedIds = followedRelations.map { it.followedId }.toSet()
                 
                 // Get suggested users (not self, not already followed, active accounts)
@@ -230,7 +230,7 @@ private fun SuggestedAccountCard(
     val avatarUrl = remember(account.avatarUrl) {
         val url = account.avatarUrl ?: ""
         if (url.startsWith("http")) url
-        else if (url.isNotBlank()) "https://wsiszffxlxupzbrgrklv.supabase.co/storage/v1/object/public/avatars_new/$url"
+        else if (url.isNotBlank()) "https://xyrpmmnegzjkbysoocpc.supabase.co/storage/v1/object/public/avatars_new/$url"
         else ""
     }
     

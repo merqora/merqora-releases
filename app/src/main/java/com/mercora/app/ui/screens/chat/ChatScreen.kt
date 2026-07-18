@@ -192,7 +192,7 @@ fun ChatScreen(
     val hasMoreMessages by ChatRepository.hasMoreMessagesFlow.collectAsState()
     val isLoadingMoreFromRepo by ChatRepository.isLoadingMore.collectAsState()
     val scope = rememberCoroutineScope()
-    val currentUserId = remember { com.vinzay.app.data.remote.SupabaseClient.auth.currentUserOrNull()?.id }
+    val currentUserId = remember { com.mercora.app.data.remote.SupabaseClient.auth.currentUserOrNull()?.id }
     val currentProfile by ProfileRepository.currentProfile.collectAsState()
     val currentUsername = currentProfile?.username ?: "TÃº"
     val currentUserAvatar = currentProfile?.avatarUrl
@@ -1201,7 +1201,7 @@ fun ChatScreen(
                     // Modo normal - enviar nuevo mensaje
                     scope.launch {
                         try {
-                            val mentionError = com.vinzay.app.ui.components.validateMentions(textToSend)
+                            val mentionError = com.mercora.app.ui.components.validateMentions(textToSend)
                             if (mentionError != null) {
                                 android.widget.Toast.makeText(
                                     context, mentionError, android.widget.Toast.LENGTH_SHORT
@@ -1560,14 +1560,14 @@ fun ChatScreen(
                         var followersCount = 0
                         var postsCount = 0
                         try {
-                            followersCount = com.vinzay.app.data.remote.SupabaseClient.database
+                            followersCount = com.mercora.app.data.remote.SupabaseClient.database
                                 .from("followers")
                                 .select(columns = io.github.jan.supabase.postgrest.query.Columns.list("id")) {
                                     filter { eq("followed_id", sharedUser.userId) }
                                 }.decodeList<kotlinx.serialization.json.JsonObject>().size
                         } catch (_: Exception) {}
                         try {
-                            postsCount = com.vinzay.app.data.remote.SupabaseClient.database
+                            postsCount = com.mercora.app.data.remote.SupabaseClient.database
                                 .from("posts")
                                 .select(columns = io.github.jan.supabase.postgrest.query.Columns.list("id")) {
                                     filter { eq("user_id", sharedUser.userId); eq("status", "active") }
@@ -1785,7 +1785,7 @@ fun ChatScreen(
             onShareClick = { rend ->
                 val shareIntent = Intent(Intent.ACTION_SEND).apply {
                     type = "text/plain"
-                    putExtra(Intent.EXTRA_TEXT, "MirÃ¡ este video en Vinzay: https://vinzay.app/rend/${rend.id}")
+                    putExtra(Intent.EXTRA_TEXT, "MirÃ¡ este video en Mercora: https://mercora.app/rend/${rend.id}")
                 }
                 context.startActivity(Intent.createChooser(shareIntent, "Compartir"))
             },
@@ -2600,7 +2600,7 @@ private fun MessageBubble(
                         // Mensaje de ubicaciÃ³n con mapa
                         isLocation && locationData != null -> {
                             val (lat, lng) = locationData
-                            val mapboxToken = com.vinzay.app.BuildConfig.MAPBOX_ACCESS_TOKEN
+                            val mapboxToken = com.mercora.app.BuildConfig.MAPBOX_ACCESS_TOKEN
                             val latStr = String.format(java.util.Locale.US, "%.6f", lat)
                             val lngStr = String.format(java.util.Locale.US, "%.6f", lng)
                             val mapUrl = "https://api.mapbox.com/styles/v1/mapbox/streets-v12/static/pin-l+a855f7($lngStr,$latStr)/$lngStr,$latStr,15,0/600x300@2x?access_token=$mapboxToken"
@@ -5789,7 +5789,7 @@ private fun ChatSettingsModal(
                                 val shareIntent = android.content.Intent(android.content.Intent.ACTION_SEND).apply {
                                     type = "application/pdf"
                                     putExtra(android.content.Intent.EXTRA_STREAM, uri)
-                                    putExtra(android.content.Intent.EXTRA_SUBJECT, "Chat con @${otherUser.username} - Rendly")
+                                    putExtra(android.content.Intent.EXTRA_SUBJECT, "Chat con @${otherUser.username} - Mercora")
                                     addFlags(android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION)
                                 }
                                 context.startActivity(android.content.Intent.createChooser(shareIntent, "Exportar chat"))
@@ -6082,7 +6082,7 @@ private fun ChatSearchScreen(
     var searchResults by remember { mutableStateOf<List<Message>>(emptyList()) }
     var isSearching by remember { mutableStateOf(false) }
     var hasSearched by remember { mutableStateOf(false) }
-    val currentUserId = remember { com.vinzay.app.data.remote.SupabaseClient.auth.currentUserOrNull()?.id }
+    val currentUserId = remember { com.mercora.app.data.remote.SupabaseClient.auth.currentUserOrNull()?.id }
     val focusRequester = remember { FocusRequester() }
     var isFocused by remember { mutableStateOf(false) }
     
@@ -6440,7 +6440,7 @@ private fun ShareUserModal(
             isLoadingSuggestions = true
             // Cargar usuarios sugeridos (seguidos, interacciones)
             try {
-                val followedIds = com.vinzay.app.data.remote.SupabaseClient.database
+                val followedIds = com.mercora.app.data.remote.SupabaseClient.database
                     .from("followers")
                     .select(columns = io.github.jan.supabase.postgrest.query.Columns.list("followed_id")) {
                         filter { eq("follower_id", currentUserId) }
@@ -6449,7 +6449,7 @@ private fun ShareUserModal(
                     .map { it.followedId }
                 
                 if (followedIds.isNotEmpty()) {
-                    val users = com.vinzay.app.data.remote.SupabaseClient.database
+                    val users = com.mercora.app.data.remote.SupabaseClient.database
                         .from("usuarios")
                         .select {
                             filter { isIn("user_id", followedIds) }
@@ -6470,7 +6470,7 @@ private fun ShareUserModal(
             kotlinx.coroutines.delay(300) // Debounce
             isSearching = true
             try {
-                val results = com.vinzay.app.data.remote.SupabaseClient.database
+                val results = com.mercora.app.data.remote.SupabaseClient.database
                     .from("usuarios")
                     .select {
                         filter { 
@@ -6644,7 +6644,7 @@ private fun ShareUserModal(
                                     val avatarUrl = when {
                                         user.avatarUrl.isNullOrEmpty() -> "https://ui-avatars.com/api/?name=${user.username}&background=A78BFA&color=fff"
                                         user.avatarUrl.startsWith("http") -> user.avatarUrl
-                                        else -> "https://wsiszffxlxupzbrgrklv.supabase.co/storage/v1/object/public/avatars_new/${user.avatarUrl}"
+                                        else -> "https://xyrpmmnegzjkbysoocpc.supabase.co/storage/v1/object/public/avatars_new/${user.avatarUrl}"
                                     }
                                     AsyncImage(
                                         model = avatarUrl,
@@ -6840,7 +6840,7 @@ private fun ShareUserGridItem(
         when {
             user.avatarUrl.isNullOrEmpty() -> "https://ui-avatars.com/api/?name=${user.username}&background=A78BFA&color=fff&size=128"
             user.avatarUrl.startsWith("http") -> user.avatarUrl
-            else -> "https://wsiszffxlxupzbrgrklv.supabase.co/storage/v1/object/public/avatars_new/${user.avatarUrl}"
+            else -> "https://xyrpmmnegzjkbysoocpc.supabase.co/storage/v1/object/public/avatars_new/${user.avatarUrl}"
         }
     }
     
@@ -6919,7 +6919,7 @@ private fun SharedUserMessageContent(
         when {
             data.avatarUrl.isEmpty() -> "https://ui-avatars.com/api/?name=${data.username}&background=A78BFA&color=fff&size=128"
             data.avatarUrl.startsWith("http") -> data.avatarUrl
-            else -> "https://wsiszffxlxupzbrgrklv.supabase.co/storage/v1/object/public/avatars_new/${data.avatarUrl}"
+            else -> "https://xyrpmmnegzjkbysoocpc.supabase.co/storage/v1/object/public/avatars_new/${data.avatarUrl}"
         }
     }
     
@@ -6927,7 +6927,7 @@ private fun SharedUserMessageContent(
         when {
             data.bannerUrl.isEmpty() -> null
             data.bannerUrl.startsWith("http") -> data.bannerUrl
-            else -> "https://wsiszffxlxupzbrgrklv.supabase.co/storage/v1/object/public/banners/${data.bannerUrl}"
+            else -> "https://xyrpmmnegzjkbysoocpc.supabase.co/storage/v1/object/public/banners/${data.bannerUrl}"
         }
     }
     
@@ -7173,24 +7173,24 @@ private fun ArticleCardMessageContent(
         isLoading = true
         isError = false
         try {
-            val postDB = com.vinzay.app.data.remote.SupabaseClient.database
+            val postDB = com.mercora.app.data.remote.SupabaseClient.database
                 .from("posts")
                 .select {
                     filter { eq("id", postId) }
                 }
-                .decodeSingleOrNull<com.vinzay.app.data.model.PostDB>()
+                .decodeSingleOrNull<com.mercora.app.data.model.PostDB>()
             
             if (postDB != null) {
                 // Obtener datos del dueÃ±o
                 var ownerUsername = "usuario"
                 var ownerAvatar = ""
                 try {
-                    val owner = com.vinzay.app.data.remote.SupabaseClient.database
+                    val owner = com.mercora.app.data.remote.SupabaseClient.database
                         .from("usuarios")
                         .select {
                             filter { eq("user_id", postDB.userId) }
                         }
-                        .decodeSingleOrNull<com.vinzay.app.data.model.Usuario>()
+                        .decodeSingleOrNull<com.mercora.app.data.model.Usuario>()
                     if (owner != null) {
                         ownerUsername = owner.username
                         ownerAvatar = owner.avatarUrl ?: ""
@@ -7475,7 +7475,7 @@ private fun ArticleCardMessageContent(
                             val resolvedAvatar = when {
                                 data.ownerAvatar.isEmpty() -> "https://ui-avatars.com/api/?name=${data.ownerUsername}&background=00BFA5&color=fff&size=64"
                                 data.ownerAvatar.startsWith("http") -> data.ownerAvatar
-                                else -> "https://wsiszffxlxupzbrgrklv.supabase.co/storage/v1/object/public/avatars_new/${data.ownerAvatar}"
+                                else -> "https://xyrpmmnegzjkbysoocpc.supabase.co/storage/v1/object/public/avatars_new/${data.ownerAvatar}"
                             }
                             AsyncImage(
                                 model = resolvedAvatar,
@@ -7620,20 +7620,20 @@ private fun ShareArticleModal(
             isLoadingOther = true
             try {
                 if (otherUserId.isNotEmpty()) {
-                    val otherPostDBs = com.vinzay.app.data.remote.SupabaseClient.database
+                    val otherPostDBs = com.mercora.app.data.remote.SupabaseClient.database
                         .from("posts")
                         .select {
                             filter { eq("user_id", otherUserId); eq("status", "active") }
                             order("created_at", io.github.jan.supabase.postgrest.query.Order.DESCENDING)
                         }
-                        .decodeList<com.vinzay.app.data.model.PostDB>()
+                        .decodeList<com.mercora.app.data.model.PostDB>()
                     
                     // Fetch other user info for mapping
                     val otherUserInfo = try {
-                        com.vinzay.app.data.remote.SupabaseClient.database
+                        com.mercora.app.data.remote.SupabaseClient.database
                             .from("usuarios")
                             .select { filter { eq("user_id", otherUserId) } }
-                            .decodeSingleOrNull<com.vinzay.app.data.model.Usuario>()
+                            .decodeSingleOrNull<com.mercora.app.data.model.Usuario>()
                     } catch (_: Exception) { null }
                     
                     otherUserPosts = otherPostDBs.map { postDB ->
@@ -7654,7 +7654,7 @@ private fun ShareArticleModal(
             // Cargar artÃ­culos guardados (misma lÃ³gica que ProfileScreen)
             isLoadingSaved = true
             try {
-                val saves = com.vinzay.app.data.remote.SupabaseClient.database
+                val saves = com.mercora.app.data.remote.SupabaseClient.database
                     .from("post_saves")
                     .select { filter { eq("user_id", currentUserId) } }
                     .decodeList<PostSaveDB>()
@@ -7662,21 +7662,21 @@ private fun ShareArticleModal(
                 val savedPostIds = saves.map { it.postId }.toSet()
                 
                 if (savedPostIds.isNotEmpty()) {
-                    val posts = com.vinzay.app.data.remote.SupabaseClient.database
+                    val posts = com.mercora.app.data.remote.SupabaseClient.database
                         .from("posts")
                         .select()
-                        .decodeList<com.vinzay.app.data.model.PostDB>()
+                        .decodeList<com.mercora.app.data.model.PostDB>()
                         .filter { it.id in savedPostIds }
                     
                     val userIds = posts.map { it.userId }.distinct()
-                    val usersMap = mutableMapOf<String, com.vinzay.app.data.model.Usuario>()
+                    val usersMap = mutableMapOf<String, com.mercora.app.data.model.Usuario>()
                     
                     for (userId in userIds) {
                         try {
-                            val user = com.vinzay.app.data.remote.SupabaseClient.database
+                            val user = com.mercora.app.data.remote.SupabaseClient.database
                                 .from("usuarios")
                                 .select { filter { eq("user_id", userId) } }
-                                .decodeSingleOrNull<com.vinzay.app.data.model.Usuario>()
+                                .decodeSingleOrNull<com.mercora.app.data.model.Usuario>()
                             if (user != null) usersMap[userId] = user
                         } catch (_: Exception) {}
                     }

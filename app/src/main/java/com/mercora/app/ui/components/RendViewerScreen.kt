@@ -238,7 +238,7 @@ private fun RendViewerPage(
 
     val avatarUrl = remember(rend.userAvatar) {
         if (rend.userAvatar.startsWith("http")) rend.userAvatar
-        else "https://wsiszffxlxupzbrgrklv.supabase.co/storage/v1/object/public/avatars_new/${rend.userAvatar}"
+        else "https://xyrpmmnegzjkbysoocpc.supabase.co/storage/v1/object/public/avatars_new/${rend.userAvatar}"
     }
 
     Box(

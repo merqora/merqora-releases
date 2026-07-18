@@ -91,7 +91,7 @@ fun PostItem(
     // Avatar URL - memoizado
     val avatarUrl = remember(post.userAvatar) {
         if (post.userAvatar.startsWith("http")) post.userAvatar
-        else "https://wsiszffxlxupzbrgrklv.supabase.co/storage/v1/object/public/avatars_new/${post.userAvatar}"
+        else "https://xyrpmmnegzjkbysoocpc.supabase.co/storage/v1/object/public/avatars_new/${post.userAvatar}"
     }
     
     Column(
@@ -684,7 +684,7 @@ private data class InfoDataItem(
 
 @Composable
 private fun ProductInfoPanel(
-    producto: com.vinzay.app.data.model.Producto,
+    producto: com.mercora.app.data.model.Producto,
     visible: Boolean = true
 ) {
     val stockText = when {
@@ -842,7 +842,7 @@ private data class PriceStrings(
 
 @Composable
 fun VideoPostItem(
-    rend: com.vinzay.app.data.model.Rend,
+    rend: com.mercora.app.data.model.Rend,
     onLikeClick: () -> Unit,
     onSaveClick: () -> Unit,
     onRendClick: () -> Unit,
@@ -869,7 +869,7 @@ fun VideoPostItem(
     }
     val avatarUrl = remember(rend.userAvatar) {
         if (rend.userAvatar.startsWith("http")) rend.userAvatar
-        else "https://wsiszffxlxupzbrgrklv.supabase.co/storage/v1/object/public/avatars_new/${rend.userAvatar}"
+        else "https://xyrpmmnegzjkbysoocpc.supabase.co/storage/v1/object/public/avatars_new/${rend.userAvatar}"
     }
     
     // PERF: El ExoPlayer reutilizable del pool (mÃ¡x 2 vivos en todo el feed)

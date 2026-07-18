@@ -31,7 +31,7 @@ fun SellerSectionV2(
 ) {
     val displayAvatar = remember(avatarUrl) {
         if (avatarUrl.startsWith("http")) avatarUrl
-        else "https://wsiszffxlxupzbrgrklv.supabase.co/storage/v1/object/public/avatars_new/$avatarUrl"
+        else "https://xyrpmmnegzjkbysoocpc.supabase.co/storage/v1/object/public/avatars_new/$avatarUrl"
     }
 
     val reputationValue = sellerStats?.reputationScore?.let { "${it}%" } ?: "N/A"

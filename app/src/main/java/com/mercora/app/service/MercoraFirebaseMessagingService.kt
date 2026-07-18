@@ -26,7 +26,7 @@ import java.net.URL
 
 /**
  * -------------------------------------------------------------------------------
- * Merqora FIREBASE MESSAGING SERVICE
+ * Mercora FIREBASE MESSAGING SERVICE
  * -------------------------------------------------------------------------------
  * Maneja las notificaciones push incluso cuando la app está cerrada.
  * 
@@ -46,15 +46,15 @@ class MercoraFirebaseMessagingService : FirebaseMessagingService() {
     private val serviceScope = CoroutineScope(Dispatchers.IO + serviceJob)
     
     companion object {
-        private const val TAG = "VinzayFCM"
+        private const val TAG = "MercoraFCM"
         
         // Channel IDs
-        const val CHANNEL_MESSAGES = "vinzay_messages"
-        const val CHANNEL_SOCIAL = "vinzay_social"
-        const val CHANNEL_TRANSACTIONS = "vinzay_transactions"
-        const val CHANNEL_PROMOTIONS = "vinzay_promotions"
-        const val CHANNEL_SYSTEM = "vinzay_system"
-        const val CHANNEL_CALLS = "vinzay_calls"
+        const val CHANNEL_MESSAGES = "mercora_messages"
+        const val CHANNEL_SOCIAL = "Mercora_social"
+        const val CHANNEL_TRANSACTIONS = "Mercora_transactions"
+        const val CHANNEL_PROMOTIONS = "Mercora_promotions"
+        const val CHANNEL_SYSTEM = "Mercora_system"
+        const val CHANNEL_CALLS = "Mercora_calls"
         
         // Notification IDs base
         private const val NOTIFICATION_ID_MESSAGE = 1000
@@ -112,7 +112,7 @@ class MercoraFirebaseMessagingService : FirebaseMessagingService() {
                     saveFcmToken(userId, token)
                 } else {
                     // Guardar token localmente para enviarlo después del login
-                    getSharedPreferences("vinzay_fcm", Context.MODE_PRIVATE)
+                    getSharedPreferences("mercora_fcm", Context.MODE_PRIVATE)
                         .edit()
                         .putString("pending_fcm_token", token)
                         .apply()
@@ -139,7 +139,7 @@ class MercoraFirebaseMessagingService : FirebaseMessagingService() {
         
         // Determinar tipo de notificación
         val notificationType = data["type"] ?: "general"
-        val title = data["title"] ?: notification?.title ?: "vinzay"
+        val title = data["title"] ?: notification?.title ?: "Mercora"
         val body = data["body"] ?: notification?.body ?: ""
         val imageUrl = data["image_url"] ?: notification?.imageUrl?.toString()
         val clickAction = data["click_action"] ?: "OPEN_APP"
@@ -441,7 +441,7 @@ class MercoraFirebaseMessagingService : FirebaseMessagingService() {
             if (url.isNotEmpty()) {
                 try {
                     val fullUrl = if (url.startsWith("http")) url 
-                        else "https://wsiszffxlxupzbrgrklv.supabase.co/storage/v1/object/public/avatars_new/$url"
+                        else "https://xyrpmmnegzjkbysoocpc.supabase.co/storage/v1/object/public/avatars_new/$url"
                     val bitmap = BitmapFactory.decodeStream(URL(fullUrl).openStream())
                     notificationBuilder.setLargeIcon(bitmap)
                 } catch (e: Exception) {

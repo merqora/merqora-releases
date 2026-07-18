@@ -85,7 +85,7 @@ fun CallScreen(
             callState.otherAvatarUrl.isEmpty() -> 
                 "https://ui-avatars.com/api/?name=${callState.otherUsername}&background=A78BFA&color=fff&size=256"
             callState.otherAvatarUrl.startsWith("http") -> callState.otherAvatarUrl
-            else -> "https://wsiszffxlxupzbrgrklv.supabase.co/storage/v1/object/public/avatars_new/${callState.otherAvatarUrl}"
+            else -> "https://xyrpmmnegzjkbysoocpc.supabase.co/storage/v1/object/public/avatars_new/${callState.otherAvatarUrl}"
         }
     }
     
@@ -397,7 +397,7 @@ fun IncomingCallOverlay(
             callState.otherAvatarUrl.isEmpty() -> 
                 "https://ui-avatars.com/api/?name=${callState.otherUsername}&background=A78BFA&color=fff&size=256"
             callState.otherAvatarUrl.startsWith("http") -> callState.otherAvatarUrl
-            else -> "https://wsiszffxlxupzbrgrklv.supabase.co/storage/v1/object/public/avatars_new/${callState.otherAvatarUrl}"
+            else -> "https://xyrpmmnegzjkbysoocpc.supabase.co/storage/v1/object/public/avatars_new/${callState.otherAvatarUrl}"
         }
     }
     

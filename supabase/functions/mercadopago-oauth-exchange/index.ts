@@ -1,4 +1,4 @@
-// Edge Function: mercadopago-oauth-exchange
+﻿// Edge Function: mercadopago-oauth-exchange
 // Intercambia el código de autorización OAuth por tokens de Mercado Pago.
 // Se ejecuta del lado del servidor para mantener el client_secret seguro.
 // HIGH-4: Usa auth.uid() del JWT, NO acepta user_id del cliente.
@@ -52,7 +52,7 @@ serve(async (req) => {
       throw new Error('Configuración de Mercado Pago incompleta en variables de entorno')
     }
 
-    const REDIRECT_URI = Deno.env.get('MERCADOPAGO_REDIRECT_URI') || 'vinzay://mp-oauth/callback'
+    const REDIRECT_URI = Deno.env.get('MERCADOPAGO_REDIRECT_URI') || 'mercora://mp-oauth/callback'
 
     const tokenResponse = await fetch('https://api.mercadopago.com/oauth/token', {
       method: 'POST',

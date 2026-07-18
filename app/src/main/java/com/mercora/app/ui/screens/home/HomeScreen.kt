@@ -190,7 +190,7 @@ fun HomeContent(
         BadgeCountCache.init(context)
         CartRepository.initCache()
         ViewTracker.init(context)
-        com.vinzay.app.data.repository.AvatarShapeRepository.init(context)
+        com.mercora.app.data.repository.AvatarShapeRepository.init(context)
     }
     
     LaunchedEffect(Unit) {
@@ -212,7 +212,7 @@ fun HomeContent(
                 StoryRepository.loadOtherUsersStories() 
             }
             initScope.launch(kotlinx.coroutines.Dispatchers.IO) { 
-                com.vinzay.app.data.repository.RendRepository.loadRends() 
+                com.mercora.app.data.repository.RendRepository.loadRends() 
             }
             // Carrito desde Supabase (badges ya visibles por cache)
             initScope.launch(kotlinx.coroutines.Dispatchers.IO) {
@@ -279,12 +279,12 @@ fun HomeContent(
     // de los posts que estÃ¡n cerca pero aÃºn no visibles. Reduce perceived loading a ~0ms.
     LaunchedEffect(posts.size) {
         if (posts.isNotEmpty()) {
-            val imageLoader = com.vinzay.app.MercoraApplication.getImageLoader(context)
+            val imageLoader = com.mercora.app.MercoraApplication.getImageLoader(context)
             val visibleKeys = listState.layoutInfo.visibleItemsInfo.map { it.key }.toSet()
             // Prefetch avatares de posts que estÃ¡n en el feed pero no visibles aÃºn (max 10)
             posts.take(15).forEach { post ->
                 val avatarUrl = if (post.userAvatar.startsWith("http")) post.userAvatar
-                    else "https://wsiszffxlxupzbrgrklv.supabase.co/storage/v1/object/public/avatars_new/${post.userAvatar}"
+                    else "https://xyrpmmnegzjkbysoocpc.supabase.co/storage/v1/object/public/avatars_new/${post.userAvatar}"
                 if (avatarUrl.isNotBlank()) {
                     val request = coil.request.ImageRequest.Builder(context)
                         .data(avatarUrl)
@@ -370,7 +370,7 @@ fun HomeContent(
                     try {
                         val conversationId = ChatRepository.getOrCreateConversation(p.userId)
                         if (conversationId != null) {
-                            val users = com.vinzay.app.data.cache.network.SupabaseDataSource.fetchUsers(listOf(p.userId))
+                            val users = com.mercora.app.data.cache.network.SupabaseDataSource.fetchUsers(listOf(p.userId))
                             val seller = users.firstOrNull()
                             if (seller != null) {
                                 onOpenChatFromProfile(seller)
@@ -395,7 +395,7 @@ fun HomeContent(
     // (handled via onNavNavigate callback to MainScreen)
     
     // WelcomeOverlay state â€” ocultar contenido del Home mientras la animaciÃ³n de bienvenida se reproduce
-    val welcomeData by com.vinzay.app.data.model.WelcomeState.welcome.collectAsState()
+    val welcomeData by com.mercora.app.data.model.WelcomeState.welcome.collectAsState()
     
     // PostOptionsModal state
     var showPostOptionsModal by remember { mutableStateOf(false) }
@@ -479,8 +479,8 @@ fun HomeContent(
     val viewedStoryIds by StoryRepository.viewedStoryIds.collectAsState()
     
     // OPTIMIZADO: Rends state en nivel superior (evita collectAsState dentro del LazyColumn item)
-    val rendsData by com.vinzay.app.data.repository.RendRepository.rends.collectAsState()
-    val rendsLoading by com.vinzay.app.data.repository.RendRepository.isLoading.collectAsState()
+    val rendsData by com.mercora.app.data.repository.RendRepository.rends.collectAsState()
+    val rendsLoading by com.mercora.app.data.repository.RendRepository.isLoading.collectAsState()
     var showStoriesViewer by remember { mutableStateOf(false) }
     var showOtherStoriesViewer by remember { mutableStateOf(false) }
     var selectedStoryUserIndex by remember { mutableIntStateOf(0) }
@@ -558,7 +558,7 @@ fun HomeContent(
             },
             text = {
                 Column {
-                    Text("Vinzay v${updateInfoValue.latest.version_name} disponible")
+                    Text("Mercora v${updateInfoValue.latest.version_name} disponible")
                     if (!updateInfoValue.latest.changelog.isNullOrBlank()) {
                         Spacer(Modifier.height(8.dp))
                         Text("Cambios:", fontWeight = FontWeight.SemiBold, fontSize = 14.sp)
@@ -780,8 +780,8 @@ fun HomeContent(
                     item(key = "rends_carousel", contentType = "rends_carousel") {
                         // Callbacks para navegar a la secciÃ³n de videos con el rend pulsado
                         val onRendClickCallback = remember { 
-                            { rend: com.vinzay.app.data.model.Rend -> 
-                                com.vinzay.app.data.repository.RendRepository.setPendingRendId(rend.id)
+                            { rend: com.mercora.app.data.model.Rend -> 
+                                com.mercora.app.data.repository.RendRepository.setPendingRendId(rend.id)
                                 onNavNavigate("videos")
                             } 
                         }
@@ -850,7 +850,7 @@ fun HomeContent(
                                 onSelectUserId = { selectedUserId = it; showUserProfile = true },
                                 onNavigateToProfile = onNavigateToProfile,
                                 onRendClick = {
-                                    com.vinzay.app.data.repository.RendRepository.setPendingRendId(rend.id)
+                                    com.mercora.app.data.repository.RendRepository.setPendingRendId(rend.id)
                                     onNavNavigate("videos")
                                 },
                                 onSelectForConsult = { selectedPostForConsult = it; showConsultModal = true },
@@ -1354,9 +1354,9 @@ fun HomeContent(
             onSubmitReport = { reason, description ->
                 scope.launch {
                     try {
-                        val currentUserId = com.vinzay.app.data.remote.SupabaseClient.auth.currentUserOrNull()?.id
+                        val currentUserId = com.mercora.app.data.remote.SupabaseClient.auth.currentUserOrNull()?.id
                         if (currentUserId != null && reportPostId.isNotEmpty()) {
-                            com.vinzay.app.data.remote.SupabaseClient.database
+                            com.mercora.app.data.remote.SupabaseClient.database
                                 .from("content_reports")
                                 .insert(mapOf(
                                     "reporter_id" to currentUserId,
@@ -1425,7 +1425,7 @@ fun HomeContent(
                 selectedPostForOptions?.let { post ->
                     scope.launch {
                         try {
-                            com.vinzay.app.data.remote.SupabaseClient.database
+                            com.mercora.app.data.remote.SupabaseClient.database
                                 .from("posts")
                                 .delete {
                                     filter { eq("id", post.id) }
@@ -1472,9 +1472,9 @@ fun HomeContent(
                 selectedPostForOptions?.let { post ->
                     scope.launch {
                         try {
-                            val currentUserId = com.vinzay.app.data.remote.SupabaseClient.auth.currentUserOrNull()?.id
+                            val currentUserId = com.mercora.app.data.remote.SupabaseClient.auth.currentUserOrNull()?.id
                             if (currentUserId != null) {
-                                com.vinzay.app.data.remote.SupabaseClient.database
+                                com.mercora.app.data.remote.SupabaseClient.database
                                     .from("blocked_users")
                                     .insert(mapOf(
                                         "blocker_id" to currentUserId,
@@ -1497,9 +1497,9 @@ fun HomeContent(
                     // Guardar en Supabase
                     scope.launch {
                         try {
-                            val currentUserId = com.vinzay.app.data.remote.SupabaseClient.auth.currentUserOrNull()?.id
+                            val currentUserId = com.mercora.app.data.remote.SupabaseClient.auth.currentUserOrNull()?.id
                             if (currentUserId != null) {
-                                com.vinzay.app.data.remote.SupabaseClient.database
+                                com.mercora.app.data.remote.SupabaseClient.database
                                     .from("hidden_posts")
                                     .insert(mapOf(
                                         "user_id" to currentUserId,
@@ -1517,9 +1517,9 @@ fun HomeContent(
                 selectedPostForOptions?.let { post ->
                     scope.launch {
                         try {
-                            val currentUserId = com.vinzay.app.data.remote.SupabaseClient.auth.currentUserOrNull()?.id
+                            val currentUserId = com.mercora.app.data.remote.SupabaseClient.auth.currentUserOrNull()?.id
                             if (currentUserId != null) {
-                                com.vinzay.app.data.remote.SupabaseClient.database
+                                com.mercora.app.data.remote.SupabaseClient.database
                                     .from("followers")
                                     .delete {
                                         filter {
@@ -1539,7 +1539,7 @@ fun HomeContent(
         )
         
         // EditPostModal
-        com.vinzay.app.ui.components.EditPostModal(
+        com.mercora.app.ui.components.EditPostModal(
             isVisible = showEditPostModal,
             post = editingPost,
             onDismiss = {
@@ -1550,7 +1550,7 @@ fun HomeContent(
                 editingPost?.let { post ->
                     scope.launch {
                         try {
-                            com.vinzay.app.data.remote.SupabaseClient.database
+                            com.mercora.app.data.remote.SupabaseClient.database
                                 .from("posts")
                                 .update({
                                     set("title", editData.title)
@@ -1577,7 +1577,7 @@ fun HomeContent(
                 editingPost?.let { post ->
                     scope.launch {
                         try {
-                            com.vinzay.app.data.remote.SupabaseClient.database
+                            com.mercora.app.data.remote.SupabaseClient.database
                                 .from("posts")
                                 .delete {
                                     filter { eq("id", post.id) }
@@ -1728,7 +1728,7 @@ private fun StablePostItem(
  */
 @Composable
 private fun StableVideoPostItem(
-    rend: com.vinzay.app.data.model.Rend,
+    rend: com.mercora.app.data.model.Rend,
     currentUserId: String?,
     onSelectUserId: (String) -> Unit,
     onNavigateToProfile: () -> Unit,
@@ -1771,14 +1771,14 @@ private fun StableVideoPostItem(
     // Check if user is verified (cacheado: no re-consulta Supabase al reciclar el item)
     var isUserVerified by remember { mutableStateOf(false) }
     LaunchedEffect(rend.userId) {
-        isUserVerified = com.vinzay.app.data.repository.VerificationRepository.isUserVerifiedCached(rend.userId)
+        isUserVerified = com.mercora.app.data.repository.VerificationRepository.isUserVerifiedCached(rend.userId)
     }
     
     val rendScope = rememberCoroutineScope()
     val onLike = remember(rendId) {
         {
             rendScope.launch {
-                com.vinzay.app.data.repository.RendRepository.toggleLike(
+                com.mercora.app.data.repository.RendRepository.toggleLike(
                     rendId,
                     currentRend.likesCount,
                     currentRend.isLiked
@@ -1790,7 +1790,7 @@ private fun StableVideoPostItem(
     val onSave = remember(rendId) {
         {
             rendScope.launch {
-                com.vinzay.app.data.repository.RendRepository.toggleSave(
+                com.mercora.app.data.repository.RendRepository.toggleSave(
                     rendId,
                     currentRend.savesCount,
                     currentRend.isSaved

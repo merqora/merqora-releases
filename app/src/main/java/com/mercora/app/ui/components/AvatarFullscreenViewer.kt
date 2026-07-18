@@ -78,7 +78,7 @@ fun AvatarFullscreenViewer(
 
         val avatarToLoad = if (!avatarUrl.isNullOrBlank()) {
             if (avatarUrl.startsWith("http")) avatarUrl
-            else "https://wsiszffxlxupzbrgrklv.supabase.co/storage/v1/object/public/avatars_new/$avatarUrl"
+            else "https://xyrpmmnegzjkbysoocpc.supabase.co/storage/v1/object/public/avatars_new/$avatarUrl"
         } else {
             "https://ui-avatars.com/api/?name=$username&background=A78BFA&color=fff&size=256"
         }

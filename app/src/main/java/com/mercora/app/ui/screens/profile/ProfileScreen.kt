@@ -150,7 +150,7 @@ fun ProfileScreen(
     
     // Inicializar repo de formas de avatar
     LaunchedEffect(Unit) {
-        com.vinzay.app.data.repository.AvatarShapeRepository.init(context)
+        com.mercora.app.data.repository.AvatarShapeRepository.init(context)
     }
     
     // Estado para modal de ajustes
@@ -249,7 +249,7 @@ fun ProfileScreen(
     }
 
     // Estado del dot de nuevas formas - actualizado al entrar a editar perfil
-    var hasNewShapesInProfile by remember { mutableStateOf(com.vinzay.app.data.repository.AvatarShapeRepository.hasUnseenShapes()) }
+    var hasNewShapesInProfile by remember { mutableStateOf(com.mercora.app.data.repository.AvatarShapeRepository.hasUnseenShapes()) }
     
     // Cargar perfil, highlights, posts y rends del usuario al iniciar
     LaunchedEffect(Unit) {
@@ -292,31 +292,31 @@ fun ProfileScreen(
         if (selectedTabIndex == 4 && savedPosts.isEmpty()) {
             isLoadingSaved = true
             try {
-                val currentUserId = com.vinzay.app.data.remote.SupabaseClient.auth.currentUserOrNull()?.id
+                val currentUserId = com.mercora.app.data.remote.SupabaseClient.auth.currentUserOrNull()?.id
                 if (currentUserId != null) {
-                    val saves = com.vinzay.app.data.remote.SupabaseClient.database
+                    val saves = com.mercora.app.data.remote.SupabaseClient.database
                         .from("post_saves")
                         .select { filter { eq("user_id", currentUserId) } }
-                        .decodeList<com.vinzay.app.ui.screens.home.PostSaveDB>()
+                        .decodeList<com.mercora.app.ui.screens.home.PostSaveDB>()
                     
                     val savedPostIds = saves.map { it.postId }.toSet()
                     
                     if (savedPostIds.isNotEmpty()) {
-                        val posts = com.vinzay.app.data.remote.SupabaseClient.database
+                        val posts = com.mercora.app.data.remote.SupabaseClient.database
                             .from("posts")
                             .select()
-                            .decodeList<com.vinzay.app.data.model.PostDB>()
+                            .decodeList<com.mercora.app.data.model.PostDB>()
                             .filter { it.id in savedPostIds }
                         
                         val userIds = posts.map { it.userId }.distinct()
-                        val usersMap = mutableMapOf<String, com.vinzay.app.data.repository.ExploreUserProfile>()
+                        val usersMap = mutableMapOf<String, com.mercora.app.data.repository.ExploreUserProfile>()
                         
                         for (userId in userIds) {
                             try {
-                                val user = com.vinzay.app.data.remote.SupabaseClient.database
+                                val user = com.mercora.app.data.remote.SupabaseClient.database
                                     .from("usuarios")
                                     .select { filter { eq("user_id", userId) } }
-                                    .decodeSingleOrNull<com.vinzay.app.data.repository.ExploreUserProfile>()
+                                    .decodeSingleOrNull<com.mercora.app.data.repository.ExploreUserProfile>()
                                 if (user != null) usersMap[userId] = user
                             } catch (_: Exception) {}
                         }
@@ -436,17 +436,17 @@ fun ProfileScreen(
             // Header con avatar y stats
             item(key = "profileHeader") {
                 // Observa el flow del repo: cambia EN TIEMPO REAL al elegir otra forma
-                val repoShape by com.vinzay.app.data.repository.AvatarShapeRepository.selectedShapeFlow.collectAsState()
+                val repoShape by com.mercora.app.data.repository.AvatarShapeRepository.selectedShapeFlow.collectAsState()
                 val avatarShapeType = try {
                     // Si el repo tiene un valor distinto al default (circle), Ãºsalo.
                     // Si no, lee del perfil (DB).
-                    if (repoShape != com.vinzay.app.data.model.AvatarShapeType.CIRCLE || profile.avatarShape.isNullOrBlank()) {
+                    if (repoShape != com.mercora.app.data.model.AvatarShapeType.CIRCLE || profile.avatarShape.isNullOrBlank()) {
                         repoShape
                     } else {
-                        com.vinzay.app.data.model.AvatarShapeType.fromDbValue(profile.avatarShape)
+                        com.mercora.app.data.model.AvatarShapeType.fromDbValue(profile.avatarShape)
                     }
                 } catch (_: Exception) {
-                    com.vinzay.app.data.model.AvatarShapeType.CIRCLE
+                    com.mercora.app.data.model.AvatarShapeType.CIRCLE
                 }
                 ProfileHeader(
                     profile = profile,
@@ -465,7 +465,7 @@ fun ProfileScreen(
                 ProfileActions(
                     onEditProfile = {
                         hasNewShapesInProfile = false
-                        com.vinzay.app.data.repository.AvatarShapeRepository.markShapesAsSeen()
+                        com.mercora.app.data.repository.AvatarShapeRepository.markShapesAsSeen()
                         onEditProfile()
                     },
                     onRendshop = { showRendshop = true },
@@ -861,9 +861,9 @@ fun ProfileScreen(
                 scope.launch {
                     try {
                         // PRIMERO: Limpiar sesiÃ³n persistida (CRÃTICO)
-                        com.vinzay.app.data.remote.SessionPersistence.clearSession()
+                        com.mercora.app.data.remote.SessionPersistence.clearSession()
                         // Cerrar sesiÃ³n en Supabase
-                        com.vinzay.app.data.remote.SupabaseClient.auth.signOut()
+                        com.mercora.app.data.remote.SupabaseClient.auth.signOut()
                         // Limpiar perfil cargado
                         ProfileRepository.clearProfile()
                         android.widget.Toast.makeText(context, "SesiÃ³n cerrada", android.widget.Toast.LENGTH_SHORT).show()
@@ -959,9 +959,9 @@ fun ProfileScreen(
                     isUnsaving = true
                     scope.launch {
                         try {
-                            val currentUserId = com.vinzay.app.data.remote.SupabaseClient.auth.currentUserOrNull()?.id
+                            val currentUserId = com.mercora.app.data.remote.SupabaseClient.auth.currentUserOrNull()?.id
                             if (currentUserId != null) {
-                                com.vinzay.app.data.remote.SupabaseClient.database
+                                com.mercora.app.data.remote.SupabaseClient.database
                                     .from("post_saves")
                                     .delete {
                                         filter {
@@ -1010,26 +1010,26 @@ fun ProfileScreen(
         )
 
         // Settings sub-screens
-        com.vinzay.app.ui.components.settings.PrivacySettingsScreen(
+        com.mercora.app.ui.components.settings.PrivacySettingsScreen(
             isVisible = showPrivacySettings,
             onDismiss = { showPrivacySettings = false }
         )
         
-        com.vinzay.app.ui.components.settings.NotificationsSettingsScreen(
+        com.mercora.app.ui.components.settings.NotificationsSettingsScreen(
             isVisible = showNotificationSettings,
             userId = profileFromRepo?.userId ?: "",
             onDismiss = { showNotificationSettings = false }
         )
         
-        com.vinzay.app.ui.components.settings.SecuritySettingsScreen(
+        com.mercora.app.ui.components.settings.SecuritySettingsScreen(
             isVisible = showSecuritySettings,
             onDismiss = { showSecuritySettings = false },
             onLogout = {
                 showSecuritySettings = false
                 scope.launch {
                     try {
-                        com.vinzay.app.data.remote.SessionPersistence.clearSession()
-                        com.vinzay.app.data.remote.SupabaseClient.auth.signOut()
+                        com.mercora.app.data.remote.SessionPersistence.clearSession()
+                        com.mercora.app.data.remote.SupabaseClient.auth.signOut()
                         ProfileRepository.clearProfile()
                         shouldLogout = true
                     } catch (_: Exception) {}
@@ -1037,12 +1037,12 @@ fun ProfileScreen(
             }
         )
         
-        com.vinzay.app.ui.components.settings.HelpCenterScreen(
+        com.mercora.app.ui.components.settings.HelpCenterScreen(
             isVisible = showHelpCenter,
             onDismiss = { showHelpCenter = false }
         )
         
-        com.vinzay.app.ui.components.settings.AboutScreen(
+        com.mercora.app.ui.components.settings.AboutScreen(
             isVisible = showAbout,
             onDismiss = { showAbout = false }
         )
@@ -1050,10 +1050,10 @@ fun ProfileScreen(
         // Visor de avatar a pantalla completa
         if (showAvatarViewer) {
             Box(modifier = Modifier.fillMaxSize()) {
-                com.vinzay.app.ui.components.AvatarFullscreenViewer(
+                com.mercora.app.ui.components.AvatarFullscreenViewer(
                     avatarUrl = profile.avatarUrl,
                     username = profile.username,
-                    shape = com.vinzay.app.data.repository.AvatarShapeRepository.getSelectedShape().toShape(),
+                    shape = com.mercora.app.data.repository.AvatarShapeRepository.getSelectedShape().toShape(),
                     onDismiss = { showAvatarViewer = false }
                 )
             }
@@ -1125,7 +1125,7 @@ private fun ProfileBanner(bannerUrl: String?, username: String = "") {
     val finalBannerUrl = remember(bannerUrl) {
         if (bannerUrl.isNullOrBlank()) null
         else if (bannerUrl.startsWith("http")) bannerUrl
-        else "https://wsiszffxlxupzbrgrklv.supabase.co/storage/v1/object/public/banners/$bannerUrl"
+        else "https://xyrpmmnegzjkbysoocpc.supabase.co/storage/v1/object/public/banners/$bannerUrl"
     }
 
     Box(
@@ -1269,7 +1269,7 @@ private fun ProfileHeader(
                         } else if (profile.avatarUrl.startsWith("http")) {
                             profile.avatarUrl
                         } else {
-                            "https://wsiszffxlxupzbrgrklv.supabase.co/storage/v1/object/public/avatars_new/${profile.avatarUrl}"
+                            "https://xyrpmmnegzjkbysoocpc.supabase.co/storage/v1/object/public/avatars_new/${profile.avatarUrl}"
                         }
                     }
                     
@@ -1324,7 +1324,7 @@ private fun ProfileHeader(
             // Badge de verificaciÃ³n junto al nombre
             if (profile.isVerified) {
                 Spacer(modifier = Modifier.width(3.dp))
-                com.vinzay.app.ui.components.VerifiedBadge(size = 14.dp)
+                com.mercora.app.ui.components.VerifiedBadge(size = 14.dp)
             }
         }
         
@@ -1747,10 +1747,10 @@ private fun formatViewCount(count: Int): String {
 @Composable
 private fun DetailsSection(profile: ProfileData) {
     // Load real seller stats
-    var sellerStats by remember { mutableStateOf<com.vinzay.app.data.model.SellerStats?>(null) }
+    var sellerStats by remember { mutableStateOf<com.mercora.app.data.model.SellerStats?>(null) }
     LaunchedEffect(profile.userId) {
         if (profile.userId.isNotEmpty()) {
-            sellerStats = com.vinzay.app.data.repository.OrderRepository.getSellerStats(profile.userId)
+            sellerStats = com.mercora.app.data.repository.OrderRepository.getSellerStats(profile.userId)
         }
     }
     
