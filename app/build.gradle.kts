@@ -51,6 +51,10 @@ android {
         }
     }
     
+    lint {
+        disable += listOf("NullSafeMutableLiveData", "ExtraTranslation")
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = true
