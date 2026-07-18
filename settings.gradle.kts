@@ -20,9 +20,11 @@ dependencyResolutionManagement {
             credentials.password = providers.gradleProperty("MAPBOX_DOWNLOADS_TOKEN").getOrElse("")
             authentication.create<BasicAuthentication>("basic")
         }
+        // JitPack - required by LiveKit (audioswitch dependency)
+        maven { url = uri("https://jitpack.io") }
     }
 }
 
-rootProject.name = "Merqora"
+rootProject.name = "Vinzay"
 include(":app")
 include(":benchmark")

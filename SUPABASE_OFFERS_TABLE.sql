@@ -1,5 +1,5 @@
 -- ═══════════════════════════════════════════════════════════════════════════════
--- SISTEMA DE OFERTAS DINÁMICAS - Merqora
+-- SISTEMA DE OFERTAS DINÁMICAS - Vinzay
 -- ═══════════════════════════════════════════════════════════════════════════════
 -- Tablas: offer_campaigns, offer_items
 -- Permite crear campañas de ofertas con fechas, categorías y productos asociados.

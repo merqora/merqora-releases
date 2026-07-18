@@ -1,5 +1,5 @@
 -- ═══════════════════════════════════════════════════════════════════════════════
--- SISTEMA DE PRESENCIA Y ESTADOS DE MENSAJES - RENDLY CHAT
+-- SISTEMA DE PRESENCIA Y ESTADOS DE MENSAJES - VINZAY CHAT
 -- Ejecutar en Supabase SQL Editor
 -- ═══════════════════════════════════════════════════════════════════════════════
 

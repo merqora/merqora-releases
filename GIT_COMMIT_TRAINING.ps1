@@ -12,7 +12,7 @@ Write-Host ""
 # Verificar que estamos en el directorio correcto
 $currentDir = Get-Location
 if (-not (Test-Path "ai-support")) {
-    Write-Host "❌ Error: Debes ejecutar desde c:\Users\Rodrigo\Documents\Rendly\" -ForegroundColor Red
+    Write-Host "❌ Error: Debes ejecutar desde c:\Users\Rodrigo\Documents\Vinzay\" -ForegroundColor Red
     exit 1
 }
 

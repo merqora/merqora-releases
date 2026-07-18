@@ -1,0 +1,57 @@
+# Project-wide Gradle settings
+org.gradle.java.home=PATH_TO_YOUR_JDK_17
+org.gradle.jvmargs=-Xmx4096m -XX:+UseParallelGC
+org.gradle.parallel=false
+org.gradle.workers.max=2
+org.gradle.caching=true
+org.gradle.daemon=false
+kotlin.daemon.jvmargs=-Xmx4096m -XX:MaxMetaspaceSize=512m
+kotlin.code.style=official
+android.useAndroidX=true
+android.enableJetifier=true
+android.enableR8.fullMode=true
+
+# Kapt
+kapt.use.worker.api=true
+kapt.worker.api.mode=isolation
+kapt.workers.jvmargs=-Xmx2048m
+kapt.incremental.apt=false
+kapt.include.compile.classpath=false
+
+# ── MAPBOX ──
+MAPBOX_DOWNLOADS_TOKEN=YOUR_MAPBOX_DOWNLOADS_TOKEN
+MAPBOX_ACCESS_TOKEN=YOUR_MAPBOX_ACCESS_TOKEN
+
+# ── GOOGLE MAPS ──
+GOOGLE_MAPS_API_KEY=YOUR_GOOGLE_MAPS_API_KEY
+
+# ── SUPABASE ──
+SUPABASE_URL=https://xyrpmmnegzjkbysoocpc.supabase.co
+SUPABASE_ANON_KEY=YOUR_SUPABASE_ANON_KEY
+
+# ── AI SUPPORT ──
+AI_SUPPORT_URL=https://vinzay-ai.up.railway.app
+
+# ── R2 / CLOUDINARY / IMAGEKIT URLs ──
+R2_PUBLIC_URL=https://pub-YOUR_BUCKET_ID.r2.dev
+CLOUDINARY_CLOUD_NAME=YOUR_CLOUD_NAME
+IMAGEKIT_URL_ENDPOINT=https://ik.imagekit.io/YOUR_ID
+
+# ── R2 CREDENTIALS ──
+CLOUDFLARE_ACCOUNT_ID=YOUR_ACCOUNT_ID
+CLOUDFLARE_ACCESS_KEY_ID=YOUR_ACCESS_KEY
+CLOUDFLARE_SECRET_ACCESS_KEY=YOUR_SECRET_KEY
+CLOUDFLARE_BUCKET_NAME=vinzay-media
+CLOUDFLARE_PUBLIC_DOMAIN=https://pub-YOUR_BUCKET_ID.r2.dev
+
+# ── CLOUDINARY API ──
+CLOUDINARY_API_KEY=YOUR_API_KEY
+CLOUDINARY_API_SECRET=YOUR_API_SECRET
+
+# ── IMAGEKIT API ──
+IMAGEKIT_PUBLIC_KEY=YOUR_PUBLIC_KEY
+IMAGEKIT_PRIVATE_KEY=YOUR_PRIVATE_KEY
+
+# ── MERCADO PAGO ──
+MP_PUBLIC_KEY=YOUR_MP_PUBLIC_KEY
+MERCADOPAGO_CLIENT_ID=YOUR_MP_CLIENT_ID

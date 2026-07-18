@@ -15,7 +15,7 @@ import { supabase } from '../supabaseClient'
 
 function StatCard({ title, value, change, changeType, icon: Icon, color }) {
   return (
-    <div className="bg-rendly-surface rounded-2xl p-6 border border-primary/10 hover:border-primary/30 transition-all duration-300">
+    <div className="bg-vinzay-surface rounded-2xl p-6 border border-primary/10 hover:border-primary/30 transition-all duration-300">
       <div className="flex items-start justify-between">
         <div>
           <p className="text-text-tertiary text-sm mb-1">{title}</p>
@@ -47,7 +47,7 @@ function RecentEscalation({ escalation, onClick }) {
   return (
     <div 
       onClick={onClick}
-      className="flex items-center gap-4 p-4 bg-rendly-surface-elevated rounded-xl cursor-pointer hover:bg-primary/10 transition-all duration-200"
+      className="flex items-center gap-4 p-4 bg-vinzay-surface-elevated rounded-xl cursor-pointer hover:bg-primary/10 transition-all duration-200"
     >
       <div className="w-10 h-10 rounded-full bg-accent-magenta/20 flex items-center justify-center">
         <AlertCircle className="w-5 h-5 text-accent-magenta" />
@@ -180,7 +180,7 @@ export default function Dashboard() {
       </div>
       
       {/* Recent Escalations */}
-      <div className="bg-rendly-surface rounded-2xl border border-primary/10 overflow-hidden">
+      <div className="bg-vinzay-surface rounded-2xl border border-primary/10 overflow-hidden">
         <div className="flex items-center justify-between p-6 border-b border-primary/10">
           <h2 className="text-lg font-semibold text-text-primary">Escalaciones Recientes</h2>
           <Link 

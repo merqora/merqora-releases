@@ -1,4 +1,4 @@
-"""Knowledge base for Rendly AI Support - FAQ and responses"""
+"""Knowledge base for Vinzay AI Support - FAQ and responses"""
 
 from typing import Dict, List, Optional, Tuple
 from rapidfuzz import fuzz, process
@@ -32,7 +32,7 @@ class FAQEntry:
             self.action_buttons = []
 
 
-# Rendly FAQ Knowledge Base
+# Vinzay FAQ Knowledge Base
 FAQ_DATABASE: List[FAQEntry] = [
     # === COMPRAS ===
     FAQEntry(
@@ -115,7 +115,7 @@ Los estados posibles son:
 4. Adjunta fotos como evidencia
 5. Describe el problema
 
-**Tienes 7 días** desde la entrega para reportar. Rendly protege tus compras.""",
+**Tienes 7 días** desde la entrega para reportar. Vinzay protege tus compras.""",
         keywords=["dañado", "roto", "diferente", "problema", "incorrecto", "mal"],
         action_buttons=[
             ActionButton("btn_orders", "📦 Ver mis pedidos", "navigate", "profile/orders", "package"),
@@ -134,7 +134,7 @@ Los estados posibles son:
             "Formas de pago",
             "¿Aceptan PayPal?",
         ],
-        answer="""En Rendly aceptamos:
+        answer="""En Vinzay aceptamos:
 
 💳 **Tarjetas de crédito/débito**
 • Visa, Mastercard, American Express
@@ -143,7 +143,7 @@ Los estados posibles son:
 • SPEI (México)
 • Transferencia directa
 
-💰 **Billetera Rendly**
+💰 **Billetera Vinzay**
 • Saldo disponible de ventas
 • Recargas
 
@@ -169,10 +169,10 @@ Para agregar un método: **Perfil** → **Métodos de pago** → **Agregar**""",
             "¿Cómo funciona el reembolso?",
             "Quiero mi dinero de vuelta",
         ],
-        answer="""Los reembolsos en Rendly:
+        answer="""Los reembolsos en Vinzay:
 
 ⏱️ **Tiempos de procesamiento:**
-• Billetera Rendly: Inmediato
+• Billetera Vinzay: Inmediato
 • Tarjeta de crédito: 5-10 días hábiles
 • Tarjeta de débito: 3-7 días hábiles
 • PayPal: 3-5 días hábiles
@@ -211,7 +211,7 @@ Si han pasado más de 10 días hábiles, contacta a tu banco.""",
 • Prueba con otro método de pago
 • Verifica que la dirección de facturación coincida
 • Contacta a tu banco para autorizar la compra
-• Usa la Billetera Rendly como alternativa
+• Usa la Billetera Vinzay como alternativa
 
 Si el problema persiste, intenta con otro método de pago.""",
         keywords=["rechazado", "error", "fallo", "pago", "tarjeta", "problema"],
@@ -259,10 +259,10 @@ Si el problema persiste, intenta con otro método de pago.""",
         questions=[
             "Quiero eliminar mi cuenta",
             "¿Cómo borro mi cuenta?",
-            "Cerrar cuenta Rendly",
+            "Cerrar cuenta Vinzay",
             "Desactivar cuenta",
         ],
-        answer="""Para eliminar tu cuenta de Rendly:
+        answer="""Para eliminar tu cuenta de Vinzay:
 
 1. **Perfil** → **Configuración** → **Cuenta**
 2. Desplázate hasta **"Eliminar cuenta"**
@@ -328,7 +328,7 @@ Si el problema persiste, intenta con otro método de pago.""",
             "Tiempo de entrega",
             "¿Cuántos días tarda en llegar?",
         ],
-        answer="""Los tiempos de envío en Rendly varían:
+        answer="""Los tiempos de envío en Vinzay varían:
 
 📦 **Envío estándar:** 5-10 días hábiles
 🚀 **Envío express:** 2-4 días hábiles
@@ -355,7 +355,7 @@ Cada vendedor indica sus tiempos de preparación (1-3 días generalmente) antes 
         intent="sell_how",
         category="ventas",
         questions=[
-            "¿Cómo vendo en Rendly?",
+            "¿Cómo vendo en Vinzay?",
             "Quiero vender productos",
             "¿Cómo publico algo?",
             "Empezar a vender",
@@ -370,7 +370,7 @@ Cada vendedor indica sus tiempos de preparación (1-3 días generalmente) antes 
             "Como pongo a la venta",
             "Subir producto",
         ],
-        answer="""Para vender en Rendly:
+        answer="""Para vender en Vinzay:
 
 1. **Verifica tu cuenta** (Perfil → Verificación)
 2. Toca el botón **"+"** en la barra inferior
@@ -404,11 +404,11 @@ Cada vendedor indica sus tiempos de preparación (1-3 días generalmente) antes 
         intent="sell_payment",
         category="ventas",
         questions=[
-            "¿Cuánto cobra Rendly de comisión?",
+            "¿Cuánto cobra Vinzay de comisión?",
             "¿Cuál es la comisión por venta?",
             "¿Qué porcentaje se llevan?",
         ],
-        answer="""Comisiones en Rendly:
+        answer="""Comisiones en Vinzay:
 
 💰 **Comisión por venta:** 10% del precio final
 
@@ -520,7 +520,7 @@ Investigamos cada reporte en menos de 24 horas.""",
         category="app",
         questions=[
             "La app se cierra sola",
-            "Rendly no funciona",
+            "Vinzay no funciona",
             "Error en la app",
             "La app está muy lenta",
             "No carga nada",
@@ -533,7 +533,7 @@ Investigamos cada reporte en menos de 24 horas.""",
 3. **Actualiza la app** en la tienda de aplicaciones
 4. **Reinicia tu dispositivo**
 5. **Limpia la caché:**
-   • Android: Ajustes → Apps → Rendly → Almacenamiento → Borrar caché
+   • Android: Ajustes → Apps → Vinzay → Almacenamiento → Borrar caché
    • iOS: Elimina y reinstala la app
 
 **Si el problema persiste:**
@@ -544,7 +544,7 @@ Investigamos cada reporte en menos de 24 horas.""",
 Trabajamos constantemente para mejorar la app.""",
         keywords=["error", "bug", "falla", "crash", "lento", "no funciona", "cierra"],
         action_buttons=[
-            ActionButton("btn_update", "🔄 Actualizar app", "open_url", "https://play.google.com/store/apps/details?id=com.rendly.app", "download"),
+            ActionButton("btn_update", "🔄 Actualizar app", "open_url", "https://play.google.com/store/apps/details?id=com.vinzay.app", "download"),
             ActionButton("btn_human", "👤 Reportar bug", "call_function", "escalate_to_human", "bug"),
         ],
     ),
@@ -562,7 +562,7 @@ Trabajamos constantemente para mejorar la app.""",
             "¿Qué necesito para verificarme?",
             "Proceso de verificación",
         ],
-        answer="""Para verificar tu cuenta en Rendly:
+        answer="""Para verificar tu cuenta en Vinzay:
 
 1. Ve a **Perfil** → **Verificación**
 2. Sube tu **identificación oficial** (INE, pasaporte, licencia)
@@ -575,7 +575,7 @@ Trabajamos constantemente para mejorar la app.""",
 • 🤝 Mayor confianza de compradores
 • 💰 Acceso a retiros de dinero
 
-⚠️ La verificación es **obligatoria para vender** en Rendly.""",
+⚠️ La verificación es **obligatoria para vender** en Vinzay.""",
         keywords=["verificar", "verificacion", "identidad", "ine", "pasaporte", "badge"],
         confidence_boost=0.1,
         action_buttons=[
@@ -597,7 +597,7 @@ Trabajamos constantemente para mejorar la app.""",
             "Mi billetera",
             "¿Cuándo me pagan?",
         ],
-        answer="""Para gestionar tu **Billetera Rendly**:
+        answer="""Para gestionar tu **Billetera Vinzay**:
 
 📍 Ve a **Perfil** → **Billetera**
 
@@ -698,7 +698,7 @@ Trabajamos constantemente para mejorar la app.""",
             "Proceso de devolución",
             "Devolver compra",
         ],
-        answer="""Para devolver un producto en Rendly:
+        answer="""Para devolver un producto en Vinzay:
 
 1. Ve a **Perfil** → **Historial de pedidos**
 2. Selecciona el pedido
@@ -715,7 +715,7 @@ Trabajamos constantemente para mejorar la app.""",
 • ⏰ Tienes **7 días** desde la entrega para solicitar devolución
 • 📦 Deberás enviar el producto de vuelta al vendedor
 • 💰 El reembolso se procesa al confirmar la recepción del vendedor
-• 🔒 Rendly protege tu compra durante todo el proceso""",
+• 🔒 Vinzay protege tu compra durante todo el proceso""",
         keywords=["devolver", "devolucion", "regresar", "retornar", "producto"],
         confidence_boost=0.1,
         action_buttons=[
@@ -733,10 +733,10 @@ Trabajamos constantemente para mejorar la app.""",
             "¿Cómo subo una historia?",
             "¿Cómo funcionan las historias?",
             "Publicar historia",
-            "Stories en Rendly",
+            "Stories en Vinzay",
             "¿Cuánto duran las historias?",
         ],
-        answer="""Las **Historias** en Rendly te permiten compartir momentos con tus seguidores:
+        answer="""Las **Historias** en Vinzay te permiten compartir momentos con tus seguidores:
 
 **Publicar una historia:**
 1. Toca el botón **"+"** en la sección de historias (arriba del feed)
@@ -770,7 +770,7 @@ Trabajamos constantemente para mejorar la app.""",
             "¿Cómo funcionan los Rends?",
             "Videos cortos",
         ],
-        answer="""Los **Rends** son videos cortos en Rendly (similar a Reels/TikTok):
+        answer="""Los **Rends** son videos cortos en Vinzay (similar a Reels/TikTok):
 
 **Crear un Rend:**
 1. Toca el botón **"+"** en la barra inferior
@@ -807,7 +807,7 @@ Trabajamos constantemente para mejorar la app.""",
             "¿Quién ve mi información?",
             "Perfil privado",
         ],
-        answer="""Para configurar tu privacidad en Rendly:
+        answer="""Para configurar tu privacidad en Vinzay:
 
 1. Ve a **Perfil** → **Configuración** → **Privacidad**
 
@@ -874,7 +874,7 @@ Trabajamos constantemente para mejorar la app.""",
             "Enviar mensaje al vendedor",
             "¿Hay videollamadas?",
         ],
-        answer="""El **Chat de Rendly** tiene muchas funciones:
+        answer="""El **Chat de Vinzay** tiene muchas funciones:
 
 **Mensajes:**
 • 💬 Texto con formato
@@ -914,7 +914,7 @@ Trabajamos constantemente para mejorar la app.""",
             "Bloquear seguidor",
             "¿Para qué sirven los seguidores?",
         ],
-        answer="""Los **seguidores** en Rendly son importantes para vender más:
+        answer="""Los **seguidores** en Vinzay son importantes para vender más:
 
 **Seguir a alguien:**
 • Ve a su perfil y toca **"Seguir"**
@@ -1017,7 +1017,7 @@ Trabajamos constantemente para mejorar la app.""",
             "¿El precio es fijo?",
             "Enviar oferta al vendedor",
         ],
-        answer="""El sistema de **ofertas** en Rendly te permite negociar:
+        answer="""El sistema de **ofertas** en Vinzay te permite negociar:
 
 **Hacer una oferta:**
 1. Ve a la publicación del producto
@@ -1052,7 +1052,7 @@ Trabajamos constantemente para mejorar la app.""",
             "Mejorar mi reputación",
             "¿Por qué importa la reputación?",
         ],
-        answer="""La **reputación** en Rendly refleja tu confiabilidad:
+        answer="""La **reputación** en Vinzay refleja tu confiabilidad:
 
 **Se compone de:**
 • ⭐ **Calificación promedio** de reseñas
@@ -1121,7 +1121,7 @@ Trabajamos constantemente para mejorar la app.""",
             "¿La app está en inglés?",
             "Configurar idioma",
         ],
-        answer="""Para cambiar el idioma de Rendly:
+        answer="""Para cambiar el idioma de Vinzay:
 
 1. Ve a **Perfil** → **Configuración** → **Idioma**
 2. Selecciona tu idioma preferido:
@@ -1147,7 +1147,7 @@ Trabajamos constantemente para mejorar la app.""",
             "Live stream",
             "¿Puedo vender en vivo?",
         ],
-        answer="""Las **transmisiones en vivo** en Rendly:
+        answer="""Las **transmisiones en vivo** en Vinzay:
 
 **Iniciar un Live:**
 1. Toca el botón **"+"** en la barra inferior
@@ -1192,14 +1192,14 @@ Trabajamos constantemente para mejorar la app.""",
 1. Ve a **Perfil** → **Historial de pedidos**
 2. Si pasaron más de 3 días sin envío, toca **"Reportar problema"**
 3. Selecciona **"El vendedor no envía"**
-4. Rendly intervendrá para resolver
+4. Vinzay intervendrá para resolver
 
 **Si sospechas fraude:**
 • 🚨 Reporta inmediatamente al usuario
 • 📸 Guarda capturas de pantalla
 • 💬 No borres la conversación
 
-⚠️ Rendly protege tus compras. Si el vendedor no cumple, recibirás reembolso completo.""",
+⚠️ Vinzay protege tus compras. Si el vendedor no cumple, recibirás reembolso completo.""",
         keywords=["vendedor", "responde", "envia", "problema", "contactar"],
         confidence_boost=0.1,
         action_buttons=[
@@ -1256,7 +1256,7 @@ Trabajamos constantemente para mejorar la app.""",
         ],
         answer="""Entiendo que prefieres hablar con una persona. Voy a transferirte con un agente de soporte humano.
 
-Un momento por favor, alguien del equipo de Rendly se comunicará contigo en breve. 🙏
+Un momento por favor, alguien del equipo de Vinzay se comunicará contigo en breve. 🙏
 
 Mientras esperas:
 • 📋 Ten a mano los detalles de tu consulta
@@ -1307,7 +1307,7 @@ Si necesitas algo más en el futuro, no dudes en escribirme. Estoy disponible **
             "Buenas noches",
             "Hey",
         ],
-        answer="""¡Hola! 👋 Bienvenido al soporte de Rendly.
+        answer="""¡Hola! 👋 Bienvenido al soporte de Vinzay.
 
 Soy el asistente virtual y estoy aquí para ayudarte. Puedo responder preguntas sobre:
 

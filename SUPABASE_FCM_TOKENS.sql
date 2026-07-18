@@ -1,5 +1,5 @@
 -- ═══════════════════════════════════════════════════════════════════════════════
--- RENDLY - FCM TOKENS TABLE
+-- VINZAY - FCM TOKENS TABLE
 -- Para notificaciones push con Firebase Cloud Messaging
 -- ═══════════════════════════════════════════════════════════════════════════════
 

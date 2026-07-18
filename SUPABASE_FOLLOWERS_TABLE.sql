@@ -1,5 +1,5 @@
 -- ============================================================================
--- SISTEMA DE SEGUIDORES Y CLIENTES - Rendly
+-- SISTEMA DE SEGUIDORES Y CLIENTES - VINZAY
 -- ============================================================================
 -- Este script elimina las columnas antiguas de la tabla usuarios y crea
 -- una nueva tabla 'followers' para manejar seguidores y clientes.

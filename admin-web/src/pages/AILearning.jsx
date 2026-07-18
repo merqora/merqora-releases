@@ -157,7 +157,7 @@ export default function AILearning() {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-        <div className="bg-rendly-surface rounded-2xl border border-primary/10 p-4">
+        <div className="bg-vinzay-surface rounded-2xl border border-primary/10 p-4">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-text-tertiary text-sm">Total Feedback</p>
@@ -167,7 +167,7 @@ export default function AILearning() {
           </div>
         </div>
 
-        <div className="bg-rendly-surface rounded-2xl border border-primary/10 p-4">
+        <div className="bg-vinzay-surface rounded-2xl border border-primary/10 p-4">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-text-tertiary text-sm">Positivos</p>
@@ -177,7 +177,7 @@ export default function AILearning() {
           </div>
         </div>
 
-        <div className="bg-rendly-surface rounded-2xl border border-primary/10 p-4">
+        <div className="bg-vinzay-surface rounded-2xl border border-primary/10 p-4">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-text-tertiary text-sm">Negativos</p>
@@ -187,7 +187,7 @@ export default function AILearning() {
           </div>
         </div>
 
-        <div className="bg-rendly-surface rounded-2xl border border-primary/10 p-4">
+        <div className="bg-vinzay-surface rounded-2xl border border-primary/10 p-4">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-text-tertiary text-sm">Calificación</p>
@@ -212,14 +212,14 @@ export default function AILearning() {
       </div>
 
       {/* Filters */}
-      <div className="bg-rendly-surface rounded-2xl border border-primary/10 p-4 space-y-4">
+      <div className="bg-vinzay-surface rounded-2xl border border-primary/10 p-4 space-y-4">
         <div className="flex flex-wrap gap-3">
           <button
             onClick={() => setFilter('all')}
             className={`px-4 py-2 rounded-xl font-medium transition-all ${
               filter === 'all'
                 ? 'bg-primary text-white'
-                : 'bg-rendly-bg text-text-secondary hover:bg-rendly-surface-elevated'
+                : 'bg-vinzay-bg text-text-secondary hover:bg-vinzay-surface-elevated'
             }`}
           >
             Todos ({learningData.length})
@@ -229,7 +229,7 @@ export default function AILearning() {
             className={`px-4 py-2 rounded-xl font-medium transition-all ${
               filter === 'positive'
                 ? 'bg-accent-green text-white'
-                : 'bg-rendly-bg text-text-secondary hover:bg-rendly-surface-elevated'
+                : 'bg-vinzay-bg text-text-secondary hover:bg-vinzay-surface-elevated'
             }`}
           >
             Positivos ({learningData.filter(f => f.helpful).length})
@@ -239,7 +239,7 @@ export default function AILearning() {
             className={`px-4 py-2 rounded-xl font-medium transition-all ${
               filter === 'negative'
                 ? 'bg-accent-magenta text-white'
-                : 'bg-rendly-bg text-text-secondary hover:bg-rendly-surface-elevated'
+                : 'bg-vinzay-bg text-text-secondary hover:bg-vinzay-surface-elevated'
             }`}
           >
             Negativos ({learningData.filter(f => !f.helpful).length})

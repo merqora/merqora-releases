@@ -1,5 +1,5 @@
 -- ═══════════════════════════════════════════════════════════════════════════════
--- RENDLY - CHAT SETTINGS TABLE
+-- VINZAY - CHAT SETTINGS TABLE
 -- Per-conversation mute settings for notifications
 -- ═══════════════════════════════════════════════════════════════════════════════
 

@@ -180,7 +180,7 @@ export default function Feedback() {
     <div className="space-y-6 fade-in">
       <div>
         <h1 className="text-2xl font-bold text-text-primary">Feedback de Usuarios</h1>
-        <p className="text-text-tertiary mt-1">Comentarios y sugerencias para mejorar Rendly</p>
+        <p className="text-text-tertiary mt-1">Comentarios y sugerencias para mejorar Vinzay</p>
       </div>
 
       {/* Filters */}
@@ -190,7 +190,7 @@ export default function Feedback() {
           className={`px-4 py-2 rounded-xl font-medium transition-all ${
             filter === 'all'
               ? 'bg-primary text-white'
-              : 'bg-rendly-surface text-text-secondary hover:bg-rendly-surface-elevated'
+              : 'bg-vinzay-surface text-text-secondary hover:bg-vinzay-surface-elevated'
           }`}
         >
           Todos ({feedbackList.length})
@@ -200,7 +200,7 @@ export default function Feedback() {
           className={`px-4 py-2 rounded-xl font-medium transition-all ${
             filter === 'pending'
               ? 'bg-accent-gold text-white'
-              : 'bg-rendly-surface text-text-secondary hover:bg-rendly-surface-elevated'
+              : 'bg-vinzay-surface text-text-secondary hover:bg-vinzay-surface-elevated'
           }`}
         >
           Pendientes ({feedbackList.filter(f => f.status === 'pending').length})
@@ -210,7 +210,7 @@ export default function Feedback() {
           className={`px-4 py-2 rounded-xl font-medium transition-all ${
             filter === 'reviewing'
               ? 'bg-accent-blue text-white'
-              : 'bg-rendly-surface text-text-secondary hover:bg-rendly-surface-elevated'
+              : 'bg-vinzay-surface text-text-secondary hover:bg-vinzay-surface-elevated'
           }`}
         >
           En revisión ({feedbackList.filter(f => f.status === 'reviewing').length})
@@ -220,7 +220,7 @@ export default function Feedback() {
           className={`px-4 py-2 rounded-xl font-medium transition-all ${
             filter === 'planned'
               ? 'bg-primary text-white'
-              : 'bg-rendly-surface text-text-secondary hover:bg-rendly-surface-elevated'
+              : 'bg-vinzay-surface text-text-secondary hover:bg-vinzay-surface-elevated'
           }`}
         >
           Planificado ({feedbackList.filter(f => f.status === 'planned').length})
@@ -230,7 +230,7 @@ export default function Feedback() {
           className={`px-4 py-2 rounded-xl font-medium transition-all ${
             filter === 'implemented'
               ? 'bg-accent-green text-white'
-              : 'bg-rendly-surface text-text-secondary hover:bg-rendly-surface-elevated'
+              : 'bg-vinzay-surface text-text-secondary hover:bg-vinzay-surface-elevated'
           }`}
         >
           Implementado ({feedbackList.filter(f => f.status === 'implemented').length})
@@ -240,14 +240,14 @@ export default function Feedback() {
       {/* Feedback List */}
       <div className="grid gap-4">
         {filteredFeedback.length === 0 ? (
-          <div className="text-center py-12 text-text-tertiary bg-rendly-surface rounded-2xl border border-primary/10">
+          <div className="text-center py-12 text-text-tertiary bg-vinzay-surface rounded-2xl border border-primary/10">
             No hay feedback con este filtro
           </div>
         ) : (
           filteredFeedback.map((feedback) => (
             <div
               key={feedback.id}
-              className="bg-rendly-surface rounded-2xl border border-primary/10 p-5 hover:border-primary/30 transition-all cursor-pointer"
+              className="bg-vinzay-surface rounded-2xl border border-primary/10 p-5 hover:border-primary/30 transition-all cursor-pointer"
               onClick={() => setSelectedFeedback(feedback)}
             >
               <div className="flex items-start justify-between mb-3">

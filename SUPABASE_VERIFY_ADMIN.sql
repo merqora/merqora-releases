@@ -11,26 +11,26 @@ SELECT
     is_verified,
     created_at
 FROM public.usuarios
-WHERE email = 'soporte.merqora@gmail.com';
+WHERE email = 'soporte.Vinzay@gmail.com';
 
 -- 2. Si tu usuario existe pero no está verificado, ejecutar esto:
 UPDATE public.usuarios
 SET is_verified = true
-WHERE email = 'soporte.merqora@gmail.com';
+WHERE email = 'soporte.Vinzay@gmail.com';
 
 -- 3. Si tu usuario NO existe en la tabla usuarios, primero necesitas:
 --    a) Registrarte en la app Android
 --    b) O crear manualmente el registro (reemplaza 'TU_USER_ID' con el UUID de auth.users)
 
 -- Para ver tu UUID de auth.users:
-SELECT id, email FROM auth.users WHERE email = 'soporte.merqora@gmail.com';
+SELECT id, email FROM auth.users WHERE email = 'soporte.Vinzay@gmail.com';
 
 -- Luego insertar en usuarios (reemplazar 'TU_USER_ID_AQUI'):
 INSERT INTO public.usuarios (user_id, username, email, is_verified, avatar_url)
 VALUES (
     'TU_USER_ID_AQUI'::uuid,  -- Reemplazar con el UUID de arriba
     'admin',
-    'soporte.merqora@gmail.com',
+    'soporte.Vinzay@gmail.com',
     true,
     null
 )
@@ -46,4 +46,4 @@ SELECT
     au.email as auth_email
 FROM public.usuarios u
 LEFT JOIN auth.users au ON u.user_id = au.id
-WHERE u.email = 'soporte.merqora@gmail.com';
+WHERE u.email = 'soporte.Vinzay@gmail.com';

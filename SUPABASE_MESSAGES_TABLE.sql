@@ -1,5 +1,5 @@
 -- ═══════════════════════════════════════════════════════════════════════════════
--- SISTEMA DE CHAT COMPLETO - RENDLY
+-- SISTEMA DE CHAT COMPLETO - VINZAY
 -- Ejecutar en Supabase SQL Editor
 -- ═══════════════════════════════════════════════════════════════════════════════
 

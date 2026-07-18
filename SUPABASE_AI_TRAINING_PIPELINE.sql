@@ -1,5 +1,5 @@
 -- ════════════════════════════════════════════════════════════════════════════
--- MERQORA AI - TRAINING PIPELINE & CONTINUOUS LEARNING DATABASE SCHEMA
+-- Vinzay AI - TRAINING PIPELINE & CONTINUOUS LEARNING DATABASE SCHEMA
 -- ════════════════════════════════════════════════════════════════════════════
 -- Sistema completo de aprendizaje continuo con:
 -- 1. Dataset estructurado para entrenamiento

@@ -157,6 +157,24 @@ serve(async (req) => {
   }
   
   try {
+    // ── JWT obligatorio ──
+    const authHeader = req.headers.get('authorization') || ''
+    const supabase = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+    )
+    let authenticatedUserId = ''
+    try {
+      const jwt = authHeader.replace('Bearer ', '')
+      const { data: { user }, error: authError } = await supabase.auth.getUser(jwt)
+      if (authError || !user) {
+        return new Response(JSON.stringify({ error: 'No autorizado' }), { status: 401, headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' } })
+      }
+      authenticatedUserId = user.id
+    } catch {
+      return new Response(JSON.stringify({ error: 'No autorizado' }), { status: 401, headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' } })
+    }
+
     const { tokens, title, body, data, image_url } = await req.json()
     
     if (!tokens || !Array.isArray(tokens) || tokens.length === 0) {
@@ -192,6 +210,19 @@ serve(async (req) => {
     const successCount = results.filter(r => r.success).length
     const failures = results.filter(r => !r.success).map(r => r.error)
     
+    // Auditoría de envío
+    try {
+      await supabase.from('notification_audit').insert({
+        user_id: authenticatedUserId,
+        title,
+        body,
+        tokens_count: tokens.length,
+        sent_count: successCount,
+        failed_count: failures.length,
+        created_at: new Date().toISOString(),
+      })
+    } catch { /* non-critical */ }
+
     return new Response(
       JSON.stringify({
         success: successCount > 0,

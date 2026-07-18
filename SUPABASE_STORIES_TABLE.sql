@@ -1,5 +1,5 @@
 -- =====================================================
--- TABLA STORIES PARA RENDLY
+-- TABLA STORIES PARA VINZAY
 -- Ejecutar en Supabase SQL Editor
 -- =====================================================
 

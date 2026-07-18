@@ -1,4 +1,4 @@
--- Tabla de notificaciones para Rendly
+-- Tabla de notificaciones para VINZAY
 -- Ejecutar en Supabase SQL Editor
 
 CREATE TABLE IF NOT EXISTS notifications (

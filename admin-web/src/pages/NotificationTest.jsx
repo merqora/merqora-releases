@@ -350,7 +350,7 @@ function NotificationTest() {
           <button
             onClick={fetchPosts}
             disabled={loading}
-            className="flex items-center gap-2 px-4 py-2 bg-rendly-surface-elevated text-text-primary rounded-xl hover:bg-primary/20 transition-colors disabled:opacity-50"
+            className="flex items-center gap-2 px-4 py-2 bg-vinzay-surface-elevated text-text-primary rounded-xl hover:bg-primary/20 transition-colors disabled:opacity-50"
           >
             <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
             Recargar
@@ -381,7 +381,7 @@ function NotificationTest() {
       </div>
 
       {/* Selector de usuario remitente */}
-      <div className="bg-rendly-surface rounded-xl p-4 space-y-4">
+      <div className="bg-vinzay-surface rounded-xl p-4 space-y-4">
         <h3 className="font-semibold text-text-primary flex items-center gap-2">
           <UserCheck className="w-5 h-5 text-blue-400" />
           Seleccionar usuario remitente
@@ -397,7 +397,7 @@ function NotificationTest() {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && searchUsers()}
-            className="flex-1 px-4 py-2 bg-rendly-bg border border-primary/20 rounded-xl text-text-primary placeholder-text-muted focus:outline-none focus:border-primary transition-colors"
+            className="flex-1 px-4 py-2 bg-vinzay-bg border border-primary/20 rounded-xl text-text-primary placeholder-text-muted focus:outline-none focus:border-primary transition-colors"
           />
           <button
             onClick={searchUsers}
@@ -440,7 +440,7 @@ function NotificationTest() {
                 className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-colors ${
                   senderUser?.user_id === user.user_id 
                     ? 'bg-blue-500/20 border border-blue-500/30' 
-                    : 'bg-rendly-bg hover:bg-primary/10'
+                    : 'bg-vinzay-bg hover:bg-primary/10'
                 }`}
                 onClick={() => setSenderUser(user)}
               >
@@ -465,7 +465,7 @@ function NotificationTest() {
       </div>
 
       {/* Custom notification sender */}
-      <div className="bg-rendly-surface rounded-xl p-4">
+      <div className="bg-vinzay-surface rounded-xl p-4">
         <h3 className="font-semibold text-text-primary mb-3 flex items-center gap-2">
           <Send className="w-5 h-5 text-primary" />
           Enviar notificación a un usuario específico
@@ -476,7 +476,7 @@ function NotificationTest() {
             placeholder="User ID del destinatario (UUID)"
             value={targetUserId}
             onChange={(e) => setTargetUserId(e.target.value)}
-            className="flex-1 px-4 py-2 bg-rendly-bg border border-primary/20 rounded-xl text-text-primary placeholder-text-muted focus:outline-none focus:border-primary transition-colors"
+            className="flex-1 px-4 py-2 bg-vinzay-bg border border-primary/20 rounded-xl text-text-primary placeholder-text-muted focus:outline-none focus:border-primary transition-colors"
           />
           <button
             onClick={sendCustomNotification}
@@ -492,25 +492,25 @@ function NotificationTest() {
           </button>
         </div>
         <p className="text-text-muted text-xs mt-2">
-          Tu ID: <code className="bg-rendly-bg px-1 rounded">{currentUser?.id || 'cargando...'}</code>
+          Tu ID: <code className="bg-vinzay-bg px-1 rounded">{currentUser?.id || 'cargando...'}</code>
         </p>
       </div>
 
       {/* Recent sent notifications */}
       {sentNotifications.length > 0 && (
-        <div className="bg-rendly-surface rounded-xl p-4">
+        <div className="bg-vinzay-surface rounded-xl p-4">
           <h3 className="font-semibold text-text-primary mb-3 flex items-center gap-2">
             <CheckCircle className="w-5 h-5 text-green-400" />
             Notificaciones enviadas recientemente
           </h3>
           <div className="space-y-2 max-h-40 overflow-y-auto">
             {sentNotifications.map((notif, idx) => (
-              <div key={notif.id || idx} className="flex items-center gap-3 text-sm bg-rendly-bg p-2 rounded-lg">
+              <div key={notif.id || idx} className="flex items-center gap-3 text-sm bg-vinzay-bg p-2 rounded-lg">
                 <Bell className="w-4 h-4 text-accent-magenta" />
                 <span className="text-text-secondary">
                   <span className="text-text-primary font-medium">{notif.type}</span>
                   {' → '}
-                  <code className="text-xs bg-rendly-surface px-1 rounded">{notif.recipient_id?.slice(0, 8)}...</code>
+                  <code className="text-xs bg-vinzay-surface px-1 rounded">{notif.recipient_id?.slice(0, 8)}...</code>
                 </span>
                 <span className="text-text-muted text-xs ml-auto">{formatDate(notif.created_at)}</span>
               </div>
@@ -527,7 +527,7 @@ function NotificationTest() {
           { label: 'Notif. enviadas', value: sentNotifications.length, color: 'text-green-400' },
           { label: 'Estado', value: realtimeStatus === 'connected' ? '🟢' : '🟡', color: 'text-text-primary' },
         ].map(stat => (
-          <div key={stat.label} className="bg-rendly-surface p-4 rounded-xl">
+          <div key={stat.label} className="bg-vinzay-surface p-4 rounded-xl">
             <p className="text-text-muted text-sm">{stat.label}</p>
             <p className={`text-2xl font-bold ${stat.color}`}>{stat.value}</p>
           </div>
@@ -546,7 +546,7 @@ function NotificationTest() {
             <RefreshCw className="w-8 h-8 text-primary animate-spin" />
           </div>
         ) : posts.length === 0 ? (
-          <div className="text-center py-12 bg-rendly-surface rounded-xl">
+          <div className="text-center py-12 bg-vinzay-surface rounded-xl">
             <Image className="w-16 h-16 text-text-muted mx-auto mb-4" />
             <h3 className="text-lg font-medium text-text-primary mb-2">No hay posts</h3>
             <p className="text-text-muted">
@@ -558,11 +558,11 @@ function NotificationTest() {
             {posts.map(post => (
               <div 
                 key={post.id} 
-                className="bg-rendly-surface rounded-xl overflow-hidden border border-primary/10 hover:border-primary/30 transition-colors"
+                className="bg-vinzay-surface rounded-xl overflow-hidden border border-primary/10 hover:border-primary/30 transition-colors"
               >
                 {/* Image */}
                 {post.images?.[0] ? (
-                  <div className="aspect-square bg-rendly-bg">
+                  <div className="aspect-square bg-vinzay-bg">
                     <img 
                       src={post.images[0]} 
                       alt={post.title || 'Post'}
@@ -570,7 +570,7 @@ function NotificationTest() {
                     />
                   </div>
                 ) : (
-                  <div className="aspect-square bg-rendly-bg flex items-center justify-center">
+                  <div className="aspect-square bg-vinzay-bg flex items-center justify-center">
                     <Image className="w-12 h-12 text-text-muted" />
                   </div>
                 )}
@@ -583,7 +583,7 @@ function NotificationTest() {
                   
                   <div className="flex items-center gap-2 text-text-muted text-sm">
                     <User className="w-4 h-4" />
-                    <code className="text-xs bg-rendly-bg px-1 rounded">
+                    <code className="text-xs bg-vinzay-bg px-1 rounded">
                       {post.user_id?.slice(0, 12)}...
                     </code>
                   </div>

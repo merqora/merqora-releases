@@ -1,4 +1,4 @@
-$basePath = "c:\Users\Rodrigo\Documents\Rendly\app\src\main\java\com\rendly\app"
+$basePath = "c:\Users\Rodrigo\Documents\Vinzay\app\src\main\java\com\Vinzay\app"
 $rc = [char]0xFFFD
 $utf8 = New-Object System.Text.UTF8Encoding($false)
 $files = Get-ChildItem -Path $basePath -Recurse -Filter "*.kt"

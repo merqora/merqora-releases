@@ -1,11 +1,11 @@
 [package]
-name = "rendly-security"
+name = "vinzay-security"
 version = "1.0.0"
 edition = "2021"
-description = "Rendly AI Support - Security & Infrastructure Service"
+description = "Vinzay AI Support - Security & Infrastructure Service"
 
 [lib]
-name = "rendly_security"
+name = "Vinzay_security"
 crate-type = ["cdylib", "rlib"]
 
 [dependencies]

@@ -59,7 +59,7 @@
 ### Opción A: Local (para testing)
 
 ```powershell
-cd c:\Users\Rodrigo\Documents\Rendly\ai-support\python
+cd c:\Users\Rodrigo\Documents\Vinzay\ai-support\python
 pip install -r requirements.txt
 ```
 
@@ -83,7 +83,7 @@ python -c "import sklearn; import numpy; print('✅ scikit-learn:', sklearn.__ve
 ### A. Verificar cambios en Git
 
 ```powershell
-cd c:\Users\Rodrigo\Documents\Rendly
+cd c:\Users\Rodrigo\Documents\Vinzay
 git status
 ```
 
@@ -132,10 +132,10 @@ Railway detectará el push y re-deployará automáticamente.
 **Verificar nuevos endpoints:**
 ```powershell
 # Test health check
-curl https://merqora-releases-production.up.railway.app/health
+curl https://vinzay-releases-production.up.railway.app/health
 
 # Test training metrics endpoint
-curl https://merqora-releases-production.up.railway.app/ai/training/metrics?hours=24
+curl https://vinzay-releases-production.up.railway.app/ai/training/metrics?hours=24
 ```
 
 ---
@@ -145,7 +145,7 @@ curl https://merqora-releases-production.up.railway.app/ai/training/metrics?hour
 ### A. Build local (opcional - para testing)
 
 ```powershell
-cd c:\Users\Rodrigo\Documents\Rendly\admin-web
+cd c:\Users\Rodrigo\Documents\Vinzay\admin-web
 npm install
 npm run build
 ```
@@ -185,7 +185,7 @@ netlify deploy --prod
 ### Opción A: Desde PowerShell Script
 
 ```powershell
-cd c:\Users\Rodrigo\Documents\Rendly\ai-support
+cd c:\Users\Rodrigo\Documents\Vinzay\ai-support
 
 # Ejecutar script completo (mensajes + flush + train)
 .\scripts\train_model.ps1
@@ -242,11 +242,11 @@ Flushed: 70 records
 $headers = @{ "Content-Type" = "application/json" }
 $body = @{
     user_id = "test_user_123"
-    message = "Como compro algo en Rendly?"
+    message = "Como compro algo en Vinzay?"
     session_id = "test_session_1"
 } | ConvertTo-Json
 
-Invoke-WebRequest -Uri "https://merqora-releases-production.up.railway.app/ai/support/message" -Method POST -Headers $headers -Body $body
+Invoke-WebRequest -Uri "https://vinzay-releases-production.up.railway.app/ai/support/message" -Method POST -Headers $headers -Body $body
 ```
 
 **Esperado:**
@@ -256,7 +256,7 @@ Invoke-WebRequest -Uri "https://merqora-releases-production.up.railway.app/ai/su
 ### Test 2: Verificar buffer flush
 
 ```powershell
-curl -X POST https://merqora-releases-production.up.railway.app/ai/training/flush
+curl -X POST https://vinzay-releases-production.up.railway.app/ai/training/flush
 ```
 
 **Esperado:**
@@ -281,7 +281,7 @@ LIMIT 10;
 ### Test 4: Verificar métricas live
 
 ```powershell
-curl "https://merqora-releases-production.up.railway.app/ai/training/metrics?hours=24"
+curl "https://vinzay-releases-production.up.railway.app/ai/training/metrics?hours=24"
 ```
 
 **Esperado:**
@@ -305,7 +305,7 @@ curl "https://merqora-releases-production.up.railway.app/ai/training/metrics?hou
 ### Test 5: Probar predicción
 
 ```powershell
-curl "https://merqora-releases-production.up.railway.app/ai/training/predict?message=quiero%20devolver%20un%20producto"
+curl "https://vinzay-releases-production.up.railway.app/ai/training/predict?message=quiero%20devolver%20un%20producto"
 ```
 
 **Esperado:**
@@ -378,8 +378,8 @@ ai-support/python/datasets/
 ### Error: "Supabase not configured"
 **Solución:** Verificar variables de entorno:
 ```powershell
-echo $env:RENDLY_AI_SUPABASE_URL
-echo $env:RENDLY_AI_SUPABASE_KEY
+echo $env:Vinzay_AI_SUPABASE_URL
+echo $env:Vinzay_AI_SUPABASE_KEY
 ```
 
 ### Error: "Model not trained yet"
@@ -394,12 +394,12 @@ echo $env:RENDLY_AI_SUPABASE_KEY
 ### Buffer no se flushea
 **Verificar:**
 ```powershell
-curl https://merqora-releases-production.up.railway.app/ai/training/dataset/stats
+curl https://vinzay-releases-production.up.railway.app/ai/training/dataset/stats
 ```
 
 **Manual flush:**
 ```powershell
-curl -X POST https://merqora-releases-production.up.railway.app/ai/training/flush
+curl -X POST https://vinzay-releases-production.up.railway.app/ai/training/flush
 ```
 
 ### Admin dashboard no carga

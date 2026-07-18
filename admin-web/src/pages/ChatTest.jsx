@@ -380,7 +380,7 @@ function ChatTest() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* User Search Panel */}
-        <div className="bg-rendly-surface rounded-xl p-4 space-y-4">
+        <div className="bg-vinzay-surface rounded-xl p-4 space-y-4">
           <h3 className="font-semibold text-text-primary flex items-center gap-2">
             <Search className="w-5 h-5" />
             Buscar usuarios
@@ -393,7 +393,7 @@ function ChatTest() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && searchUsers()}
-              className="flex-1 px-4 py-2 bg-rendly-bg border border-primary/20 rounded-xl text-text-primary placeholder-text-muted focus:outline-none focus:border-primary transition-colors"
+              className="flex-1 px-4 py-2 bg-vinzay-bg border border-primary/20 rounded-xl text-text-primary placeholder-text-muted focus:outline-none focus:border-primary transition-colors"
             />
             <button
               onClick={searchUsers}
@@ -414,7 +414,7 @@ function ChatTest() {
               users.map(user => (
                 <div 
                   key={user.user_id}
-                  className="flex items-center gap-3 p-3 bg-rendly-bg rounded-lg hover:bg-primary/10 transition-colors"
+                  className="flex items-center gap-3 p-3 bg-vinzay-bg rounded-lg hover:bg-primary/10 transition-colors"
                 >
                   {user.avatar_url ? (
                     <img 
@@ -441,7 +441,7 @@ function ChatTest() {
                       className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
                         selectedUser?.user_id === user.user_id
                           ? 'bg-green-500/20 text-green-400'
-                          : 'bg-rendly-surface text-text-secondary hover:bg-green-500/20 hover:text-green-400'
+                          : 'bg-vinzay-surface text-text-secondary hover:bg-green-500/20 hover:text-green-400'
                       }`}
                     >
                       {selectedUser?.user_id === user.user_id ? '✓ Destino' : 'Destino'}
@@ -451,7 +451,7 @@ function ChatTest() {
                       className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
                         senderUser?.user_id === user.user_id
                           ? 'bg-blue-500/20 text-blue-400'
-                          : 'bg-rendly-surface text-text-secondary hover:bg-blue-500/20 hover:text-blue-400'
+                          : 'bg-vinzay-surface text-text-secondary hover:bg-blue-500/20 hover:text-blue-400'
                       }`}
                     >
                       {senderUser?.user_id === user.user_id ? '✓ Remitente' : 'Remitente'}
@@ -464,12 +464,12 @@ function ChatTest() {
         </div>
 
         {/* Chat Panel */}
-        <div className="bg-rendly-surface rounded-xl p-4 flex flex-col h-[500px]">
+        <div className="bg-vinzay-surface rounded-xl p-4 flex flex-col h-[500px]">
           {/* Chat header */}
           <div className="flex items-center gap-3 pb-4 border-b border-primary/10">
             {selectedUser && senderUser ? (
               <>
-                <button onClick={resetSelection} className="p-2 hover:bg-rendly-bg rounded-lg transition-colors">
+                <button onClick={resetSelection} className="p-2 hover:bg-vinzay-bg rounded-lg transition-colors">
                   <ArrowLeft className="w-4 h-4 text-text-muted" />
                 </button>
                 <div className="flex-1">
@@ -504,7 +504,7 @@ function ChatTest() {
                   <div className={`max-w-[80%] px-4 py-2 rounded-2xl ${
                     isFromSender 
                       ? 'bg-blue-500 text-white rounded-br-sm' 
-                      : 'bg-rendly-bg text-text-primary rounded-bl-sm'
+                      : 'bg-vinzay-bg text-text-primary rounded-bl-sm'
                   }`}>
                     <p className="text-sm">{msg.content}</p>
                     <p className={`text-xs mt-1 ${isFromSender ? 'text-blue-200' : 'text-text-muted'}`}>
@@ -526,7 +526,7 @@ function ChatTest() {
                 value={newMessage}
                 onChange={(e) => setNewMessage(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && sendMessage()}
-                className="flex-1 px-4 py-2 bg-rendly-bg border border-primary/20 rounded-xl text-text-primary placeholder-text-muted focus:outline-none focus:border-primary transition-colors"
+                className="flex-1 px-4 py-2 bg-vinzay-bg border border-primary/20 rounded-xl text-text-primary placeholder-text-muted focus:outline-none focus:border-primary transition-colors"
               />
               <button
                 onClick={sendMessage}
@@ -542,23 +542,23 @@ function ChatTest() {
 
       {/* Status cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="bg-rendly-surface p-4 rounded-xl">
+        <div className="bg-vinzay-surface p-4 rounded-xl">
           <p className="text-text-muted text-sm">Remitente</p>
           <p className="text-lg font-bold text-blue-400">
             {senderUser ? `@${senderUser.username}` : '-'}
           </p>
         </div>
-        <div className="bg-rendly-surface p-4 rounded-xl">
+        <div className="bg-vinzay-surface p-4 rounded-xl">
           <p className="text-text-muted text-sm">Destinatario</p>
           <p className="text-lg font-bold text-green-400">
             {selectedUser ? `@${selectedUser.username}` : '-'}
           </p>
         </div>
-        <div className="bg-rendly-surface p-4 rounded-xl">
+        <div className="bg-vinzay-surface p-4 rounded-xl">
           <p className="text-text-muted text-sm">Mensajes</p>
           <p className="text-lg font-bold text-text-primary">{messages.length}</p>
         </div>
-        <div className="bg-rendly-surface p-4 rounded-xl">
+        <div className="bg-vinzay-surface p-4 rounded-xl">
           <p className="text-text-muted text-sm">Conversación</p>
           <p className="text-lg font-bold text-text-primary">
             {conversationId ? '✅' : '❌'}

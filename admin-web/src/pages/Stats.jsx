@@ -15,7 +15,7 @@ import { supabase } from '../supabaseClient'
 
 function StatCard({ title, value, subtitle, icon: Icon, color, trend }) {
   return (
-    <div className="bg-rendly-surface rounded-2xl p-6 border border-primary/10">
+    <div className="bg-vinzay-surface rounded-2xl p-6 border border-primary/10">
       <div className="flex items-start justify-between">
         <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${color}`}>
           <Icon className="w-6 h-6 text-white" />
@@ -44,7 +44,7 @@ function ProgressBar({ label, value, max, color }) {
         <span className="text-text-secondary">{label}</span>
         <span className="text-text-primary font-medium">{value}</span>
       </div>
-      <div className="h-2 bg-rendly-bg rounded-full overflow-hidden">
+      <div className="h-2 bg-vinzay-bg rounded-full overflow-hidden">
         <div 
           className={`h-full rounded-full transition-all duration-500 ${color}`}
           style={{ width: `${percentage}%` }}
@@ -187,7 +187,7 @@ export default function Stats() {
       {/* Charts Section */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Resolution Rate */}
-        <div className="bg-rendly-surface rounded-2xl p-6 border border-primary/10">
+        <div className="bg-vinzay-surface rounded-2xl p-6 border border-primary/10">
           <h3 className="text-lg font-semibold text-text-primary mb-6">Tasa de Resolución</h3>
           
           <div className="flex items-center justify-center mb-6">
@@ -235,7 +235,7 @@ export default function Stats() {
         </div>
         
         {/* Top Intents */}
-        <div className="bg-rendly-surface rounded-2xl p-6 border border-primary/10">
+        <div className="bg-vinzay-surface rounded-2xl p-6 border border-primary/10">
           <h3 className="text-lg font-semibold text-text-primary mb-6">Intents Más Comunes</h3>
           
           <div className="space-y-4">
@@ -259,23 +259,23 @@ export default function Stats() {
       </div>
       
       {/* Performance Metrics */}
-      <div className="bg-rendly-surface rounded-2xl p-6 border border-primary/10">
+      <div className="bg-vinzay-surface rounded-2xl p-6 border border-primary/10">
         <h3 className="text-lg font-semibold text-text-primary mb-6">Métricas de Rendimiento</h3>
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="text-center p-6 bg-rendly-bg rounded-xl">
+          <div className="text-center p-6 bg-vinzay-bg rounded-xl">
             <Zap className="w-8 h-8 text-accent-gold mx-auto mb-3" />
             <p className="text-2xl font-bold text-text-primary">{'<'} 1s</p>
             <p className="text-text-tertiary">Tiempo de respuesta IA</p>
           </div>
           
-          <div className="text-center p-6 bg-rendly-bg rounded-xl">
+          <div className="text-center p-6 bg-vinzay-bg rounded-xl">
             <Target className="w-8 h-8 text-primary mx-auto mb-3" />
             <p className="text-2xl font-bold text-text-primary">85%</p>
             <p className="text-text-tertiary">Precisión promedio</p>
           </div>
           
-          <div className="text-center p-6 bg-rendly-bg rounded-xl">
+          <div className="text-center p-6 bg-vinzay-bg rounded-xl">
             <TrendingUp className="w-8 h-8 text-accent-green mx-auto mb-3" />
             <p className="text-2xl font-bold text-text-primary">24/7</p>
             <p className="text-text-tertiary">Disponibilidad</p>

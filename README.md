@@ -1,6 +1,6 @@
-# 🚀 Merqora Releases - Production App Repository
+# 🚀 Vinzay Releases - Production App Repository
 
-APK releases y código fuente completo para Merqora/Rendly app.
+APK releases y código fuente completo para Vinzay/Rendly app.
 
 ## Stack Tecnológico Enterprise
 
@@ -67,7 +67,7 @@ Ver documentación completa en `ai-support/python/README_TRAINING.md`
 
 ## Deployment
 
-- **Backend**: Railway - https://merqora-releases-production.up.railway.app
+- **Backend**: Railway - https://Vinzay-releases-production.up.railway.app
 - **Admin Panel**: Netlify
 - **APK Releases**: GitHub Releases
 

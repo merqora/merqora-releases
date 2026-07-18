@@ -2,7 +2,7 @@
 #include <algorithm>
 #include <cmath>
 
-namespace rendly {
+namespace vinzay {
 namespace ai {
 
 ConfidenceCalculator::ConfidenceCalculator() = default;
@@ -50,4 +50,4 @@ int ConfidenceCalculator::calculate(
 }
 
 } // namespace ai
-} // namespace rendly
+} // namespace vinzay

@@ -279,7 +279,7 @@ export default function Verification() {
         </div>
         <button 
           onClick={() => { loadRequests(); loadStats(); }}
-          className="p-2 bg-rendly-surface-elevated rounded-xl text-text-secondary hover:text-text-primary transition-colors"
+          className="p-2 bg-vinzay-surface-elevated rounded-xl text-text-secondary hover:text-text-primary transition-colors"
         >
           <RefreshCw className={`w-5 h-5 ${loading ? 'animate-spin' : ''}`} />
         </button>
@@ -288,7 +288,7 @@ export default function Verification() {
       {/* Stats Cards */}
       <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
         <div 
-          className={`bg-rendly-surface rounded-xl p-4 cursor-pointer transition-all border-2 ${filter === 'pending' ? 'border-yellow-500' : 'border-transparent hover:border-primary/30'}`}
+          className={`bg-vinzay-surface rounded-xl p-4 cursor-pointer transition-all border-2 ${filter === 'pending' ? 'border-yellow-500' : 'border-transparent hover:border-primary/30'}`}
           onClick={() => setFilter('pending')}
         >
           <div className="flex items-center gap-3">
@@ -303,7 +303,7 @@ export default function Verification() {
         </div>
 
         <div 
-          className={`bg-rendly-surface rounded-xl p-4 cursor-pointer transition-all border-2 ${filter === 'under_review' ? 'border-blue-500' : 'border-transparent hover:border-primary/30'}`}
+          className={`bg-vinzay-surface rounded-xl p-4 cursor-pointer transition-all border-2 ${filter === 'under_review' ? 'border-blue-500' : 'border-transparent hover:border-primary/30'}`}
           onClick={() => setFilter('under_review')}
         >
           <div className="flex items-center gap-3">
@@ -318,7 +318,7 @@ export default function Verification() {
         </div>
 
         <div 
-          className={`bg-rendly-surface rounded-xl p-4 cursor-pointer transition-all border-2 ${filter === 'approved' ? 'border-green-500' : 'border-transparent hover:border-primary/30'}`}
+          className={`bg-vinzay-surface rounded-xl p-4 cursor-pointer transition-all border-2 ${filter === 'approved' ? 'border-green-500' : 'border-transparent hover:border-primary/30'}`}
           onClick={() => setFilter('approved')}
         >
           <div className="flex items-center gap-3">
@@ -333,7 +333,7 @@ export default function Verification() {
         </div>
 
         <div 
-          className={`bg-rendly-surface rounded-xl p-4 cursor-pointer transition-all border-2 ${filter === 'rejected' ? 'border-red-500' : 'border-transparent hover:border-primary/30'}`}
+          className={`bg-vinzay-surface rounded-xl p-4 cursor-pointer transition-all border-2 ${filter === 'rejected' ? 'border-red-500' : 'border-transparent hover:border-primary/30'}`}
           onClick={() => setFilter('rejected')}
         >
           <div className="flex items-center gap-3">
@@ -348,7 +348,7 @@ export default function Verification() {
         </div>
 
         <div 
-          className={`bg-rendly-surface rounded-xl p-4 cursor-pointer transition-all border-2 ${filter === 'all' ? 'border-primary' : 'border-transparent hover:border-primary/30'}`}
+          className={`bg-vinzay-surface rounded-xl p-4 cursor-pointer transition-all border-2 ${filter === 'all' ? 'border-primary' : 'border-transparent hover:border-primary/30'}`}
           onClick={() => setFilter('all')}
         >
           <div className="flex items-center gap-3">
@@ -373,7 +373,7 @@ export default function Verification() {
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && loadRequests()}
-            className="w-full pl-10 pr-4 py-3 bg-rendly-surface border border-primary/20 rounded-xl text-text-primary placeholder-text-muted focus:outline-none focus:border-primary transition-colors"
+            className="w-full pl-10 pr-4 py-3 bg-vinzay-surface border border-primary/20 rounded-xl text-text-primary placeholder-text-muted focus:outline-none focus:border-primary transition-colors"
           />
         </div>
         <button
@@ -385,7 +385,7 @@ export default function Verification() {
       </div>
 
       {/* Requests Table */}
-      <div className="bg-rendly-surface rounded-xl overflow-hidden">
+      <div className="bg-vinzay-surface rounded-xl overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
@@ -415,7 +415,7 @@ export default function Verification() {
                 requests.map((request) => (
                   <tr 
                     key={request.id} 
-                    className="border-b border-primary/5 hover:bg-rendly-surface-elevated transition-colors cursor-pointer"
+                    className="border-b border-primary/5 hover:bg-vinzay-surface-elevated transition-colors cursor-pointer"
                     onClick={() => { setSelectedRequest(request); setShowDetailModal(true); }}
                   >
                     <td className="p-4">
@@ -474,9 +474,9 @@ export default function Verification() {
       {/* Detail Modal */}
       {showDetailModal && selectedRequest && (
         <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
-          <div className="bg-rendly-surface rounded-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto">
+          <div className="bg-vinzay-surface rounded-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto">
             {/* Modal Header */}
-            <div className="sticky top-0 bg-rendly-surface border-b border-primary/10 p-6 flex items-center justify-between">
+            <div className="sticky top-0 bg-vinzay-surface border-b border-primary/10 p-6 flex items-center justify-between">
               <div className="flex items-center gap-4">
                 <img 
                   src={selectedRequest.avatar_url || `https://ui-avatars.com/api/?name=${selectedRequest.username}&background=A78BFA&color=fff`}
@@ -493,7 +493,7 @@ export default function Verification() {
               </div>
               <button 
                 onClick={() => { setShowDetailModal(false); setSelectedRequest(null); setRejectionReason(''); setReviewNotes(''); }}
-                className="p-2 hover:bg-rendly-surface-elevated rounded-lg transition-colors"
+                className="p-2 hover:bg-vinzay-surface-elevated rounded-lg transition-colors"
               >
                 <X className="w-5 h-5 text-text-muted" />
               </button>
@@ -503,22 +503,22 @@ export default function Verification() {
             <div className="p-6 space-y-6">
               {/* Info Grid */}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div className="bg-rendly-bg rounded-xl p-4">
+                <div className="bg-vinzay-bg rounded-xl p-4">
                   <p className="text-text-muted text-xs mb-1">Tipo de cuenta</p>
                   <p className="text-text-primary font-medium flex items-center gap-2">
                     {getTypeIcon(selectedRequest.verification_type)}
                     {getTypeLabel(selectedRequest.verification_type)}
                   </p>
                 </div>
-                <div className="bg-rendly-bg rounded-xl p-4">
+                <div className="bg-vinzay-bg rounded-xl p-4">
                   <p className="text-text-muted text-xs mb-1">Seguidores</p>
                   <p className="text-text-primary font-medium">{selectedRequest.followers_count?.toLocaleString() || 0}</p>
                 </div>
-                <div className="bg-rendly-bg rounded-xl p-4">
+                <div className="bg-vinzay-bg rounded-xl p-4">
                   <p className="text-text-muted text-xs mb-1">Siguiendo</p>
                   <p className="text-text-primary font-medium">{selectedRequest.following_count?.toLocaleString() || 0}</p>
                 </div>
-                <div className="bg-rendly-bg rounded-xl p-4">
+                <div className="bg-vinzay-bg rounded-xl p-4">
                   <p className="text-text-muted text-xs mb-1">Posts</p>
                   <p className="text-text-primary font-medium">{selectedRequest.posts_count?.toLocaleString() || 0}</p>
                 </div>
@@ -526,30 +526,30 @@ export default function Verification() {
 
               {/* Details */}
               <div className="space-y-4">
-                <div className="bg-rendly-bg rounded-xl p-4">
+                <div className="bg-vinzay-bg rounded-xl p-4">
                   <p className="text-text-muted text-xs mb-2">Nombre legal completo</p>
                   <p className="text-text-primary">{selectedRequest.full_legal_name || '-'}</p>
                 </div>
 
-                <div className="bg-rendly-bg rounded-xl p-4">
+                <div className="bg-vinzay-bg rounded-xl p-4">
                   <p className="text-text-muted text-xs mb-2">Bio del perfil</p>
                   <p className="text-text-primary">{selectedRequest.bio || 'Sin bio'}</p>
                 </div>
 
-                <div className="bg-rendly-bg rounded-xl p-4">
+                <div className="bg-vinzay-bg rounded-xl p-4">
                   <p className="text-text-muted text-xs mb-2">Razón de la solicitud</p>
                   <p className="text-text-primary whitespace-pre-wrap">{selectedRequest.reason_for_verification || '-'}</p>
                 </div>
 
                 {selectedRequest.notable_presence && (
-                  <div className="bg-rendly-bg rounded-xl p-4">
+                  <div className="bg-vinzay-bg rounded-xl p-4">
                     <p className="text-text-muted text-xs mb-2">Presencia en otras plataformas</p>
                     <p className="text-text-primary whitespace-pre-wrap">{selectedRequest.notable_presence}</p>
                   </div>
                 )}
 
                 {selectedRequest.website_url && (
-                  <div className="bg-rendly-bg rounded-xl p-4">
+                  <div className="bg-vinzay-bg rounded-xl p-4">
                     <p className="text-text-muted text-xs mb-2">Sitio web</p>
                     <a 
                       href={selectedRequest.website_url} 
@@ -565,11 +565,11 @@ export default function Verification() {
                 )}
 
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="bg-rendly-bg rounded-xl p-4">
+                  <div className="bg-vinzay-bg rounded-xl p-4">
                     <p className="text-text-muted text-xs mb-1">Fecha de solicitud</p>
                     <p className="text-text-primary text-sm">{formatDate(selectedRequest.created_at)}</p>
                   </div>
-                  <div className="bg-rendly-bg rounded-xl p-4">
+                  <div className="bg-vinzay-bg rounded-xl p-4">
                     <p className="text-text-muted text-xs mb-1">Cuenta creada</p>
                     <p className="text-text-primary text-sm">{formatDate(selectedRequest.account_created_at)}</p>
                   </div>
@@ -595,7 +595,7 @@ export default function Verification() {
                       value={reviewNotes}
                       onChange={(e) => setReviewNotes(e.target.value)}
                       placeholder="Notas internas sobre esta solicitud..."
-                      className="w-full p-3 bg-rendly-bg border border-primary/20 rounded-xl text-text-primary placeholder-text-muted focus:outline-none focus:border-primary resize-none"
+                      className="w-full p-3 bg-vinzay-bg border border-primary/20 rounded-xl text-text-primary placeholder-text-muted focus:outline-none focus:border-primary resize-none"
                       rows={2}
                     />
                   </div>
@@ -606,7 +606,7 @@ export default function Verification() {
                       value={rejectionReason}
                       onChange={(e) => setRejectionReason(e.target.value)}
                       placeholder="Explica por qué se rechaza la solicitud..."
-                      className="w-full p-3 bg-rendly-bg border border-primary/20 rounded-xl text-text-primary placeholder-text-muted focus:outline-none focus:border-primary resize-none"
+                      className="w-full p-3 bg-vinzay-bg border border-primary/20 rounded-xl text-text-primary placeholder-text-muted focus:outline-none focus:border-primary resize-none"
                       rows={2}
                     />
                   </div>

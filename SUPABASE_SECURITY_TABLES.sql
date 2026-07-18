@@ -1,5 +1,5 @@
 -- =====================================================
--- TABLAS DE SEGURIDAD PARA RENDLY
+-- TABLAS DE SEGURIDAD PARA VINZAY
 -- Ejecutar en Supabase SQL Editor
 -- =====================================================
 

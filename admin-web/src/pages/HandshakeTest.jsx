@@ -228,7 +228,7 @@ function HandshakeTest() {
           <button
             onClick={fetchHandshakes}
             disabled={loading}
-            className="flex items-center gap-2 px-4 py-2 bg-rendly-surface-elevated text-text-primary rounded-xl hover:bg-primary/20 transition-colors disabled:opacity-50"
+            className="flex items-center gap-2 px-4 py-2 bg-vinzay-surface-elevated text-text-primary rounded-xl hover:bg-primary/20 transition-colors disabled:opacity-50"
           >
             <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
             Recargar
@@ -267,7 +267,7 @@ function HandshakeTest() {
           { label: 'Aceptados', value: handshakes.filter(h => h.status === 'ACCEPTED').length, color: 'text-blue-400' },
           { label: 'Completados', value: handshakes.filter(h => h.status === 'COMPLETED').length, color: 'text-green-400' },
         ].map(stat => (
-          <div key={stat.label} className="bg-rendly-surface p-4 rounded-xl">
+          <div key={stat.label} className="bg-vinzay-surface p-4 rounded-xl">
             <p className="text-text-muted text-sm">{stat.label}</p>
             <p className={`text-2xl font-bold ${stat.color}`}>{stat.value}</p>
           </div>
@@ -281,7 +281,7 @@ function HandshakeTest() {
             <RefreshCw className="w-8 h-8 text-primary animate-spin" />
           </div>
         ) : handshakes.length === 0 ? (
-          <div className="text-center py-12 bg-rendly-surface rounded-xl">
+          <div className="text-center py-12 bg-vinzay-surface rounded-xl">
             <Grip className="w-16 h-16 text-text-muted mx-auto mb-4" />
             <h3 className="text-lg font-medium text-text-primary mb-2">No hay handshakes</h3>
             <p className="text-text-muted">
@@ -292,7 +292,7 @@ function HandshakeTest() {
           handshakes.map(handshake => (
             <div 
               key={handshake.id} 
-              className={`bg-rendly-surface rounded-xl p-5 border-l-4 ${
+              className={`bg-vinzay-surface rounded-xl p-5 border-l-4 ${
                 handshake.status === 'PROPOSED' ? 'border-yellow-500' :
                 handshake.status === 'ACCEPTED' ? 'border-blue-500' :
                 handshake.status === 'COMPLETED' ? 'border-green-500' :
@@ -314,14 +314,14 @@ function HandshakeTest() {
                       <User className="w-4 h-4 text-text-muted" />
                       <span className="text-sm">
                         <span className="text-text-muted">Iniciador:</span>{' '}
-                        <code className="text-xs bg-rendly-bg px-1 rounded">{handshake.initiator_id?.slice(0, 8)}...</code>
+                        <code className="text-xs bg-vinzay-bg px-1 rounded">{handshake.initiator_id?.slice(0, 8)}...</code>
                       </span>
                     </div>
                     <div className="flex items-center gap-2 text-text-secondary">
                       <User className="w-4 h-4 text-text-muted" />
                       <span className="text-sm">
                         <span className="text-text-muted">Receptor:</span>{' '}
-                        <code className="text-xs bg-rendly-bg px-1 rounded">{handshake.receiver_id?.slice(0, 8)}...</code>
+                        <code className="text-xs bg-vinzay-bg px-1 rounded">{handshake.receiver_id?.slice(0, 8)}...</code>
                       </span>
                     </div>
                   </div>

@@ -1,5 +1,5 @@
 -- ═══════════════════════════════════════════════════════════════════════════
--- SISTEMA DE VERIFICACIÓN DE CUENTAS - RENDLY
+-- SISTEMA DE VERIFICACIÓN DE CUENTAS - VINZAY
 -- ═══════════════════════════════════════════════════════════════════════════
 
 -- Tabla de solicitudes de verificación

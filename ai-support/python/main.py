@@ -1,5 +1,5 @@
 """
-Rendly AI Support - FastAPI Application
+Vinzay AI Support - FastAPI Application
 
 Main entry point for the AI support system.
 """
@@ -68,8 +68,8 @@ async def lifespan(app: FastAPI):
 
 # Create FastAPI app
 app = FastAPI(
-    title="Rendly AI Support",
-    description="AI-powered support system for Rendly app",
+    title="Vinzay AI Support",
+    description="AI-powered support system for Vinzay app",
     version="1.0.0",
     lifespan=lifespan,
 )

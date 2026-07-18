@@ -1,5 +1,5 @@
 -- =====================================================
--- RENDLY AI SUPPORT - DATABASE SCHEMA
+-- VINZAY AI SUPPORT - DATABASE SCHEMA
 -- =====================================================
 -- Tablas para persistir conversaciones de soporte IA
 -- =====================================================

@@ -1,5 +1,5 @@
 -- ═══════════════════════════════════════════════════════════════════════════════
--- RENDLY - FIX FCM PUSH NOTIFICATION TRIGGER
+-- VINZAY - FIX FCM PUSH NOTIFICATION TRIGGER
 -- Arregla el problema de tipos UUID vs TEXT
 -- ═══════════════════════════════════════════════════════════════════════════════
 
@@ -63,7 +63,7 @@ BEGIN
             notification_title := COALESCE(NEW.sender_username, 'Alguien') || ' te mencionó';
             notification_body := COALESCE(NEW.message, 'Te mencionaron en una publicación');
         ELSE
-            notification_title := 'Rendly';
+            notification_title := 'VINZAY';
             notification_body := COALESCE(NEW.message, 'Tienes una nueva notificación');
     END CASE;
     

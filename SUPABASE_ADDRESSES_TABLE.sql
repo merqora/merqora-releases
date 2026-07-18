@@ -1,5 +1,5 @@
 -- ═══════════════════════════════════════════════════════════════════════════════════
--- RENDLY - ADDRESSES TABLE
+-- VINZAY - ADDRESSES TABLE
 -- Sistema profesional de gestión de direcciones con validación y scoring
 -- ═══════════════════════════════════════════════════════════════════════════════════
 

@@ -1,5 +1,5 @@
 -- ═══════════════════════════════════════════════════════════════════════════════
--- SISTEMA DE ÓRDENES Y MERCADO PAGO - Rendly Uruguay
+-- SISTEMA DE ÓRDENES Y MERCADO PAGO - VINZAY Uruguay
 -- ═══════════════════════════════════════════════════════════════════════════════
 -- Tablas para gestionar compras, pagos con Mercado Pago y seguimiento de órdenes.
 -- Diseñado para Uruguay como mercado inicial con soporte para expansión.

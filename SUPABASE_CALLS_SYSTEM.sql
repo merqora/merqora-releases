@@ -1,5 +1,5 @@
 -- ═══════════════════════════════════════════════════════════════
--- SISTEMA DE LLAMADAS - Rendly
+-- SISTEMA DE LLAMADAS - VINZAY
 -- Señalización WebRTC via Supabase Realtime
 -- ═══════════════════════════════════════════════════════════════
 

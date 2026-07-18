@@ -3,7 +3,7 @@ import { Bot, Lock, Mail, Eye, EyeOff, AlertCircle, CheckCircle, ArrowLeft, User
 import { supabase } from '../supabaseClient'
 
 export default function Login({ onLogin }) {
-  const [email, setEmail] = useState('admin@rendly.com')
+  const [email, setEmail] = useState('admin@Vinzay.com')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -105,21 +105,21 @@ export default function Login({ onLogin }) {
   }
 
   return (
-    <div className="min-h-screen bg-rendly-bg flex items-center justify-center p-4">
+    <div className="min-h-screen bg-vinzay-bg flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="text-center mb-8">
-          <div className="w-20 h-20 mx-auto rounded-2xl gradient-rendly flex items-center justify-center mb-4">
+          <div className="w-20 h-20 mx-auto rounded-2xl gradient-vinzay flex items-center justify-center mb-4">
             <Bot className="w-10 h-10 text-white" />
           </div>
-          <h1 className="text-3xl font-bold text-text-primary">Rendly Admin</h1>
+          <h1 className="text-3xl font-bold text-text-primary">Vinzay Admin</h1>
           <p className="text-text-tertiary mt-2">Panel de Administración</p>
         </div>
 
         {/* Form */}
         <form 
           onSubmit={mode === 'login' ? handleLogin : mode === 'recover' ? handleRecoverPassword : handleRegister} 
-          className="bg-rendly-surface rounded-2xl border border-primary/10 p-8 space-y-6"
+          className="bg-vinzay-surface rounded-2xl border border-primary/10 p-8 space-y-6"
         >
           {/* Header */}
           <div>
@@ -173,9 +173,9 @@ export default function Login({ onLogin }) {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="admin@rendly.com"
+                  placeholder="admin@Vinzay.com"
                   required
-                  className="w-full pl-12 pr-4 py-3 bg-rendly-bg border border-primary/20 rounded-xl text-text-primary placeholder-text-muted focus:outline-none focus:border-primary transition-colors"
+                  className="w-full pl-12 pr-4 py-3 bg-vinzay-bg border border-primary/20 rounded-xl text-text-primary placeholder-text-muted focus:outline-none focus:border-primary transition-colors"
                 />
               </div>
             </div>
@@ -195,7 +195,7 @@ export default function Login({ onLogin }) {
                     placeholder="••••••••"
                     required
                     minLength={mode === 'register' ? 6 : undefined}
-                    className="w-full pl-12 pr-12 py-3 bg-rendly-bg border border-primary/20 rounded-xl text-text-primary placeholder-text-muted focus:outline-none focus:border-primary transition-colors"
+                    className="w-full pl-12 pr-12 py-3 bg-vinzay-bg border border-primary/20 rounded-xl text-text-primary placeholder-text-muted focus:outline-none focus:border-primary transition-colors"
                   />
                   <button
                     type="button"
@@ -256,7 +256,7 @@ export default function Login({ onLogin }) {
                   <div className="w-full border-t border-primary/10"></div>
                 </div>
                 <div className="relative flex justify-center text-xs">
-                  <span className="px-2 bg-rendly-surface text-text-muted">o</span>
+                  <span className="px-2 bg-vinzay-surface text-text-muted">o</span>
                 </div>
               </div>
 
@@ -272,13 +272,13 @@ export default function Login({ onLogin }) {
           )}
 
           <p className="text-center text-text-muted text-xs">
-            Solo personal autorizado de Rendly
+            Solo personal autorizado de Vinzay
           </p>
         </form>
 
         {/* Footer */}
         <p className="text-center text-text-muted text-sm mt-6">
-          © 2024 Rendly. Todos los derechos reservados.
+          © 2024 Vinzay. Todos los derechos reservados.
         </p>
       </div>
     </div>

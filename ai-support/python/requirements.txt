@@ -1,4 +1,4 @@
-# Rendly AI Support - Python Dependencies
+# Vinzay AI Support - Python Dependencies
 
 # Web Framework
 fastapi>=0.109.0

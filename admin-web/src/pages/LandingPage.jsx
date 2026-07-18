@@ -4,8 +4,9 @@ import {
   Shield, HeartHandshake, MessageCircle, Bot, Tag, Users,
   Download, ChevronRight, Star, CheckCircle, Smartphone,
   ArrowRight, Zap, Lock, Heart, ShoppingBag, TrendingUp,
-  Eye, Sparkles, ChevronDown, Menu, X
+  Eye, Sparkles, ChevronDown, Menu, X, Package
 } from 'lucide-react'
+import { supabase } from '../supabaseClient'
 
 /* ═══════════ Hooks & Helpers ═══════════ */
 function useInView(threshold = 0.1) {
@@ -62,7 +63,7 @@ const FEATURES = [
 ]
 
 const STEPS = [
-  { num: '01', title: 'Descargá la App', desc: 'Bajá Merqora gratis desde nuestro sitio en segundos.', icon: Download },
+  { num: '01', title: 'Descargá la App', desc: 'Bajá Vinzay gratis desde nuestro sitio en segundos.', icon: Download },
   { num: '02', title: 'Creá tu Cuenta', desc: 'Registrate y verificá tu perfil para mayor confianza.', icon: CheckCircle },
   { num: '03', title: 'Comprá y Vendé', desc: 'Explorá miles de productos o publicá los tuyos.', icon: ShoppingBag },
 ]
@@ -82,10 +83,10 @@ function Navbar() {
     <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? 'navbar-scrolled py-3' : 'py-5'}`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
         <Link to="/" className="flex items-center gap-3 group">
-          <div className="w-10 h-10 rounded-xl gradient-rendly flex items-center justify-center group-hover:scale-110 transition-transform">
+          <div className="w-10 h-10 rounded-xl gradient-vinzay flex items-center justify-center group-hover:scale-110 transition-transform">
             <ShoppingBag className="w-5 h-5 text-white" />
           </div>
-          <span className="text-xl font-bold text-white">Merqora</span>
+          <span className="text-xl font-bold text-white">Vinzay</span>
         </Link>
 
         {/* Desktop links */}
@@ -162,14 +163,14 @@ function Hero() {
           <div className="flex items-center gap-6 mt-10 justify-center lg:justify-start animate-fade-in" style={{ animationDelay: '500ms' }}>
             <div className="flex -space-x-3">
               {['🟣','🔵','🟢','🟡','🔴'].map((c, i) => (
-                <div key={i} className="w-10 h-10 rounded-full border-2 border-rendly-bg bg-rendly-surface-elevated flex items-center justify-center text-lg">{c}</div>
+                <div key={i} className="w-10 h-10 rounded-full border-2 border-Vinzay-bg bg-vinzay-surface-elevated flex items-center justify-center text-lg">{c}</div>
               ))}
             </div>
             <div className="text-left">
               <div className="flex items-center gap-1">
                 {[...Array(5)].map((_, i) => <Star key={i} className="w-4 h-4 fill-accent-gold text-accent-gold" />)}
               </div>
-              <p className="text-text-tertiary text-sm">Usuarios confían en Merqora</p>
+              <p className="text-text-tertiary text-sm">Usuarios confían en Vinzay</p>
             </div>
           </div>
         </div>
@@ -185,26 +186,26 @@ function Hero() {
                 {/* Fake app UI */}
                 <div className="p-4 pt-10">
                   <div className="flex items-center justify-between mb-6">
-                    <div className="text-lg font-bold text-white">Merqora</div>
+                    <div className="text-lg font-bold text-white">Vinzay</div>
                     <div className="flex gap-2">
-                      <div className="w-8 h-8 rounded-full bg-rendly-surface-elevated" />
+                      <div className="w-8 h-8 rounded-full bg-vinzay-surface-elevated" />
                     </div>
                   </div>
                   {/* Search bar */}
-                  <div className="h-10 rounded-xl bg-rendly-surface-elevated mb-4 flex items-center px-3">
+                  <div className="h-10 rounded-xl bg-vinzay-surface-elevated mb-4 flex items-center px-3">
                     <div className="w-4 h-4 rounded-full border border-text-muted" />
                     <div className="ml-2 h-3 w-24 rounded bg-text-muted/20" />
                   </div>
                   {/* Categories */}
                   <div className="flex gap-2 mb-4 overflow-hidden">
                     {['Ofertas', 'Top', 'Zona'].map((c, i) => (
-                      <div key={i} className={`px-3 py-1.5 rounded-lg text-xs font-medium ${i === 0 ? 'bg-primary text-white' : 'bg-rendly-surface-elevated text-text-secondary'}`}>{c}</div>
+                      <div key={i} className={`px-3 py-1.5 rounded-lg text-xs font-medium ${i === 0 ? 'bg-primary text-white' : 'bg-vinzay-surface-elevated text-text-secondary'}`}>{c}</div>
                     ))}
                   </div>
                   {/* Product cards */}
                   <div className="grid grid-cols-2 gap-2">
                     {[1,2,3,4].map(i => (
-                      <div key={i} className="rounded-xl bg-rendly-surface-elevated overflow-hidden">
+                      <div key={i} className="rounded-xl bg-vinzay-surface-elevated overflow-hidden">
                         <div className={`h-20 ${i % 2 === 0 ? 'bg-gradient-to-br from-[#0A3D62]/40 to-[#2E8B57]/40' : 'bg-gradient-to-br from-[#2E8B57]/30 to-[#FF6B35]/30'}`} />
                         <div className="p-2">
                           <div className="h-2 w-16 rounded bg-text-muted/30 mb-1" />
@@ -214,7 +215,7 @@ function Hero() {
                     ))}
                   </div>
                   {/* Bottom nav - matches app's BottomNavBar */}
-                  <div className="absolute bottom-2 left-3 right-3 h-14 rounded-2xl bg-rendly-tab-bar flex items-center justify-around px-2">
+                  <div className="absolute bottom-2 left-3 right-3 h-14 rounded-2xl bg-vinzay-tab-bar flex items-center justify-around px-2">
                     {/* Home */}
                     <svg viewBox="0 0 24 24" className="w-5 h-5 text-[#3A8FD4]" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
                     {/* Search */}
@@ -282,7 +283,7 @@ function Features() {
               Todo lo que necesitás<br /><span className="gradient-text">en un solo lugar</span>
             </h2>
             <p className="text-text-secondary max-w-2xl mx-auto text-lg">
-              Merqora combina lo mejor del marketplace con la seguridad que necesitás para comprar y vender tranquilo.
+              Vinzay combina lo mejor del marketplace con la seguridad que necesitás para comprar y vender tranquilo.
             </p>
           </div>
         </Reveal>
@@ -328,12 +329,78 @@ function HowItWorks() {
           {STEPS.map((s, i) => (
             <Reveal key={i} delay={i * 150}>
               <div className="text-center relative">
-                <div className="w-16 h-16 rounded-2xl gradient-rendly flex items-center justify-center mx-auto mb-6 relative z-10 shadow-lg shadow-[#0A3D62]/20">
+                <div className="w-16 h-16 rounded-2xl gradient-vinzay flex items-center justify-center mx-auto mb-6 relative z-10 shadow-lg shadow-[#0A3D62]/20">
                   <s.icon className="w-7 h-7 text-white" />
                 </div>
                 <div className="text-xs font-bold text-primary mb-2 tracking-widest">{s.num}</div>
                 <h3 className="text-xl font-bold text-white mb-2">{s.title}</h3>
                 <p className="text-text-secondary text-sm">{s.desc}</p>
+              </div>
+            </Reveal>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+/* ═══════════ Product Showcase ═══════════ */
+function ProductShowcase() {
+  const [products, setProducts] = useState([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    supabase.from('posts').select('id, title, description, price, currency, images, category, location, created_at').order('created_at', { ascending: false }).limit(6).then(({ data, error }) => {
+      if (!error && data) setProducts(data)
+      setLoading(false)
+    })
+  }, [])
+
+  if (loading || products.length === 0) return null
+
+  return (
+    <section id="products" className="py-24 relative overflow-hidden">
+      <div className="hero-glow w-[500px] h-[500px] bg-[#2E8B57]/20 -right-40 top-1/2 -translate-y-1/2" />
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <Reveal>
+          <div className="text-center mb-16">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#2E8B57]/10 text-[#2E8B57] text-sm font-medium mb-4">
+              <Package className="w-4 h-4" /> Productos recientes
+            </div>
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white mb-4">
+              Lo que se <span className="gradient-text">vende ahora</span>
+            </h2>
+            <p className="text-text-secondary max-w-2xl mx-auto text-lg">
+              Miles de productos publicados por toda Uruguay. Encontrá lo que buscás cerca tuyo.
+            </p>
+          </div>
+        </Reveal>
+
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {products.map((p, i) => (
+            <Reveal key={p.id} delay={i * 100}>
+              <div className="glass card-hover rounded-2xl overflow-hidden group cursor-pointer">
+                <div className="aspect-[4/3] bg-vinzay-surface-elevated flex items-center justify-center overflow-hidden">
+                  {p.images?.[0] ? (
+                    <img src={p.images[0]} alt={p.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                  ) : (
+                    <Package className="w-12 h-12 text-text-muted" />
+                  )}
+                </div>
+                <div className="p-5">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-xs font-medium text-primary-bright bg-primary-bright/10 px-2.5 py-1 rounded-full">{p.category || 'General'}</span>
+                    <span className="text-xs text-text-muted">{p.location || ''}</span>
+                  </div>
+                  <h3 className="font-bold text-white text-lg mb-1 group-hover:text-primary-bright transition-colors truncate">{p.title}</h3>
+                  <p className="text-text-secondary text-sm leading-relaxed line-clamp-2 mb-3">{p.description}</p>
+                  <div className="flex items-center justify-between">
+                    <span className="text-xl font-black text-white">
+                      {p.currency === 'USD' ? 'US$' : '$'}{parseInt(p.price).toLocaleString('es-AR')}
+                    </span>
+                    <span className="text-text-muted text-xs">{new Date(p.created_at).toLocaleDateString('es-AR')}</span>
+                  </div>
+                </div>
               </div>
             </Reveal>
           ))}
@@ -382,7 +449,7 @@ function SecuritySection() {
             </div>
             <div className="space-y-6 pt-4">
               {/* Fake verification card */}
-              <div className="bg-rendly-bg rounded-2xl p-4 flex items-center gap-4">
+              <div className="bg-vinzay-bg rounded-2xl p-4 flex items-center gap-4">
                 <div className="w-12 h-12 rounded-full bg-[#0A3D62] flex items-center justify-center text-white font-bold">M</div>
                 <div className="flex-1">
                   <div className="flex items-center gap-2">
@@ -397,7 +464,7 @@ function SecuritySection() {
                 </div>
               </div>
               {/* Handshake demo */}
-              <div className="bg-rendly-bg rounded-2xl p-4">
+              <div className="bg-vinzay-bg rounded-2xl p-4">
                 <div className="flex items-center gap-3 mb-3">
                   <HeartHandshake className="w-5 h-5 text-accent-magenta" />
                   <span className="font-semibold text-white text-sm">Handshake Completado</span>
@@ -432,17 +499,25 @@ function SecuritySection() {
 
 /* ═══════════ Download CTA ═══════════ */
 function DownloadCTA() {
+  const [latest, setLatest] = useState(null)
+
+  useEffect(() => {
+    supabase.from('app_versions').select('version_name, file_size, min_sdk').order('created_at', { ascending: false }).limit(1).single().then(({ data, error }) => {
+      if (!error && data) setLatest(data)
+    })
+  }, [])
+
   return (
     <section id="download" className="py-24 relative overflow-hidden">
       <div className="hero-glow w-[600px] h-[600px] bg-[#0A3D62]/25 left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2" />
       <div className="max-w-4xl mx-auto px-4 text-center relative z-10">
         <Reveal>
           <div className="glass rounded-3xl p-10 sm:p-16">
-            <div className="w-20 h-20 rounded-3xl gradient-rendly flex items-center justify-center mx-auto mb-6 animate-glow">
+            <div className="w-20 h-20 rounded-3xl gradient-vinzay flex items-center justify-center mx-auto mb-6 animate-glow">
               <Smartphone className="w-10 h-10 text-white" />
             </div>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white mb-4">
-              Descargá <span className="gradient-text">Merqora</span> ahora
+              Descargá <span className="gradient-text">Vinzay</span> ahora
             </h2>
             <p className="text-text-secondary text-lg mb-8 max-w-xl mx-auto">
               Disponible para Android. Descarga directa, sin Play Store. Instalación rápida y segura.
@@ -450,10 +525,12 @@ function DownloadCTA() {
             <Link to="/download" className="btn-primary inline-flex items-center gap-3 px-10 py-5 rounded-2xl text-white font-bold text-lg download-pulse">
               <span className="flex items-center gap-3">
                 <Download className="w-6 h-6" />
-                Descargar APK Gratis
+                {latest ? `Descargar v${latest.version_name}` : 'Descargar APK Gratis'}
               </span>
             </Link>
-            <p className="text-text-muted text-sm mt-4">Android 8.0+ · Menos de 50MB · 100% Gratis</p>
+            <p className="text-text-muted text-sm mt-4">
+              Android {latest?.min_sdk || '8.0+'} · {latest ? `${(latest.file_size / 1_000_000).toFixed(0)}MB` : 'Menos de 50MB'} · 100% Gratis
+            </p>
           </div>
         </Reveal>
       </div>
@@ -469,10 +546,10 @@ function Footer() {
         <div className="grid md:grid-cols-4 gap-8 mb-10">
           <div className="md:col-span-2">
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-xl gradient-rendly flex items-center justify-center">
+              <div className="w-10 h-10 rounded-xl gradient-vinzay flex items-center justify-center">
                 <ShoppingBag className="w-5 h-5 text-white" />
               </div>
-              <span className="text-xl font-bold text-white">Merqora</span>
+              <span className="text-xl font-bold text-white">Vinzay</span>
             </div>
             <p className="text-text-secondary text-sm leading-relaxed max-w-md">
               El marketplace social más seguro de Uruguay. Compra, vende y conecta con confianza gracias a nuestro sistema de verificación y transacciones seguras.
@@ -497,7 +574,7 @@ function Footer() {
         </div>
         <div className="section-separator mb-6" />
         <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
-          <p className="text-text-muted text-sm">© {new Date().getFullYear()} Merqora. Todos los derechos reservados.</p>
+          <p className="text-text-muted text-sm">© {new Date().getFullYear()} Vinzay. Todos los derechos reservados.</p>
           <div className="flex items-center gap-2 text-text-muted text-sm">
             <Heart className="w-4 h-4 text-accent-magenta" />
             <span>Hecho en Uruguay</span>
@@ -519,6 +596,8 @@ export default function LandingPage() {
       <Features />
       <div className="section-separator max-w-5xl mx-auto" />
       <HowItWorks />
+      <div className="section-separator max-w-5xl mx-auto" />
+      <ProductShowcase />
       <div className="section-separator max-w-5xl mx-auto" />
       <SecuritySection />
       <DownloadCTA />

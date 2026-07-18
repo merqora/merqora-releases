@@ -29,7 +29,7 @@ body {
 /* ═══════════ Core Utilities ═══════════ */
 .fade-in { animation: fadeIn 0.3s ease-in-out; }
 .glow-purple { box-shadow: 0 0 20px rgba(46, 139, 87, 0.3); }
-.gradient-rendly { background: linear-gradient(135deg, #0A3D62 0%, #2E8B57 100%); }
+.gradient-vinzay { background: linear-gradient(135deg, #0A3D62 0%, #2E8B57 100%); }
 
 /* ═══════════ Landing Page Styles ═══════════ */
 .gradient-text {

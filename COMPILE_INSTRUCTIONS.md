@@ -181,12 +181,12 @@ Si ves estos mensajes, el código nativo está funcionando correctamente.
 
 ### Medir Frame Rate:
 ```bash
-adb shell dumpsys gfxinfo com.rendly.app
+adb shell dumpsys gfxinfo com.vinzay.app
 ```
 
 ### Medir Memory:
 ```bash
-adb shell dumpsys meminfo com.rendly.app
+adb shell dumpsys meminfo com.vinzay.app
 ```
 
 ### Profile en Android Studio:

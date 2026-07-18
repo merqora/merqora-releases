@@ -1,5 +1,5 @@
 -- =====================================================
--- RENDLY AI SUPPORT - FIX PARA TABLAS
+-- VINZAY AI SUPPORT - FIX PARA TABLAS
 -- =====================================================
 -- Ejecutar en Supabase SQL Editor para arreglar las FK
 -- =====================================================

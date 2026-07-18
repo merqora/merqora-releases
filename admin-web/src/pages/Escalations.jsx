@@ -36,7 +36,7 @@ function EscalationCard({ escalation, onResolve }) {
   }
   
   return (
-    <div className="bg-rendly-surface rounded-2xl border border-primary/10 overflow-hidden hover:border-primary/30 transition-all duration-300">
+    <div className="bg-vinzay-surface rounded-2xl border border-primary/10 overflow-hidden hover:border-primary/30 transition-all duration-300">
       {/* Header */}
       <div className="flex items-center justify-between p-4 border-b border-primary/10">
         <div className="flex items-center gap-3">
@@ -63,7 +63,7 @@ function EscalationCard({ escalation, onResolve }) {
         
         {/* Last message */}
         {escalation.last_message && (
-          <div className="bg-rendly-bg rounded-xl p-3">
+          <div className="bg-vinzay-bg rounded-xl p-3">
             <p className="text-text-tertiary text-xs mb-1">Último mensaje</p>
             <p className="text-text-secondary text-sm line-clamp-2">{escalation.last_message}</p>
           </div>
@@ -252,7 +252,7 @@ export default function Escalations() {
             placeholder="Buscar..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="pl-10 pr-4 py-2 bg-rendly-surface border border-primary/20 rounded-xl text-text-primary placeholder-text-muted focus:outline-none focus:border-primary w-full md:w-64"
+            className="pl-10 pr-4 py-2 bg-vinzay-surface border border-primary/20 rounded-xl text-text-primary placeholder-text-muted focus:outline-none focus:border-primary w-full md:w-64"
           />
         </div>
       </div>
@@ -267,7 +267,7 @@ export default function Escalations() {
               flex items-center gap-2 px-4 py-2 rounded-xl whitespace-nowrap transition-all
               ${filter === key 
                 ? 'bg-primary text-white' 
-                : 'bg-rendly-surface text-text-secondary hover:bg-rendly-surface-elevated'
+                : 'bg-vinzay-surface text-text-secondary hover:bg-vinzay-surface-elevated'
               }
             `}
           >
@@ -298,7 +298,7 @@ export default function Escalations() {
           ))}
         </div>
       ) : (
-        <div className="text-center py-16 bg-rendly-surface rounded-2xl border border-primary/10">
+        <div className="text-center py-16 bg-vinzay-surface rounded-2xl border border-primary/10">
           <CheckCircle className="w-16 h-16 mx-auto mb-4 text-accent-green" />
           <h3 className="text-xl font-semibold text-text-primary mb-2">
             ¡Todo al día!

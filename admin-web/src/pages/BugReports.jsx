@@ -218,19 +218,19 @@ export default function BugReports() {
 
       {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="bg-rendly-surface rounded-2xl border border-primary/10 p-4">
+        <div className="bg-vinzay-surface rounded-2xl border border-primary/10 p-4">
           <div className="text-2xl font-bold text-accent-magenta">{reports.filter(r => r.status === 'open').length}</div>
           <div className="text-sm text-text-tertiary">Abiertos</div>
         </div>
-        <div className="bg-rendly-surface rounded-2xl border border-primary/10 p-4">
+        <div className="bg-vinzay-surface rounded-2xl border border-primary/10 p-4">
           <div className="text-2xl font-bold text-accent-blue">{reports.filter(r => r.status === 'in_progress').length}</div>
           <div className="text-sm text-text-tertiary">En Progreso</div>
         </div>
-        <div className="bg-rendly-surface rounded-2xl border border-primary/10 p-4">
+        <div className="bg-vinzay-surface rounded-2xl border border-primary/10 p-4">
           <div className="text-2xl font-bold text-accent-gold">{reports.filter(r => r.severity === 'critical').length}</div>
           <div className="text-sm text-text-tertiary">Críticos</div>
         </div>
-        <div className="bg-rendly-surface rounded-2xl border border-primary/10 p-4">
+        <div className="bg-vinzay-surface rounded-2xl border border-primary/10 p-4">
           <div className="text-2xl font-bold text-accent-green">{reports.filter(r => r.status === 'fixed').length}</div>
           <div className="text-sm text-text-tertiary">Resueltos</div>
         </div>
@@ -243,7 +243,7 @@ export default function BugReports() {
           className={`px-4 py-2 rounded-xl font-medium transition-all ${
             filter === 'all'
               ? 'bg-primary text-white'
-              : 'bg-rendly-surface text-text-secondary hover:bg-rendly-surface-elevated'
+              : 'bg-vinzay-surface text-text-secondary hover:bg-vinzay-surface-elevated'
           }`}
         >
           Todos ({reports.length})
@@ -253,7 +253,7 @@ export default function BugReports() {
           className={`px-4 py-2 rounded-xl font-medium transition-all ${
             filter === 'open'
               ? 'bg-accent-magenta text-white'
-              : 'bg-rendly-surface text-text-secondary hover:bg-rendly-surface-elevated'
+              : 'bg-vinzay-surface text-text-secondary hover:bg-vinzay-surface-elevated'
           }`}
         >
           Abiertos ({reports.filter(r => r.status === 'open').length})
@@ -263,7 +263,7 @@ export default function BugReports() {
           className={`px-4 py-2 rounded-xl font-medium transition-all ${
             filter === 'investigating'
               ? 'bg-accent-gold text-white'
-              : 'bg-rendly-surface text-text-secondary hover:bg-rendly-surface-elevated'
+              : 'bg-vinzay-surface text-text-secondary hover:bg-vinzay-surface-elevated'
           }`}
         >
           Investigando ({reports.filter(r => r.status === 'investigating').length})
@@ -273,7 +273,7 @@ export default function BugReports() {
           className={`px-4 py-2 rounded-xl font-medium transition-all ${
             filter === 'in_progress'
               ? 'bg-accent-blue text-white'
-              : 'bg-rendly-surface text-text-secondary hover:bg-rendly-surface-elevated'
+              : 'bg-vinzay-surface text-text-secondary hover:bg-vinzay-surface-elevated'
           }`}
         >
           En Progreso ({reports.filter(r => r.status === 'in_progress').length})
@@ -283,7 +283,7 @@ export default function BugReports() {
           className={`px-4 py-2 rounded-xl font-medium transition-all ${
             filter === 'fixed'
               ? 'bg-accent-green text-white'
-              : 'bg-rendly-surface text-text-secondary hover:bg-rendly-surface-elevated'
+              : 'bg-vinzay-surface text-text-secondary hover:bg-vinzay-surface-elevated'
           }`}
         >
           Resueltos ({reports.filter(r => r.status === 'fixed').length})
@@ -293,14 +293,14 @@ export default function BugReports() {
       {/* Reports List */}
       <div className="grid gap-4">
         {filteredReports.length === 0 ? (
-          <div className="text-center py-12 text-text-tertiary bg-rendly-surface rounded-2xl border border-primary/10">
+          <div className="text-center py-12 text-text-tertiary bg-vinzay-surface rounded-2xl border border-primary/10">
             No hay reportes con este filtro
           </div>
         ) : (
           filteredReports.map((report) => (
             <div
               key={report.id}
-              className="bg-rendly-surface rounded-2xl border border-primary/10 p-5 hover:border-primary/30 transition-all cursor-pointer"
+              className="bg-vinzay-surface rounded-2xl border border-primary/10 p-5 hover:border-primary/30 transition-all cursor-pointer"
               onClick={() => {
                 setSelectedReport(report)
                 setAdminNotes(report.admin_notes || '')

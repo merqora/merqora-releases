@@ -227,7 +227,50 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
+-- ═══════════════════════════════════════════════════════════════════════════════
+-- 8. POST TAGS TABLE - User tagging in posts
+-- ═══════════════════════════════════════════════════════════════════════════════
+
+CREATE TABLE IF NOT EXISTS post_tags (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    post_id UUID NOT NULL REFERENCES posts(id) ON DELETE CASCADE,
+    user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+    tagged_user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    UNIQUE(post_id, tagged_user_id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_post_tags_post ON post_tags(post_id);
+CREATE INDEX IF NOT EXISTS idx_post_tags_tagged ON post_tags(tagged_user_id);
+
+ALTER TABLE post_tags ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Anyone can view post tags"
+    ON post_tags FOR SELECT USING (true);
+
+CREATE POLICY "Users can tag others"
+    ON post_tags FOR INSERT
+    WITH CHECK (auth.uid() = user_id);
+
+CREATE POLICY "Users can remove own tags"
+    ON post_tags FOR DELETE
+    USING (auth.uid() = user_id);
+
+-- RPC: Check if user can be tagged (respects allow_tagging setting)
+CREATE OR REPLACE FUNCTION check_user_can_be_tagged(p_tagged_user_id UUID)
+RETURNS BOOLEAN AS $$
+DECLARE
+    v_allow_tagging BOOLEAN;
+BEGIN
+    SELECT COALESCE(allow_tagging, true) INTO v_allow_tagging
+    FROM user_privacy_settings
+    WHERE user_id = p_tagged_user_id;
+    
+    RETURN COALESCE(v_allow_tagging, true);
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
 -- ============================================================================
--- DONE! Tables: user_privacy_settings, story_hidden_users, user_language_preferences
--- RPCs: search_users_for_mention, can_view_stories, get_user_online_status
+-- DONE! Tables: user_privacy_settings, story_hidden_users, user_language_preferences, post_tags
+-- RPCs: search_users_for_mention, can_view_stories, get_user_online_status, check_user_can_be_tagged
 -- ============================================================================

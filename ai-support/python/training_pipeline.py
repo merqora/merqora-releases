@@ -1,5 +1,5 @@
 """
-Merqora AI Training Pipeline - Real ML Training System
+Vinzay AI Training Pipeline - Real ML Training System
 
 This module handles:
 1. Dataset management (export, import, clean, split)

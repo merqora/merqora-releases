@@ -5,11 +5,11 @@
 ### 1. Crear Service Account en Firebase
 
 1. Ve a [Firebase Console](https://console.firebase.google.com/)
-2. Selecciona tu proyecto **rendly-app**
+2. Selecciona tu proyecto **vinzay-app**
 3. Haz clic en ⚙️ → **Project settings**
 4. Ve a la pestaña **Service accounts**
 5. Haz clic en **"Generate new private key"**
-6. Descarga el archivo JSON (ej: `rendly-app-firebase-adminsdk-xxxxx.json`)
+6. Descarga el archivo JSON (ej: `vinzay-app-firebase-adminsdk-xxxxx.json`)
 
 ### 2. Extraer las credenciales del JSON
 
@@ -17,8 +17,8 @@ Abre el archivo JSON descargado. Necesitas estos valores:
 
 ```json
 {
-  "project_id": "rendly-app",
-  "client_email": "firebase-adminsdk-xxxxx@rendly-app.iam.gserviceaccount.com",
+  "project_id": "vinzay-app",
+  "client_email": "firebase-adminsdk-xxxxx@vinzay-app.iam.gserviceaccount.com",
   "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQ...(muy largo)...xxxxx=\n-----END PRIVATE KEY-----\n"
 }
 ```
@@ -32,8 +32,8 @@ Abre el archivo JSON descargado. Necesitas estos valores:
 
 | Nombre | Valor |
 |--------|-------|
-| `FIREBASE_PROJECT_ID` | `rendly-app` |
-| `FIREBASE_CLIENT_EMAIL` | `firebase-adminsdk-xxxxx@rendly-app.iam.gserviceaccount.com` |
+| `FIREBASE_PROJECT_ID` | `vinzay-app` |
+| `FIREBASE_CLIENT_EMAIL` | `firebase-adminsdk-xxxxx@vinzay-app.iam.gserviceaccount.com` |
 | `FIREBASE_PRIVATE_KEY` | El contenido completo de `private_key` (con `-----BEGIN...` y `-----END...`) |
 
 **⚠️ IMPORTANTE para `FIREBASE_PRIVATE_KEY`:**

@@ -1,4 +1,4 @@
-"""Pydantic models for Rendly AI Support API"""
+"""Pydantic models for Vinzay AI Support API"""
 
 from pydantic import BaseModel, Field
 from typing import Optional, List

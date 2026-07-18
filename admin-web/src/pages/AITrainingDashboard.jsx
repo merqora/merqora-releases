@@ -7,7 +7,7 @@ import {
   ArrowUpRight, ArrowDownRight, Minus, Activity, Database
 } from 'lucide-react'
 
-const API_BASE = 'https://merqora-releases-production.up.railway.app'
+const API_BASE = 'https://Vinzay-releases-production.up.railway.app'
 
 export default function AITrainingDashboard() {
   const [activeTab, setActiveTab] = useState('metrics')

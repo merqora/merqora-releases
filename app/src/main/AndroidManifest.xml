@@ -29,8 +29,14 @@
     <uses-feature android:name="android.hardware.camera.autofocus" android:required="false" />
     <uses-feature android:name="android.hardware.location.gps" android:required="false" />
 
+    <!-- Package visibility for payment app detection -->
+    <queries>
+        <package android:name="com.mercadopago.wallet" />
+        <package android:name="air.Prex" />
+    </queries>
+
     <application
-        android:name=".MerqoraApplication"
+        android:name=".VinzayApplication"
         android:usesCleartextTraffic="true"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -39,7 +45,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Merqora"
+        android:theme="@style/Theme.Vinzay"
         android:hardwareAccelerated="true"
         android:largeHeap="true"
         tools:targetApi="31">
@@ -66,7 +72,7 @@
             <!-- TODO: Re-enable for release builds after signing setup -->
             <!--
             <meta-data
-                android:name="com.rendly.app.startup.DeferredInitializer"
+                android:name="com.vinzay.app.startup.DeferredInitializer"
                 android:value="androidx.startup" />
             -->
         </provider>
@@ -98,7 +104,7 @@
         <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:theme="@style/Theme.Merqora"
+            android:theme="@style/Theme.Vinzay"
             android:windowSoftInputMode="adjustResize"
             android:screenOrientation="portrait"
             android:launchMode="singleTask"
@@ -110,16 +116,30 @@
             
             <!-- ═══════════════════════════════════════════════════════════════════
                  MERCADO PAGO DEEP LINKS - Retorno después del pago
-                 Maneja: merqora://payment/success, merqora://payment/failure, merqora://payment/pending
+                 Maneja: vinzay://payment/success, vinzay://payment/failure, vinzay://payment/pending
                  ═══════════════════════════════════════════════════════════════════ -->
             <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <!-- Deep link scheme: merqora://payment/* -->
+                <!-- Deep link scheme: vinzay://payment/* -->
                 <data 
-                    android:scheme="merqora"
+                    android:scheme="vinzay"
                     android:host="payment" />
+            </intent-filter>
+
+            <!-- ═══════════════════════════════════════════════════════════════════
+                 APP LINKS / DEEP LINKS - Productos compartidos
+                 Maneja: https://vinzay.app/p/* y https://vinzay.netlify.app/p/*
+                 ═══════════════════════════════════════════════════════════════════ -->
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <!-- Host principal acordado -->
+                <data android:scheme="https" android:host="vinzay.app" android:pathPrefix="/p/" />
+                <!-- Host de Netlify de respaldo -->
+                <data android:scheme="https" android:host="vinzay.netlify.app" android:pathPrefix="/p/" />
             </intent-filter>
         </activity>
         
@@ -130,7 +150,7 @@
         <activity
             android:name=".ui.screens.checkout.MercadoPagoCheckoutActivity"
             android:exported="false"
-            android:theme="@style/Theme.Merqora"
+            android:theme="@style/Theme.Vinzay"
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity" />
         
@@ -139,7 +159,7 @@
              Recibe notificaciones push incluso con la app cerrada
              ═══════════════════════════════════════════════════════════════════ -->
         <service
-            android:name=".service.MerqoraFirebaseMessagingService"
+            android:name=".service.VinzayFirebaseMessagingService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
@@ -149,7 +169,7 @@
         <!-- FCM Default Notification Channel -->
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_channel_id"
-            android:value="merqora_messages" />
+            android:value="vinzay_messages" />
             
         <!-- FCM Default Notification Icon -->
         <meta-data

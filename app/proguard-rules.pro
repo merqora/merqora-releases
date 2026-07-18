@@ -26,9 +26,9 @@
 # ─────────────────────────────────────────────────────────────────────────────────
 # STARTUP CRITICAL - Keep startup path classes
 # ─────────────────────────────────────────────────────────────────────────────────
--keep class com.rendly.app.MainActivity { *; }
--keep class com.rendly.app.RendlyApplication { *; }
--keep class com.rendly.app.startup.** { *; }
+-keep class com.vinzay.app.MainActivity { *; }
+-keep class com.vinzay.app.RendlyApplication { *; }
+-keep class com.vinzay.app.startup.** { *; }
 
 # ─────────────────────────────────────────────────────────────────────────────────
 # NATIVE METHODS
@@ -71,11 +71,11 @@
 # ─────────────────────────────────────────────────────────────────────────────────
 -keepattributes *Annotation*, InnerClasses
 -dontnote kotlinx.serialization.AnnotationsKt
--keep,includedescriptorclasses class com.rendly.app.**$$serializer { *; }
--keepclassmembers class com.rendly.app.** {
+-keep,includedescriptorclasses class com.vinzay.app.**$$serializer { *; }
+-keepclassmembers class com.vinzay.app.** {
     *** Companion;
 }
--keepclasseswithmembers class com.rendly.app.** {
+-keepclasseswithmembers class com.vinzay.app.** {
     kotlinx.serialization.KSerializer serializer(...);
 }
 

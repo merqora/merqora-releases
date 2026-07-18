@@ -1,11 +1,11 @@
 """
-Reasoning Engine - Intelligent response generation for Rendly AI Support
+Reasoning Engine - Intelligent response generation for Vinzay AI Support
 
 This engine generates contextual responses when FAQ doesn't have an exact match.
 It analyzes the user's question and constructs helpful responses based on:
 - Detected intent and category
 - Extracted keywords and context
-- Rendly's features and policies
+- Vinzay's features and policies
 """
 
 from typing import Dict, List, Optional, Tuple
@@ -27,8 +27,8 @@ class ReasoningResult:
             self.suggested_actions = []
 
 
-class RendlyKnowledge:
-    """Core knowledge about Rendly platform"""
+class VinzayKnowledge:
+    """Core knowledge about Vinzay platform"""
     
     # Platform policies and facts
     POLICIES = {
@@ -89,11 +89,11 @@ class RendlyKnowledge:
 class ReasoningEngine:
     """
     Intelligent reasoning engine that generates contextual responses.
-    Uses pattern matching, template generation, and Rendly knowledge.
+    Uses pattern matching, template generation, and Vinzay knowledge.
     """
     
     def __init__(self):
-        self.knowledge = RendlyKnowledge()
+        self.knowledge = VinzayKnowledge()
         self._build_response_templates()
     
     def _build_response_templates(self):
@@ -379,7 +379,7 @@ Toma foto de lo que recibiste y compáralo con lo que muestra la publicación or
         
         base_response += f"""
 
-💡 Tienes **{self.knowledge.POLICIES["return_window"]}** para reportar. Rendly protege todas tus compras."""
+💡 Tienes **{self.knowledge.POLICIES["return_window"]}** para reportar. Vinzay protege todas tus compras."""
         
         return base_response, 82
 
@@ -401,11 +401,11 @@ Toma foto de lo que recibiste y compáralo con lo que muestra la publicación or
 
 🔒 Tus datos de pago están protegidos con encriptación de grado bancario."""
         else:
-            response = f"""En Rendly aceptamos varios métodos de pago:
+            response = f"""En Vinzay aceptamos varios métodos de pago:
 
 💳 **Tarjetas:** Visa, Mastercard, American Express
 🏦 **Transferencia:** SPEI y transferencia directa  
-💰 **Billetera Rendly:** Usa tu saldo de ventas
+💰 **Billetera Vinzay:** Usa tu saldo de ventas
 📱 **Otros:** PayPal, Mercado Pago
 
 Para gestionar tus métodos de pago:
@@ -430,7 +430,7 @@ Para gestionar tus métodos de pago:
                 response += f"{i}. {step}\n"
             
             response += f"""
-💡 **Alternativa rápida:** Usa la **Billetera Rendly** si tienes saldo disponible.
+💡 **Alternativa rápida:** Usa la **Billetera Vinzay** si tienes saldo disponible.
 
 Si el problema persiste después de verificar todo, es posible que tu banco esté bloqueando la transacción por seguridad. Llama a tu banco para autorizar el pago."""
         
@@ -462,10 +462,10 @@ Gestiona tus métodos de pago en:
         policies = self.knowledge.POLICIES
         nav = self.knowledge.NAVIGATION
         
-        response = f"""Información sobre reembolsos en Rendly:
+        response = f"""Información sobre reembolsos en Vinzay:
 
 ⏱️ **Tiempos de procesamiento:**
-• Billetera Rendly: {policies["refund_time_wallet"]}
+• Billetera Vinzay: {policies["refund_time_wallet"]}
 • Tarjeta de crédito: {policies["refund_time_card"]}
 • Tarjeta de débito: {policies["refund_time_debit"]}
 
@@ -575,7 +575,7 @@ Opciones disponibles:
         """Generate response for account deletion"""
         nav = self.knowledge.NAVIGATION
         
-        response = f"""Para eliminar tu cuenta de Rendly:
+        response = f"""Para eliminar tu cuenta de Vinzay:
 
 1. Ve a **{nav["settings"]}** → **Cuenta**
 2. Desplázate hasta **"Eliminar cuenta"**
@@ -614,7 +614,7 @@ Opciones disponibles:
 💡 Puedes marcar una dirección como **predeterminada** para futuras compras."""
         
         elif "tiempo" in msg_lower or "tarda" in msg_lower or "dias" in msg_lower:
-            response = f"""Tiempos de envío en Rendly:
+            response = f"""Tiempos de envío en Vinzay:
 
 📦 **Envío estándar:** {policies["shipping_standard"]}
 🚀 **Envío express:** {policies["shipping_express"]}
@@ -628,7 +628,7 @@ El tiempo depende de:
 💡 En cada producto verás el tiempo estimado para tu ubicación específica."""
         
         else:
-            response = f"""Información de envíos en Rendly:
+            response = f"""Información de envíos en Vinzay:
 
 📦 **Tiempos:** {policies["shipping_standard"]} (estándar) / {policies["shipping_express"]} (express)
 📍 **Direcciones:** Gestiona en **{nav["addresses"]}**
@@ -670,7 +670,7 @@ Si ya pasó el tiempo estimado de entrega, puedes reportar el problema directame
 
 • **Alta demanda** - Fechas especiales o promociones
 • **Ubicación** - Ciudades remotas tardan más
-• **Paquetería** - Retrasos externos a Rendly
+• **Paquetería** - Retrasos externos a Vinzay
 
 **Qué puedes hacer:**
 1. Revisa el tracking del pedido para ver su ubicación actual
@@ -700,7 +700,7 @@ Problemas comunes:
         nav = self.knowledge.NAVIGATION
         policies = self.knowledge.POLICIES
         
-        response = f"""Para vender en Rendly, sigue estos pasos:
+        response = f"""Para vender en Vinzay, sigue estos pasos:
 
 **1. Verifica tu cuenta** (si no lo has hecho)
    → **{nav["verification"]}**
@@ -737,17 +737,17 @@ Problemas comunes:
         if "cobrar" in msg_lower or "retir" in msg_lower or "dinero" in msg_lower:
             response = f"""Para recibir el dinero de tus ventas:
 
-1. El pago llega a tu **Billetera Rendly** cuando el comprador confirma recepción
+1. El pago llega a tu **Billetera Vinzay** cuando el comprador confirma recepción
 2. Ve a **{nav["wallet"]}**
 3. Toca **"Retirar fondos"**
 4. Selecciona tu método de retiro (cuenta bancaria)
 5. El dinero llega en 1-3 días hábiles
 
 💰 **Mínimo para retirar:** {policies["min_withdraw"]}
-📊 **Comisión de Rendly:** {policies["commission"]} (se descuenta automáticamente)"""
+📊 **Comisión de Vinzay:** {policies["commission"]} (se descuenta automáticamente)"""
         
         elif "comision" in msg_lower or "porcentaje" in msg_lower:
-            response = f"""Comisiones de venta en Rendly:
+            response = f"""Comisiones de venta en Vinzay:
 
 💰 **Comisión por venta:** {policies["commission"]}
 
@@ -861,7 +861,7 @@ Ve tus ventas en: **{nav["sales"]}**
 • Acceso a funciones premium"""
         
         else:
-            response = f"""Opciones de seguridad en Rendly:
+            response = f"""Opciones de seguridad en Vinzay:
 
 🔐 **Verificación en dos pasos (2FA):**
 Actívala en **{nav["security"]}**
@@ -889,7 +889,7 @@ Verifica tu identidad en **{nav["verification"]}**
         
         response += """
 📱 **Para limpiar caché:**
-• Android: Ajustes → Apps → Rendly → Almacenamiento → Borrar caché
+• Android: Ajustes → Apps → Vinzay → Almacenamiento → Borrar caché
 • iOS: Elimina y reinstala la app
 
 """
@@ -914,7 +914,7 @@ Verifica tu identidad en **{nav["verification"]}**
 
     def _template_greeting(self, message: str, context: Dict) -> Tuple[str, int]:
         """Generate response for greetings"""
-        response = """¡Hola! 👋 Soy el asistente virtual de Rendly.
+        response = """¡Hola! 👋 Soy el asistente virtual de Vinzay.
 
 Estoy aquí para ayudarte con:
 

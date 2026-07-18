@@ -7,7 +7,7 @@ export default {
   theme: {
     extend: {
       colors: {
-        'rendly': {
+        'vinzay': {
           bg: '#0A0A0F',
           'tab-bar': '#050508',
           surface: '#16161E',

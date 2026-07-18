@@ -54,8 +54,8 @@ class SupabaseService:
     """
     
     def __init__(self):
-        self.supabase_url = os.getenv("RENDLY_AI_SUPABASE_URL", os.getenv("SUPABASE_URL", ""))
-        self.supabase_key = os.getenv("RENDLY_AI_SUPABASE_KEY", os.getenv("SUPABASE_SERVICE_KEY", ""))
+        self.supabase_url = os.getenv("VINZAY_AI_SUPABASE_URL", os.getenv("SUPABASE_URL", ""))
+        self.supabase_key = os.getenv("VINZAY_AI_SUPABASE_KEY", os.getenv("SUPABASE_SERVICE_KEY", ""))
         
         self.is_configured = bool(self.supabase_url and self.supabase_key)
         

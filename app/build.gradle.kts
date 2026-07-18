@@ -1,19 +1,21 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id("org.jetbrains.kotlin.plugin.compose")
     id("com.google.dagger.hilt.android")
     id("androidx.baselineprofile")
     id("com.google.gms.google-services")
+    id("io.sentry.android.gradle")
     kotlin("kapt")
-    kotlin("plugin.serialization") version "1.9.22"
+    kotlin("plugin.serialization")
 }
 
 android {
-    namespace = "com.rendly.app"
-    compileSdk = 34
+    namespace = "com.vinzay.app"
+    compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.rendly.app"
+        applicationId = "com.vinzay.app"
         minSdk = 26
         targetSdk = 34
         versionCode = 1
@@ -63,18 +65,28 @@ android {
             // Baseline Profile optimization (run :app:generateBaselineProfile manually)
             // Disabled auto-gen to speed up builds
             // baselineProfile.automaticGenerationDuringBuild = true
-            buildConfigField("String", "SUPABASE_URL", "\"https://xyrpmmnegzjkbysoocpc.supabase.co\"")
-            buildConfigField("String", "SUPABASE_ANON_KEY", "\"***REMOVED_ANON_KEY***\"")
-            buildConfigField("String", "R2_PUBLIC_URL", "\"https://pub-40412c53d63945a3a1e5a19e946f5fba.r2.dev\"")
-            buildConfigField("String", "CLOUDINARY_CLOUD_NAME", "\"dz0clge3s\"")
-            buildConfigField("String", "IMAGEKIT_URL_ENDPOINT", "\"https://ik.imagekit.io/4z6ezuoeb\"")
+            buildConfigField("String", "SUPABASE_URL", "\"${project.findProperty("SUPABASE_URL") ?: "https://xyrpmmnegzjkbysoocpc.supabase.co"}\"")
+            buildConfigField("String", "SUPABASE_ANON_KEY", "\"${project.findProperty("SUPABASE_ANON_KEY") ?: ""}\"")
+            buildConfigField("String", "R2_PUBLIC_URL", "\"${project.findProperty("R2_PUBLIC_URL") ?: ""}\"")
+            buildConfigField("String", "CLOUDINARY_CLOUD_NAME", "\"${project.findProperty("CLOUDINARY_CLOUD_NAME") ?: ""}\"")
+            buildConfigField("String", "IMAGEKIT_URL_ENDPOINT", "\"${project.findProperty("IMAGEKIT_URL_ENDPOINT") ?: ""}\"")
+            buildConfigField("String", "IMAGEKIT_PUBLIC_KEY", "\"${project.findProperty("IMAGEKIT_PUBLIC_KEY") ?: ""}\"")
+            buildConfigField("String", "IMAGEKIT_PRIVATE_KEY", "\"${project.findProperty("IMAGEKIT_PRIVATE_KEY") ?: ""}\"")
+            buildConfigField("String", "CLOUDFLARE_ACCOUNT_ID", "\"${project.findProperty("CLOUDFLARE_ACCOUNT_ID") ?: ""}\"")
+            buildConfigField("String", "CLOUDFLARE_ACCESS_KEY_ID", "\"${project.findProperty("CLOUDFLARE_ACCESS_KEY_ID") ?: ""}\"")
+            buildConfigField("String", "CLOUDFLARE_SECRET_ACCESS_KEY", "\"${project.findProperty("CLOUDFLARE_SECRET_ACCESS_KEY") ?: ""}\"")
+            buildConfigField("String", "CLOUDFLARE_BUCKET_NAME", "\"${project.findProperty("CLOUDFLARE_BUCKET_NAME") ?: ""}\"")
+            buildConfigField("String", "CLOUDFLARE_PUBLIC_DOMAIN", "\"${project.findProperty("CLOUDFLARE_PUBLIC_DOMAIN") ?: ""}\"")
+            buildConfigField("String", "CLOUDINARY_API_KEY", "\"${project.findProperty("CLOUDINARY_API_KEY") ?: ""}\"")
+            buildConfigField("String", "CLOUDINARY_API_SECRET", "\"${project.findProperty("CLOUDINARY_API_SECRET") ?: ""}\"")
             buildConfigField("String", "MAPBOX_ACCESS_TOKEN", "\"${project.findProperty("MAPBOX_ACCESS_TOKEN") ?: ""}\"")
             buildConfigField("String", "GOOGLE_MAPS_API_KEY", "\"${project.findProperty("GOOGLE_MAPS_API_KEY") ?: ""}\"")
             // Mercado Pago Checkout API
-            buildConfigField("String", "MP_PUBLIC_KEY", "\"${project.findProperty("MP_PUBLIC_KEY") ?: "APP_USR-f317b894-f344-4a2d-a430-5879dbd9cef2"}\"")
-            buildConfigField("String", "MP_ACCESS_TOKEN", "\"${project.findProperty("MP_ACCESS_TOKEN") ?: "APP_USR-5371485033290040-020723-f545050d5138976f10770ec01b67ad38-1622183330"}\"")
+            buildConfigField("String", "MP_PUBLIC_KEY", "\"${project.findProperty("MP_PUBLIC_KEY") ?: ""}\"")
+            // HIGH-2: MP_ACCESS_TOKEN eliminado — solo se usa en Edge Functions del servidor
+            buildConfigField("String", "MERCADOPAGO_CLIENT_ID", "\"${project.findProperty("MERCADOPAGO_CLIENT_ID") ?: ""}\"")
             // AI Support Backend URL - deploy to Railway/Render and set in gradle.properties
-            buildConfigField("String", "AI_SUPPORT_URL", "\"${project.findProperty("AI_SUPPORT_URL") ?: "https://rendly-ai.up.railway.app"}\"")
+            buildConfigField("String", "AI_SUPPORT_URL", "\"${project.findProperty("AI_SUPPORT_URL") ?: "https://vinzay-ai.up.railway.app"}\"")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -82,20 +94,30 @@ android {
         }
         debug {
             isMinifyEnabled = false
-            buildConfigField("String", "SUPABASE_URL", "\"https://xyrpmmnegzjkbysoocpc.supabase.co\"")
-            buildConfigField("String", "SUPABASE_ANON_KEY", "\"***REMOVED_ANON_KEY***\"")
-            buildConfigField("String", "R2_PUBLIC_URL", "\"https://pub-40412c53d63945a3a1e5a19e946f5fba.r2.dev\"")
-            buildConfigField("String", "CLOUDINARY_CLOUD_NAME", "\"dz0clge3s\"")
-            buildConfigField("String", "IMAGEKIT_URL_ENDPOINT", "\"https://ik.imagekit.io/4z6ezuoeb\"")
+            buildConfigField("String", "SUPABASE_URL", "\"${project.findProperty("SUPABASE_URL") ?: "https://xyrpmmnegzjkbysoocpc.supabase.co"}\"")
+            buildConfigField("String", "SUPABASE_ANON_KEY", "\"${project.findProperty("SUPABASE_ANON_KEY") ?: ""}\"")
+            buildConfigField("String", "R2_PUBLIC_URL", "\"${project.findProperty("R2_PUBLIC_URL") ?: ""}\"")
+            buildConfigField("String", "CLOUDINARY_CLOUD_NAME", "\"${project.findProperty("CLOUDINARY_CLOUD_NAME") ?: ""}\"")
+            buildConfigField("String", "IMAGEKIT_URL_ENDPOINT", "\"${project.findProperty("IMAGEKIT_URL_ENDPOINT") ?: ""}\"")
+            buildConfigField("String", "IMAGEKIT_PUBLIC_KEY", "\"${project.findProperty("IMAGEKIT_PUBLIC_KEY") ?: ""}\"")
+            buildConfigField("String", "IMAGEKIT_PRIVATE_KEY", "\"${project.findProperty("IMAGEKIT_PRIVATE_KEY") ?: ""}\"")
+            buildConfigField("String", "CLOUDFLARE_ACCOUNT_ID", "\"${project.findProperty("CLOUDFLARE_ACCOUNT_ID") ?: ""}\"")
+            buildConfigField("String", "CLOUDFLARE_ACCESS_KEY_ID", "\"${project.findProperty("CLOUDFLARE_ACCESS_KEY_ID") ?: ""}\"")
+            buildConfigField("String", "CLOUDFLARE_SECRET_ACCESS_KEY", "\"${project.findProperty("CLOUDFLARE_SECRET_ACCESS_KEY") ?: ""}\"")
+            buildConfigField("String", "CLOUDFLARE_BUCKET_NAME", "\"${project.findProperty("CLOUDFLARE_BUCKET_NAME") ?: ""}\"")
+            buildConfigField("String", "CLOUDFLARE_PUBLIC_DOMAIN", "\"${project.findProperty("CLOUDFLARE_PUBLIC_DOMAIN") ?: ""}\"")
+            buildConfigField("String", "CLOUDINARY_API_KEY", "\"${project.findProperty("CLOUDINARY_API_KEY") ?: ""}\"")
+            buildConfigField("String", "CLOUDINARY_API_SECRET", "\"${project.findProperty("CLOUDINARY_API_SECRET") ?: ""}\"")
             buildConfigField("String", "MAPBOX_ACCESS_TOKEN", "\"${project.findProperty("MAPBOX_ACCESS_TOKEN") ?: ""}\"")
             buildConfigField("String", "GOOGLE_MAPS_API_KEY", "\"${project.findProperty("GOOGLE_MAPS_API_KEY") ?: ""}\"")
-            // Mercado Pago Checkout API - DEBUG usa credenciales TEST para tarjetas de prueba
+            // Mercado Pago Checkout API - DEBUG usa credenciales TEST si están configuradas
             // Para obtener credenciales TEST: https://www.mercadopago.com.uy/developers/panel/app -> Credenciales de prueba
             // Agregar MP_TEST_PUBLIC_KEY y MP_TEST_ACCESS_TOKEN en gradle.properties
-            buildConfigField("String", "MP_PUBLIC_KEY", "\"${project.findProperty("MP_TEST_PUBLIC_KEY") ?: project.findProperty("MP_PUBLIC_KEY") ?: "TEST-f317b894-f344-4a2d-a430-5879dbd9cef2"}\"")
-            buildConfigField("String", "MP_ACCESS_TOKEN", "\"${project.findProperty("MP_TEST_ACCESS_TOKEN") ?: project.findProperty("MP_ACCESS_TOKEN") ?: "TEST-5371485033290040-020723-f545050d5138976f10770ec01b67ad38-1622183330"}\"")
+            buildConfigField("String", "MP_PUBLIC_KEY", "\"${project.findProperty("MP_TEST_PUBLIC_KEY") ?: project.findProperty("MP_PUBLIC_KEY") ?: ""}\"")
+            // HIGH-2: MP_ACCESS_TOKEN eliminado
+            buildConfigField("String", "MERCADOPAGO_CLIENT_ID", "\"${project.findProperty("MERCADOPAGO_CLIENT_ID") ?: ""}\"")
             // AI Support Backend URL - for debug, use local IP or deployed URL
-            buildConfigField("String", "AI_SUPPORT_URL", "\"${project.findProperty("AI_SUPPORT_URL") ?: "https://rendly-ai.up.railway.app"}\"")
+            buildConfigField("String", "AI_SUPPORT_URL", "\"${project.findProperty("AI_SUPPORT_URL") ?: "https://vinzay-ai.up.railway.app"}\"")
         }
     }
     
@@ -117,10 +139,6 @@ android {
         buildConfig = true
     }
 
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.8"
-    }
-
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
@@ -128,9 +146,17 @@ android {
     }
 }
 
+
+
+composeCompiler {
+    // Stability config: marca colecciones/fechas como estables para que
+    // los items del feed sean skippable durante el scroll
+    stabilityConfigurationFiles.add(project.layout.projectDirectory.file("compose_compiler_config.conf"))
+}
+
 dependencies {
     // Compose BOM
-    val composeBom = platform("androidx.compose:compose-bom:2023.10.01")
+    val composeBom = platform("androidx.compose:compose-bom:2025.06.01")
     implementation(composeBom)
     androidTestImplementation(composeBom)
 
@@ -145,47 +171,42 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-test-manifest")
 
     // Compose Integration
-    implementation("androidx.activity:activity-compose:1.8.2")
-    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.7.0")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
-    implementation("androidx.lifecycle:lifecycle-process:2.7.0") // Para detectar app en primer plano
-    
+    implementation("androidx.activity:activity-compose:1.10.1")
+    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.9.1")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.9.1")
+    implementation("androidx.lifecycle:lifecycle-process:2.9.1") // Para detectar app en primer plano
+
     // Navigation
-    implementation("androidx.navigation:navigation-compose:2.7.6")
+    implementation("androidx.navigation:navigation-compose:2.9.0")
 
     // AndroidX Core
-    implementation("androidx.core:core-ktx:1.12.0")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
-    
+    implementation("androidx.core:core-ktx:1.16.0")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.9.1")
+
     // Coroutines
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
-    
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.2")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
+
     // Hilt (Dependency Injection)
-    implementation("com.google.dagger:hilt-android:2.48")
-    kapt("com.google.dagger:hilt-compiler:2.48")
-    implementation("androidx.hilt:hilt-navigation-compose:1.1.0")
-    
+    implementation("com.google.dagger:hilt-android:2.56.2")
+    kapt("com.google.dagger:hilt-compiler:2.56.2")
+    implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
+
     // Image Loading - Coil (Ultra optimizado)
-    implementation("io.coil-kt:coil-compose:2.5.0")
-    implementation("io.coil-kt:coil-gif:2.5.0")
-    
+    implementation("io.coil-kt:coil-compose:2.7.0")
+    implementation("io.coil-kt:coil-gif:2.7.0")
+
     // Room Database
-    val roomVersion = "2.6.1"
+    val roomVersion = "2.7.1"
     implementation("androidx.room:room-runtime:$roomVersion")
     implementation("androidx.room:room-ktx:$roomVersion")
     kapt("androidx.room:room-compiler:$roomVersion")
     
     // Networking
-    implementation("com.squareup.retrofit2:retrofit:2.9.0")
-    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
-    implementation("com.squareup.okhttp3:logging-interceptor:4.11.0")
     val ktorVersion = "2.3.7"
     implementation("io.ktor:ktor-client-android:$ktorVersion")
     implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
     implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
-    implementation("io.ktor:ktor-client-logging:$ktorVersion")
-    implementation("io.ktor:ktor-client-cio:2.3.5")
     // Ktor OkHttp engine con soporte de WebSockets (requerido para Supabase Realtime)
     implementation("io.ktor:ktor-client-okhttp:$ktorVersion")
 
@@ -204,26 +225,27 @@ dependencies {
     // El checkout se carga en una WebView dentro de la app - sin abrir navegador
 
     // Serialization
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.2")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.1")
     
     // DataStore (mejor que SharedPreferences)
     implementation("androidx.datastore:datastore-preferences:1.0.0")
     
     // Paging 3 (para scroll infinito optimizado)
-    implementation("androidx.paging:paging-runtime-ktx:3.2.1")
-    implementation("androidx.paging:paging-compose:3.2.1")
+    // DESHABILITADO: no se usa actualmente, se maneja con LazyColumn manual
+    // implementation("androidx.paging:paging-runtime-ktx:3.2.1")
+    // implementation("androidx.paging:paging-compose:3.2.1")
     
     // WorkManager (for background cache sync)
     implementation("androidx.work:work-runtime-ktx:2.9.0")
     
-    // Splash Screen
-    implementation("androidx.core:core-splashscreen:1.0.1")
+    // Splash Screen (removido intencionalmente - se usa XML splash nativo)
+    // implementation("androidx.core:core-splashscreen:1.0.1")
     
     // App Startup Library - optimizes ContentProvider initialization
     implementation("androidx.startup:startup-runtime:1.1.1")
     
     // Profile Installer - enables Baseline Profile on older devices
-    implementation("androidx.profileinstaller:profileinstaller:1.3.1")
+    implementation("androidx.profileinstaller:profileinstaller:1.4.1")
     
     // Baseline Profile
     baselineProfile(project(":benchmark"))
@@ -235,27 +257,29 @@ dependencies {
     implementation("androidx.camera:camera-lifecycle:$cameraxVersion")
     implementation("androidx.camera:camera-view:$cameraxVersion")
     
-    // QR Code Generation & Scanning
+    // QR Code Generation
     implementation("com.google.zxing:core:3.5.2")
-    implementation("com.google.mlkit:barcode-scanning:17.2.0")
     
     // Media3 ExoPlayer for video playback
-    val media3Version = "1.2.0"
+    val media3Version = "1.6.1"
     implementation("androidx.media3:media3-exoplayer:$media3Version")
     implementation("androidx.media3:media3-ui:$media3Version")
-    
+
     // Accompanist Permissions
-    implementation("com.google.accompanist:accompanist-permissions:0.32.0")
+    implementation("com.google.accompanist:accompanist-permissions:0.37.0")
     
     // Biometric Authentication
     implementation("androidx.biometric:biometric:1.1.0")
     
     // Google Play Services Location (GPS for AddressEngine)
     implementation("com.google.android.gms:play-services-location:21.0.1")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.7.3")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.10.2")
     
-    // WebRTC para streaming en vivo
-    implementation("io.getstream:stream-webrtc-android:1.1.1")
+    // LiveKit para streaming en vivo (reemplaza WebRTC directo)
+    implementation("io.livekit:livekit-android:1.4.0")
+    
+    // Sentry (Error Tracking)
+    implementation("io.sentry:sentry-android:7.20.0")
     
     // Firebase (Push Notifications)
     implementation(platform("com.google.firebase:firebase-bom:32.7.0"))
@@ -264,6 +288,10 @@ dependencies {
     
     // Testing
     testImplementation("junit:junit:4.13.2")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.10.2")
+    testImplementation("io.mockk:mockk:1.13.14")
+    testImplementation("app.cash.turbine:turbine:1.2.0")
+    testImplementation("org.robolectric:robolectric:4.14.1")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
