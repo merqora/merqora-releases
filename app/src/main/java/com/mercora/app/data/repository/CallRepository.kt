@@ -96,14 +96,37 @@ object CallRepository {
     private var isResetting = false
     private var isEnding = false
     
-    // STUN/TURN servers
-    private val iceServers = listOf(
-        PeerConnection.IceServer.builder("stun:stun.l.google.com:19302").createIceServer(),
-        PeerConnection.IceServer.builder("stun:stun1.l.google.com:19302").createIceServer(),
-        PeerConnection.IceServer.builder("stun:stun2.l.google.com:19302").createIceServer(),
-        PeerConnection.IceServer.builder("stun:stun3.l.google.com:19302").createIceServer(),
-        PeerConnection.IceServer.builder("stun:stun4.l.google.com:19302").createIceServer()
-    )
+    // STUN/TURN servers with Metered TURN relay
+    private val iceServers = mutableListOf<PeerConnection.IceServer>()
+
+    private fun refreshIceServers() {
+        iceServers.clear()
+        iceServers.add(PeerConnection.IceServer.builder("stun:stun.l.google.com:19302").createIceServer())
+        iceServers.add(PeerConnection.IceServer.builder("stun:stun.relay.metered.ca:80").createIceServer())
+        try {
+            val json = java.net.URL("https://mercora-calls.metered.live/api/v1/turn/credentials?apiKey=***REMOVED***").readText()
+            val arr = org.json.JSONArray(json)
+            for (i in 0 until arr.length()) {
+                val obj = arr.getJSONObject(i)
+                val urls = obj.getString("urls")
+                if (urls.startsWith("turn") || urls.startsWith("turns")) {
+                    val username = obj.optString("username", "")
+                    val credential = obj.optString("credential", "")
+                    iceServers.add(PeerConnection.IceServer.builder(urls)
+                        .setUsername(username).setPassword(credential).createIceServer())
+                }
+            }
+            Log.d(TAG, "TURN credentials refreshed: ${iceServers.size} servers")
+        } catch (e: Exception) {
+            Log.w(TAG, "Failed to fetch TURN, using fallback", e)
+            iceServers.add(PeerConnection.IceServer.builder("turn:global.relay.metered.ca:80")
+                .setUsername("23f3fdd34f1367daeb9f589b").setPassword("Wgx1x+SVHIDE+r3K").createIceServer())
+            iceServers.add(PeerConnection.IceServer.builder("turn:global.relay.metered.ca:443")
+                .setUsername("23f3fdd34f1367daeb9f589b").setPassword("Wgx1x+SVHIDE+r3K").createIceServer())
+            iceServers.add(PeerConnection.IceServer.builder("turns:global.relay.metered.ca:443?transport=tcp")
+                .setUsername("23f3fdd34f1367daeb9f589b").setPassword("Wgx1x+SVHIDE+r3K").createIceServer())
+        }
+    }
     
     // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
     // INICIALIZACIÃ“N
@@ -117,6 +140,7 @@ object CallRepository {
         
         appContext = context.applicationContext
         audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        refreshIceServers()
         vibrator = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             val vm = context.getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as VibratorManager
             vm.defaultVibrator
@@ -753,7 +777,7 @@ object CallRepository {
                             SupabaseClient.database
                                 .from("usuarios")
                                 .select { filter { eq("user_id", callerId) } }
-                                .decodeSingleOrNull<com.vinzay.app.data.model.Usuario>()
+                                .decodeSingleOrNull<com.mercora.app.data.model.Usuario>()
                         } catch (_: Exception) { null }
                         
                         val incomingState = CallState(
@@ -1133,7 +1157,7 @@ object CallRepository {
                 SupabaseClient.database
                     .from("usuarios")
                     .select { filter { eq("user_id", currentUserId) } }
-                    .decodeSingleOrNull<com.vinzay.app.data.model.Usuario>()
+                    .decodeSingleOrNull<com.mercora.app.data.model.Usuario>()
             } catch (_: Exception) { null }
             
             val callerName = callerInfo?.username ?: "Usuario"
