@@ -1,11 +1,11 @@
-plugins {
+﻿plugins {
     id("com.android.test")
     id("org.jetbrains.kotlin.android")
     id("androidx.baselineprofile")
 }
 
 android {
-    namespace = "com.rendly.benchmark"
+    namespace = "com.mercora.benchmark"
     compileSdk = 35
 
     compileOptions {

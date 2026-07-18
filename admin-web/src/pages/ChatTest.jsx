@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+﻿import { useState, useEffect, useRef } from 'react'
 import { 
   MessageSquare,
   Search,
@@ -17,10 +17,10 @@ import { supabase } from '../supabaseClient'
 const SUPABASE_URL = 'https://xyrpmmnegzjkbysoocpc.supabase.co'
 const SUPABASE_ANON_KEY = '***REMOVED_ANON_KEY***'
 
-// Función para enviar push notification via Supabase Edge Function (FCM v1 API)
+// FunciÃ³n para enviar push notification via Supabase Edge Function (FCM v1 API)
 async function sendPushNotification(tokens, title, body, data = {}) {
   if (!tokens || tokens.length === 0) {
-    console.log('⚠️ No hay tokens FCM para enviar')
+    console.log('âš ï¸ No hay tokens FCM para enviar')
     return { success: false, error: 'No hay tokens' }
   }
 
@@ -36,15 +36,15 @@ async function sendPushNotification(tokens, title, body, data = {}) {
     })
 
     const result = await response.json()
-    console.log('📬 FCM v1 Response:', result)
+    console.log('ðŸ“¬ FCM v1 Response:', result)
     return result.success ? { success: true, result } : { success: false, error: result.error || 'Error desconocido' }
   } catch (error) {
-    console.error('❌ Error enviando push:', error)
+    console.error('âŒ Error enviando push:', error)
     return { success: false, error: error.message }
   }
 }
 
-// Obtener tokens FCM de un usuario usando función RPC
+// Obtener tokens FCM de un usuario usando funciÃ³n RPC
 async function getUserFCMTokens(userId) {
   const { data, error } = await supabase.rpc('get_user_fcm_tokens', { target_user_id: userId })
   if (error) {
@@ -64,7 +64,7 @@ function ChatTest() {
   const [searchQuery, setSearchQuery] = useState('')
   const [searching, setSearching] = useState(false)
   const [selectedUser, setSelectedUser] = useState(null)
-  const [senderUser, setSenderUser] = useState(null) // Usuario que "envía" el mensaje
+  const [senderUser, setSenderUser] = useState(null) // Usuario que "envÃ­a" el mensaje
   const [messages, setMessages] = useState([])
   const [newMessage, setNewMessage] = useState('')
   const [loading, setLoading] = useState(false)
@@ -89,7 +89,7 @@ function ChatTest() {
           table: 'messages'
         },
         (payload) => {
-          console.log('🔔 Nuevo mensaje:', payload.new)
+          console.log('ðŸ”” Nuevo mensaje:', payload.new)
           if (conversationId && payload.new.conversation_id === conversationId) {
             setMessages(prev => [...prev, payload.new])
           }
@@ -145,7 +145,7 @@ function ChatTest() {
     setConversationId(null)
     setMessages([])
     
-    // Si ya hay un remitente, buscar o crear conversación
+    // Si ya hay un remitente, buscar o crear conversaciÃ³n
     if (senderUser) {
       await findOrCreateConversation(senderUser.user_id, user.user_id)
     }
@@ -154,7 +154,7 @@ function ChatTest() {
   async function selectSender(user) {
     setSenderUser(user)
     
-    // Si ya hay un destinatario, buscar o crear conversación
+    // Si ya hay un destinatario, buscar o crear conversaciÃ³n
     if (selectedUser) {
       await findOrCreateConversation(user.user_id, selectedUser.user_id)
     }
@@ -163,7 +163,7 @@ function ChatTest() {
   async function findOrCreateConversation(senderId, recipientId) {
     setLoading(true)
     try {
-      // Buscar conversación existente entre estos dos usuarios
+      // Buscar conversaciÃ³n existente entre estos dos usuarios
       const { data: senderParticipations } = await supabase
         .from('conversation_participants')
         .select('conversation_id')
@@ -179,16 +179,16 @@ function ChatTest() {
           .in('conversation_id', senderConvIds)
 
         if (recipientParticipations?.length > 0) {
-          // Conversación encontrada
+          // ConversaciÃ³n encontrada
           const convId = recipientParticipations[0].conversation_id
           setConversationId(convId)
           await loadMessages(convId)
-          showNotificationToast('✅ Conversación existente encontrada', 'success')
+          showNotificationToast('âœ… ConversaciÃ³n existente encontrada', 'success')
           return
         }
       }
 
-      // Crear nueva conversación
+      // Crear nueva conversaciÃ³n
       const { data: newConv, error: convError } = await supabase
         .from('conversations')
         .insert({})
@@ -205,7 +205,7 @@ function ChatTest() {
 
       setConversationId(newConv.id)
       setMessages([])
-      showNotificationToast('✅ Nueva conversación creada', 'success')
+      showNotificationToast('âœ… Nueva conversaciÃ³n creada', 'success')
 
     } catch (error) {
       console.error('Error finding/creating conversation:', error)
@@ -250,7 +250,7 @@ function ChatTest() {
 
       if (msgError) throw msgError
 
-      // Actualizar conversación
+      // Actualizar conversaciÃ³n
       await supabase
         .from('conversations')
         .update({
@@ -277,9 +277,9 @@ function ChatTest() {
 
       setNewMessage('')
       
-      // 🔔 ENVIAR PUSH NOTIFICATION
+      // ðŸ”” ENVIAR PUSH NOTIFICATION
       const tokens = await getUserFCMTokens(selectedUser.user_id)
-      console.log(`📱 Tokens FCM encontrados: ${tokens.length}`)
+      console.log(`ðŸ“± Tokens FCM encontrados: ${tokens.length}`)
       
       if (tokens.length > 0) {
         const pushResult = await sendPushNotification(
@@ -295,12 +295,12 @@ function ChatTest() {
         )
         
         if (pushResult.success) {
-          showNotificationToast(`✅ Mensaje + Push enviado a @${selectedUser.username}`, 'success')
+          showNotificationToast(`âœ… Mensaje + Push enviado a @${selectedUser.username}`, 'success')
         } else {
-          showNotificationToast(`✅ Mensaje enviado (push falló)`, 'warning')
+          showNotificationToast(`âœ… Mensaje enviado (push fallÃ³)`, 'warning')
         }
       } else {
-        showNotificationToast(`✅ Mensaje enviado a @${selectedUser.username}`, 'success')
+        showNotificationToast(`âœ… Mensaje enviado a @${selectedUser.username}`, 'success')
       }
 
     } catch (error) {
@@ -338,7 +338,7 @@ function ChatTest() {
             Test de Chat
           </h1>
           <p className="text-text-muted mt-1">
-            Envía mensajes como cualquier usuario a cualquier otro usuario. Verifica el badge en la app.
+            EnvÃ­a mensajes como cualquier usuario a cualquier otro usuario. Verifica el badge en la app.
           </p>
         </div>
 
@@ -369,18 +369,18 @@ function ChatTest() {
 
       {/* Info box */}
       <div className="bg-blue-500/10 border border-blue-500/30 rounded-xl p-4">
-        <h3 className="font-semibold text-blue-400 mb-2">💬 Cómo funciona:</h3>
+        <h3 className="font-semibold text-blue-400 mb-2">ðŸ’¬ CÃ³mo funciona:</h3>
         <ol className="list-decimal list-inside space-y-1 text-text-secondary text-sm">
-          <li>Busca y selecciona el usuario <strong>destinatario</strong> (quien recibirá el mensaje)</li>
-          <li>Busca y selecciona el usuario <strong>remitente</strong> (en nombre de quién envías)</li>
-          <li>Escribe un mensaje y envía</li>
-          <li>El destinatario verá el badge azul con el número en el icono de chat 💬</li>
+          <li>Busca y selecciona el usuario <strong>destinatario</strong> (quien recibirÃ¡ el mensaje)</li>
+          <li>Busca y selecciona el usuario <strong>remitente</strong> (en nombre de quiÃ©n envÃ­as)</li>
+          <li>Escribe un mensaje y envÃ­a</li>
+          <li>El destinatario verÃ¡ el badge azul con el nÃºmero en el icono de chat ðŸ’¬</li>
         </ol>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* User Search Panel */}
-        <div className="bg-vinzay-surface rounded-xl p-4 space-y-4">
+        <div className="bg-mercora-surface rounded-xl p-4 space-y-4">
           <h3 className="font-semibold text-text-primary flex items-center gap-2">
             <Search className="w-5 h-5" />
             Buscar usuarios
@@ -393,7 +393,7 @@ function ChatTest() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && searchUsers()}
-              className="flex-1 px-4 py-2 bg-vinzay-bg border border-primary/20 rounded-xl text-text-primary placeholder-text-muted focus:outline-none focus:border-primary transition-colors"
+              className="flex-1 px-4 py-2 bg-mercora-bg border border-primary/20 rounded-xl text-text-primary placeholder-text-muted focus:outline-none focus:border-primary transition-colors"
             />
             <button
               onClick={searchUsers}
@@ -414,7 +414,7 @@ function ChatTest() {
               users.map(user => (
                 <div 
                   key={user.user_id}
-                  className="flex items-center gap-3 p-3 bg-vinzay-bg rounded-lg hover:bg-primary/10 transition-colors"
+                  className="flex items-center gap-3 p-3 bg-mercora-bg rounded-lg hover:bg-primary/10 transition-colors"
                 >
                   {user.avatar_url ? (
                     <img 
@@ -441,20 +441,20 @@ function ChatTest() {
                       className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
                         selectedUser?.user_id === user.user_id
                           ? 'bg-green-500/20 text-green-400'
-                          : 'bg-vinzay-surface text-text-secondary hover:bg-green-500/20 hover:text-green-400'
+                          : 'bg-mercora-surface text-text-secondary hover:bg-green-500/20 hover:text-green-400'
                       }`}
                     >
-                      {selectedUser?.user_id === user.user_id ? '✓ Destino' : 'Destino'}
+                      {selectedUser?.user_id === user.user_id ? 'âœ“ Destino' : 'Destino'}
                     </button>
                     <button
                       onClick={() => selectSender(user)}
                       className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
                         senderUser?.user_id === user.user_id
                           ? 'bg-blue-500/20 text-blue-400'
-                          : 'bg-vinzay-surface text-text-secondary hover:bg-blue-500/20 hover:text-blue-400'
+                          : 'bg-mercora-surface text-text-secondary hover:bg-blue-500/20 hover:text-blue-400'
                       }`}
                     >
-                      {senderUser?.user_id === user.user_id ? '✓ Remitente' : 'Remitente'}
+                      {senderUser?.user_id === user.user_id ? 'âœ“ Remitente' : 'Remitente'}
                     </button>
                   </div>
                 </div>
@@ -464,12 +464,12 @@ function ChatTest() {
         </div>
 
         {/* Chat Panel */}
-        <div className="bg-vinzay-surface rounded-xl p-4 flex flex-col h-[500px]">
+        <div className="bg-mercora-surface rounded-xl p-4 flex flex-col h-[500px]">
           {/* Chat header */}
           <div className="flex items-center gap-3 pb-4 border-b border-primary/10">
             {selectedUser && senderUser ? (
               <>
-                <button onClick={resetSelection} className="p-2 hover:bg-vinzay-bg rounded-lg transition-colors">
+                <button onClick={resetSelection} className="p-2 hover:bg-mercora-bg rounded-lg transition-colors">
                   <ArrowLeft className="w-4 h-4 text-text-muted" />
                 </button>
                 <div className="flex-1">
@@ -504,7 +504,7 @@ function ChatTest() {
                   <div className={`max-w-[80%] px-4 py-2 rounded-2xl ${
                     isFromSender 
                       ? 'bg-blue-500 text-white rounded-br-sm' 
-                      : 'bg-vinzay-bg text-text-primary rounded-bl-sm'
+                      : 'bg-mercora-bg text-text-primary rounded-bl-sm'
                   }`}>
                     <p className="text-sm">{msg.content}</p>
                     <p className={`text-xs mt-1 ${isFromSender ? 'text-blue-200' : 'text-text-muted'}`}>
@@ -526,7 +526,7 @@ function ChatTest() {
                 value={newMessage}
                 onChange={(e) => setNewMessage(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && sendMessage()}
-                className="flex-1 px-4 py-2 bg-vinzay-bg border border-primary/20 rounded-xl text-text-primary placeholder-text-muted focus:outline-none focus:border-primary transition-colors"
+                className="flex-1 px-4 py-2 bg-mercora-bg border border-primary/20 rounded-xl text-text-primary placeholder-text-muted focus:outline-none focus:border-primary transition-colors"
               />
               <button
                 onClick={sendMessage}
@@ -542,26 +542,26 @@ function ChatTest() {
 
       {/* Status cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="bg-vinzay-surface p-4 rounded-xl">
+        <div className="bg-mercora-surface p-4 rounded-xl">
           <p className="text-text-muted text-sm">Remitente</p>
           <p className="text-lg font-bold text-blue-400">
             {senderUser ? `@${senderUser.username}` : '-'}
           </p>
         </div>
-        <div className="bg-vinzay-surface p-4 rounded-xl">
+        <div className="bg-mercora-surface p-4 rounded-xl">
           <p className="text-text-muted text-sm">Destinatario</p>
           <p className="text-lg font-bold text-green-400">
             {selectedUser ? `@${selectedUser.username}` : '-'}
           </p>
         </div>
-        <div className="bg-vinzay-surface p-4 rounded-xl">
+        <div className="bg-mercora-surface p-4 rounded-xl">
           <p className="text-text-muted text-sm">Mensajes</p>
           <p className="text-lg font-bold text-text-primary">{messages.length}</p>
         </div>
-        <div className="bg-vinzay-surface p-4 rounded-xl">
-          <p className="text-text-muted text-sm">Conversación</p>
+        <div className="bg-mercora-surface p-4 rounded-xl">
+          <p className="text-text-muted text-sm">ConversaciÃ³n</p>
           <p className="text-lg font-bold text-text-primary">
-            {conversationId ? '✅' : '❌'}
+            {conversationId ? 'âœ…' : 'âŒ'}
           </p>
         </div>
       </div>

@@ -743,5 +743,65 @@ binzei.com, fenzei.com, fonzei.com, banzoi.com, binzoi.com, venzoi.com, vezei.co
 | buyvivel.com | Buy live |
 | livelan.com | Live lan |
 
+---
+
+# 🆕🆕🆕 NOMBRES PREMIUM ABSTRACTOS (estilo Ferrari, Armani, Versace)
+> 7 letras, sonido italiano/europeo, abstractos, NO descriptivos
+
+## 🏆 TOP 10 premium
+
+| # | .com | Suena como | Ecosistema |
+|---|------|-----------|------------|
+| 1 | **vilveri.com** 🏆 | Marca italiana de lujo. Como Vilveri | Vilveri Pagos ★ Envíos ★ Shop ★ Express |
+| 2 | **vorveri.com** 🏆 | Marca europea premium | Vorveri Pagos ★ |
+| 3 | **lorveri.com** 🏆 | Apellido italiano de diseñador | Lorveri Pagos ★ |
+| 4 | **vilvari.com** | Sonido italiano elegante | Vilvari Pagos ★ |
+| 5 | **vorvari.com** | Sonido europeo premium | Vorvari Pagos ★ |
+| 6 | **bilveri.com** | Como Bilveri (marca inventada) | Bilveri Pagos ★ |
+| 7 | **lorelvi.com** | Elegante, moderno | Lorelvi Pagos ★ |
+| 8 | **virelvi.com** | Tech + italiano | Virelvi Pagos ★ |
+| 9 | **folveri.com** | Italiano único | Folvari Pagos ★ |
+| 10 | **filvari.com** | Italiano fresco | Filvari Pagos ★ |
+
+## Más premium disponibles
+
+| .com | Suena |
+|------|-------|
+| bilvari.com | Bil-va-ri |
+| folvari.com | Fol-va-ri |
+| forvari.com | For-va-ri |
+| folvori.com | Fol-vo-ri |
+| nalvori.com | Nal-vo-ri |
+| lervani.com | Ler-va-ni |
+| farelvi.com | Fa-rel-vi |
+| forelvi.com | Fo-rel-vi |
+| norelvi.com | No-rel-vi |
+| vorelvo.com | Vo-rel-vo |
+| farelvo.com | Fa-rel-vo |
+| forelvo.com | Fo-rel-vo |
+| vorelva.com | Vo-rel-va |
+| farelva.com | Fa-rel-va |
+| forelva.com | Fo-rel-va |
+| lorelva.com | Lo-rel-va |
+| fernoli.com | Fer-no-li |
+| varnoli.com | Var-no-li |
+| falire.com | Fa-li-re |
+| belorev.com | Be-lo-rev |
+| felorev.com | Fe-lo-rev |
+| nalorev.com | Na-lo-rev |
+| salorev.com | Sa-lo-rev |
+| vonave.com | Vo-na-ve |
+
 ## Y los originales que ya teníamos (de antes de esta ronda)
 vinzay.com, venova.com, valova.com, berola.com, ferola.com, viliva.com, velivo.com, viniva.com, feliva.com, voliva.com, nerola.com, foravi.com, farovi.com
+
+---
+
+# ✅ DECISIÓN FINAL: MERCORA (julio 2026)
+
+**Elegido:** mercora.app ✅ (disponible)
+
+**Concepto:** Mercado + Cora(ção). Social commerce, Uruguay primero.
+**Ecosistema:** Mercora Pagos, Mercora Envíos, Mercora Shop, Mercora Express.
+
+**Largo plazo:** mercora.com está registrado (dueño particular, oferta mínima ~USD $3.800). Se intentará comprar cuando el proyecto tenga fondos.

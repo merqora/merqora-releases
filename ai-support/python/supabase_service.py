@@ -1,8 +1,8 @@
-"""
-Supabase Service - Persistencia y aprendizaje automático
+﻿"""
+Supabase Service - Persistencia y aprendizaje automÃ¡tico
 
 Guarda todas las conversaciones, mensajes y feedback en Supabase.
-Implementa aprendizaje automático basado en interacciones.
+Implementa aprendizaje automÃ¡tico basado en interacciones.
 """
 
 import os
@@ -23,7 +23,7 @@ logger = structlog.get_logger()
 
 @dataclass
 class ConversationRecord:
-    """Registro de conversación"""
+    """Registro de conversaciÃ³n"""
     id: str
     user_id: str
     session_id: str
@@ -50,12 +50,12 @@ class MessageRecord:
 class SupabaseService:
     """
     Servicio para interactuar con Supabase.
-    Guarda conversaciones, mensajes y maneja el aprendizaje automático.
+    Guarda conversaciones, mensajes y maneja el aprendizaje automÃ¡tico.
     """
     
     def __init__(self):
-        self.supabase_url = os.getenv("VINZAY_AI_SUPABASE_URL", os.getenv("SUPABASE_URL", ""))
-        self.supabase_key = os.getenv("VINZAY_AI_SUPABASE_KEY", os.getenv("SUPABASE_SERVICE_KEY", ""))
+        self.supabase_url = os.getenv("mercora_ai_SUPABASE_URL", os.getenv("SUPABASE_URL", ""))
+        self.supabase_key = os.getenv("mercora_ai_SUPABASE_KEY", os.getenv("SUPABASE_SERVICE_KEY", ""))
         
         self.is_configured = bool(self.supabase_url and self.supabase_key)
         
@@ -73,7 +73,7 @@ class SupabaseService:
         }
     
     async def _request(self, method: str, endpoint: str, data: Dict = None) -> Optional[Dict]:
-        """Hace una petición a Supabase REST API"""
+        """Hace una peticiÃ³n a Supabase REST API"""
         if not self.is_configured:
             return None
         
@@ -111,7 +111,7 @@ class SupabaseService:
             return None
     
     async def create_conversation(self, user_id: str, session_id: str) -> Optional[str]:
-        """Crea una nueva conversación"""
+        """Crea una nueva conversaciÃ³n"""
         data = {
             "user_id": user_id,
             "session_id": session_id,
@@ -128,8 +128,8 @@ class SupabaseService:
         return None
     
     async def get_or_create_conversation(self, user_id: str, session_id: str) -> Optional[str]:
-        """Obtiene conversación existente o crea una nueva"""
-        # Buscar conversación activa
+        """Obtiene conversaciÃ³n existente o crea una nueva"""
+        # Buscar conversaciÃ³n activa
         endpoint = f"support_conversations?user_id=eq.{user_id}&session_id=eq.{session_id}&status=eq.active&limit=1"
         result = await self._request("GET", endpoint)
         
@@ -140,20 +140,20 @@ class SupabaseService:
         return await self.create_conversation(user_id, session_id)
     
     async def is_conversation_escalated(self, conversation_id: str) -> bool:
-        """Verifica si una conversación está escalada a agente humano.
+        """Verifica si una conversaciÃ³n estÃ¡ escalada a agente humano.
         
-        Una conversación se considera escalada si:
-        1. Hay una escalación pendiente en ai_escalations, O
-        2. Hay al menos un mensaje del agente humano (role='human_support') en la conversación
+        Una conversaciÃ³n se considera escalada si:
+        1. Hay una escalaciÃ³n pendiente en ai_escalations, O
+        2. Hay al menos un mensaje del agente humano (role='human_support') en la conversaciÃ³n
         """
-        # Verificar escalación pendiente
+        # Verificar escalaciÃ³n pendiente
         endpoint = f"ai_escalations?conversation_id=eq.{conversation_id}&status=eq.pending&limit=1"
         escalation_result = await self._request("GET", endpoint)
         if escalation_result and len(escalation_result) > 0:
             logger.info("conversation_escalated_pending", conversation_id=conversation_id)
             return True
         
-        # Verificar si hay mensajes del agente humano en la conversación
+        # Verificar si hay mensajes del agente humano en la conversaciÃ³n
         messages_endpoint = f"support_messages?conversation_id=eq.{conversation_id}&role=eq.human_support&limit=1"
         human_messages = await self._request("GET", messages_endpoint)
         if human_messages and len(human_messages) > 0:
@@ -168,7 +168,7 @@ class SupabaseService:
         content: str,
         analysis: Dict
     ) -> Optional[str]:
-        """Guarda mensaje del usuario con análisis"""
+        """Guarda mensaje del usuario con anÃ¡lisis"""
         data = {
             "conversation_id": conversation_id,
             "role": "user",
@@ -223,7 +223,7 @@ class SupabaseService:
         confidence_score: int,
         detected_intent: str
     ) -> Optional[str]:
-        """Crea registro de escalación"""
+        """Crea registro de escalaciÃ³n"""
         data = {
             "conversation_id": conversation_id,
             "user_id": user_id,
@@ -239,7 +239,7 @@ class SupabaseService:
             esc_id = result[0].get("id")
             logger.info("escalation_created", escalation_id=esc_id)
             
-            # Actualizar estado de conversación
+            # Actualizar estado de conversaciÃ³n
             await self._request(
                 "PATCH", 
                 f"support_conversations?id=eq.{conversation_id}",
@@ -275,7 +275,7 @@ class SupabaseService:
     
     async def get_learning_data(self, limit: int = 100) -> List[Dict]:
         """
-        Obtiene datos para aprendizaje automático.
+        Obtiene datos para aprendizaje automÃ¡tico.
         Retorna mensajes con feedback positivo para entrenar el modelo.
         """
         if not self.is_configured:
@@ -307,7 +307,7 @@ class SupabaseService:
         conversation_id: str, 
         limit: int = 20
     ) -> List[Dict]:
-        """Obtiene historial de conversación"""
+        """Obtiene historial de conversaciÃ³n"""
         endpoint = f"support_messages?conversation_id=eq.{conversation_id}&order=created_at.asc&limit={limit}"
         
         result = await self._request("GET", endpoint)
@@ -321,11 +321,11 @@ class SupabaseService:
         return []
     
     async def get_stats(self) -> Dict:
-        """Obtiene estadísticas de la IA"""
+        """Obtiene estadÃ­sticas de la IA"""
         if not self.is_configured:
             return {"error": "Supabase not configured"}
         
-        # Obtener stats de últimos 30 días
+        # Obtener stats de Ãºltimos 30 dÃ­as
         result = await self._request("GET", "v_ai_stats_summary")
         
         if result and len(result) > 0:
@@ -336,7 +336,7 @@ class SupabaseService:
     async def get_agent_responses_for_learning(self, limit: int = 50) -> List[Dict]:
         """
         Obtiene respuestas de agentes humanos para aprendizaje.
-        La IA aprende cómo los agentes resuelven problemas.
+        La IA aprende cÃ³mo los agentes resuelven problemas.
         """
         if not self.is_configured:
             return []
@@ -364,7 +364,7 @@ class SupabaseService:
     async def check_for_similar_query(self, user_message: str) -> Optional[str]:
         """
         Busca si existe una respuesta de agente para una consulta similar.
-        Usa búsqueda simple por palabras clave.
+        Usa bÃºsqueda simple por palabras clave.
         """
         if not self.is_configured:
             return None
@@ -401,9 +401,9 @@ class SupabaseService:
         
         return best_match
     
-    # ═══════════════════════════════════════
+    # â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
     # AI TRAINING DATA METHODS
-    # ═══════════════════════════════════════
+    # â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
     
     async def save_training_data(
         self,

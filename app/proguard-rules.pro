@@ -6,7 +6,7 @@
 # ─────────────────────────────────────────────────────────────────────────────────
 # R8 AGGRESSIVE OPTIMIZATIONS
 # ─────────────────────────────────────────────────────────────────────────────────
--optimizationpasses 7
+-optimizationpasses 2
 -dontusemixedcaseclassnames
 -allowaccessmodification
 -repackageclasses ''

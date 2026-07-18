@@ -25,6 +25,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Vinzay"
+rootProject.name = "Mercora"
 include(":app")
 include(":benchmark")

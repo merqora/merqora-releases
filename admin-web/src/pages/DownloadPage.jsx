@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+﻿import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import {
   Download, ArrowLeft, Shield, CheckCircle, Smartphone,
@@ -33,7 +33,7 @@ export default function DownloadPage() {
         id: 'fallback',
         version_name: '1.0.0',
         version_code: 1,
-        changelog: 'Primera versión de Vinzay. Incluye:\n• Marketplace con búsqueda y filtros\n• Chat en tiempo real\n• Sistema de verificación\n• Handshake para transacciones seguras\n• Soporte IA 24/7\n• Ofertas dinámicas',
+        changelog: 'Primera versiÃ³n de Mercora. Incluye:\nâ€¢ Marketplace con bÃºsqueda y filtros\nâ€¢ Chat en tiempo real\nâ€¢ Sistema de verificaciÃ³n\nâ€¢ Handshake para transacciones seguras\nâ€¢ Soporte IA 24/7\nâ€¢ Ofertas dinÃ¡micas',
         file_size_mb: 45,
         min_android: '8.0',
         is_latest: true,
@@ -70,7 +70,7 @@ export default function DownloadPage() {
       if (downloadUrl) {
         // Proxy GitHub URLs through Netlify to avoid redirect to github.com
         let finalUrl = downloadUrl
-        const ghPrefix = 'https://github.com/Vinzay/Vinzay-releases/releases/download/'
+        const ghPrefix = 'https://github.com/Mercora/Vinzay-releases/releases/download/'
         if (downloadUrl.startsWith(ghPrefix)) {
           finalUrl = '/download-apk/' + downloadUrl.slice(ghPrefix.length)
         }
@@ -83,11 +83,11 @@ export default function DownloadPage() {
         link.click()
         document.body.removeChild(link)
       } else {
-        alert('El APK aún no está disponible. El administrador debe subir la primera versión desde el panel de admin.')
+        alert('El APK aÃºn no estÃ¡ disponible. El administrador debe subir la primera versiÃ³n desde el panel de admin.')
       }
     } catch (err) {
       console.error('Download error:', err)
-      alert('Error al descargar. Intentá de nuevo.')
+      alert('Error al descargar. IntentÃ¡ de nuevo.')
     } finally {
       setDownloading(false)
     }
@@ -114,7 +114,7 @@ export default function DownloadPage() {
       <nav className="glass-strong fixed top-0 left-0 right-0 z-50 py-4">
         <div className="max-w-5xl mx-auto px-4 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-3 group">
-            <div className="w-9 h-9 rounded-xl gradient-vinzay flex items-center justify-center">
+            <div className="w-9 h-9 rounded-xl gradient-mercora flex items-center justify-center">
               <ShoppingBag className="w-4 h-4 text-white" />
             </div>
             <span className="text-lg font-bold text-white">Vinzay</span>
@@ -128,14 +128,14 @@ export default function DownloadPage() {
       <main className="max-w-5xl mx-auto px-4 pt-28 pb-20 relative z-10">
         {/* Hero */}
         <div className="text-center mb-12">
-          <div className="w-20 h-20 rounded-3xl gradient-vinzay flex items-center justify-center mx-auto mb-6 animate-glow">
+          <div className="w-20 h-20 rounded-3xl gradient-mercora flex items-center justify-center mx-auto mb-6 animate-glow">
             <Download className="w-10 h-10 text-white" />
           </div>
           <h1 className="text-4xl sm:text-5xl font-black text-white mb-4">
-            Descargá <span className="gradient-text">Vinzay</span>
+            DescargÃ¡ <span className="gradient-text">Vinzay</span>
           </h1>
           <p className="text-text-secondary text-lg max-w-xl mx-auto">
-            Descarga directa y segura. Instalá en tu Android en menos de un minuto.
+            Descarga directa y segura. InstalÃ¡ en tu Android en menos de un minuto.
           </p>
         </div>
 
@@ -155,7 +155,7 @@ export default function DownloadPage() {
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-4">
                       <span className="px-3 py-1 rounded-full bg-accent-green/10 text-accent-green text-sm font-semibold">
-                        Última versión
+                        Ãšltima versiÃ³n
                       </span>
                       <span className="text-text-muted text-sm">
                         {formatDate(latestVersion.created_at)}
@@ -211,7 +211,7 @@ export default function DownloadPage() {
                       </span>
                     </button>
                     <p className="text-text-muted text-xs text-center mt-2">
-                      100% Gratis · Sin malware
+                      100% Gratis Â· Sin malware
                     </p>
                   </div>
                 </div>
@@ -222,16 +222,16 @@ export default function DownloadPage() {
             <div className="glass rounded-3xl p-8 mb-8">
               <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-3">
                 <Info className="w-6 h-6 text-primary" />
-                Cómo instalar
+                CÃ³mo instalar
               </h3>
               <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 {[
-                  { step: '1', title: 'Descargá el APK', desc: 'Tocá el botón de descarga arriba', icon: Download },
-                  { step: '2', title: 'Abrí el archivo', desc: 'Buscalo en tus descargas', icon: FileText },
-                  { step: '3', title: 'Permití la instalación', desc: 'Habilitá "fuentes desconocidas" si te lo pide', icon: Shield },
-                  { step: '4', title: '¡Listo!', desc: 'Abrí Vinzay y creá tu cuenta', icon: CheckCircle },
+                  { step: '1', title: 'DescargÃ¡ el APK', desc: 'TocÃ¡ el botÃ³n de descarga arriba', icon: Download },
+                  { step: '2', title: 'AbrÃ­ el archivo', desc: 'Buscalo en tus descargas', icon: FileText },
+                  { step: '3', title: 'PermitÃ­ la instalaciÃ³n', desc: 'HabilitÃ¡ "fuentes desconocidas" si te lo pide', icon: Shield },
+                  { step: '4', title: 'Â¡Listo!', desc: 'AbrÃ­ Vinzay y creÃ¡ tu cuenta', icon: CheckCircle },
                 ].map((s, i) => (
-                  <div key={i} className="bg-vinzay-bg rounded-2xl p-4 text-center">
+                  <div key={i} className="bg-mercora-bg rounded-2xl p-4 text-center">
                     <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mx-auto mb-3">
                       <s.icon className="w-6 h-6 text-primary" />
                     </div>
@@ -247,10 +247,10 @@ export default function DownloadPage() {
                 <div className="bg-accent-gold/5 border border-accent-gold/20 rounded-2xl p-4 flex items-start gap-3">
                   <AlertTriangle className="w-5 h-5 text-accent-gold flex-shrink-0 mt-0.5" />
                   <div>
-                    <p className="text-white text-sm font-medium mb-1">¿Tu navegador dice "archivo dañino"?</p>
+                    <p className="text-white text-sm font-medium mb-1">Â¿Tu navegador dice "archivo daÃ±ino"?</p>
                     <p className="text-text-secondary text-xs leading-relaxed">
                       Es normal. Chrome muestra este aviso para <strong className="text-white">todas</strong> las apps que no vienen de Play Store. 
-                      Tocá <strong className="text-white">"Descargar de todos modos"</strong> para continuar. 
+                      TocÃ¡ <strong className="text-white">"Descargar de todos modos"</strong> para continuar. 
                       Vinzay es 100% segura y libre de virus.
                     </p>
                   </div>
@@ -258,10 +258,10 @@ export default function DownloadPage() {
                 <div className="bg-primary/5 border border-primary/20 rounded-2xl p-4 flex items-start gap-3">
                   <Shield className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
                   <div>
-                    <p className="text-white text-sm font-medium mb-1">¿Te pide habilitar "fuentes desconocidas"?</p>
+                    <p className="text-white text-sm font-medium mb-1">Â¿Te pide habilitar "fuentes desconocidas"?</p>
                     <p className="text-text-secondary text-xs leading-relaxed">
-                      Andá a <strong className="text-white">Configuración → Seguridad → Fuentes desconocidas</strong> y habilitá 
-                      la opción para tu navegador. Esto es necesario para instalar apps fuera de Play Store.
+                      AndÃ¡ a <strong className="text-white">ConfiguraciÃ³n â†’ Seguridad â†’ Fuentes desconocidas</strong> y habilitÃ¡ 
+                      la opciÃ³n para tu navegador. Esto es necesario para instalar apps fuera de Play Store.
                     </p>
                   </div>
                 </div>
@@ -277,10 +277,10 @@ export default function DownloadPage() {
                 </h3>
                 <div className="space-y-3">
                   {olderVersions.map(v => (
-                    <div key={v.id} className="bg-vinzay-bg rounded-2xl overflow-hidden">
+                    <div key={v.id} className="bg-mercora-bg rounded-2xl overflow-hidden">
                       <button
                         onClick={() => setExpandedVersion(expandedVersion === v.id ? null : v.id)}
-                        className="w-full flex items-center justify-between p-4 hover:bg-vinzay-surface-elevated transition-colors"
+                        className="w-full flex items-center justify-between p-4 hover:bg-mercora-surface-elevated transition-colors"
                       >
                         <div className="flex items-center gap-4">
                           <span className="font-semibold text-white">v{v.version_name}</span>
@@ -313,10 +313,10 @@ export default function DownloadPage() {
               <h4 className="text-white font-semibold mb-3">Requisitos del sistema</h4>
               <div className="flex flex-wrap justify-center gap-6 text-text-tertiary text-sm">
                 <span>Android 8.0 (Oreo) o superior</span>
-                <span>·</span>
+                <span>Â·</span>
                 <span>~50 MB de espacio</span>
-                <span>·</span>
-                <span>Conexión a internet</span>
+                <span>Â·</span>
+                <span>ConexiÃ³n a internet</span>
               </div>
             </div>
           </>
@@ -326,7 +326,7 @@ export default function DownloadPage() {
       {/* Footer */}
       <footer className="border-t border-white/5 py-6">
         <div className="max-w-5xl mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-4">
-          <p className="text-text-muted text-sm">© {new Date().getFullYear()} Vinzay</p>
+          <p className="text-text-muted text-sm">Â© {new Date().getFullYear()} Vinzay</p>
           <Link to="/" className="text-text-tertiary hover:text-white text-sm transition-colors">Volver al inicio</Link>
         </div>
       </footer>

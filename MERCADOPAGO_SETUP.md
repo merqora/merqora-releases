@@ -1,20 +1,20 @@
-# 🔵 Integración Mercado Pago - Guía de Configuración
+﻿# ðŸ”µ IntegraciÃ³n Mercado Pago - GuÃ­a de ConfiguraciÃ³n
 
 ## Resumen
 
-Esta guía explica cómo configurar la integración de Mercado Pago para pagos en Uruguay.
+Esta guÃ­a explica cÃ³mo configurar la integraciÃ³n de Mercado Pago para pagos en Uruguay.
 
 ## Arquitectura
 
 ```
-┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
-│   Android App   │────▶│ Supabase Edge   │────▶│  Mercado Pago   │
-│  (CheckoutScreen│     │   Functions     │     │      API        │
-│   + Custom Tab) │     │                 │     │                 │
-└─────────────────┘     └─────────────────┘     └─────────────────┘
-        │                       │                       │
-        │                       │                       │
-        ▼                       ▼                       ▼
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”     â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”     â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚   Android App   â”‚â”€â”€â”€â”€â–¶â”‚ Supabase Edge   â”‚â”€â”€â”€â”€â–¶â”‚  Mercado Pago   â”‚
+â”‚  (CheckoutScreenâ”‚     â”‚   Functions     â”‚     â”‚      API        â”‚
+â”‚   + Custom Tab) â”‚     â”‚                 â”‚     â”‚                 â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜     â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜     â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+        â”‚                       â”‚                       â”‚
+        â”‚                       â”‚                       â”‚
+        â–¼                       â–¼                       â–¼
    Deep Link            Webhook (IPN)          Checkout Pro
    (Retorno)           (Notificaciones)         (Pago)
 ```
@@ -22,25 +22,25 @@ Esta guía explica cómo configurar la integración de Mercado Pago para pagos e
 ## Paso 1: Crear Cuenta de Desarrollador en Mercado Pago
 
 1. Ve a: https://www.mercadopago.com.uy/developers/panel
-2. Inicia sesión con tu cuenta de Mercado Pago Uruguay
-3. Click en **"Crear aplicación"**
+2. Inicia sesiÃ³n con tu cuenta de Mercado Pago Uruguay
+3. Click en **"Crear aplicaciÃ³n"**
 4. Nombre: `Rendly Uruguay`
 5. Selecciona **"Checkout Pro"** como producto
-6. Acepta términos y crea
+6. Acepta tÃ©rminos y crea
 
 ### Obtener Credenciales
 
-Una vez creada la aplicación, ve a **Credenciales** y copia:
+Una vez creada la aplicaciÃ³n, ve a **Credenciales** y copia:
 
 - **Public Key**: `APP_USR-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx`
 - **Access Token**: `APP_USR-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx-xxxxxx-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx-xxxxxxxxx`
 
-⚠️ **IMPORTANTE**: El Access Token es SECRETO. Nunca lo incluyas en el código del app.
+âš ï¸ **IMPORTANTE**: El Access Token es SECRETO. Nunca lo incluyas en el cÃ³digo del app.
 
 ### Credenciales de Prueba (Sandbox)
 
 Para testing, Mercado Pago te da credenciales de prueba:
-- Ve a la sección **"Credenciales de prueba"**
+- Ve a la secciÃ³n **"Credenciales de prueba"**
 - Usa estas credenciales para el modo sandbox
 
 ## Paso 2: Ejecutar SQL en Supabase
@@ -52,11 +52,11 @@ Ejecuta el contenido de `SUPABASE_ORDERS_MERCADOPAGO.sql` en el SQL Editor de Su
 3. Click "Run"
 
 Esto crea las tablas:
-- `orders` - Órdenes de compra
+- `orders` - Ã“rdenes de compra
 - `order_items` - Items de cada orden
-- `payments` - Información de pagos
+- `payments` - InformaciÃ³n de pagos
 - `order_status_history` - Historial de estados
-- `seller_stats` - Estadísticas de vendedores
+- `seller_stats` - EstadÃ­sticas de vendedores
 
 ## Paso 3: Configurar Edge Functions en Supabase
 
@@ -68,7 +68,7 @@ En el dashboard de Supabase, ve a **Project Settings > Edge Functions** y agrega
 # Credenciales de Mercado Pago
 MERCADOPAGO_ACCESS_TOKEN=APP_USR-tu-access-token-aqui
 
-# Modo sandbox (true para pruebas, false para producción)
+# Modo sandbox (true para pruebas, false para producciÃ³n)
 MERCADOPAGO_SANDBOX=true
 
 # Scheme de la app para deep links
@@ -104,7 +104,7 @@ supabase functions deploy mp-webhook --no-verify-jwt
 
 ## Paso 4: Sincronizar Gradle
 
-Después de los cambios en `build.gradle.kts`:
+DespuÃ©s de los cambios en `build.gradle.kts`:
 
 ```powershell
 cd c:\Users\Rodrigo\Documents\Rendly
@@ -115,7 +115,7 @@ Las nuevas dependencias agregadas:
 - `io.github.jan-tennert.supabase:functions-kt` - Para llamar Edge Functions
 - `androidx.browser:browser:1.7.0` - Para Custom Tabs (checkout)
 
-## Paso 5: Probar la Integración
+## Paso 5: Probar la IntegraciÃ³n
 
 ### Usuarios de Prueba
 
@@ -127,7 +127,7 @@ Mercado Pago te da usuarios de prueba para simular compras:
 
 ### Tarjetas de Prueba (Uruguay)
 
-| Tarjeta | Número | CVV | Vencimiento | Resultado |
+| Tarjeta | NÃºmero | CVV | Vencimiento | Resultado |
 |---------|--------|-----|-------------|-----------|
 | Visa | 4509 9535 6623 3704 | 123 | 11/25 | Aprobado |
 | Mastercard | 5031 7557 3453 0604 | 123 | 11/25 | Aprobado |
@@ -137,14 +137,14 @@ Mercado Pago te da usuarios de prueba para simular compras:
 
 1. Agrega productos al carrito
 2. Ve a Checkout
-3. Selecciona "Mercado Pago" como método de pago
+3. Selecciona "Mercado Pago" como mÃ©todo de pago
 4. Click "Pagar"
 5. Se abre Custom Tab con el checkout de MP
 6. Usa tarjeta de prueba
-7. Después del pago, la app recibe el deep link:
-   - Éxito: `rendly://payment/success?order_id=xxx`
-   - Fallo: `rendly://payment/failure?order_id=xxx`
-   - Pendiente: `rendly://payment/pending?order_id=xxx`
+7. DespuÃ©s del pago, la app recibe el deep link:
+   - Ã‰xito: `mercora://payment/success?order_id=xxx`
+   - Fallo: `mercora://payment/failure?order_id=xxx`
+   - Pendiente: `mercora://payment/pending?order_id=xxx`
 
 ## Archivos Creados/Modificados
 
@@ -152,8 +152,8 @@ Mercado Pago te da usuarios de prueba para simular compras:
 - `supabase/functions/create-mp-preference/index.ts` - Crea preferencias de pago
 - `supabase/functions/mp-webhook/index.ts` - Recibe notificaciones de pago
 - `app/.../data/repository/MercadoPagoRepository.kt` - Cliente Android
-- `app/.../data/model/Order.kt` - Modelos de órdenes
-- `app/.../data/repository/OrderRepository.kt` - Gestión de órdenes
+- `app/.../data/model/Order.kt` - Modelos de Ã³rdenes
+- `app/.../data/repository/OrderRepository.kt` - GestiÃ³n de Ã³rdenes
 - `app/.../ui/screens/checkout/CheckoutScreen.kt` - Pantalla de checkout
 - `SUPABASE_ORDERS_MERCADOPAGO.sql` - Esquema de base de datos
 
@@ -161,38 +161,38 @@ Mercado Pago te da usuarios de prueba para simular compras:
 - `app/build.gradle.kts` - Nuevas dependencias
 - `app/src/main/AndroidManifest.xml` - Deep links
 - `app/.../MainActivity.kt` - Manejo de deep links
-- `app/.../ui/components/CartModal.kt` - Navegación a checkout
+- `app/.../ui/components/CartModal.kt` - NavegaciÃ³n a checkout
 - `app/.../ui/components/ProductPage.kt` - Mejoras varias
 
-## Pasar a Producción
+## Pasar a ProducciÃ³n
 
 1. Cambia `MERCADOPAGO_SANDBOX=false` en Supabase secrets
-2. Usa las credenciales de **producción** (no las de prueba)
-3. Verifica que el webhook esté configurado correctamente
+2. Usa las credenciales de **producciÃ³n** (no las de prueba)
+3. Verifica que el webhook estÃ© configurado correctamente
 4. Prueba con una compra real de bajo monto
 
 ## Troubleshooting
 
 ### El checkout no abre
-- Verifica que `androidx.browser:browser` esté en las dependencias
-- Asegúrate de tener Chrome o un navegador compatible instalado
+- Verifica que `androidx.browser:browser` estÃ© en las dependencias
+- AsegÃºrate de tener Chrome o un navegador compatible instalado
 
 ### El deep link no funciona
 - Verifica el `AndroidManifest.xml` tenga el intent-filter correcto
-- Asegúrate que `launchMode="singleTask"` esté en la MainActivity
-- Prueba manualmente: `adb shell am start -d "rendly://payment/success"`
+- AsegÃºrate que `launchMode="singleTask"` estÃ© en la MainActivity
+- Prueba manualmente: `adb shell am start -d "mercora://payment/success"`
 
 ### Error en Edge Function
 - Revisa los logs: `supabase functions logs create-mp-preference`
-- Verifica que `MERCADOPAGO_ACCESS_TOKEN` esté configurado
+- Verifica que `MERCADOPAGO_ACCESS_TOKEN` estÃ© configurado
 
 ### Webhook no recibe notificaciones
 - Verifica que la URL del webhook sea correcta en el panel de MP
 - Revisa los logs del webhook: `supabase functions logs mp-webhook`
-- MP puede tardar unos segundos en enviar la notificación
+- MP puede tardar unos segundos en enviar la notificaciÃ³n
 
 ## Soporte
 
-- Documentación MP: https://www.mercadopago.com.uy/developers/es/docs
+- DocumentaciÃ³n MP: https://www.mercadopago.com.uy/developers/es/docs
 - API Reference: https://www.mercadopago.com.uy/developers/es/reference
 - Supabase Edge Functions: https://supabase.com/docs/guides/functions

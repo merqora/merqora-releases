@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+﻿import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { 
   MessageSquare, 
@@ -36,7 +36,7 @@ function ConversationRow({ conversation }) {
   return (
     <Link 
       to={`/chat/${conversation.id}`}
-      className="flex items-center gap-4 p-4 bg-vinzay-surface rounded-xl border border-primary/10 hover:border-primary/30 hover:bg-vinzay-surface-elevated transition-all duration-200"
+      className="flex items-center gap-4 p-4 bg-mercora-surface rounded-xl border border-primary/10 hover:border-primary/30 hover:bg-mercora-surface-elevated transition-all duration-200"
     >
       {/* Avatar */}
       <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
@@ -98,7 +98,7 @@ export default function Conversations() {
       
       if (error) throw error
       
-      // Cargar conteo de mensajes y último mensaje
+      // Cargar conteo de mensajes y Ãºltimo mensaje
       const conversationsWithMeta = await Promise.all(
         (data || []).map(async (conv) => {
           const { data: messages, count } = await supabase
@@ -153,7 +153,7 @@ export default function Conversations() {
             placeholder="Buscar por usuario..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="pl-10 pr-4 py-2 bg-vinzay-surface border border-primary/20 rounded-xl text-text-primary placeholder-text-muted focus:outline-none focus:border-primary w-full md:w-64"
+            className="pl-10 pr-4 py-2 bg-mercora-surface border border-primary/20 rounded-xl text-text-primary placeholder-text-muted focus:outline-none focus:border-primary w-full md:w-64"
           />
         </div>
       </div>
@@ -168,7 +168,7 @@ export default function Conversations() {
               px-4 py-2 rounded-xl whitespace-nowrap transition-all
               ${filter === key 
                 ? 'bg-primary text-white' 
-                : 'bg-vinzay-surface text-text-secondary hover:bg-vinzay-surface-elevated'
+                : 'bg-mercora-surface text-text-secondary hover:bg-mercora-surface-elevated'
               }
             `}
           >
@@ -189,13 +189,13 @@ export default function Conversations() {
           ))}
         </div>
       ) : (
-        <div className="text-center py-16 bg-vinzay-surface rounded-2xl border border-primary/10">
+        <div className="text-center py-16 bg-mercora-surface rounded-2xl border border-primary/10">
           <MessageSquare className="w-16 h-16 mx-auto mb-4 text-text-muted" />
           <h3 className="text-xl font-semibold text-text-primary mb-2">
             No hay conversaciones
           </h3>
           <p className="text-text-tertiary">
-            Las conversaciones aparecerán aquí cuando los usuarios contacten al soporte
+            Las conversaciones aparecerÃ¡n aquÃ­ cuando los usuarios contacten al soporte
           </p>
         </div>
       )}

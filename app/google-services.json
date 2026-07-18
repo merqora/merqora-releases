@@ -1,15 +1,15 @@
 {
   "project_info": {
     "project_number": "619903470328",
-    "project_id": "rendly-app",
-    "storage_bucket": "rendly-app.firebasestorage.app"
+    "project_id": "mercora-app",
+    "storage_bucket": "mercora-app.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
         "mobilesdk_app_id": "1:619903470328:android:46712dc0bcaa858713090d",
         "android_client_info": {
-          "package_name": "com.vinzay.app"
+          "package_name": "com.mercora.app"
         }
       },
       "oauth_client": [],

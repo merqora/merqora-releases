@@ -1,5 +1,5 @@
-"""
-Vinzay AI Learning Engine
+﻿"""
+Mercora AI Learning Engine
 
 This module handles:
 1. Response caching - fast responses for similar questions

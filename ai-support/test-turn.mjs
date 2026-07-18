@@ -1,9 +1,9 @@
-import { connect, getPublicIP } from 'turn-server';
+﻿import { connect, getPublicIP } from 'turn-server';
 
 // Try to connect to our TURN server
 connect('turn:192.168.1.16:3479?transport=udp', {
   username: 'rendly',
-  password: 'rendly123',
+  password: '***REMOVED***',
   autoRefresh: false,
 }, (err, socket) => {
   if (err) {

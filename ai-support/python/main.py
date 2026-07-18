@@ -1,5 +1,5 @@
-"""
-Vinzay AI Support - FastAPI Application
+﻿"""
+Mercora AI Support - FastAPI Application
 
 Main entry point for the AI support system.
 """
@@ -68,7 +68,7 @@ async def lifespan(app: FastAPI):
 
 # Create FastAPI app
 app = FastAPI(
-    title="Vinzay AI Support",
+    title="Mercora AI Support",
     description="AI-powered support system for Vinzay app",
     version="1.0.0",
     lifespan=lifespan,
@@ -171,7 +171,7 @@ async def submit_feedback(
         
         return FeedbackResponse(
             success=True,
-            message="¡Gracias por tu feedback! Nos ayuda a mejorar."
+            message="Â¡Gracias por tu feedback! Nos ayuda a mejorar."
         )
         
     except Exception as e:
@@ -210,7 +210,7 @@ async def escalate_conversation(
         
         return {
             "success": True,
-            "message": "Conversación escalada a soporte humano",
+            "message": "ConversaciÃ³n escalada a soporte humano",
             "support_user_id": settings.support_user_id
         }
         

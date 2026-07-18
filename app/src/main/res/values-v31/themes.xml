@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Theme para Android 12+ (API 31+) con SplashScreen API nativo -->
-    <style name="Theme.Vinzay" parent="android:Theme.Material.Light.NoActionBar">
+    <style name="Theme.Mercora" parent="android:Theme.Material.Light.NoActionBar">
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:navigationBarColor">@android:color/transparent</item>
         
-        <!-- SplashScreen API Android 12+ - Máxima optimización -->
+        <!-- SplashScreen API Android 12+ - Mï¿½xima optimizaciï¿½n -->
         <item name="android:windowSplashScreenBackground">#FFFFFF</item>
         <item name="android:windowSplashScreenAnimatedIcon">@mipmap/ic_launcher_round</item>
         <item name="android:windowSplashScreenAnimationDuration">200</item>
@@ -18,7 +18,7 @@
         <item name="android:enforceStatusBarContrast">false</item>
     </style>
     
-    <style name="Theme.Vinzay.Splash" parent="Theme.Vinzay">
+    <style name="Theme.Mercora.Splash" parent="Theme.Mercora">
         <item name="android:windowBackground">#FFFFFF</item>
     </style>
 </resources>

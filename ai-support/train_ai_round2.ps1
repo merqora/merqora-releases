@@ -1,8 +1,8 @@
-$baseUrl = "https://merqora-releases-production.up.railway.app/ai/support/message"
+﻿$baseUrl = "https://mercora-releases-production.up.railway.app/ai/support/message"
 $headers = @{ "Content-Type" = "application/json" }
 
 $messages = @(
-    # ═══ RONDA 2: PREGUNTAS COMPLEJAS Y CONVERSACIONALES ═══
+    # â•â•â• RONDA 2: PREGUNTAS COMPLEJAS Y CONVERSACIONALES â•â•â•
     
     # --- Compras avanzadas ---
     "compre un producto hace 3 dias y todavia dice pendiente, que pasa?",
@@ -141,7 +141,7 @@ $messages = @(
     "la app pide permisos que no quiero dar",
     "por que la app necesita acceso a la camara?",
     "por que la app necesita acceso al microfono?",
-    "la app se actualizo y perdí mis datos",
+    "la app se actualizo y perdÃ­ mis datos",
     "como reporto un bug?",
     "hay una version beta de la app?",
     
@@ -201,10 +201,10 @@ $okCount = 0
 $escCount = 0
 $i = 0
 
-Write-Host "═══════════════════════════════════════════════════" -ForegroundColor Cyan
+Write-Host "â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•" -ForegroundColor Cyan
 Write-Host "  ENTRENAMIENTO IA RENDLY - RONDA 2 (AVANZADO)" -ForegroundColor Cyan
 Write-Host "  Total de mensajes: $total" -ForegroundColor Cyan
-Write-Host "═══════════════════════════════════════════════════" -ForegroundColor Cyan
+Write-Host "â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•" -ForegroundColor Cyan
 Write-Host ""
 
 foreach ($msg in $messages) {
@@ -245,20 +245,20 @@ foreach ($msg in $messages) {
 }
 
 Write-Host ""
-Write-Host "═══════════════════════════════════════════════════" -ForegroundColor Cyan
+Write-Host "â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•" -ForegroundColor Cyan
 Write-Host "  RONDA 2 COMPLETADA" -ForegroundColor Green
 Write-Host "  Exitosos: $success / $total" -ForegroundColor Green
 Write-Host "  Respondidos por IA: $okCount" -ForegroundColor Green
 Write-Host "  Escalados: $escCount" -ForegroundColor Yellow
 Write-Host "  Errores: $errors" -ForegroundColor $(if ($errors -gt 0) { "Red" } else { "Green" })
-Write-Host "═══════════════════════════════════════════════════" -ForegroundColor Cyan
+Write-Host "â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•" -ForegroundColor Cyan
 
 # Obtener stats finales
 try {
-    $statsResp = Invoke-WebRequest -Uri "https://merqora-releases-production.up.railway.app/ai/support/stats" -UseBasicParsing
+    $statsResp = Invoke-WebRequest -Uri "https://mercora-releases-production.up.railway.app/ai/support/stats" -UseBasicParsing
     $stats = $statsResp.Content | ConvertFrom-Json
     Write-Host ""
-    Write-Host "═══ STATS FINALES DE LA IA ═══" -ForegroundColor Magenta
+    Write-Host "â•â•â• STATS FINALES DE LA IA â•â•â•" -ForegroundColor Magenta
     Write-Host "  Cache: $($stats.response_cache_size) respuestas" -ForegroundColor White
     Write-Host "  Patrones: $($stats.learned_patterns_count) aprendidos" -ForegroundColor White
     Write-Host "  Modelo local: $($stats.local_ai.training_examples) ejemplos" -ForegroundColor White

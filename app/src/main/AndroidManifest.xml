@@ -36,7 +36,7 @@
     </queries>
 
     <application
-        android:name=".VinzayApplication"
+        android:name=".MercoraApplication"
         android:usesCleartextTraffic="true"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -45,7 +45,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Vinzay"
+        android:theme="@style/Theme.Mercora"
         android:hardwareAccelerated="true"
         android:largeHeap="true"
         tools:targetApi="31">
@@ -72,7 +72,7 @@
             <!-- TODO: Re-enable for release builds after signing setup -->
             <!--
             <meta-data
-                android:name="com.vinzay.app.startup.DeferredInitializer"
+                android:name="com.mercora.app.startup.DeferredInitializer"
                 android:value="androidx.startup" />
             -->
         </provider>
@@ -104,7 +104,7 @@
         <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:theme="@style/Theme.Vinzay"
+            android:theme="@style/Theme.Mercora"
             android:windowSoftInputMode="adjustResize"
             android:screenOrientation="portrait"
             android:launchMode="singleTask"
@@ -116,30 +116,30 @@
             
             <!-- ═══════════════════════════════════════════════════════════════════
                  MERCADO PAGO DEEP LINKS - Retorno después del pago
-                 Maneja: vinzay://payment/success, vinzay://payment/failure, vinzay://payment/pending
+                 Maneja: mercora://payment/success, mercora://payment/failure, mercora://payment/pending
                  ═══════════════════════════════════════════════════════════════════ -->
             <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <!-- Deep link scheme: vinzay://payment/* -->
+                <!-- Deep link scheme: mercora://payment/* -->
                 <data 
-                    android:scheme="vinzay"
+                    android:scheme="mercora"
                     android:host="payment" />
             </intent-filter>
 
             <!-- ═══════════════════════════════════════════════════════════════════
                  APP LINKS / DEEP LINKS - Productos compartidos
-                 Maneja: https://vinzay.app/p/* y https://vinzay.netlify.app/p/*
+                 Maneja: https://mercora.app/p/* y https://mercora.netlify.app/p/*
                  ═══════════════════════════════════════════════════════════════════ -->
             <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <!-- Host principal acordado -->
-                <data android:scheme="https" android:host="vinzay.app" android:pathPrefix="/p/" />
+                <data android:scheme="https" android:host="mercora.app" android:pathPrefix="/p/" />
                 <!-- Host de Netlify de respaldo -->
-                <data android:scheme="https" android:host="vinzay.netlify.app" android:pathPrefix="/p/" />
+                <data android:scheme="https" android:host="mercora.netlify.app" android:pathPrefix="/p/" />
             </intent-filter>
         </activity>
         
@@ -150,7 +150,7 @@
         <activity
             android:name=".ui.screens.checkout.MercadoPagoCheckoutActivity"
             android:exported="false"
-            android:theme="@style/Theme.Vinzay"
+            android:theme="@style/Theme.Mercora"
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity" />
         
@@ -159,7 +159,7 @@
              Recibe notificaciones push incluso con la app cerrada
              ═══════════════════════════════════════════════════════════════════ -->
         <service
-            android:name=".service.VinzayFirebaseMessagingService"
+            android:name=".service.MercoraFirebaseMessagingService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
@@ -169,7 +169,7 @@
         <!-- FCM Default Notification Channel -->
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_channel_id"
-            android:value="vinzay_messages" />
+            android:value="mercora_messages" />
             
         <!-- FCM Default Notification Icon -->
         <meta-data

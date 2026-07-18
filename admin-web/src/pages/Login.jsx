@@ -1,9 +1,9 @@
-import { useState } from 'react'
+﻿import { useState } from 'react'
 import { Bot, Lock, Mail, Eye, EyeOff, AlertCircle, CheckCircle, ArrowLeft, UserPlus } from 'lucide-react'
 import { supabase } from '../supabaseClient'
 
 export default function Login({ onLogin }) {
-  const [email, setEmail] = useState('admin@Vinzay.com')
+  const [email, setEmail] = useState('admin@mercora.app')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -25,12 +25,12 @@ export default function Login({ onLogin }) {
 
       if (error) throw error
 
-      console.log('✅ Login exitoso:', data.user.email)
+      console.log('âœ… Login exitoso:', data.user.email)
       onLogin(data.user)
     } catch (error) {
-      console.error('❌ Error de login:', error)
+      console.error('âŒ Error de login:', error)
       setError(error.message === 'Invalid login credentials' 
-        ? 'Credenciales inválidas. Verifica tu email y contraseña.'
+        ? 'Credenciales invÃ¡lidas. Verifica tu email y contraseÃ±a.'
         : error.message
       )
     } finally {
@@ -51,9 +51,9 @@ export default function Login({ onLogin }) {
 
       if (error) throw error
 
-      setSuccess('¡Enlace de recuperación enviado! Revisa tu email (también la carpeta de spam).')
+      setSuccess('Â¡Enlace de recuperaciÃ³n enviado! Revisa tu email (tambiÃ©n la carpeta de spam).')
     } catch (error) {
-      console.error('❌ Error al enviar recuperación:', error)
+      console.error('âŒ Error al enviar recuperaciÃ³n:', error)
       setError(error.message)
     } finally {
       setLoading(false)
@@ -67,7 +67,7 @@ export default function Login({ onLogin }) {
     setSuccess('')
 
     if (password.length < 6) {
-      setError('La contraseña debe tener al menos 6 caracteres')
+      setError('La contraseÃ±a debe tener al menos 6 caracteres')
       setLoading(false)
       return
     }
@@ -86,16 +86,16 @@ export default function Login({ onLogin }) {
       if (error) throw error
 
       if (data.user && !data.session) {
-        setSuccess('¡Usuario creado! Revisa tu email para confirmar la cuenta, o inicia sesión directamente.')
+        setSuccess('Â¡Usuario creado! Revisa tu email para confirmar la cuenta, o inicia sesiÃ³n directamente.')
         setMode('login')
       } else if (data.session) {
-        console.log('✅ Registro y login exitoso:', data.user.email)
+        console.log('âœ… Registro y login exitoso:', data.user.email)
         onLogin(data.user)
       }
     } catch (error) {
-      console.error('❌ Error al registrar:', error)
+      console.error('âŒ Error al registrar:', error)
       if (error.message.includes('already registered')) {
-        setError('Este email ya está registrado. Intenta iniciar sesión.')
+        setError('Este email ya estÃ¡ registrado. Intenta iniciar sesiÃ³n.')
       } else {
         setError(error.message)
       }
@@ -105,21 +105,21 @@ export default function Login({ onLogin }) {
   }
 
   return (
-    <div className="min-h-screen bg-vinzay-bg flex items-center justify-center p-4">
+    <div className="min-h-screen bg-mercora-bg flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="text-center mb-8">
-          <div className="w-20 h-20 mx-auto rounded-2xl gradient-vinzay flex items-center justify-center mb-4">
+          <div className="w-20 h-20 mx-auto rounded-2xl gradient-mercora flex items-center justify-center mb-4">
             <Bot className="w-10 h-10 text-white" />
           </div>
-          <h1 className="text-3xl font-bold text-text-primary">Vinzay Admin</h1>
-          <p className="text-text-tertiary mt-2">Panel de Administración</p>
+          <h1 className="text-3xl font-bold text-text-primary">Mercora Admin</h1>
+          <p className="text-text-tertiary mt-2">Panel de AdministraciÃ³n</p>
         </div>
 
         {/* Form */}
         <form 
           onSubmit={mode === 'login' ? handleLogin : mode === 'recover' ? handleRecoverPassword : handleRegister} 
-          className="bg-vinzay-surface rounded-2xl border border-primary/10 p-8 space-y-6"
+          className="bg-mercora-surface rounded-2xl border border-primary/10 p-8 space-y-6"
         >
           {/* Header */}
           <div>
@@ -134,13 +134,13 @@ export default function Login({ onLogin }) {
               </button>
             )}
             <h2 className="text-xl font-semibold text-text-primary mb-2">
-              {mode === 'login' && 'Iniciar Sesión'}
-              {mode === 'recover' && 'Recuperar Contraseña'}
+              {mode === 'login' && 'Iniciar SesiÃ³n'}
+              {mode === 'recover' && 'Recuperar ContraseÃ±a'}
               {mode === 'register' && 'Crear Usuario Admin'}
             </h2>
             <p className="text-text-muted text-sm">
-              {mode === 'login' && 'Accede al panel de administración'}
-              {mode === 'recover' && 'Te enviaremos un enlace para restablecer tu contraseña'}
+              {mode === 'login' && 'Accede al panel de administraciÃ³n'}
+              {mode === 'recover' && 'Te enviaremos un enlace para restablecer tu contraseÃ±a'}
               {mode === 'register' && 'Crea una nueva cuenta de administrador'}
             </p>
           </div>
@@ -173,9 +173,9 @@ export default function Login({ onLogin }) {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="admin@Vinzay.com"
+                  placeholder="admin@mercora.app"
                   required
-                  className="w-full pl-12 pr-4 py-3 bg-vinzay-bg border border-primary/20 rounded-xl text-text-primary placeholder-text-muted focus:outline-none focus:border-primary transition-colors"
+                  className="w-full pl-12 pr-4 py-3 bg-mercora-bg border border-primary/20 rounded-xl text-text-primary placeholder-text-muted focus:outline-none focus:border-primary transition-colors"
                 />
               </div>
             </div>
@@ -184,7 +184,7 @@ export default function Login({ onLogin }) {
             {mode !== 'recover' && (
               <div>
                 <label className="block text-text-secondary text-sm font-medium mb-2">
-                  Contraseña {mode === 'register' && <span className="text-text-muted">(mín. 6 caracteres)</span>}
+                  ContraseÃ±a {mode === 'register' && <span className="text-text-muted">(mÃ­n. 6 caracteres)</span>}
                 </label>
                 <div className="relative">
                   <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-text-muted" />
@@ -192,10 +192,10 @@ export default function Login({ onLogin }) {
                     type={showPassword ? 'text' : 'password'}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    placeholder="••••••••"
+                    placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
                     required
                     minLength={mode === 'register' ? 6 : undefined}
-                    className="w-full pl-12 pr-12 py-3 bg-vinzay-bg border border-primary/20 rounded-xl text-text-primary placeholder-text-muted focus:outline-none focus:border-primary transition-colors"
+                    className="w-full pl-12 pr-12 py-3 bg-mercora-bg border border-primary/20 rounded-xl text-text-primary placeholder-text-muted focus:outline-none focus:border-primary transition-colors"
                   />
                   <button
                     type="button"
@@ -222,14 +222,14 @@ export default function Login({ onLogin }) {
             {loading ? (
               <>
                 <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                {mode === 'login' && 'Iniciando sesión...'}
+                {mode === 'login' && 'Iniciando sesiÃ³n...'}
                 {mode === 'recover' && 'Enviando...'}
                 {mode === 'register' && 'Creando usuario...'}
               </>
             ) : (
               <>
-                {mode === 'login' && 'Iniciar Sesión'}
-                {mode === 'recover' && 'Enviar Enlace de Recuperación'}
+                {mode === 'login' && 'Iniciar SesiÃ³n'}
+                {mode === 'recover' && 'Enviar Enlace de RecuperaciÃ³n'}
                 {mode === 'register' && (
                   <>
                     <UserPlus className="w-5 h-5" />
@@ -248,7 +248,7 @@ export default function Login({ onLogin }) {
                 onClick={() => { setMode('recover'); setError(''); setSuccess(''); }}
                 className="w-full text-center text-text-muted hover:text-primary text-sm transition-colors"
               >
-                ¿Olvidaste tu contraseña?
+                Â¿Olvidaste tu contraseÃ±a?
               </button>
               
               <div className="relative">
@@ -256,7 +256,7 @@ export default function Login({ onLogin }) {
                   <div className="w-full border-t border-primary/10"></div>
                 </div>
                 <div className="relative flex justify-center text-xs">
-                  <span className="px-2 bg-vinzay-surface text-text-muted">o</span>
+                  <span className="px-2 bg-mercora-surface text-text-muted">o</span>
                 </div>
               </div>
 
@@ -278,7 +278,7 @@ export default function Login({ onLogin }) {
 
         {/* Footer */}
         <p className="text-center text-text-muted text-sm mt-6">
-          © 2024 Vinzay. Todos los derechos reservados.
+          Â© 2024 Vinzay. Todos los derechos reservados.
         </p>
       </div>
     </div>

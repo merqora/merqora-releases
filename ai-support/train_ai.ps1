@@ -1,8 +1,8 @@
-$baseUrl = "https://merqora-releases-production.up.railway.app/ai/support/message"
+﻿$baseUrl = "https://mercora-releases-production.up.railway.app/ai/support/message"
 $headers = @{ "Content-Type" = "application/json" }
 
 $messages = @(
-    # ═══ COMPRAS Y PAGOS ═══
+    # â•â•â• COMPRAS Y PAGOS â•â•â•
     "Como puedo comprar un producto en Rendly?",
     "Quiero comprar algo pero no se como",
     "Como agrego algo al carrito?",
@@ -24,7 +24,7 @@ $messages = @(
     "Cuanto tarda en llegar el reembolso?",
     "Mi pago quedo pendiente",
     
-    # ═══ ENVIOS Y DIRECCIONES ═══
+    # â•â•â• ENVIOS Y DIRECCIONES â•â•â•
     "Como agrego una direccion de envio?",
     "Donde pongo mi direccion?",
     "Como cambio mi direccion de entrega?",
@@ -41,7 +41,7 @@ $messages = @(
     "Cuanto cuesta el envio?",
     "Hacen envios a todo el pais?",
     
-    # ═══ CUENTA Y PERFIL ═══
+    # â•â•â• CUENTA Y PERFIL â•â•â•
     "Como creo una cuenta en Rendly?",
     "Como me registro?",
     "No puedo iniciar sesion",
@@ -61,7 +61,7 @@ $messages = @(
     "Creo que hackearon mi cuenta",
     "Como cierro sesion en todos los dispositivos?",
     
-    # ═══ VENDER PRODUCTOS ═══
+    # â•â•â• VENDER PRODUCTOS â•â•â•
     "Como vendo en Rendly?",
     "Quiero publicar un producto para vender",
     "Como publico un articulo?",
@@ -78,7 +78,7 @@ $messages = @(
     "Como me convierto en vendedor verificado?",
     "Que beneficios tiene ser vendedor verificado?",
     
-    # ═══ CHAT Y MENSAJES ═══
+    # â•â•â• CHAT Y MENSAJES â•â•â•
     "Como le envio un mensaje a un vendedor?",
     "Donde estan mis mensajes?",
     "No me llegan las notificaciones de mensajes",
@@ -92,7 +92,7 @@ $messages = @(
     "Se puede hacer llamadas en Rendly?",
     "Como llamo a un vendedor?",
     
-    # ═══ HISTORIAS Y RENDS ═══
+    # â•â•â• HISTORIAS Y RENDS â•â•â•
     "Que son las historias en Rendly?",
     "Como subo una historia?",
     "Cuanto duran las historias?",
@@ -107,7 +107,7 @@ $messages = @(
     "Como agrego texto a un Rend?",
     "Se pueden agregar stickers?",
     
-    # ═══ SEGURIDAD Y PRIVACIDAD ═══
+    # â•â•â• SEGURIDAD Y PRIVACIDAD â•â•â•
     "Mis datos estan seguros en Rendly?",
     "Como cambio la privacidad de mi perfil?",
     "Puedo hacer mi perfil privado?",
@@ -118,7 +118,7 @@ $messages = @(
     "Que informacion recopila Rendly?",
     "Como protejo mi informacion personal?",
     
-    # ═══ NOTIFICACIONES ═══
+    # â•â•â• NOTIFICACIONES â•â•â•
     "No me llegan notificaciones",
     "Como activo las notificaciones?",
     "Recibo demasiadas notificaciones",
@@ -127,7 +127,7 @@ $messages = @(
     "No me avisa cuando me escriben",
     "Las notificaciones de compras no funcionan",
     
-    # ═══ HANDSHAKE Y COMPRA PRESENCIAL ═══
+    # â•â•â• HANDSHAKE Y COMPRA PRESENCIAL â•â•â•
     "Que es un handshake en Rendly?",
     "Como funciona la compra presencial?",
     "Como confirmo una compra en persona?",
@@ -135,7 +135,7 @@ $messages = @(
     "El handshake no funciona sin internet",
     "Como se hace un handshake offline?",
     
-    # ═══ TRANSACCIONES ═══
+    # â•â•â• TRANSACCIONES â•â•â•
     "Donde veo mis transacciones?",
     "Como veo el historial de compras?",
     "Quiero ver todas mis compras anteriores",
@@ -145,7 +145,7 @@ $messages = @(
     "Como marco como recibido?",
     "Donde esta el numero de seguimiento?",
     
-    # ═══ LIKES, SAVES, SEGUIDORES ═══
+    # â•â•â• LIKES, SAVES, SEGUIDORES â•â•â•
     "Como le doy like a un producto?",
     "Donde veo mis productos guardados?",
     "Como guardo un producto para despues?",
@@ -154,7 +154,7 @@ $messages = @(
     "Donde estan mis seguidores?",
     "Como dejo de seguir a alguien?",
     
-    # ═══ REVIEWS Y CALIFICACIONES ═══
+    # â•â•â• REVIEWS Y CALIFICACIONES â•â•â•
     "Como califico a un vendedor?",
     "Como dejo una resena de un producto?",
     "Donde veo las resenas de un producto?",
@@ -162,7 +162,7 @@ $messages = @(
     "Quiero cambiar mi calificacion",
     "Como se calculan las estrellas?",
     
-    # ═══ PROBLEMAS TECNICOS ═══
+    # â•â•â• PROBLEMAS TECNICOS â•â•â•
     "La app se cierra sola",
     "La aplicacion esta muy lenta",
     "No carga la pagina principal",
@@ -176,13 +176,13 @@ $messages = @(
     "Como actualizo la app?",
     "Tengo la ultima version?",
     
-    # ═══ LIVES Y STREAMING ═══
+    # â•â•â• LIVES Y STREAMING â•â•â•
     "Como hago un en vivo en Rendly?",
     "Se puede hacer streaming?",
     "Que necesito para hacer un live?",
     "Cuantas personas pueden ver mi live?",
     
-    # ═══ GENERAL ═══
+    # â•â•â• GENERAL â•â•â•
     "Que es Rendly?",
     "Para que sirve Rendly?",
     "Es gratis usar Rendly?",
@@ -197,7 +197,7 @@ $messages = @(
     "Hay version web de Rendly?",
     "Se puede usar en computadora?",
     
-    # ═══ SEGUNDA RONDA - VARIACIONES NATURALES ═══
+    # â•â•â• SEGUNDA RONDA - VARIACIONES NATURALES â•â•â•
     "oye como hago para comprar algo?",
     "necesito saber como pagar",
     "me podrias explicar como funciona el pago?",
@@ -273,10 +273,10 @@ $success = 0
 $errors = 0
 $i = 0
 
-Write-Host "═══════════════════════════════════════════════════" -ForegroundColor Cyan
+Write-Host "â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•" -ForegroundColor Cyan
 Write-Host "  ENTRENAMIENTO MASIVO DE IA RENDLY" -ForegroundColor Cyan
 Write-Host "  Total de mensajes: $total" -ForegroundColor Cyan
-Write-Host "═══════════════════════════════════════════════════" -ForegroundColor Cyan
+Write-Host "â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•" -ForegroundColor Cyan
 Write-Host ""
 
 foreach ($msg in $messages) {
@@ -316,8 +316,8 @@ foreach ($msg in $messages) {
 }
 
 Write-Host ""
-Write-Host "═══════════════════════════════════════════════════" -ForegroundColor Cyan
+Write-Host "â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•" -ForegroundColor Cyan
 Write-Host "  ENTRENAMIENTO COMPLETADO" -ForegroundColor Green
 Write-Host "  Exitosos: $success / $total" -ForegroundColor Green
 Write-Host "  Errores: $errors" -ForegroundColor $(if ($errors -gt 0) { "Red" } else { "Green" })
-Write-Host "═══════════════════════════════════════════════════" -ForegroundColor Cyan
+Write-Host "â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•" -ForegroundColor Cyan

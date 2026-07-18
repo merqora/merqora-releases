@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback, useMemo } from 'react'
+﻿import { useState, useEffect, useRef, useCallback, useMemo } from 'react'
 import {
   Video,
   Eye,
@@ -72,7 +72,7 @@ function LiveStreams() {
             </span>
           </div>
           <button onClick={fetchStreams} disabled={loading}
-            className="p-2.5 bg-vinzay-surface rounded-xl border border-primary/10 text-text-secondary hover:text-text-primary hover:border-primary/30 transition-all disabled:opacity-50">
+            className="p-2.5 bg-mercora-surface rounded-xl border border-primary/10 text-text-secondary hover:text-text-primary hover:border-primary/30 transition-all disabled:opacity-50">
             <RefreshCw className={`w-5 h-5 ${loading ? 'animate-spin' : ''}`} />
           </button>
         </div>
@@ -93,7 +93,7 @@ function LiveStreams() {
 function StreamsList({ streams, loading, error, onSelect, onRetry }) {
   if (error) {
     return (
-      <div className="bg-vinzay-surface rounded-2xl p-12 border border-primary/10 text-center">
+      <div className="bg-mercora-surface rounded-2xl p-12 border border-primary/10 text-center">
         <AlertCircle className="w-12 h-12 text-accent-magenta mx-auto mb-4" />
         <h3 className="text-text-primary font-semibold mb-2">Error cargando transmisiones</h3>
         <p className="text-text-tertiary text-sm mb-4">{error}</p>
@@ -106,16 +106,16 @@ function StreamsList({ streams, loading, error, onSelect, onRetry }) {
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {[1, 2, 3].map((i) => (
-          <div key={i} className="bg-vinzay-surface rounded-2xl p-6 border border-primary/10 animate-pulse">
+          <div key={i} className="bg-mercora-surface rounded-2xl p-6 border border-primary/10 animate-pulse">
             <div className="flex items-center gap-4 mb-4">
-              <div className="w-14 h-14 rounded-full bg-vinzay-surface-elevated" />
+              <div className="w-14 h-14 rounded-full bg-mercora-surface-elevated" />
               <div className="flex-1 space-y-2">
-                <div className="h-4 bg-vinzay-surface-elevated rounded w-24" />
-                <div className="h-3 bg-vinzay-surface-elevated rounded w-32" />
+                <div className="h-4 bg-mercora-surface-elevated rounded w-24" />
+                <div className="h-3 bg-mercora-surface-elevated rounded w-32" />
               </div>
             </div>
-            <div className="h-3 bg-vinzay-surface-elevated rounded w-full mb-2" />
-            <div className="h-3 bg-vinzay-surface-elevated rounded w-3/4" />
+            <div className="h-3 bg-mercora-surface-elevated rounded w-full mb-2" />
+            <div className="h-3 bg-mercora-surface-elevated rounded w-3/4" />
           </div>
         ))}
       </div>
@@ -124,13 +124,13 @@ function StreamsList({ streams, loading, error, onSelect, onRetry }) {
 
   if (streams.length === 0) {
     return (
-      <div className="bg-vinzay-surface rounded-2xl p-12 border border-primary/10 text-center">
+      <div className="bg-mercora-surface rounded-2xl p-12 border border-primary/10 text-center">
         <div className="w-20 h-20 rounded-full bg-accent-magenta/10 flex items-center justify-center mx-auto mb-4">
           <Video className="w-10 h-10 text-accent-magenta" />
         </div>
         <h3 className="text-text-primary font-semibold text-lg mb-2">Sin transmisiones activas</h3>
         <p className="text-text-tertiary text-sm max-w-md mx-auto">
-          Inicia una transmisión desde la sección "En Vivo" en la app de Vinzay para verla aquí.
+          Inicia una transmisiÃ³n desde la secciÃ³n "En Vivo" en la app de Vinzay para verla aquÃ­.
         </p>
       </div>
     )
@@ -157,7 +157,7 @@ function StreamCard({ stream, onSelect }) {
 
   return (
     <div onClick={onSelect}
-      className="bg-vinzay-surface rounded-2xl p-5 border border-primary/10 hover:border-accent-magenta/50 cursor-pointer transition-all duration-300 group">
+      className="bg-mercora-surface rounded-2xl p-5 border border-primary/10 hover:border-accent-magenta/50 cursor-pointer transition-all duration-300 group">
       <div className="flex items-center gap-4 mb-4">
         <div className="relative">
           <div className="w-14 h-14 rounded-full bg-gradient-to-br from-accent-magenta to-accent-pink flex items-center justify-center text-white font-bold text-xl">
@@ -196,16 +196,16 @@ function StreamCard({ stream, onSelect }) {
       <div className="mt-4 pt-3 border-t border-primary/10 opacity-0 group-hover:opacity-100 transition-opacity">
         <div className="flex items-center gap-2 text-accent-magenta text-sm font-medium">
           <Eye className="w-4 h-4" />
-          <span>Ver transmisión</span>
+          <span>Ver transmisiÃ³n</span>
         </div>
       </div>
     </div>
   )
 }
 
-/* ═══════════════════════════════════════════════
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    StreamViewer - LiveKit Video Player
-   ═══════════════════════════════════════════════ */
+   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 function StreamViewer({ stream, onClose }) {
   const videoRef = useRef(null)
   const roomRef = useRef(null)
@@ -230,7 +230,7 @@ function StreamViewer({ stream, onClose }) {
     channelRef.current.send({
       type: 'broadcast',
       event: 'like',
-      payload: { type: 'like', userId: sessionUser?.id || 'anon', username: sessionUser?.user_metadata?.username || 'Anónimo' }
+      payload: { type: 'like', userId: sessionUser?.id || 'anon', username: sessionUser?.user_metadata?.username || 'AnÃ³nimo' }
     })
   }, [sessionUser])
 
@@ -239,7 +239,7 @@ function StreamViewer({ stream, onClose }) {
     channelRef.current.send({
       type: 'broadcast',
       event: 'comment',
-      payload: { type: 'comment', userId: sessionUser?.id || 'anon', username: sessionUser?.user_metadata?.username || 'Anónimo', text: commentText.trim() }
+      payload: { type: 'comment', userId: sessionUser?.id || 'anon', username: sessionUser?.user_metadata?.username || 'AnÃ³nimo', text: commentText.trim() }
     })
     setCommentText('')
   }, [commentText, sessionUser])
@@ -250,7 +250,7 @@ function StreamViewer({ stream, onClose }) {
 
   useEffect(() => {
     if (!stream?.id || !roomName) {
-      setConnectionError('Esta transmisión no tiene sala configurada')
+      setConnectionError('Esta transmisiÃ³n no tiene sala configurada')
       setStatus('Error')
       return
     }
@@ -370,7 +370,7 @@ function StreamViewer({ stream, onClose }) {
             setStatus('Reconectando...')
             reconnectTimeout = setTimeout(() => connect(), 3000)
           } else {
-            setConnectionError(err.message || 'Error de conexión')
+            setConnectionError(err.message || 'Error de conexiÃ³n')
             setStatus('Error')
           }
         }
@@ -424,7 +424,7 @@ function StreamViewer({ stream, onClose }) {
   }
 
   return (
-    <div className="bg-vinzay-surface rounded-2xl overflow-hidden border border-primary/10">
+    <div className="bg-mercora-surface rounded-2xl overflow-hidden border border-primary/10">
       <div className="relative bg-black aspect-video flex items-center justify-center">
         {!isConnected && !connectionError && (
           <div className="absolute inset-0 flex items-center justify-center bg-black/80 z-10">
@@ -440,13 +440,13 @@ function StreamViewer({ stream, onClose }) {
           <div className="absolute inset-0 flex items-center justify-center bg-black/80 z-10">
             <div className="text-center max-w-md px-6">
               <WifiOff className="w-12 h-12 text-accent-magenta mx-auto mb-4" />
-              <h3 className="text-white font-semibold mb-2">Error de conexión</h3>
+              <h3 className="text-white font-semibold mb-2">Error de conexiÃ³n</h3>
               <p className="text-text-tertiary text-sm mb-4">{connectionError}</p>
               {!roomName && (
                 <p className="text-text-tertiary text-xs mb-4">El broadcaster debe actualizar la app para usar LiveKit</p>
               )}
               <button onClick={onClose}
-                className="px-6 py-2.5 bg-vinzay-surface-elevated text-text-primary rounded-xl border border-primary/10 hover:border-primary/30 transition-all text-sm font-medium">
+                className="px-6 py-2.5 bg-mercora-surface-elevated text-text-primary rounded-xl border border-primary/10 hover:border-primary/30 transition-all text-sm font-medium">
                 Volver
               </button>
             </div>
@@ -542,7 +542,7 @@ function StreamViewer({ stream, onClose }) {
         </div>
 
         {stream.title && (
-          <div className="p-3 bg-vinzay-surface-elevated rounded-xl mb-4">
+          <div className="p-3 bg-mercora-surface-elevated rounded-xl mb-4">
             <p className="text-text-primary text-sm font-medium">{stream.title}</p>
           </div>
         )}
@@ -557,7 +557,7 @@ function StreamViewer({ stream, onClose }) {
                     {(c.username || 'A')[0].toUpperCase()}
                   </div>
                   <div>
-                    <span className="text-accent-magenta text-xs font-semibold">@{c.username || 'Anónimo'}</span>
+                    <span className="text-accent-magenta text-xs font-semibold">@{c.username || 'AnÃ³nimo'}</span>
                     <p className="text-text-primary text-sm">{c.text}</p>
                   </div>
                 </div>
@@ -570,7 +570,7 @@ function StreamViewer({ stream, onClose }) {
                 onChange={(e) => setCommentText(e.target.value)}
                 onKeyDown={(e) => { if (e.key === 'Enter') sendComment() }}
                 placeholder="Escribe un comentario..."
-                className="flex-1 px-3 py-2 bg-vinzay-surface-elevated border border-primary/10 rounded-xl text-text-primary text-sm placeholder-text-muted outline-none focus:border-accent-magenta/50 transition-colors"
+                className="flex-1 px-3 py-2 bg-mercora-surface-elevated border border-primary/10 rounded-xl text-text-primary text-sm placeholder-text-muted outline-none focus:border-accent-magenta/50 transition-colors"
               />
               <button onClick={sendComment} disabled={!commentText.trim()}
                 className="p-2 bg-accent-magenta rounded-xl text-white hover:bg-accent-magenta/80 disabled:opacity-40 transition-all">

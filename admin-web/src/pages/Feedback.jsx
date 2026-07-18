@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+﻿import { useState, useEffect } from 'react'
 import { supabase } from '../supabaseClient'
 
 export default function Feedback() {
@@ -23,7 +23,7 @@ export default function Feedback() {
           table: 'app_feedback'
         },
         (payload) => {
-          console.log('✅ Nuevo feedback recibido:', payload.new)
+          console.log('âœ… Nuevo feedback recibido:', payload.new)
           setFeedbackList(prev => [payload.new, ...prev])
         }
       )
@@ -35,16 +35,16 @@ export default function Feedback() {
           table: 'app_feedback'
         },
         (payload) => {
-          console.log('✅ Feedback actualizado:', payload.new)
+          console.log('âœ… Feedback actualizado:', payload.new)
           setFeedbackList(prev => 
             prev.map(f => f.id === payload.new.id ? payload.new : f)
           )
         }
       )
       .subscribe((status) => {
-        console.log('📡 Feedback realtime status:', status)
+        console.log('ðŸ“¡ Feedback realtime status:', status)
         if (status === 'SUBSCRIBED') {
-          console.log('✅ Suscrito a cambios de app_feedback en tiempo real')
+          console.log('âœ… Suscrito a cambios de app_feedback en tiempo real')
         }
       })
 
@@ -56,21 +56,21 @@ export default function Feedback() {
   async function loadFeedback() {
     setLoading(true)
     try {
-      console.log('📥 Cargando app_feedback...')
+      console.log('ðŸ“¥ Cargando app_feedback...')
       const { data, error } = await supabase
         .from('app_feedback')
         .select('*')
         .order('created_at', { ascending: false })
       
       if (error) {
-        console.error('❌ Error cargando feedback:', error)
+        console.error('âŒ Error cargando feedback:', error)
         throw error
       }
       
-      console.log(`✅ ${data?.length || 0} feedbacks cargados`)
+      console.log(`âœ… ${data?.length || 0} feedbacks cargados`)
       setFeedbackList(data || [])
     } catch (error) {
-      console.error('❌ Error loading feedback:', error)
+      console.error('âŒ Error loading feedback:', error)
       alert(`Error cargando feedback: ${error.message}`)
     } finally {
       setLoading(false)
@@ -85,7 +85,7 @@ export default function Feedback() {
         .eq('id', feedbackId)
       
       if (error) throw error
-      console.log('✓ Estado actualizado')
+      console.log('âœ“ Estado actualizado')
     } catch (error) {
       console.error('Error updating status:', error)
     }
@@ -99,7 +99,7 @@ export default function Feedback() {
         .eq('id', feedbackId)
       
       if (error) throw error
-      console.log('✓ Prioridad actualizada')
+      console.log('âœ“ Prioridad actualizada')
     } catch (error) {
       console.error('Error updating priority:', error)
     }
@@ -123,7 +123,7 @@ export default function Feedback() {
       
       setResponseText('')
       setSelectedFeedback(null)
-      console.log('✓ Respuesta enviada')
+      console.log('âœ“ Respuesta enviada')
     } catch (error) {
       console.error('Error sending response:', error)
     } finally {
@@ -137,11 +137,11 @@ export default function Feedback() {
 
   const getCategoryLabel = (category) => {
     const labels = {
-      feature_request: '💡 Nueva función',
-      improvement: '📈 Mejora',
-      complaint: '😤 Queja',
-      praise: '👏 Elogio',
-      other: '📝 Otro'
+      feature_request: 'ðŸ’¡ Nueva funciÃ³n',
+      improvement: 'ðŸ“ˆ Mejora',
+      complaint: 'ðŸ˜¤ Queja',
+      praise: 'ðŸ‘ Elogio',
+      other: 'ðŸ“ Otro'
     }
     return labels[category] || category
   }
@@ -180,7 +180,7 @@ export default function Feedback() {
     <div className="space-y-6 fade-in">
       <div>
         <h1 className="text-2xl font-bold text-text-primary">Feedback de Usuarios</h1>
-        <p className="text-text-tertiary mt-1">Comentarios y sugerencias para mejorar Vinzay</p>
+        <p className="text-text-tertiary mt-1">Comentarios y sugerencias para mejorar Mercora</p>
       </div>
 
       {/* Filters */}
@@ -190,7 +190,7 @@ export default function Feedback() {
           className={`px-4 py-2 rounded-xl font-medium transition-all ${
             filter === 'all'
               ? 'bg-primary text-white'
-              : 'bg-vinzay-surface text-text-secondary hover:bg-vinzay-surface-elevated'
+              : 'bg-mercora-surface text-text-secondary hover:bg-mercora-surface-elevated'
           }`}
         >
           Todos ({feedbackList.length})
@@ -200,7 +200,7 @@ export default function Feedback() {
           className={`px-4 py-2 rounded-xl font-medium transition-all ${
             filter === 'pending'
               ? 'bg-accent-gold text-white'
-              : 'bg-vinzay-surface text-text-secondary hover:bg-vinzay-surface-elevated'
+              : 'bg-mercora-surface text-text-secondary hover:bg-mercora-surface-elevated'
           }`}
         >
           Pendientes ({feedbackList.filter(f => f.status === 'pending').length})
@@ -210,17 +210,17 @@ export default function Feedback() {
           className={`px-4 py-2 rounded-xl font-medium transition-all ${
             filter === 'reviewing'
               ? 'bg-accent-blue text-white'
-              : 'bg-vinzay-surface text-text-secondary hover:bg-vinzay-surface-elevated'
+              : 'bg-mercora-surface text-text-secondary hover:bg-mercora-surface-elevated'
           }`}
         >
-          En revisión ({feedbackList.filter(f => f.status === 'reviewing').length})
+          En revisiÃ³n ({feedbackList.filter(f => f.status === 'reviewing').length})
         </button>
         <button
           onClick={() => setFilter('planned')}
           className={`px-4 py-2 rounded-xl font-medium transition-all ${
             filter === 'planned'
               ? 'bg-primary text-white'
-              : 'bg-vinzay-surface text-text-secondary hover:bg-vinzay-surface-elevated'
+              : 'bg-mercora-surface text-text-secondary hover:bg-mercora-surface-elevated'
           }`}
         >
           Planificado ({feedbackList.filter(f => f.status === 'planned').length})
@@ -230,7 +230,7 @@ export default function Feedback() {
           className={`px-4 py-2 rounded-xl font-medium transition-all ${
             filter === 'implemented'
               ? 'bg-accent-green text-white'
-              : 'bg-vinzay-surface text-text-secondary hover:bg-vinzay-surface-elevated'
+              : 'bg-mercora-surface text-text-secondary hover:bg-mercora-surface-elevated'
           }`}
         >
           Implementado ({feedbackList.filter(f => f.status === 'implemented').length})
@@ -240,14 +240,14 @@ export default function Feedback() {
       {/* Feedback List */}
       <div className="grid gap-4">
         {filteredFeedback.length === 0 ? (
-          <div className="text-center py-12 text-text-tertiary bg-vinzay-surface rounded-2xl border border-primary/10">
+          <div className="text-center py-12 text-text-tertiary bg-mercora-surface rounded-2xl border border-primary/10">
             No hay feedback con este filtro
           </div>
         ) : (
           filteredFeedback.map((feedback) => (
             <div
               key={feedback.id}
-              className="bg-vinzay-surface rounded-2xl border border-primary/10 p-5 hover:border-primary/30 transition-all cursor-pointer"
+              className="bg-mercora-surface rounded-2xl border border-primary/10 p-5 hover:border-primary/30 transition-all cursor-pointer"
               onClick={() => setSelectedFeedback(feedback)}
             >
               <div className="flex items-start justify-between mb-3">
@@ -258,9 +258,9 @@ export default function Feedback() {
                       {feedback.status}
                     </span>
                     <span className={`text-sm font-medium ${getPriorityColor(feedback.priority)}`}>
-                      {feedback.priority === 'high' && '🔴'}
-                      {feedback.priority === 'medium' && '🟡'}
-                      {feedback.priority === 'low' && '⚪'}
+                      {feedback.priority === 'high' && 'ðŸ”´'}
+                      {feedback.priority === 'medium' && 'ðŸŸ¡'}
+                      {feedback.priority === 'low' && 'âšª'}
                     </span>
                   </div>
                   <h3 className="font-semibold text-text-primary mb-1">{feedback.title}</h3>
@@ -268,13 +268,13 @@ export default function Feedback() {
                 </div>
                 {feedback.rating && (
                   <div className="flex items-center ml-4">
-                    <span className="text-yellow-500 text-xl">{'⭐'.repeat(feedback.rating)}</span>
+                    <span className="text-yellow-500 text-xl">{'â­'.repeat(feedback.rating)}</span>
                   </div>
                 )}
               </div>
               
               <div className="flex items-center justify-between text-xs text-text-muted mt-3 pt-3 border-t border-primary/10">
-                <span>Usuario: {feedback.user_name || 'Anónimo'}</span>
+                <span>Usuario: {feedback.user_name || 'AnÃ³nimo'}</span>
                 <span>{new Date(feedback.created_at).toLocaleString('es-ES')}</span>
               </div>
             </div>
@@ -293,7 +293,7 @@ export default function Feedback() {
                   <div className="flex items-center gap-2">
                     <span className="text-2xl">{getCategoryLabel(selectedFeedback.category)}</span>
                     {selectedFeedback.rating && (
-                      <span className="text-yellow-500">{'⭐'.repeat(selectedFeedback.rating)}</span>
+                      <span className="text-yellow-500">{'â­'.repeat(selectedFeedback.rating)}</span>
                     )}
                   </div>
                 </div>
@@ -301,13 +301,13 @@ export default function Feedback() {
                   onClick={() => setSelectedFeedback(null)}
                   className="text-gray-400 hover:text-gray-600 text-2xl"
                 >
-                  ×
+                  Ã—
                 </button>
               </div>
 
               <div className="space-y-4">
                 <div>
-                  <label className="text-sm font-medium text-gray-700 block mb-1">Descripción</label>
+                  <label className="text-sm font-medium text-gray-700 block mb-1">DescripciÃ³n</label>
                   <p className="text-gray-900 bg-gray-50 p-3 rounded">{selectedFeedback.description}</p>
                 </div>
 
@@ -320,7 +320,7 @@ export default function Feedback() {
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
                     >
                       <option value="pending">Pendiente</option>
-                      <option value="reviewing">En revisión</option>
+                      <option value="reviewing">En revisiÃ³n</option>
                       <option value="planned">Planificado</option>
                       <option value="implemented">Implementado</option>
                       <option value="rejected">Rechazado</option>
@@ -337,7 +337,7 @@ export default function Feedback() {
                       <option value="low">Baja</option>
                       <option value="medium">Media</option>
                       <option value="high">Alta</option>
-                      <option value="critical">Crítica</option>
+                      <option value="critical">CrÃ­tica</option>
                     </select>
                   </div>
                 </div>
@@ -382,7 +382,7 @@ export default function Feedback() {
                 )}
 
                 <div className="text-xs text-gray-500 pt-4 border-t border-gray-200">
-                  <div>Usuario: {selectedFeedback.user_name || 'Anónimo'}</div>
+                  <div>Usuario: {selectedFeedback.user_name || 'AnÃ³nimo'}</div>
                   <div>Email: {selectedFeedback.user_email || 'No proporcionado'}</div>
                   <div>Fecha: {new Date(selectedFeedback.created_at).toLocaleString('es-ES')}</div>
                   <div>ID: {selectedFeedback.id}</div>

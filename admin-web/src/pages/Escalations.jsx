@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+﻿import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { 
   AlertCircle, 
@@ -18,7 +18,7 @@ function EscalationCard({ escalation, onResolve }) {
     if (seconds < 60) return 'Hace un momento'
     if (seconds < 3600) return `Hace ${Math.floor(seconds / 60)} min`
     if (seconds < 86400) return `Hace ${Math.floor(seconds / 3600)}h`
-    return `Hace ${Math.floor(seconds / 86400)} días`
+    return `Hace ${Math.floor(seconds / 86400)} dÃ­as`
   }
   
   const statusColors = {
@@ -36,7 +36,7 @@ function EscalationCard({ escalation, onResolve }) {
   }
   
   return (
-    <div className="bg-vinzay-surface rounded-2xl border border-primary/10 overflow-hidden hover:border-primary/30 transition-all duration-300">
+    <div className="bg-mercora-surface rounded-2xl border border-primary/10 overflow-hidden hover:border-primary/30 transition-all duration-300">
       {/* Header */}
       <div className="flex items-center justify-between p-4 border-b border-primary/10">
         <div className="flex items-center gap-3">
@@ -57,14 +57,14 @@ function EscalationCard({ escalation, onResolve }) {
       <div className="p-4 space-y-3">
         {/* Reason */}
         <div>
-          <p className="text-text-tertiary text-xs mb-1">Razón de escalación</p>
+          <p className="text-text-tertiary text-xs mb-1">RazÃ³n de escalaciÃ³n</p>
           <p className="text-text-primary">{escalation.reason}</p>
         </div>
         
         {/* Last message */}
         {escalation.last_message && (
-          <div className="bg-vinzay-bg rounded-xl p-3">
-            <p className="text-text-tertiary text-xs mb-1">Último mensaje</p>
+          <div className="bg-mercora-bg rounded-xl p-3">
+            <p className="text-text-tertiary text-xs mb-1">Ãšltimo mensaje</p>
             <p className="text-text-secondary text-sm line-clamp-2">{escalation.last_message}</p>
           </div>
         )}
@@ -142,7 +142,7 @@ export default function Escalations() {
       
       if (error) throw error
       
-      // Cargar último mensaje de cada conversación
+      // Cargar Ãºltimo mensaje de cada conversaciÃ³n
       const escalationsWithMessages = await Promise.all(
         (data || []).map(async (e) => {
           const { data: messages } = await supabase
@@ -169,7 +169,7 @@ export default function Escalations() {
   
   async function handleResolve(escalationId) {
     try {
-      // 1. Obtener info de la escalación
+      // 1. Obtener info de la escalaciÃ³n
       const { data: escalation } = await supabase
         .from('ai_escalations')
         .select('conversation_id, user_id')
@@ -177,7 +177,7 @@ export default function Escalations() {
         .single()
       
       if (!escalation) {
-        alert('Error: Escalación no encontrada')
+        alert('Error: EscalaciÃ³n no encontrada')
         return
       }
 
@@ -192,31 +192,31 @@ export default function Escalations() {
           content: feedbackMessage
         })
       
-      console.log('✅ Mensaje de calificación enviado al usuario')
+      console.log('âœ… Mensaje de calificaciÃ³n enviado al usuario')
       
-      // 3. ELIMINAR la escalación inmediatamente de la lista local
+      // 3. ELIMINAR la escalaciÃ³n inmediatamente de la lista local
       setEscalations(prev => prev.filter(e => e.id !== escalationId))
       
-      // 4. ELIMINAR la escalación de la base de datos (NO esperar)
+      // 4. ELIMINAR la escalaciÃ³n de la base de datos (NO esperar)
       const { error: deleteEscError } = await supabase
         .from('ai_escalations')
         .delete()
         .eq('id', escalationId)
       
       if (deleteEscError) {
-        console.error('Error eliminando escalación:', deleteEscError)
+        console.error('Error eliminando escalaciÃ³n:', deleteEscError)
       } else {
-        console.log('🗑️ Escalación eliminada de la base de datos')
+        console.log('ðŸ—‘ï¸ EscalaciÃ³n eliminada de la base de datos')
       }
       
       // NOTA: NO eliminamos support_conversations ni support_messages
       // porque ai_feedback necesita estos datos para el aprendizaje de IA
-      // La conversación se archivará automáticamente después de 24h
+      // La conversaciÃ³n se archivarÃ¡ automÃ¡ticamente despuÃ©s de 24h
       
-      console.log('✅ Chat resuelto. El feedback se guardará cuando el usuario califique.')
+      console.log('âœ… Chat resuelto. El feedback se guardarÃ¡ cuando el usuario califique.')
       
     } catch (error) {
-      console.error('❌ Error resolving:', error)
+      console.error('âŒ Error resolving:', error)
       alert(`Error: ${error.message}`)
       // Recargar en caso de error para sincronizar estado
       loadEscalations()
@@ -241,7 +241,7 @@ export default function Escalations() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-text-primary">Escalaciones</h1>
-          <p className="text-text-tertiary">Conversaciones que necesitan atención humana</p>
+          <p className="text-text-tertiary">Conversaciones que necesitan atenciÃ³n humana</p>
         </div>
         
         {/* Search */}
@@ -252,7 +252,7 @@ export default function Escalations() {
             placeholder="Buscar..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="pl-10 pr-4 py-2 bg-vinzay-surface border border-primary/20 rounded-xl text-text-primary placeholder-text-muted focus:outline-none focus:border-primary w-full md:w-64"
+            className="pl-10 pr-4 py-2 bg-mercora-surface border border-primary/20 rounded-xl text-text-primary placeholder-text-muted focus:outline-none focus:border-primary w-full md:w-64"
           />
         </div>
       </div>
@@ -267,7 +267,7 @@ export default function Escalations() {
               flex items-center gap-2 px-4 py-2 rounded-xl whitespace-nowrap transition-all
               ${filter === key 
                 ? 'bg-primary text-white' 
-                : 'bg-vinzay-surface text-text-secondary hover:bg-vinzay-surface-elevated'
+                : 'bg-mercora-surface text-text-secondary hover:bg-mercora-surface-elevated'
               }
             `}
           >
@@ -298,10 +298,10 @@ export default function Escalations() {
           ))}
         </div>
       ) : (
-        <div className="text-center py-16 bg-vinzay-surface rounded-2xl border border-primary/10">
+        <div className="text-center py-16 bg-mercora-surface rounded-2xl border border-primary/10">
           <CheckCircle className="w-16 h-16 mx-auto mb-4 text-accent-green" />
           <h3 className="text-xl font-semibold text-text-primary mb-2">
-            ¡Todo al día!
+            Â¡Todo al dÃ­a!
           </h3>
           <p className="text-text-tertiary">
             No hay escalaciones {filter === 'pending' ? 'pendientes' : ''} en este momento

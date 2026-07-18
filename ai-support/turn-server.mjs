@@ -1,10 +1,10 @@
-import { createServer } from 'turn-server';
+﻿import { createServer } from 'turn-server';
 
 const server = createServer({
   auth: {
     mechanism: 'long-term',
     realm: 'rendly.local',
-    credentials: { rendly: 'rendly123' }
+    credentials: { rendly: '***REMOVED***' }
   },
   relay: {
     ip: '0.0.0.0',
@@ -13,7 +13,7 @@ const server = createServer({
 });
 
 server.on('listening', (info) => {
-  console.log(`✓ TURN server on ${info.address}:${info.port}/${info.transport}`);
+  console.log(`âœ“ TURN server on ${info.address}:${info.port}/${info.transport}`);
 });
 
 server.on('error', (err) => {

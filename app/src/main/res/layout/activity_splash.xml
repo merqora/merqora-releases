@@ -11,6 +11,6 @@
         android:layout_height="72dp"
         android:layout_gravity="center"
         android:src="@mipmap/ic_launcher"
-        android:contentDescription="Vinzay" />
+        android:contentDescription="Mercora" />
     
 </FrameLayout>

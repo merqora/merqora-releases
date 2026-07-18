@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+﻿import { useState, useEffect } from 'react'
 import { BrowserRouter, Routes, Route, Link, useLocation, Navigate } from 'react-router-dom'
 import {
   MessageSquare, BarChart3, Bell, Bot, TrendingUp,
@@ -8,7 +8,7 @@ import {
 } from 'lucide-react'
 import { supabase } from './supabaseClient'
 
-// Pages — Admin
+// Pages â€” Admin
 import Dashboard from './pages/Dashboard'
 import Escalations from './pages/Escalations'
 import Conversations from './pages/Conversations'
@@ -27,26 +27,26 @@ import ContentReports from './pages/ContentReports'
 import AdminAppManager from './pages/AdminAppManager'
 import LiveStreams from './pages/LiveStreams'
 
-/* ═══════════ Admin Sidebar ═══════════ */
+/* â•â•â•â•â•â•â•â•â•â•â• Admin Sidebar â•â•â•â•â•â•â•â•â•â•â• */
 function Sidebar({ isOpen, setIsOpen }) {
   const location = useLocation()
 
   const navItems = [
     { path: '/admin', icon: BarChart3, label: 'Dashboard' },
-    { path: '/admin/app-manager', icon: Package, label: '📱 App Manager' },
-    { path: '/admin/live', icon: Video, label: '🔴 En Vivo' },
-    { path: '/admin/handshake-test', icon: Grip, label: '🧪 Test Handshake' },
-    { path: '/admin/notification-test', icon: Bell, label: '🔔 Test Notificaciones' },
-    { path: '/admin/chat-test', icon: MessageSquare, label: '💬 Test Chat' },
-    { path: '/admin/verification', icon: BadgeCheck, label: 'Verificación' },
+    { path: '/admin/app-manager', icon: Package, label: 'ðŸ“± App Manager' },
+    { path: '/admin/live', icon: Video, label: 'ðŸ”´ En Vivo' },
+    { path: '/admin/handshake-test', icon: Grip, label: 'ðŸ§ª Test Handshake' },
+    { path: '/admin/notification-test', icon: Bell, label: 'ðŸ”” Test Notificaciones' },
+    { path: '/admin/chat-test', icon: MessageSquare, label: 'ðŸ’¬ Test Chat' },
+    { path: '/admin/verification', icon: BadgeCheck, label: 'VerificaciÃ³n' },
     { path: '/admin/escalations', icon: AlertCircle, label: 'Escalaciones' },
     { path: '/admin/conversations', icon: MessageSquare, label: 'Conversaciones' },
     { path: '/admin/ai-learning', icon: Brain, label: 'Aprendizaje IA' },
     { path: '/admin/training-pipeline', icon: TrendingUp, label: 'Training Pipeline' },
     { path: '/admin/feedback', icon: MessageCircle, label: 'Feedback' },
     { path: '/admin/bug-reports', icon: Bug, label: 'Bug Reports' },
-    { path: '/admin/content-reports', icon: AlertCircle, label: '🚨 Reportes' },
-    { path: '/admin/stats', icon: TrendingUp, label: 'Estadísticas' },
+    { path: '/admin/content-reports', icon: AlertCircle, label: 'ðŸš¨ Reportes' },
+    { path: '/admin/stats', icon: TrendingUp, label: 'EstadÃ­sticas' },
   ]
 
   return (
@@ -55,13 +55,13 @@ function Sidebar({ isOpen, setIsOpen }) {
         <div className="fixed inset-0 bg-black/50 z-40 lg:hidden" onClick={() => setIsOpen(false)} />
       )}
       <aside className={`
-        fixed top-0 left-0 h-full w-64 bg-vinzay-surface border-r border-primary/10 z-50
+        fixed top-0 left-0 h-full w-64 bg-mercora-surface border-r border-primary/10 z-50
         transform transition-transform duration-300 ease-in-out flex flex-col
         ${isOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 lg:static
       `}>
         <div className="flex-shrink-0 p-6 border-b border-primary/10">
           <Link to="/" className="flex items-center gap-3 group">
-            <div className="w-10 h-10 rounded-xl gradient-vinzay flex items-center justify-center group-hover:scale-105 transition-transform">
+            <div className="w-10 h-10 rounded-xl gradient-mercora flex items-center justify-center group-hover:scale-105 transition-transform">
               <ShoppingBag className="w-5 h-5 text-white" />
             </div>
             <div>
@@ -78,7 +78,7 @@ function Sidebar({ isOpen, setIsOpen }) {
               <Link
                 key={path} to={path} onClick={() => setIsOpen(false)}
                 className={`flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-200
-                  ${isActive ? 'bg-primary text-white glow-purple' : 'text-text-secondary hover:bg-vinzay-surface-elevated hover:text-text-primary'}`}
+                  ${isActive ? 'bg-primary text-white glow-purple' : 'text-text-secondary hover:bg-mercora-surface-elevated hover:text-text-primary'}`}
               >
                 <Icon className="w-5 h-5" />
                 <span className="font-medium text-sm">{label}</span>
@@ -98,12 +98,12 @@ function Sidebar({ isOpen, setIsOpen }) {
   )
 }
 
-/* ═══════════ Admin Header ═══════════ */
+/* â•â•â•â•â•â•â•â•â•â•â• Admin Header â•â•â•â•â•â•â•â•â•â•â• */
 function Header({ setIsOpen, user, onLogout }) {
   const [notifications] = useState(3)
 
   return (
-    <header className="h-16 bg-vinzay-surface border-b border-primary/10 flex items-center justify-between px-4 lg:px-6">
+    <header className="h-16 bg-mercora-surface border-b border-primary/10 flex items-center justify-between px-4 lg:px-6">
       <button onClick={() => setIsOpen(true)} className="lg:hidden p-2 text-text-secondary hover:text-text-primary">
         <Menu className="w-6 h-6" />
       </button>
@@ -111,8 +111,8 @@ function Header({ setIsOpen, user, onLogout }) {
       <div className="hidden md:flex flex-1 max-w-md mx-4">
         <input
           type="text"
-          placeholder="Buscar conversación, usuario..."
-          className="w-full px-4 py-2 bg-vinzay-bg border border-primary/20 rounded-xl text-text-primary placeholder-text-muted focus:outline-none focus:border-primary transition-colors"
+          placeholder="Buscar conversaciÃ³n, usuario..."
+          className="w-full px-4 py-2 bg-mercora-bg border border-primary/20 rounded-xl text-text-primary placeholder-text-muted focus:outline-none focus:border-primary transition-colors"
         />
       </div>
 
@@ -131,10 +131,10 @@ function Header({ setIsOpen, user, onLogout }) {
             <p className="text-text-primary text-sm font-medium">{user?.email?.split('@')[0] || 'Admin'}</p>
             <p className="text-text-muted text-xs">Administrador</p>
           </div>
-          <div className="w-10 h-10 rounded-full gradient-vinzay flex items-center justify-center text-white font-bold">
+          <div className="w-10 h-10 rounded-full gradient-mercora flex items-center justify-center text-white font-bold">
             {user?.email?.[0]?.toUpperCase() || 'A'}
           </div>
-          <button onClick={onLogout} className="p-2 text-text-muted hover:text-accent-magenta transition-colors" title="Cerrar sesión">
+          <button onClick={onLogout} className="p-2 text-text-muted hover:text-accent-magenta transition-colors" title="Cerrar sesiÃ³n">
             <LogOut className="w-5 h-5" />
           </button>
         </div>
@@ -143,12 +143,12 @@ function Header({ setIsOpen, user, onLogout }) {
   )
 }
 
-/* ═══════════ Admin Layout ═══════════ */
+/* â•â•â•â•â•â•â•â•â•â•â• Admin Layout â•â•â•â•â•â•â•â•â•â•â• */
 function AdminLayout({ user, onLogout }) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
 
   return (
-    <div className="flex h-screen bg-vinzay-bg">
+    <div className="flex h-screen bg-mercora-bg">
       <Sidebar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />
       <div className="flex-1 flex flex-col overflow-hidden">
         <Header setIsOpen={setSidebarOpen} user={user} onLogout={onLogout} />
@@ -177,10 +177,10 @@ function AdminLayout({ user, onLogout }) {
   )
 }
 
-/* ═══════════ Access Denied Screen ═══════════ */
+/* â•â•â•â•â•â•â•â•â•â•â• Access Denied Screen â•â•â•â•â•â•â•â•â•â•â• */
 function AccessDenied({ onLogout }) {
   return (
-    <div className="min-h-screen bg-vinzay-bg flex items-center justify-center p-4">
+    <div className="min-h-screen bg-mercora-bg flex items-center justify-center p-4">
       <div className="glass rounded-3xl p-10 max-w-md text-center">
         <ShieldAlert className="w-16 h-16 text-accent-magenta mx-auto mb-6" />
         <h1 className="text-2xl font-bold text-text-primary mb-3">Acceso Denegado</h1>
@@ -192,7 +192,7 @@ function AccessDenied({ onLogout }) {
             <span>Volver al inicio</span>
           </Link>
           <button onClick={onLogout} className="text-text-muted hover:text-text-primary text-sm transition-colors">
-            Cerrar sesión
+            Cerrar sesiÃ³n
           </button>
         </div>
       </div>
@@ -200,7 +200,7 @@ function AccessDenied({ onLogout }) {
   )
 }
 
-/* ═══════════ Main App (Full: Public + Admin) ═══════════ */
+/* â•â•â•â•â•â•â•â•â•â•â• Main App (Full: Public + Admin) â•â•â•â•â•â•â•â•â•â•â• */
 export default function AppFull() {
   const [user, setUser] = useState(null)
   const [isVerified, setIsVerified] = useState(false)
@@ -274,15 +274,15 @@ export default function AppFull() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* ═══ Redirect root to Admin ═══ */}
+        {/* â•â•â• Redirect root to Admin â•â•â• */}
         <Route path="/" element={<Navigate to="/admin" replace />} />
 
-        {/* ═══ Admin Routes ═══ */}
+        {/* â•â•â• Admin Routes â•â•â• */}
         <Route path="/admin/*" element={
           !user ? (
             <Login onLogin={setUser} />
           ) : verifyLoading ? (
-            <div className="min-h-screen bg-vinzay-bg flex items-center justify-center">
+            <div className="min-h-screen bg-mercora-bg flex items-center justify-center">
               <div className="text-center">
                 <div className="w-10 h-10 border-2 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-3" />
                 <p className="text-text-muted text-sm">Verificando permisos...</p>

@@ -1,4 +1,4 @@
-"""
+﻿"""
 AI Support Orchestrator - Main decision engine
 
 This is the brain of the AI support system. It:
@@ -35,7 +35,7 @@ from training_pipeline import get_training_pipeline
 
 # Try to import Rust security service
 try:
-    import Vinzay_security
+    import Mercora_security
     RUST_AVAILABLE = True
 except ImportError:
     RUST_AVAILABLE = False
@@ -116,7 +116,7 @@ class SecurityService:
 def get_security_service():
     """Get security service (Rust if available, else Python)"""
     if RUST_AVAILABLE:
-        return Vinzay_security.SecurityService()
+        return Mercora_security.SecurityService()
     return SecurityService()
 
 
@@ -179,92 +179,92 @@ class AIOrchestrator:
     def _generate_escalation_message(self, analysis: AnalysisResult) -> str:
         """Generate message when escalating to human"""
         if analysis.is_aggressive:
-            return """Entiendo que estás frustrado/a. Voy a transferirte con un agente de soporte humano que podrá ayudarte mejor con tu situación.
+            return """Entiendo que estÃ¡s frustrado/a. Voy a transferirte con un agente de soporte humano que podrÃ¡ ayudarte mejor con tu situaciÃ³n.
 
-Un momento por favor, alguien del equipo de Vinzay se comunicará contigo en breve. 🙏"""
+Un momento por favor, alguien del equipo de Vinzay se comunicarÃ¡ contigo en breve. ðŸ™"""
         
         if analysis.is_confused:
             return """Veo que tienes varias dudas. Para darte la mejor ayuda posible, te voy a conectar con un agente de soporte.
 
-En unos momentos alguien del equipo te atenderá personalmente. ¡Gracias por tu paciencia! 🙏"""
+En unos momentos alguien del equipo te atenderÃ¡ personalmente. Â¡Gracias por tu paciencia! ðŸ™"""
         
         return """Para brindarte la mejor asistencia con tu consulta, te voy a conectar con un agente de soporte humano.
 
-Un miembro del equipo Vinzay te atenderá en breve. ¡Gracias por contactarnos! 🙏"""
+Un miembro del equipo Vinzay te atenderÃ¡ en breve. Â¡Gracias por contactarnos! ðŸ™"""
     
     def _generate_fallback_response(self, analysis: AnalysisResult) -> str:
         """Generate fallback when no FAQ match"""
         category = self._intent_to_category(analysis.detected_intent)
         
         fallbacks = {
-            IntentCategory.PURCHASES: """No encontré información específica sobre tu consulta de compras.
+            IntentCategory.PURCHASES: """No encontrÃ© informaciÃ³n especÃ­fica sobre tu consulta de compras.
 
-¿Podrías darme más detalles? Por ejemplo:
-• ¿Es sobre el estado de un pedido?
-• ¿Necesitas cancelar o devolver?
-• ¿Hay algún problema con lo recibido?
+Â¿PodrÃ­as darme mÃ¡s detalles? Por ejemplo:
+â€¢ Â¿Es sobre el estado de un pedido?
+â€¢ Â¿Necesitas cancelar o devolver?
+â€¢ Â¿Hay algÃºn problema con lo recibido?
 
-También puedes revisar **Perfil → Historial de pedidos** para ver tus compras.""",
+TambiÃ©n puedes revisar **Perfil â†’ Historial de pedidos** para ver tus compras.""",
 
-            IntentCategory.PAYMENTS: """No encontré una respuesta exacta para tu consulta de pagos.
+            IntentCategory.PAYMENTS: """No encontrÃ© una respuesta exacta para tu consulta de pagos.
 
-¿Podrías especificar si es sobre:
-• Agregar o cambiar método de pago
-• Un pago rechazado o con error
-• Un reembolso pendiente
+Â¿PodrÃ­as especificar si es sobre:
+â€¢ Agregar o cambiar mÃ©todo de pago
+â€¢ Un pago rechazado o con error
+â€¢ Un reembolso pendiente
 
-Revisa **Perfil → Métodos de pago** para gestionar tus tarjetas.""",
+Revisa **Perfil â†’ MÃ©todos de pago** para gestionar tus tarjetas.""",
 
-            IntentCategory.ACCOUNT: """No encontré información específica sobre tu cuenta.
+            IntentCategory.ACCOUNT: """No encontrÃ© informaciÃ³n especÃ­fica sobre tu cuenta.
 
-¿Tu consulta es sobre:
-• Cambiar contraseña o datos
-• Verificar tu cuenta
-• Problemas para acceder
+Â¿Tu consulta es sobre:
+â€¢ Cambiar contraseÃ±a o datos
+â€¢ Verificar tu cuenta
+â€¢ Problemas para acceder
 
-Revisa **Perfil → Configuración** para opciones de cuenta.""",
+Revisa **Perfil â†’ ConfiguraciÃ³n** para opciones de cuenta.""",
 
-            IntentCategory.SHIPPING: """No encontré una respuesta exacta sobre envíos.
+            IntentCategory.SHIPPING: """No encontrÃ© una respuesta exacta sobre envÃ­os.
 
-¿Necesitas ayuda con:
-• Agregar o cambiar dirección
-• Tiempos de entrega
-• Un paquete perdido o demorado
+Â¿Necesitas ayuda con:
+â€¢ Agregar o cambiar direcciÃ³n
+â€¢ Tiempos de entrega
+â€¢ Un paquete perdido o demorado
 
-Revisa **Perfil → Direcciones** para gestionar tus direcciones.""",
+Revisa **Perfil â†’ Direcciones** para gestionar tus direcciones.""",
 
-            IntentCategory.SALES: """No encontré información específica sobre ventas.
+            IntentCategory.SALES: """No encontrÃ© informaciÃ³n especÃ­fica sobre ventas.
 
-¿Tu consulta es sobre:
-• Cómo publicar un producto
-• Comisiones y cobros
-• Problemas con una venta
+Â¿Tu consulta es sobre:
+â€¢ CÃ³mo publicar un producto
+â€¢ Comisiones y cobros
+â€¢ Problemas con una venta
 
-Revisa **Perfil → Mis ventas** para ver el estado de tus ventas.""",
+Revisa **Perfil â†’ Mis ventas** para ver el estado de tus ventas.""",
 
-            IntentCategory.SECURITY: """No encontré una respuesta exacta sobre seguridad.
+            IntentCategory.SECURITY: """No encontrÃ© una respuesta exacta sobre seguridad.
 
-¿Necesitas ayuda con:
-• Activar verificación en dos pasos
-• Reportar un usuario o fraude
-• Proteger tu cuenta
+Â¿Necesitas ayuda con:
+â€¢ Activar verificaciÃ³n en dos pasos
+â€¢ Reportar un usuario o fraude
+â€¢ Proteger tu cuenta
 
-Revisa **Perfil → Configuración → Seguridad** para opciones.""",
+Revisa **Perfil â†’ ConfiguraciÃ³n â†’ Seguridad** para opciones.""",
         }
         
         return fallbacks.get(
             category,
             """No estoy seguro de entender tu consulta.
 
-¿Podrías reformularla o darme más detalles? Puedo ayudarte con:
-• 🛒 Compras y pedidos
-• 💰 Pagos y reembolsos
-• 👤 Tu cuenta
-• 📦 Envíos
-• 🏪 Ventas
-• 🔒 Seguridad
+Â¿PodrÃ­as reformularla o darme mÃ¡s detalles? Puedo ayudarte con:
+â€¢ ðŸ›’ Compras y pedidos
+â€¢ ðŸ’° Pagos y reembolsos
+â€¢ ðŸ‘¤ Tu cuenta
+â€¢ ðŸ“¦ EnvÃ­os
+â€¢ ðŸª Ventas
+â€¢ ðŸ”’ Seguridad
 
-También puedes explorar el **Centro de ayuda** para más información."""
+TambiÃ©n puedes explorar el **Centro de ayuda** para mÃ¡s informaciÃ³n."""
         )
     
     async def process_message(
@@ -294,7 +294,7 @@ También puedes explorar el **Centro de ayuda** para más información."""
                         return SupportMessageResponse(
                             message_id=message_id,
                             response_type=ResponseType.ESCALATED,
-                            content="Un agente humano está atendiendo tu consulta. Por favor, espera su respuesta.",
+                            content="Un agente humano estÃ¡ atendiendo tu consulta. Por favor, espera su respuesta.",
                             session_id=session_id,
                             conversation_id=conversation_id,
                             escalated=True,
@@ -619,7 +619,7 @@ También puedes explorar el **Centro de ayuda** para más información."""
             suggested_actions=reasoning_result.suggested_actions
         )
         
-        # Guardar en Supabase y aprender automáticamente
+        # Guardar en Supabase y aprender automÃ¡ticamente
         response_time_ms = int((time.time() - start_time) * 1000)
         await self._save_to_supabase(
             user_id=request.user_id,
@@ -639,8 +639,8 @@ También puedes explorar el **Centro de ayuda** para más información."""
         actions_map = {
             "purchase_track": ["Ver historial de pedidos", "Contactar vendedor"],
             "purchase_cancel": ["Ver historial de pedidos", "Solicitar reembolso"],
-            "payment_methods": ["Agregar método de pago", "Ver billetera"],
-            "account_password": ["Cambiar contraseña", "Activar 2FA"],
+            "payment_methods": ["Agregar mÃ©todo de pago", "Ver billetera"],
+            "account_password": ["Cambiar contraseÃ±a", "Activar 2FA"],
             "shipping_address": ["Gestionar direcciones"],
             "sell_how": ["Publicar producto", "Ver mis ventas"],
             "security_2fa": ["Configurar seguridad"],
@@ -676,11 +676,11 @@ También puedes explorar el **Centro de ayuda** para más información."""
         escalation_reason: Optional[str] = None,
         response_source: str = "unknown"
     ):
-        """Guarda la interacción en Supabase, entrena el modelo, y alimenta el training pipeline"""
+        """Guarda la interacciÃ³n en Supabase, entrena el modelo, y alimenta el training pipeline"""
         try:
             category_str = analysis.category.value if hasattr(analysis.category, 'value') else str(analysis.category)
             
-            # 1. Obtener o crear conversación
+            # 1. Obtener o crear conversaciÃ³n
             conv_id = await self.supabase.get_or_create_conversation(user_id, session_id)
             
             if conv_id:
@@ -707,7 +707,7 @@ También puedes explorar el **Centro de ayuda** para más información."""
                     response_time_ms=response_time_ms
                 )
                 
-                # 4. Si fue escalada, crear registro de escalación
+                # 4. Si fue escalada, crear registro de escalaciÃ³n
                 if escalated:
                     await self.supabase.create_escalation(
                         conversation_id=conv_id,
@@ -776,7 +776,7 @@ También puedes explorar el **Centro de ayuda** para más información."""
             except Exception as stats_err:
                 logger.warn("daily_stats_update_error", error=str(stats_err))
             
-            # 6. APRENDIZAJE CONTINUO - Aprender de CADA interacción
+            # 6. APRENDIZAJE CONTINUO - Aprender de CADA interacciÃ³n
             if analysis.detected_intent and analysis.detected_intent != "unknown":
                 was_helpful = not escalated and analysis.confidence_score >= 50
                 self.local_ai.learn_from_feedback(
@@ -804,7 +804,7 @@ También puedes explorar el **Centro de ayuda** para más información."""
                     confidence=analysis.confidence_score
                 )
             
-            # 9. Si fue escalada, registrar el patrón
+            # 9. Si fue escalada, registrar el patrÃ³n
             if escalated:
                 self.learning_engine.learn_new_pattern(
                     question=user_message,

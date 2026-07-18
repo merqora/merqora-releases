@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+﻿import { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import {
   Shield, HeartHandshake, MessageCircle, Bot, Tag, Users,
@@ -8,7 +8,7 @@ import {
 } from 'lucide-react'
 import { supabase } from '../supabaseClient'
 
-/* ═══════════ Hooks & Helpers ═══════════ */
+/* â•â•â•â•â•â•â•â•â•â•â• Hooks & Helpers â•â•â•â•â•â•â•â•â•â•â• */
 function useInView(threshold = 0.1) {
   const ref = useRef(null)
   const [visible, setVisible] = useState(false)
@@ -52,23 +52,23 @@ function Counter({ target, suffix = '' }) {
   return <span ref={ref}>{count.toLocaleString('es-AR')}{suffix}</span>
 }
 
-/* ═══════════ Data ═══════════ */
+/* â•â•â•â•â•â•â•â•â•â•â• Data â•â•â•â•â•â•â•â•â•â•â• */
 const FEATURES = [
-  { icon: Shield, color: '#0A3D62', title: 'Vendedores Verificados', desc: 'Cada vendedor pasa por un proceso de verificación real. Comprá con la confianza de saber con quién tratás.' },
-  { icon: HeartHandshake, color: '#FF6B35', title: 'Sistema Handshake', desc: 'Transacciones presenciales seguras con confirmación QR bilateral. Sin estafas, sin sorpresas.' },
-  { icon: MessageCircle, color: '#2E8B57', title: 'Chat en Tiempo Real', desc: 'Mensajería instantánea con presencia online, reacciones y notificaciones push.' },
-  { icon: Bot, color: '#0A3D62', title: 'Soporte IA 24/7', desc: 'Nuestro asistente inteligente resuelve tus dudas al instante. Si necesitás más, escalamos a un humano.' },
-  { icon: Tag, color: '#FF6B35', title: 'Ofertas Dinámicas', desc: 'Campañas flash, descuentos por tiempo limitado y liquidaciones actualizadas en tiempo real.' },
-  { icon: Users, color: '#2E8B57', title: 'Comunidad Social', desc: 'Seguí a tus vendedores favoritos, mirá stories, dale like y guardá lo que te gusta.' },
+  { icon: Shield, color: '#0A3D62', title: 'Vendedores Verificados', desc: 'Cada vendedor pasa por un proceso de verificaciÃ³n real. ComprÃ¡ con la confianza de saber con quiÃ©n tratÃ¡s.' },
+  { icon: HeartHandshake, color: '#FF6B35', title: 'Sistema Handshake', desc: 'Transacciones presenciales seguras con confirmaciÃ³n QR bilateral. Sin estafas, sin sorpresas.' },
+  { icon: MessageCircle, color: '#2E8B57', title: 'Chat en Tiempo Real', desc: 'MensajerÃ­a instantÃ¡nea con presencia online, reacciones y notificaciones push.' },
+  { icon: Bot, color: '#0A3D62', title: 'Soporte IA 24/7', desc: 'Nuestro asistente inteligente resuelve tus dudas al instante. Si necesitÃ¡s mÃ¡s, escalamos a un humano.' },
+  { icon: Tag, color: '#FF6B35', title: 'Ofertas DinÃ¡micas', desc: 'CampaÃ±as flash, descuentos por tiempo limitado y liquidaciones actualizadas en tiempo real.' },
+  { icon: Users, color: '#2E8B57', title: 'Comunidad Social', desc: 'SeguÃ­ a tus vendedores favoritos, mirÃ¡ stories, dale like y guardÃ¡ lo que te gusta.' },
 ]
 
 const STEPS = [
-  { num: '01', title: 'Descargá la App', desc: 'Bajá Vinzay gratis desde nuestro sitio en segundos.', icon: Download },
-  { num: '02', title: 'Creá tu Cuenta', desc: 'Registrate y verificá tu perfil para mayor confianza.', icon: CheckCircle },
-  { num: '03', title: 'Comprá y Vendé', desc: 'Explorá miles de productos o publicá los tuyos.', icon: ShoppingBag },
+  { num: '01', title: 'DescargÃ¡ la App', desc: 'BajÃ¡ Vinzay gratis desde nuestro sitio en segundos.', icon: Download },
+  { num: '02', title: 'CreÃ¡ tu Cuenta', desc: 'Registrate y verificÃ¡ tu perfil para mayor confianza.', icon: CheckCircle },
+  { num: '03', title: 'ComprÃ¡ y VendÃ©', desc: 'ExplorÃ¡ miles de productos o publicÃ¡ los tuyos.', icon: ShoppingBag },
 ]
 
-/* ═══════════ Navbar ═══════════ */
+/* â•â•â•â•â•â•â•â•â•â•â• Navbar â•â•â•â•â•â•â•â•â•â•â• */
 function Navbar() {
   const [scrolled, setScrolled] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
@@ -83,7 +83,7 @@ function Navbar() {
     <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? 'navbar-scrolled py-3' : 'py-5'}`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
         <Link to="/" className="flex items-center gap-3 group">
-          <div className="w-10 h-10 rounded-xl gradient-vinzay flex items-center justify-center group-hover:scale-110 transition-transform">
+          <div className="w-10 h-10 rounded-xl gradient-mercora flex items-center justify-center group-hover:scale-110 transition-transform">
             <ShoppingBag className="w-5 h-5 text-white" />
           </div>
           <span className="text-xl font-bold text-white">Vinzay</span>
@@ -91,8 +91,8 @@ function Navbar() {
 
         {/* Desktop links */}
         <div className="hidden md:flex items-center gap-8">
-          <a href="#features" className="text-text-secondary hover:text-white transition-colors text-sm font-medium">Características</a>
-          <a href="#how" className="text-text-secondary hover:text-white transition-colors text-sm font-medium">Cómo funciona</a>
+          <a href="#features" className="text-text-secondary hover:text-white transition-colors text-sm font-medium">CaracterÃ­sticas</a>
+          <a href="#how" className="text-text-secondary hover:text-white transition-colors text-sm font-medium">CÃ³mo funciona</a>
           <a href="#download" className="text-text-secondary hover:text-white transition-colors text-sm font-medium">Descargar</a>
           <Link to="/download" className="btn-primary px-5 py-2.5 rounded-xl text-sm font-semibold text-white">
             <span className="flex items-center gap-2"><Download className="w-4 h-4" /> Descargar App</span>
@@ -108,8 +108,8 @@ function Navbar() {
       {/* Mobile menu */}
       {mobileOpen && (
         <div className="md:hidden glass-strong mt-2 mx-4 rounded-2xl p-6 space-y-4 animate-slide-down">
-          <a href="#features" onClick={() => setMobileOpen(false)} className="block text-text-secondary hover:text-white py-2">Características</a>
-          <a href="#how" onClick={() => setMobileOpen(false)} className="block text-text-secondary hover:text-white py-2">Cómo funciona</a>
+          <a href="#features" onClick={() => setMobileOpen(false)} className="block text-text-secondary hover:text-white py-2">CaracterÃ­sticas</a>
+          <a href="#how" onClick={() => setMobileOpen(false)} className="block text-text-secondary hover:text-white py-2">CÃ³mo funciona</a>
           <a href="#download" onClick={() => setMobileOpen(false)} className="block text-text-secondary hover:text-white py-2">Descargar</a>
           <Link to="/download" onClick={() => setMobileOpen(false)} className="btn-primary block text-center px-5 py-3 rounded-xl text-white font-semibold">
             <span>Descargar App</span>
@@ -120,7 +120,7 @@ function Navbar() {
   )
 }
 
-/* ═══════════ Hero ═══════════ */
+/* â•â•â•â•â•â•â•â•â•â•â• Hero â•â•â•â•â•â•â•â•â•â•â• */
 function Hero() {
   return (
     <section className="relative min-h-screen flex items-center pt-20 overflow-hidden">
@@ -140,11 +140,11 @@ function Hero() {
 
           <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-black leading-[1.1] tracking-tight mb-6 animate-slide-up">
             El marketplace<br />social{' '}
-            <span className="gradient-text">más seguro</span>
+            <span className="gradient-text">mÃ¡s seguro</span>
           </h1>
 
           <p className="text-lg sm:text-xl text-text-secondary max-w-lg mx-auto lg:mx-0 mb-8 leading-relaxed animate-slide-up" style={{ animationDelay: '150ms' }}>
-            Compra, vende y conecta con confianza. Vendedores verificados, transacciones seguras y una comunidad que crece cada día.
+            Compra, vende y conecta con confianza. Vendedores verificados, transacciones seguras y una comunidad que crece cada dÃ­a.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start animate-slide-up" style={{ animationDelay: '300ms' }}>
@@ -155,27 +155,27 @@ function Hero() {
               </span>
             </Link>
             <a href="#features" className="btn-outline px-8 py-4 rounded-2xl text-white font-semibold text-lg flex items-center justify-center gap-2">
-              Conocer más <ArrowRight className="w-5 h-5" />
+              Conocer mÃ¡s <ArrowRight className="w-5 h-5" />
             </a>
           </div>
 
           {/* Social proof */}
           <div className="flex items-center gap-6 mt-10 justify-center lg:justify-start animate-fade-in" style={{ animationDelay: '500ms' }}>
             <div className="flex -space-x-3">
-              {['🟣','🔵','🟢','🟡','🔴'].map((c, i) => (
-                <div key={i} className="w-10 h-10 rounded-full border-2 border-Vinzay-bg bg-vinzay-surface-elevated flex items-center justify-center text-lg">{c}</div>
+              {['ðŸŸ£','ðŸ”µ','ðŸŸ¢','ðŸŸ¡','ðŸ”´'].map((c, i) => (
+                <div key={i} className="w-10 h-10 rounded-full border-2 border-Vinzay-bg bg-mercora-surface-elevated flex items-center justify-center text-lg">{c}</div>
               ))}
             </div>
             <div className="text-left">
               <div className="flex items-center gap-1">
                 {[...Array(5)].map((_, i) => <Star key={i} className="w-4 h-4 fill-accent-gold text-accent-gold" />)}
               </div>
-              <p className="text-text-tertiary text-sm">Usuarios confían en Vinzay</p>
+              <p className="text-text-tertiary text-sm">Usuarios confÃ­an en Vinzay</p>
             </div>
           </div>
         </div>
 
-        {/* Right — Phone mockup */}
+        {/* Right â€” Phone mockup */}
         <div className="flex justify-center lg:justify-end animate-scale-in" style={{ animationDelay: '400ms' }}>
           <div className="relative">
             {/* Glow behind phone */}
@@ -188,24 +188,24 @@ function Hero() {
                   <div className="flex items-center justify-between mb-6">
                     <div className="text-lg font-bold text-white">Vinzay</div>
                     <div className="flex gap-2">
-                      <div className="w-8 h-8 rounded-full bg-vinzay-surface-elevated" />
+                      <div className="w-8 h-8 rounded-full bg-mercora-surface-elevated" />
                     </div>
                   </div>
                   {/* Search bar */}
-                  <div className="h-10 rounded-xl bg-vinzay-surface-elevated mb-4 flex items-center px-3">
+                  <div className="h-10 rounded-xl bg-mercora-surface-elevated mb-4 flex items-center px-3">
                     <div className="w-4 h-4 rounded-full border border-text-muted" />
                     <div className="ml-2 h-3 w-24 rounded bg-text-muted/20" />
                   </div>
                   {/* Categories */}
                   <div className="flex gap-2 mb-4 overflow-hidden">
                     {['Ofertas', 'Top', 'Zona'].map((c, i) => (
-                      <div key={i} className={`px-3 py-1.5 rounded-lg text-xs font-medium ${i === 0 ? 'bg-primary text-white' : 'bg-vinzay-surface-elevated text-text-secondary'}`}>{c}</div>
+                      <div key={i} className={`px-3 py-1.5 rounded-lg text-xs font-medium ${i === 0 ? 'bg-primary text-white' : 'bg-mercora-surface-elevated text-text-secondary'}`}>{c}</div>
                     ))}
                   </div>
                   {/* Product cards */}
                   <div className="grid grid-cols-2 gap-2">
                     {[1,2,3,4].map(i => (
-                      <div key={i} className="rounded-xl bg-vinzay-surface-elevated overflow-hidden">
+                      <div key={i} className="rounded-xl bg-mercora-surface-elevated overflow-hidden">
                         <div className={`h-20 ${i % 2 === 0 ? 'bg-gradient-to-br from-[#0A3D62]/40 to-[#2E8B57]/40' : 'bg-gradient-to-br from-[#2E8B57]/30 to-[#FF6B35]/30'}`} />
                         <div className="p-2">
                           <div className="h-2 w-16 rounded bg-text-muted/30 mb-1" />
@@ -215,7 +215,7 @@ function Hero() {
                     ))}
                   </div>
                   {/* Bottom nav - matches app's BottomNavBar */}
-                  <div className="absolute bottom-2 left-3 right-3 h-14 rounded-2xl bg-vinzay-tab-bar flex items-center justify-around px-2">
+                  <div className="absolute bottom-2 left-3 right-3 h-14 rounded-2xl bg-mercora-tab-bar flex items-center justify-around px-2">
                     {/* Home */}
                     <svg viewBox="0 0 24 24" className="w-5 h-5 text-[#3A8FD4]" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
                     {/* Search */}
@@ -244,7 +244,7 @@ function Hero() {
   )
 }
 
-/* ═══════════ Stats Bar ═══════════ */
+/* â•â•â•â•â•â•â•â•â•â•â• Stats Bar â•â•â•â•â•â•â•â•â•â•â• */
 function StatsBar() {
   return (
     <Reveal>
@@ -254,7 +254,7 @@ function StatsBar() {
             { label: 'Descargas', value: 500, suffix: '+' },
             { label: 'Vendedores Verificados', value: 120, suffix: '+' },
             { label: 'Transacciones Seguras', value: 1800, suffix: '+' },
-            { label: 'Valoración', value: 4.9, suffix: '★', fixed: true },
+            { label: 'ValoraciÃ³n', value: 4.9, suffix: 'â˜…', fixed: true },
           ].map((s, i) => (
             <div key={i}>
               <div className="text-3xl md:text-4xl font-black text-white">
@@ -269,7 +269,7 @@ function StatsBar() {
   )
 }
 
-/* ═══════════ Features ═══════════ */
+/* â•â•â•â•â•â•â•â•â•â•â• Features â•â•â•â•â•â•â•â•â•â•â• */
 function Features() {
   return (
     <section id="features" className="py-24 relative overflow-hidden">
@@ -277,13 +277,13 @@ function Features() {
         <Reveal>
           <div className="text-center mb-16">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4">
-              <Zap className="w-4 h-4" /> Características
+              <Zap className="w-4 h-4" /> CaracterÃ­sticas
             </div>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white mb-4">
-              Todo lo que necesitás<br /><span className="gradient-text">en un solo lugar</span>
+              Todo lo que necesitÃ¡s<br /><span className="gradient-text">en un solo lugar</span>
             </h2>
             <p className="text-text-secondary max-w-2xl mx-auto text-lg">
-              Vinzay combina lo mejor del marketplace con la seguridad que necesitás para comprar y vender tranquilo.
+              Vinzay combina lo mejor del marketplace con la seguridad que necesitÃ¡s para comprar y vender tranquilo.
             </p>
           </div>
         </Reveal>
@@ -306,7 +306,7 @@ function Features() {
   )
 }
 
-/* ═══════════ How It Works ═══════════ */
+/* â•â•â•â•â•â•â•â•â•â•â• How It Works â•â•â•â•â•â•â•â•â•â•â• */
 function HowItWorks() {
   return (
     <section id="how" className="py-24 relative overflow-hidden">
@@ -314,10 +314,10 @@ function HowItWorks() {
         <Reveal>
           <div className="text-center mb-16">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent-green/10 text-accent-green text-sm font-medium mb-4">
-              <CheckCircle className="w-4 h-4" /> Súper fácil
+              <CheckCircle className="w-4 h-4" /> SÃºper fÃ¡cil
             </div>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white mb-4">
-              Empezá en <span className="gradient-text">3 pasos</span>
+              EmpezÃ¡ en <span className="gradient-text">3 pasos</span>
             </h2>
           </div>
         </Reveal>
@@ -329,7 +329,7 @@ function HowItWorks() {
           {STEPS.map((s, i) => (
             <Reveal key={i} delay={i * 150}>
               <div className="text-center relative">
-                <div className="w-16 h-16 rounded-2xl gradient-vinzay flex items-center justify-center mx-auto mb-6 relative z-10 shadow-lg shadow-[#0A3D62]/20">
+                <div className="w-16 h-16 rounded-2xl gradient-mercora flex items-center justify-center mx-auto mb-6 relative z-10 shadow-lg shadow-[#0A3D62]/20">
                   <s.icon className="w-7 h-7 text-white" />
                 </div>
                 <div className="text-xs font-bold text-primary mb-2 tracking-widest">{s.num}</div>
@@ -344,7 +344,7 @@ function HowItWorks() {
   )
 }
 
-/* ═══════════ Product Showcase ═══════════ */
+/* â•â•â•â•â•â•â•â•â•â•â• Product Showcase â•â•â•â•â•â•â•â•â•â•â• */
 function ProductShowcase() {
   const [products, setProducts] = useState([])
   const [loading, setLoading] = useState(true)
@@ -371,7 +371,7 @@ function ProductShowcase() {
               Lo que se <span className="gradient-text">vende ahora</span>
             </h2>
             <p className="text-text-secondary max-w-2xl mx-auto text-lg">
-              Miles de productos publicados por toda Uruguay. Encontrá lo que buscás cerca tuyo.
+              Miles de productos publicados por toda Uruguay. EncontrÃ¡ lo que buscÃ¡s cerca tuyo.
             </p>
           </div>
         </Reveal>
@@ -380,7 +380,7 @@ function ProductShowcase() {
           {products.map((p, i) => (
             <Reveal key={p.id} delay={i * 100}>
               <div className="glass card-hover rounded-2xl overflow-hidden group cursor-pointer">
-                <div className="aspect-[4/3] bg-vinzay-surface-elevated flex items-center justify-center overflow-hidden">
+                <div className="aspect-[4/3] bg-mercora-surface-elevated flex items-center justify-center overflow-hidden">
                   {p.images?.[0] ? (
                     <img src={p.images[0]} alt={p.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                   ) : (
@@ -410,7 +410,7 @@ function ProductShowcase() {
   )
 }
 
-/* ═══════════ Security Highlight ═══════════ */
+/* â•â•â•â•â•â•â•â•â•â•â• Security Highlight â•â•â•â•â•â•â•â•â•â•â• */
 function SecuritySection() {
   return (
     <section className="py-24 relative overflow-hidden">
@@ -426,10 +426,10 @@ function SecuritySection() {
             </h2>
             <div className="space-y-5">
               {[
-                { icon: Shield, text: 'Verificación de identidad real para vendedores' },
-                { icon: HeartHandshake, text: 'Sistema Handshake con confirmación QR bilateral' },
-                { icon: Eye, text: 'Reputación transparente basada en transacciones reales' },
-                { icon: Lock, text: 'Encriptación de datos y pagos seguros con MercadoPago' },
+                { icon: Shield, text: 'VerificaciÃ³n de identidad real para vendedores' },
+                { icon: HeartHandshake, text: 'Sistema Handshake con confirmaciÃ³n QR bilateral' },
+                { icon: Eye, text: 'ReputaciÃ³n transparente basada en transacciones reales' },
+                { icon: Lock, text: 'EncriptaciÃ³n de datos y pagos seguros con MercadoPago' },
               ].map((item, i) => (
                 <div key={i} className="flex items-start gap-4">
                   <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
@@ -449,22 +449,22 @@ function SecuritySection() {
             </div>
             <div className="space-y-6 pt-4">
               {/* Fake verification card */}
-              <div className="bg-vinzay-bg rounded-2xl p-4 flex items-center gap-4">
+              <div className="bg-mercora-bg rounded-2xl p-4 flex items-center gap-4">
                 <div className="w-12 h-12 rounded-full bg-[#0A3D62] flex items-center justify-center text-white font-bold">M</div>
                 <div className="flex-1">
                   <div className="flex items-center gap-2">
                     <span className="font-bold text-white">@mauro_shop</span>
-                    <span className="text-blue-400">✓</span>
+                    <span className="text-blue-400">âœ“</span>
                   </div>
                   <span className="text-accent-green text-sm font-medium">Vendedor Verificado</span>
                 </div>
                 <div className="text-right">
                   <div className="text-accent-gold font-bold">98%</div>
-                  <div className="text-text-muted text-xs">reputación</div>
+                  <div className="text-text-muted text-xs">reputaciÃ³n</div>
                 </div>
               </div>
               {/* Handshake demo */}
-              <div className="bg-vinzay-bg rounded-2xl p-4">
+              <div className="bg-mercora-bg rounded-2xl p-4">
                 <div className="flex items-center gap-3 mb-3">
                   <HeartHandshake className="w-5 h-5 text-accent-magenta" />
                   <span className="font-semibold text-white text-sm">Handshake Completado</span>
@@ -474,7 +474,7 @@ function SecuritySection() {
                 <div className="w-6 h-6 rounded-full bg-[#0A3D62] flex items-center justify-center text-xs text-white">C</div>
                     <span className="text-text-secondary">Comprador</span>
                   </div>
-                  <div className="text-accent-green">✓ Confirmado</div>
+                  <div className="text-accent-green">âœ“ Confirmado</div>
                   <div className="flex items-center gap-2">
                     <span className="text-text-secondary">Vendedor</span>
                 <div className="w-6 h-6 rounded-full bg-[#FF6B35]/80 flex items-center justify-center text-xs text-white">V</div>
@@ -485,8 +485,8 @@ function SecuritySection() {
               <div className="bg-accent-green/10 rounded-2xl p-4 flex items-center gap-3">
                 <CheckCircle className="w-6 h-6 text-accent-green" />
                 <div>
-                  <div className="font-semibold text-white text-sm">Transacción exitosa</div>
-                  <div className="text-text-tertiary text-xs">Ambas partes confirmaron · Hace 2 min</div>
+                  <div className="font-semibold text-white text-sm">TransacciÃ³n exitosa</div>
+                  <div className="text-text-tertiary text-xs">Ambas partes confirmaron Â· Hace 2 min</div>
                 </div>
               </div>
             </div>
@@ -497,7 +497,7 @@ function SecuritySection() {
   )
 }
 
-/* ═══════════ Download CTA ═══════════ */
+/* â•â•â•â•â•â•â•â•â•â•â• Download CTA â•â•â•â•â•â•â•â•â•â•â• */
 function DownloadCTA() {
   const [latest, setLatest] = useState(null)
 
@@ -513,14 +513,14 @@ function DownloadCTA() {
       <div className="max-w-4xl mx-auto px-4 text-center relative z-10">
         <Reveal>
           <div className="glass rounded-3xl p-10 sm:p-16">
-            <div className="w-20 h-20 rounded-3xl gradient-vinzay flex items-center justify-center mx-auto mb-6 animate-glow">
+            <div className="w-20 h-20 rounded-3xl gradient-mercora flex items-center justify-center mx-auto mb-6 animate-glow">
               <Smartphone className="w-10 h-10 text-white" />
             </div>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white mb-4">
-              Descargá <span className="gradient-text">Vinzay</span> ahora
+              DescargÃ¡ <span className="gradient-text">Vinzay</span> ahora
             </h2>
             <p className="text-text-secondary text-lg mb-8 max-w-xl mx-auto">
-              Disponible para Android. Descarga directa, sin Play Store. Instalación rápida y segura.
+              Disponible para Android. Descarga directa, sin Play Store. InstalaciÃ³n rÃ¡pida y segura.
             </p>
             <Link to="/download" className="btn-primary inline-flex items-center gap-3 px-10 py-5 rounded-2xl text-white font-bold text-lg download-pulse">
               <span className="flex items-center gap-3">
@@ -529,7 +529,7 @@ function DownloadCTA() {
               </span>
             </Link>
             <p className="text-text-muted text-sm mt-4">
-              Android {latest?.min_sdk || '8.0+'} · {latest ? `${(latest.file_size / 1_000_000).toFixed(0)}MB` : 'Menos de 50MB'} · 100% Gratis
+              Android {latest?.min_sdk || '8.0+'} Â· {latest ? `${(latest.file_size / 1_000_000).toFixed(0)}MB` : 'Menos de 50MB'} Â· 100% Gratis
             </p>
           </div>
         </Reveal>
@@ -538,7 +538,7 @@ function DownloadCTA() {
   )
 }
 
-/* ═══════════ Footer ═══════════ */
+/* â•â•â•â•â•â•â•â•â•â•â• Footer â•â•â•â•â•â•â•â•â•â•â• */
 function Footer() {
   return (
     <footer className="border-t border-white/5 py-12">
@@ -546,27 +546,27 @@ function Footer() {
         <div className="grid md:grid-cols-4 gap-8 mb-10">
           <div className="md:col-span-2">
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-xl gradient-vinzay flex items-center justify-center">
+              <div className="w-10 h-10 rounded-xl gradient-mercora flex items-center justify-center">
                 <ShoppingBag className="w-5 h-5 text-white" />
               </div>
               <span className="text-xl font-bold text-white">Vinzay</span>
             </div>
             <p className="text-text-secondary text-sm leading-relaxed max-w-md">
-              El marketplace social más seguro de Uruguay. Compra, vende y conecta con confianza gracias a nuestro sistema de verificación y transacciones seguras.
+              El marketplace social mÃ¡s seguro de Uruguay. Compra, vende y conecta con confianza gracias a nuestro sistema de verificaciÃ³n y transacciones seguras.
             </p>
           </div>
           <div>
             <h4 className="text-white font-semibold mb-4">Producto</h4>
             <div className="space-y-2">
-              <a href="#features" className="block text-text-secondary hover:text-white text-sm transition-colors">Características</a>
-              <a href="#how" className="block text-text-secondary hover:text-white text-sm transition-colors">Cómo funciona</a>
+              <a href="#features" className="block text-text-secondary hover:text-white text-sm transition-colors">CaracterÃ­sticas</a>
+              <a href="#how" className="block text-text-secondary hover:text-white text-sm transition-colors">CÃ³mo funciona</a>
               <Link to="/download" className="block text-text-secondary hover:text-white text-sm transition-colors">Descargar</Link>
             </div>
           </div>
           <div>
             <h4 className="text-white font-semibold mb-4">Legal</h4>
             <div className="space-y-2">
-              <a href="#" className="block text-text-secondary hover:text-white text-sm transition-colors">Términos de uso</a>
+              <a href="#" className="block text-text-secondary hover:text-white text-sm transition-colors">TÃ©rminos de uso</a>
               <a href="#" className="block text-text-secondary hover:text-white text-sm transition-colors">Privacidad</a>
               <a href="#" className="block text-text-secondary hover:text-white text-sm transition-colors">Contacto</a>
             </div>
@@ -574,7 +574,7 @@ function Footer() {
         </div>
         <div className="section-separator mb-6" />
         <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
-          <p className="text-text-muted text-sm">© {new Date().getFullYear()} Vinzay. Todos los derechos reservados.</p>
+          <p className="text-text-muted text-sm">Â© {new Date().getFullYear()} Vinzay. Todos los derechos reservados.</p>
           <div className="flex items-center gap-2 text-text-muted text-sm">
             <Heart className="w-4 h-4 text-accent-magenta" />
             <span>Hecho en Uruguay</span>
@@ -585,7 +585,7 @@ function Footer() {
   )
 }
 
-/* ═══════════ Main Export ═══════════ */
+/* â•â•â•â•â•â•â•â•â•â•â• Main Export â•â•â•â•â•â•â•â•â•â•â• */
 export default function LandingPage() {
   return (
     <div className="min-h-screen bg-[#050508] overflow-x-hidden">

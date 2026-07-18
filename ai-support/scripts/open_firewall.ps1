@@ -1,4 +1,4 @@
-# Script para abrir el firewall de Windows para Rendly AI Support
+﻿# Script para abrir el firewall de Windows para Mercora AI Support
 # DEBE EJECUTARSE COMO ADMINISTRADOR
 
 Write-Host "========================================" -ForegroundColor Cyan
@@ -15,12 +15,12 @@ if (-not $isAdmin) {
 
 # Eliminar reglas existentes
 Write-Host "`nEliminando reglas anteriores..." -ForegroundColor Yellow
-Remove-NetFirewallRule -DisplayName "Rendly AI Support*" -ErrorAction SilentlyContinue
+Remove-NetFirewallRule -DisplayName "Mercora AI Support*" -ErrorAction SilentlyContinue
 Remove-NetFirewallRule -DisplayName "Python*" -ErrorAction SilentlyContinue
 
 # Crear regla para puerto 8000 TCP
 Write-Host "Creando regla para puerto 8000 TCP..." -ForegroundColor Yellow
-New-NetFirewallRule -DisplayName "Rendly AI Support - TCP 8000" `
+New-NetFirewallRule -DisplayName "Mercora AI Support - TCP 8000" `
     -Direction Inbound `
     -Protocol TCP `
     -LocalPort 8000 `
@@ -33,7 +33,7 @@ New-NetFirewallRule -DisplayName "Rendly AI Support - TCP 8000" `
 Write-Host "Creando regla para Python..." -ForegroundColor Yellow
 $pythonPath = "$env:LOCALAPPDATA\Programs\Python\Python314\python.exe"
 if (Test-Path $pythonPath) {
-    New-NetFirewallRule -DisplayName "Rendly AI Support - Python" `
+    New-NetFirewallRule -DisplayName "Mercora AI Support - Python" `
         -Direction Inbound `
         -Program $pythonPath `
         -Action Allow `
@@ -42,9 +42,9 @@ if (Test-Path $pythonPath) {
         -Description "Permite conexiones entrantes a Python para Rendly AI"
 }
 
-# Crear regla para ICMP (ping) - útil para diagnóstico
+# Crear regla para ICMP (ping) - Ãºtil para diagnÃ³stico
 Write-Host "Habilitando ping (ICMP)..." -ForegroundColor Yellow
-netsh advfirewall firewall add rule name="Rendly AI Support - Ping" protocol=icmpv4:8,any dir=in action=allow
+netsh advfirewall firewall add rule name="Mercora AI Support - Ping" protocol=icmpv4:8,any dir=in action=allow
 
 Write-Host "`n========================================" -ForegroundColor Green
 Write-Host "  Firewall configurado correctamente!" -ForegroundColor Green
@@ -52,13 +52,13 @@ Write-Host "========================================" -ForegroundColor Green
 
 # Verificar
 Write-Host "`nReglas creadas:" -ForegroundColor Cyan
-Get-NetFirewallRule -DisplayName "Rendly AI Support*" | Select-Object DisplayName, Enabled, Direction, Action | Format-Table -AutoSize
+Get-NetFirewallRule -DisplayName "Mercora AI Support*" | Select-Object DisplayName, Enabled, Direction, Action | Format-Table -AutoSize
 
 Write-Host "`nAhora reinicia el servidor AI y prueba desde tu telefono." -ForegroundColor Yellow
 
 # Verificar la regla
 Write-Host "`nVerificando regla..." -ForegroundColor Cyan
-Get-NetFirewallRule -DisplayName "Rendly AI Support*" | Format-Table Name, DisplayName, Enabled, Direction, Action
+Get-NetFirewallRule -DisplayName "Mercora AI Support*" | Format-Table Name, DisplayName, Enabled, Direction, Action
 
 Write-Host "`nPresiona cualquier tecla para salir..."
 $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")

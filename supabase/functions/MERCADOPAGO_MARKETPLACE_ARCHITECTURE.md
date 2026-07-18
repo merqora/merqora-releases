@@ -1,4 +1,4 @@
-# Mercado Pago Marketplace + Split Payments — Architecture Guide
+﻿# Mercado Pago Marketplace + Split Payments â€” Architecture Guide
 
 ## Overview
 
@@ -6,24 +6,24 @@ Vinzay acts as a **Mercado Pago Marketplace**. When a buyer pays:
 
 1. MP creates the payment using the **seller's access_token** (obtained via OAuth)
 2. MP **automatically splits** the payment: seller receives `(total - commission)`, Vinzay receives the commission
-3. **Vinzay NEVER custodies the money**. Funds flow directly: Buyer → MP → Seller + Vinzay
+3. **Vinzay NEVER custodies the money**. Funds flow directly: Buyer â†’ MP â†’ Seller + Vinzay
 
 ## Key Concepts
 
 ### Split Payments (`application_fee`)
 - The `POST /v1/payments` API call includes `application_fee` (commission amount) and `sponsor_id` (seller's MP user ID)
-- MP automatically routes the split — no manual disbursement needed
+- MP automatically routes the split â€” no manual disbursement needed
 - Both the seller and the platform receive their portion directly from MP
 
 ### OAuth Flow
-- Sellers connect their MP accounts via OAuth → Vinzay stores their `access_token` (encrypted)
+- Sellers connect their MP accounts via OAuth â†’ Vinzay stores their `access_token` (encrypted)
 - The `access_token` is used server-side only (never exposed to the client)
 - Token exchange happens via Edge Function (keeps `client_secret` secure)
 
 ## Files Modified/Created
 
 ### Database
-- `supabase/migrations/007_marketplace_split_payments.sql` — New tables + functions
+- `supabase/migrations/007_marketplace_split_payments.sql` â€” New tables + functions
 
 ### Edge Functions (Server)
 | File | Purpose |
@@ -32,7 +32,7 @@ Vinzay acts as a **Mercado Pago Marketplace**. When a buyer pays:
 | `process-card-payment/index.ts` | Checkout API + Split Payments via seller's token |
 | `create-mp-preference/index.ts` | Checkout Pro fallback with marketplace_fee |
 | `mp-webhook/index.ts` | Webhook handler with signature validation, no manual disbursement |
-| ~~`transfer-to-seller/index.ts`~~ | Eliminada — Split Payments reemplaza completamente |
+| ~~`transfer-to-seller/index.ts`~~ | Eliminada â€” Split Payments reemplaza completamente |
 
 ### Android App
 | File | Purpose |
@@ -51,14 +51,14 @@ Vinzay acts as a **Mercado Pago Marketplace**. When a buyer pays:
 1. Register Vinzay as a **Marketplace application** at https://www.mercadopago.com.uy/developers
 2. Get `client_id` and `client_secret`
 3. Get `access_token` for the platform account (for webhook queries)
-4. Configure `redirect_uri` for OAuth: `vinzay://mp-oauth/callback`
+4. Configure `redirect_uri` for OAuth: `mercora://mp-oauth/callback`
 
 ### 2. Environment Variables (Supabase Edge Functions)
 ```
 MERCADOPAGO_ACCESS_TOKEN=<platform_access_token>
 MERCADOPAGO_CLIENT_ID=<mp_client_id>
 MERCADOPAGO_CLIENT_SECRET=<mp_client_secret>
-MERCADOPAGO_REDIRECT_URI=vinzay://mp-oauth/callback
+MERCADOPAGO_REDIRECT_URI=mercora://mp-oauth/callback
 MERCADOPAGO_WEBHOOK_SECRET=<webhook_secret_for_signature_validation>
 MERCADOPAGO_SANDBOX=true
 TOKEN_ENCRYPTION_KEY=<32_char_key_for_encrypting_tokens>
@@ -99,4 +99,4 @@ Set the webhook URL in your MP application dashboard:
 - Webhook signatures are validated using `X-Signature` header (HMAC-SHA256)
 - Idempotency keys prevent duplicate payment processing
 - Client never sees seller's access_token
-- `creditSeller()` is deprecated — all disbursement is handled by MP automatically
+- `creditSeller()` is deprecated â€” all disbursement is handled by MP automatically

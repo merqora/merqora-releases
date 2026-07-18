@@ -1,10 +1,10 @@
-"""
-LLM Service - Sistema de IA híbrido para Vinzay
+﻿"""
+LLM Service - Sistema de IA hÃ­brido para Vinzay
 
 Combina:
 - Groq (Llama 3 70B) como LLM principal
 - Modelo local entrenado como fallback
-- Caché inteligente y aprendizaje continuo
+- CachÃ© inteligente y aprendizaje continuo
 """
 
 import os
@@ -186,7 +186,7 @@ RESPONDE SOLO con la respuesta al usuario, sin explicaciones adicionales."""
         self.cache = ResponseCache()
         self.conversations: Dict[str, List[ConversationMessage]] = {}
 
-        self.groq_key = os.getenv("VINZAY_AI_GROQ_KEY", os.getenv("GROQ_API_KEY", ""))
+        self.groq_key = os.getenv("mercora_ai_GROQ_KEY", os.getenv("GROQ_API_KEY", ""))
         self.groq_enabled = bool(self.groq_key)
 
         self.local_ai = get_local_ai()
@@ -198,8 +198,8 @@ RESPONDE SOLO con la respuesta al usuario, sin explicaciones adicionales."""
             logger.info("groq_initialized", model=self.model)
         else:
             self.llm_provider = "local_trained"
-            self.model = "VINZAY_AI_v1"
-            logger.info("groq_not_configured", message="Set VINZAY_AI_GROQ_KEY or GROQ_API_KEY env var")
+            self.model = "mercora_ai_v1"
+            logger.info("groq_not_configured", message="Set mercora_ai_GROQ_KEY or GROQ_API_KEY env var")
 
         logger.info(
             "ai_initialized",

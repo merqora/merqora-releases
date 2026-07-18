@@ -11,11 +11,11 @@ plugins {
 }
 
 android {
-    namespace = "com.vinzay.app"
+    namespace = "com.mercora.app"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.vinzay.app"
+        applicationId = "com.mercora.app"
         minSdk = 26
         targetSdk = 34
         versionCode = 1
@@ -44,11 +44,10 @@ android {
 
     signingConfigs {
         create("release") {
-            // Usar keystore de debug para testing de performance
-            storeFile = file(System.getProperty("user.home") + "/.android/debug.keystore")
-            storePassword = "android"
-            keyAlias = "androiddebugkey"
-            keyPassword = "android"
+            storeFile = file(System.getProperty("user.home") + "/.android/mercora-release.keystore")
+            storePassword = "***REMOVED***"
+            keyAlias = "mercora"
+            keyPassword = "***REMOVED***"
         }
     }
     
@@ -85,8 +84,8 @@ android {
             buildConfigField("String", "MP_PUBLIC_KEY", "\"${project.findProperty("MP_PUBLIC_KEY") ?: ""}\"")
             // HIGH-2: MP_ACCESS_TOKEN eliminado — solo se usa en Edge Functions del servidor
             buildConfigField("String", "MERCADOPAGO_CLIENT_ID", "\"${project.findProperty("MERCADOPAGO_CLIENT_ID") ?: ""}\"")
-            // AI Support Backend URL - deploy to Railway/Render and set in gradle.properties
-            buildConfigField("String", "AI_SUPPORT_URL", "\"${project.findProperty("AI_SUPPORT_URL") ?: "https://vinzay-ai.up.railway.app"}\"")
+            // AI Support Backend URL - deploy to Render and set in gradle.properties
+            buildConfigField("String", "AI_SUPPORT_URL", "\"${project.findProperty("AI_SUPPORT_URL") ?: "https://mercora-ai.onrender.com"}\"")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -116,8 +115,8 @@ android {
             buildConfigField("String", "MP_PUBLIC_KEY", "\"${project.findProperty("MP_TEST_PUBLIC_KEY") ?: project.findProperty("MP_PUBLIC_KEY") ?: ""}\"")
             // HIGH-2: MP_ACCESS_TOKEN eliminado
             buildConfigField("String", "MERCADOPAGO_CLIENT_ID", "\"${project.findProperty("MERCADOPAGO_CLIENT_ID") ?: ""}\"")
-            // AI Support Backend URL - for debug, use local IP or deployed URL
-            buildConfigField("String", "AI_SUPPORT_URL", "\"${project.findProperty("AI_SUPPORT_URL") ?: "https://vinzay-ai.up.railway.app"}\"")
+            // AI Support Backend URL - overridable via gradle.properties (AI_SUPPORT_URL)
+            buildConfigField("String", "AI_SUPPORT_URL", "\"${project.findProperty("AI_SUPPORT_URL") ?: "https://mercora-ai.onrender.com"}\"")
         }
     }
     
@@ -146,7 +145,11 @@ android {
     }
 }
 
-
+sentry {
+    org.set("mercora")
+    projectName.set("android")
+    autoUploadProguardMapping.set(false)
+}
 
 composeCompiler {
     // Stability config: marca colecciones/fechas como estables para que

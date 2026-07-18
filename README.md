@@ -1,6 +1,6 @@
-# 🚀 Vinzay Releases - Production App Repository
+# 🚀 Mercora - Production App Repository
 
-APK releases y código fuente completo para Vinzay/Rendly app.
+APK releases y código fuente completo para Mercora app.
 
 ## Stack Tecnológico Enterprise
 
@@ -44,7 +44,7 @@ APK releases y código fuente completo para Vinzay/Rendly app.
 
 ```bash
 # 1. Abrir en Android Studio
-cd Rendly
+cd Mercora
 
 # 2. Sincronizar Gradle
 ./gradlew build
@@ -67,7 +67,7 @@ Ver documentación completa en `ai-support/python/README_TRAINING.md`
 
 ## Deployment
 
-- **Backend**: Railway - https://Vinzay-releases-production.up.railway.app
+- **Backend**: Railway - https://mercora-releases-production.up.railway.app
 - **Admin Panel**: Netlify
 - **APK Releases**: GitHub Releases
 

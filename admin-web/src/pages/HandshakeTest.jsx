@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+﻿import { useState, useEffect } from 'react'
 import { 
   Grip,
   Clock,
@@ -36,11 +36,11 @@ function HandshakeTest() {
           table: 'handshake_transactions'
         },
         (payload) => {
-          console.log('🔔 Handshake change:', payload)
+          console.log('ðŸ”” Handshake change:', payload)
           
           if (payload.eventType === 'INSERT') {
             setHandshakes(prev => [payload.new, ...prev])
-            showNotification('🆕 Nuevo handshake recibido!', 'success')
+            showNotification('ðŸ†• Nuevo handshake recibido!', 'success')
           } else if (payload.eventType === 'UPDATE') {
             setHandshakes(prev => 
               prev.map(h => h.id === payload.new.id ? payload.new : h)
@@ -96,7 +96,7 @@ function HandshakeTest() {
         .eq('id', handshakeId)
 
       if (error) throw error
-      showNotification('✅ Handshake aceptado!', 'success')
+      showNotification('âœ… Handshake aceptado!', 'success')
     } catch (error) {
       console.error('Error accepting handshake:', error)
       showNotification('Error al aceptar: ' + error.message, 'error')
@@ -114,7 +114,7 @@ function HandshakeTest() {
         .eq('id', handshakeId)
 
       if (error) throw error
-      showNotification('❌ Handshake rechazado', 'info')
+      showNotification('âŒ Handshake rechazado', 'info')
     } catch (error) {
       console.error('Error rejecting handshake:', error)
       showNotification('Error al rechazar: ' + error.message, 'error')
@@ -132,7 +132,7 @@ function HandshakeTest() {
         .eq('id', handshakeId)
 
       if (error) throw error
-      showNotification('🚫 Handshake cancelado', 'info')
+      showNotification('ðŸš« Handshake cancelado', 'info')
     } catch (error) {
       console.error('Error cancelling handshake:', error)
       showNotification('Error al cancelar: ' + error.message, 'error')
@@ -155,7 +155,7 @@ function HandshakeTest() {
         .eq('id', handshakeId)
 
       if (error) throw error
-      showNotification('✅ Confirmación registrada!', 'success')
+      showNotification('âœ… ConfirmaciÃ³n registrada!', 'success')
     } catch (error) {
       console.error('Error confirming:', error)
       showNotification('Error al confirmar: ' + error.message, 'error')
@@ -208,7 +208,7 @@ function HandshakeTest() {
             Test de Handshakes
           </h1>
           <p className="text-text-muted mt-1">
-            Prueba el sistema de handshakes desde aquí. Los cambios se reflejan en tiempo real.
+            Prueba el sistema de handshakes desde aquÃ­. Los cambios se reflejan en tiempo real.
           </p>
         </div>
 
@@ -228,7 +228,7 @@ function HandshakeTest() {
           <button
             onClick={fetchHandshakes}
             disabled={loading}
-            className="flex items-center gap-2 px-4 py-2 bg-vinzay-surface-elevated text-text-primary rounded-xl hover:bg-primary/20 transition-colors disabled:opacity-50"
+            className="flex items-center gap-2 px-4 py-2 bg-mercora-surface-elevated text-text-primary rounded-xl hover:bg-primary/20 transition-colors disabled:opacity-50"
           >
             <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
             Recargar
@@ -249,13 +249,13 @@ function HandshakeTest() {
 
       {/* Info box */}
       <div className="bg-primary/10 border border-primary/30 rounded-xl p-4">
-        <h3 className="font-semibold text-primary mb-2">📱 Instrucciones de prueba:</h3>
+        <h3 className="font-semibold text-primary mb-2">ðŸ“± Instrucciones de prueba:</h3>
         <ol className="list-decimal list-inside space-y-1 text-text-secondary text-sm">
           <li>Abre la app Android y ve a un chat con otro usuario</li>
-          <li>Pulsa el botón de handshake (🤝) a la izquierda del input</li>
+          <li>Pulsa el botÃ³n de handshake (ðŸ¤) a la izquierda del input</li>
           <li>Completa los datos y pulsa "Iniciar"</li>
-          <li>El handshake aparecerá aquí en tiempo real</li>
-          <li>Acepta o rechaza desde esta página para ver el cambio en la app</li>
+          <li>El handshake aparecerÃ¡ aquÃ­ en tiempo real</li>
+          <li>Acepta o rechaza desde esta pÃ¡gina para ver el cambio en la app</li>
         </ol>
       </div>
 
@@ -267,7 +267,7 @@ function HandshakeTest() {
           { label: 'Aceptados', value: handshakes.filter(h => h.status === 'ACCEPTED').length, color: 'text-blue-400' },
           { label: 'Completados', value: handshakes.filter(h => h.status === 'COMPLETED').length, color: 'text-green-400' },
         ].map(stat => (
-          <div key={stat.label} className="bg-vinzay-surface p-4 rounded-xl">
+          <div key={stat.label} className="bg-mercora-surface p-4 rounded-xl">
             <p className="text-text-muted text-sm">{stat.label}</p>
             <p className={`text-2xl font-bold ${stat.color}`}>{stat.value}</p>
           </div>
@@ -281,18 +281,18 @@ function HandshakeTest() {
             <RefreshCw className="w-8 h-8 text-primary animate-spin" />
           </div>
         ) : handshakes.length === 0 ? (
-          <div className="text-center py-12 bg-vinzay-surface rounded-xl">
+          <div className="text-center py-12 bg-mercora-surface rounded-xl">
             <Grip className="w-16 h-16 text-text-muted mx-auto mb-4" />
             <h3 className="text-lg font-medium text-text-primary mb-2">No hay handshakes</h3>
             <p className="text-text-muted">
-              Inicia uno desde la app Android para verlo aquí
+              Inicia uno desde la app Android para verlo aquÃ­
             </p>
           </div>
         ) : (
           handshakes.map(handshake => (
             <div 
               key={handshake.id} 
-              className={`bg-vinzay-surface rounded-xl p-5 border-l-4 ${
+              className={`bg-mercora-surface rounded-xl p-5 border-l-4 ${
                 handshake.status === 'PROPOSED' ? 'border-yellow-500' :
                 handshake.status === 'ACCEPTED' ? 'border-blue-500' :
                 handshake.status === 'COMPLETED' ? 'border-green-500' :
@@ -314,14 +314,14 @@ function HandshakeTest() {
                       <User className="w-4 h-4 text-text-muted" />
                       <span className="text-sm">
                         <span className="text-text-muted">Iniciador:</span>{' '}
-                        <code className="text-xs bg-vinzay-bg px-1 rounded">{handshake.initiator_id?.slice(0, 8)}...</code>
+                        <code className="text-xs bg-mercora-bg px-1 rounded">{handshake.initiator_id?.slice(0, 8)}...</code>
                       </span>
                     </div>
                     <div className="flex items-center gap-2 text-text-secondary">
                       <User className="w-4 h-4 text-text-muted" />
                       <span className="text-sm">
                         <span className="text-text-muted">Receptor:</span>{' '}
-                        <code className="text-xs bg-vinzay-bg px-1 rounded">{handshake.receiver_id?.slice(0, 8)}...</code>
+                        <code className="text-xs bg-mercora-bg px-1 rounded">{handshake.receiver_id?.slice(0, 8)}...</code>
                       </span>
                     </div>
                   </div>
@@ -347,10 +347,10 @@ function HandshakeTest() {
                   {(handshake.status === 'ACCEPTED' || handshake.status === 'IN_PROGRESS') && (
                     <div className="flex items-center gap-4 pt-2 border-t border-primary/10">
                       <span className={`text-sm ${handshake.initiator_confirmed ? 'text-green-400' : 'text-text-muted'}`}>
-                        {handshake.initiator_confirmed ? '✅' : '⏳'} Iniciador confirmó
+                        {handshake.initiator_confirmed ? 'âœ…' : 'â³'} Iniciador confirmÃ³
                       </span>
                       <span className={`text-sm ${handshake.receiver_confirmed ? 'text-green-400' : 'text-text-muted'}`}>
-                        {handshake.receiver_confirmed ? '✅' : '⏳'} Receptor confirmó
+                        {handshake.receiver_confirmed ? 'âœ…' : 'â³'} Receptor confirmÃ³
                       </span>
                     </div>
                   )}

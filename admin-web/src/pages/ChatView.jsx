@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+﻿import { useState, useEffect, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { 
   ArrowLeft, 
@@ -28,7 +28,7 @@ function MessageBubble({ message, isFromAgent }) {
   const isAgent = message.role === 'human_support'
   
   const bubbleColors = {
-    user: 'bg-vinzay-surface-elevated',
+    user: 'bg-mercora-surface-elevated',
     ai: 'bg-primary/20 border border-primary/30',
     human_support: 'bg-accent-blue/20 border border-accent-blue/30',
     system: 'bg-accent-gold/10 border border-accent-gold/30'
@@ -63,7 +63,7 @@ function MessageBubble({ message, isFromAgent }) {
         `}>
           {/* Role label */}
           <p className={`text-xs mb-1 ${isUser ? 'text-accent-magenta' : isAI ? 'text-primary' : 'text-accent-blue'}`}>
-            {isUser ? 'Usuario' : isAI ? 'IA Vinzay' : 'Agente de Soporte'}
+            {isUser ? 'Usuario' : isAI ? 'IA Mercora' : 'Agente de Soporte'}
           </p>
           
           {/* Content */}
@@ -73,7 +73,7 @@ function MessageBubble({ message, isFromAgent }) {
           <div className="flex items-center gap-2 mt-2 text-text-muted text-xs">
             <span>{timeString}</span>
             {message.confidence_score && (
-              <span className="text-primary">• {message.confidence_score}% confianza</span>
+              <span className="text-primary">â€¢ {message.confidence_score}% confianza</span>
             )}
           </div>
         </div>
@@ -135,7 +135,7 @@ export default function ChatView() {
     try {
       console.log('Loading conversation:', conversationId)
       
-      // Cargar conversación
+      // Cargar conversaciÃ³n
       const { data: conv, error: convError } = await supabase
         .from('support_conversations')
         .select('*')
@@ -169,7 +169,7 @@ export default function ChatView() {
       const messageContent = newMessage.trim()
       await sendAgentMessage(conversationId, messageContent, 'agent-1')
       
-      // NO agregar localmente - el mensaje llegará via realtime
+      // NO agregar localmente - el mensaje llegarÃ¡ via realtime
       // Esto evita el problema de mensaje doble
       
       // Guardar respuesta para aprendizaje de IA
@@ -198,25 +198,25 @@ export default function ChatView() {
   }
   
   async function handleResolve() {
-    if (!window.confirm('¿Marcar esta conversación como resuelta? Se enviará un mensaje al usuario para calificar la atención.')) {
+    if (!window.confirm('Â¿Marcar esta conversaciÃ³n como resuelta? Se enviarÃ¡ un mensaje al usuario para calificar la atenciÃ³n.')) {
       return
     }
     
     try {
-      // 1. Enviar mensaje de calificación al usuario
-      const ratingMessage = `¡Gracias por contactarnos! 🎉
+      // 1. Enviar mensaje de calificaciÃ³n al usuario
+      const ratingMessage = `Â¡Gracias por contactarnos! ðŸŽ‰
 
 Tu consulta ha sido marcada como resuelta por nuestro equipo de soporte.
 
-¿Cómo calificarías la atención recibida?
-⭐ Responde con un número del 1 al 5:
+Â¿CÃ³mo calificarÃ­as la atenciÃ³n recibida?
+â­ Responde con un nÃºmero del 1 al 5:
 1 = Muy malo
 2 = Malo  
 3 = Regular
 4 = Bueno
 5 = Excelente
 
-Tu opinión nos ayuda a mejorar. ¡Gracias!`
+Tu opiniÃ³n nos ayuda a mejorar. Â¡Gracias!`
 
       await supabase
         .from('support_messages')
@@ -226,7 +226,7 @@ Tu opinión nos ayuda a mejorar. ¡Gracias!`
           content: ratingMessage
         })
       
-      // 2. Actualizar estado de la conversación
+      // 2. Actualizar estado de la conversaciÃ³n
       await supabase
         .from('support_conversations')
         .update({ 
@@ -235,7 +235,7 @@ Tu opinión nos ayuda a mejorar. ¡Gracias!`
         })
         .eq('id', conversationId)
       
-      // 3. Actualizar escalación como resuelta
+      // 3. Actualizar escalaciÃ³n como resuelta
       await supabase
         .from('ai_escalations')
         .update({ 
@@ -244,7 +244,7 @@ Tu opinión nos ayuda a mejorar. ¡Gracias!`
         })
         .eq('conversation_id', conversationId)
       
-      // Agregar mensaje local y mostrar confirmación
+      // Agregar mensaje local y mostrar confirmaciÃ³n
       setMessages(prev => [...prev, {
         id: `system_${Date.now()}`,
         role: 'system',
@@ -252,11 +252,11 @@ Tu opinión nos ayuda a mejorar. ¡Gracias!`
         created_at: new Date().toISOString()
       }])
       
-      alert('✅ Conversación marcada como resuelta. Se envió solicitud de calificación al usuario.')
+      alert('âœ… ConversaciÃ³n marcada como resuelta. Se enviÃ³ solicitud de calificaciÃ³n al usuario.')
       
     } catch (error) {
       console.error('Error resolving:', error)
-      alert('Error al resolver la conversación')
+      alert('Error al resolver la conversaciÃ³n')
     }
   }
   
@@ -272,7 +272,7 @@ Tu opinión nos ayuda a mejorar. ¡Gracias!`
     return (
       <div className="flex flex-col items-center justify-center h-full gap-4">
         <AlertCircle className="w-16 h-16 text-accent-gold" />
-        <p className="text-text-secondary text-lg">Conversación no encontrada</p>
+        <p className="text-text-secondary text-lg">ConversaciÃ³n no encontrada</p>
         <button 
           onClick={() => navigate('/escalations')}
           className="px-4 py-2 bg-primary text-white rounded-xl hover:bg-primary/80 transition-colors"
@@ -286,11 +286,11 @@ Tu opinión nos ayuda a mejorar. ¡Gracias!`
   return (
     <div className="flex flex-col h-[calc(100vh-8rem)] fade-in">
       {/* Header */}
-      <div className="flex items-center justify-between p-4 bg-vinzay-surface rounded-t-2xl border border-primary/10 border-b-0">
+      <div className="flex items-center justify-between p-4 bg-mercora-surface rounded-t-2xl border border-primary/10 border-b-0">
         <div className="flex items-center gap-4">
           <button 
             onClick={() => navigate(-1)}
-            className="p-2 text-text-secondary hover:text-text-primary hover:bg-vinzay-surface-elevated rounded-xl transition-colors"
+            className="p-2 text-text-secondary hover:text-text-primary hover:bg-mercora-surface-elevated rounded-xl transition-colors"
           >
             <ArrowLeft className="w-5 h-5" />
           </button>
@@ -327,10 +327,10 @@ Tu opinión nos ayuda a mejorar. ¡Gracias!`
       </div>
       
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-4 bg-vinzay-bg border-x border-primary/10 space-y-4">
+      <div className="flex-1 overflow-y-auto p-4 bg-mercora-bg border-x border-primary/10 space-y-4">
         {messages.length === 0 ? (
           <div className="text-center py-8 text-text-tertiary">
-            No hay mensajes en esta conversación
+            No hay mensajes en esta conversaciÃ³n
           </div>
         ) : (
           messages.map((message) => (
@@ -341,7 +341,7 @@ Tu opinión nos ayuda a mejorar. ¡Gracias!`
       </div>
       
       {/* Input */}
-      <div className="p-4 bg-vinzay-surface rounded-b-2xl border border-primary/10 border-t-0">
+      <div className="p-4 bg-mercora-surface rounded-b-2xl border border-primary/10 border-t-0">
         <div className="flex items-center gap-3">
           <input
             type="text"
@@ -364,7 +364,7 @@ Tu opinión nos ayuda a mejorar. ¡Gracias!`
             }}
             onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && handleSend()}
             placeholder="Escribe tu respuesta al usuario..."
-            className="flex-1 px-4 py-3 bg-vinzay-bg border border-primary/20 rounded-xl text-text-primary placeholder-text-muted focus:outline-none focus:border-primary transition-colors"
+            className="flex-1 px-4 py-3 bg-mercora-bg border border-primary/20 rounded-xl text-text-primary placeholder-text-muted focus:outline-none focus:border-primary transition-colors"
           />
           <button
             onClick={handleSend}
@@ -373,7 +373,7 @@ Tu opinión nos ayuda a mejorar. ¡Gracias!`
               p-3 rounded-xl transition-all duration-200
               ${newMessage.trim() && !sending
                 ? 'bg-primary text-white hover:bg-primary-dark glow-purple'
-                : 'bg-vinzay-surface-elevated text-text-muted cursor-not-allowed'
+                : 'bg-mercora-surface-elevated text-text-muted cursor-not-allowed'
               }
             `}
           >
@@ -381,7 +381,7 @@ Tu opinión nos ayuda a mejorar. ¡Gracias!`
           </button>
         </div>
         <p className="text-text-muted text-xs mt-2 text-center">
-          Los mensajes que envíes aparecerán en el chat del usuario en tiempo real
+          Los mensajes que envÃ­es aparecerÃ¡n en el chat del usuario en tiempo real
         </p>
       </div>
     </div>

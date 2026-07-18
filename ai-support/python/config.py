@@ -1,4 +1,4 @@
-"""Configuration for Vinzay AI Support"""
+﻿"""Configuration for Mercora AI Support"""
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from functools import lru_cache
@@ -31,7 +31,7 @@ class Settings(BaseSettings):
     # Groq LLM
     groq_key: str = ""  # Groq API key for Llama 3 70B
     
-    model_config = SettingsConfigDict(env_file=".env", env_prefix="VINZAY_AI_", extra="ignore")
+    model_config = SettingsConfigDict(env_file=".env", env_prefix="mercora_ai_", extra="ignore")
 
 
 @lru_cache()
