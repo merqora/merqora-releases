@@ -76,7 +76,7 @@ serve(async (req) => {
     const idempotencyKey = `webhook-${effectivePaymentId}-${effectiveTopic}`
     const supabase = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+      Deno.env.get('RENDLY_SERVICE_KEY') ?? ''
     )
 
     const { data: existingAudit } = await supabase

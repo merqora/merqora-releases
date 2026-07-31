@@ -78,7 +78,7 @@ serve(async (req) => {
     // ── JWT obligatorio ──
     const authHeader = req.headers.get('authorization') || ''
     const supabaseUrl = Deno.env.get('SUPABASE_URL') || ''
-    const supabase = createClient(supabaseUrl, Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || '')
+    const supabase = createClient(supabaseUrl, Deno.env.get('RENDLY_SERVICE_KEY') || '')
     let authenticatedUserId = ''
     try {
       const jwt = authHeader.replace('Bearer ', '')

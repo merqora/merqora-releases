@@ -6,8 +6,8 @@ const LIVEKIT_API_KEY = Deno.env.get('LIVEKIT_API_KEY') || ''
 const LIVEKIT_API_SECRET = Deno.env.get('LIVEKIT_API_SECRET') || ''
 const LIVEKIT_HOST = Deno.env.get('LIVEKIT_HOST') || ''
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL') || ''
-const SUPABASE_ANON_KEY = Deno.env.get('SUPABASE_ANON_KEY') || ''
-const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || ''
+const RENDLY_ANON_KEY = Deno.env.get('RENDLY_ANON_KEY') || ''
+const RENDLY_SERVICE_KEY = Deno.env.get('RENDLY_SERVICE_KEY') || ''
 
 const CORS_HEADERS = {
   'Access-Control-Allow-Origin': '*',
@@ -33,7 +33,7 @@ serve(async (req) => {
       return jsonResponse({ error: 'No autorizado' }, 401)
     }
 
-    const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+    const supabase = createClient(SUPABASE_URL, RENDLY_ANON_KEY, {
       global: { headers: { Authorization: `Bearer ${authHeader}` } },
     })
     const { data: { user }, error: authError } = await supabase.auth.getUser(authHeader)
@@ -49,7 +49,7 @@ serve(async (req) => {
       return jsonResponse({ error: 'role debe ser broadcaster o viewer' }, 400)
     }
 
-    const adminClient = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY)
+    const adminClient = createClient(SUPABASE_URL, RENDLY_SERVICE_KEY)
     const { data: profile } = await adminClient
       .from('usuarios')
       .select('username')

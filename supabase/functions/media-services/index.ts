@@ -12,7 +12,7 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 // ═══════════════════════════════════════════════════════════════════════════
 
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL') || ''
-const SUPABASE_ANON_KEY = Deno.env.get('SUPABASE_ANON_KEY') || ''
+const RENDLY_ANON_KEY = Deno.env.get('RENDLY_ANON_KEY') || ''
 
 const R2_ACCOUNT_ID = Deno.env.get('CLOUDFLARE_ACCOUNT_ID') || ''
 const R2_ACCESS_KEY_ID = Deno.env.get('CLOUDFLARE_ACCESS_KEY_ID') || ''
@@ -46,7 +46,7 @@ async function requireUser(req: Request) {
   const authHeader = req.headers.get('Authorization')?.replace('Bearer ', '')
   if (!authHeader) return { user: null, error: jsonResponse({ error: 'No autorizado' }, 401) }
 
-  const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+  const supabase = createClient(SUPABASE_URL, RENDLY_ANON_KEY, {
     global: { headers: { Authorization: `Bearer ${authHeader}` } },
   })
   const { data: { user }, error: authError } = await supabase.auth.getUser(authHeader)

@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { 
   Bell,
   Heart,
@@ -18,7 +18,7 @@ import { supabase } from '../supabaseClient'
 
 // URL de Supabase para Edge Functions (FCM v1 API - más seguro)
 const SUPABASE_URL = 'https://xyrpmmnegzjkbysoocpc.supabase.co'
-const SUPABASE_ANON_KEY = '***REMOVED_ANON_KEY***'
+const SUPABASE_ANON_KEY = 'sb_publishable_jwNO2ocLF0MLBGHaF_EEjg_P4IhPH38'
 
 // Función para enviar push notification via Supabase Edge Function (FCM v1 API)
 async function sendPushNotification(tokens, title, body, data = {}, imageUrl = null) {
