@@ -113,7 +113,7 @@ fun ShareModal(
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         Text(
-                            text = "Compartir publicaciÃ³n",
+                            text = "Compartir publicación",
                             fontSize = 20.sp,
                             fontWeight = FontWeight.Bold,
                             color = TextPrimary
@@ -148,7 +148,7 @@ fun ShareModal(
                         // Internal Share
                         ShareOptionItem(
                             icon = Icons.Outlined.Send,
-                            title = "Enviar por Rendly",
+                            title = "Enviar por Mercora",
                             subtitle = "Compartir con tus amigos o clientes",
                             iconColor = PrimaryBright,
                             onClick = {
@@ -185,7 +185,7 @@ fun ShareModal(
                                 onClick = {
                                     haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                                     val clipboardManager = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                                    val clipData = ClipData.newPlainText("Rendly Post Link", post.shareLink)
+                                    val clipData = ClipData.newPlainText("Mercora Post Link", post.shareLink)
                                     clipboardManager.setPrimaryClip(clipData)
                                     Toast.makeText(context, "Enlace copiado al portapapeles", Toast.LENGTH_SHORT).show()
                                     onDismiss()
@@ -195,7 +195,7 @@ fun ShareModal(
                             // System Share
                             ShareQuickAction(
                                 icon = Icons.Outlined.Share,
-                                label = "MÃ¡s opciones",
+                                label = "Más opciones",
                                 color = TextPrimary,
                                 modifier = Modifier.weight(1f),
                                 onClick = {
@@ -207,19 +207,19 @@ fun ShareModal(
                                         val priceText = "$${post.producto.precio}"
                                         
                                         val shareText = """
-                                            Â¡MirÃ¡ este producto en Rendly! ðŸ”¥
+                                            ¡Mirá este producto en Mercora! 🔥
                                             
-                                            ðŸ“¦ $productName
-                                            ðŸ’° $priceText
+                                            📦 $productName
+                                            💰 $priceText
                                             
-                                            ðŸ‘‰ ${post.shareLink}
+                                            👉 ${post.shareLink}
                                         """.trimIndent()
                                         
                                         putExtra(Intent.EXTRA_TEXT, shareText)
-                                        putExtra(Intent.EXTRA_TITLE, "MirÃ¡ este producto: $productName")
+                                        putExtra(Intent.EXTRA_TITLE, "Mirá este producto: $productName")
                                         type = "text/plain"
                                     }
-                                    val shareIntent = Intent.createChooser(sendIntent, "Compartir publicaciÃ³n")
+                                    val shareIntent = Intent.createChooser(sendIntent, "Compartir publicación")
                                     context.startActivity(shareIntent)
                                     onDismiss()
                                 }

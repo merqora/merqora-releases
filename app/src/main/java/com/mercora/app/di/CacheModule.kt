@@ -30,14 +30,14 @@ object CacheModule {
     
     /**
      * COLD START OPTIMIZATION: Database se crea lazy cuando se accede por primera vez.
-     * NO usar @Singleton aquí - el singleton está en VinzayDatabase.getInstance()
+     * NO usar @Singleton aquí - el singleton está en MercoraDatabase.getInstance()
      * Esto evita que Hilt fuerce la creación durante el startup.
      */
     @Provides
-    fun provideVinzayDatabase(
+    fun provideMercoraDatabase(
         @ApplicationContext context: Context
-    ): VinzayDatabase {
-        return VinzayDatabase.getInstance(context)
+    ): MercoraDatabase {
+        return MercoraDatabase.getInstance(context)
     }
     
     // -----------------------------------------------------------------------
@@ -45,52 +45,52 @@ object CacheModule {
     // -----------------------------------------------------------------------
     
     @Provides
-    fun provideCachedUserDao(database: VinzayDatabase): CachedUserDao {
+    fun provideCachedUserDao(database: MercoraDatabase): CachedUserDao {
         return database.cachedUserDao()
     }
     
     @Provides
-    fun provideCachedPostDao(database: VinzayDatabase): CachedPostDao {
+    fun provideCachedPostDao(database: MercoraDatabase): CachedPostDao {
         return database.cachedPostDao()
     }
     
     @Provides
-    fun provideCachedRendDao(database: VinzayDatabase): CachedRendDao {
+    fun provideCachedRendDao(database: MercoraDatabase): CachedRendDao {
         return database.cachedRendDao()
     }
     
     @Provides
-    fun provideCachedStoryDao(database: VinzayDatabase): CachedStoryDao {
+    fun provideCachedStoryDao(database: MercoraDatabase): CachedStoryDao {
         return database.cachedStoryDao()
     }
     
     @Provides
-    fun provideCachedMessageDao(database: VinzayDatabase): CachedMessageDao {
+    fun provideCachedMessageDao(database: MercoraDatabase): CachedMessageDao {
         return database.cachedMessageDao()
     }
     
     @Provides
-    fun provideCachedConversationDao(database: VinzayDatabase): CachedConversationDao {
+    fun provideCachedConversationDao(database: MercoraDatabase): CachedConversationDao {
         return database.cachedConversationDao()
     }
     
     @Provides
-    fun provideCachedNotificationDao(database: VinzayDatabase): CachedNotificationDao {
+    fun provideCachedNotificationDao(database: MercoraDatabase): CachedNotificationDao {
         return database.cachedNotificationDao()
     }
     
     @Provides
-    fun provideCachedFollowDao(database: VinzayDatabase): CachedFollowDao {
+    fun provideCachedFollowDao(database: MercoraDatabase): CachedFollowDao {
         return database.cachedFollowDao()
     }
     
     @Provides
-    fun provideCacheSyncMetadataDao(database: VinzayDatabase): CacheSyncMetadataDao {
+    fun provideCacheSyncMetadataDao(database: MercoraDatabase): CacheSyncMetadataDao {
         return database.cacheSyncMetadataDao()
     }
     
     @Provides
-    fun providePendingOperationDao(database: VinzayDatabase): PendingOperationDao {
+    fun providePendingOperationDao(database: MercoraDatabase): PendingOperationDao {
         return database.pendingOperationDao()
     }
     

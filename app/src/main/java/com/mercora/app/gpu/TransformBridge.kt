@@ -19,13 +19,13 @@ import kotlinx.coroutines.isActive
 
 /**
  * Motor de Transformaciones 2D Profesional - Nivel Instagram/Lightroom
- * ImplementaciÃ³n en Kotlin puro (fallback sin JNI)
+ * Implementación en Kotlin puro (fallback sin JNI)
  * 
- * CaracterÃ­sticas:
- * - Inercia fÃ­sica al soltar gestos
- * - Snap suave a Ã¡ngulos (0Â°/90Â°/180Â°/270Â°)
- * - Rubber-band en lÃ­mites de zoom
- * - Zoom logarÃ­tmico para UX natural
+ * Características:
+ * - Inercia física al soltar gestos
+ * - Snap suave a ángulos (0°/90°/180°/270°)
+ * - Rubber-band en límites de zoom
+ * - Zoom logarítmico para UX natural
  * - Pan uniforme independiente de escala
  */
 class TransformBridge {
@@ -150,7 +150,7 @@ class TransformBridge {
 }
 
 // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-// ESTADO DE TRANSFORMACIÃ“N OBSERVABLE
+// ESTADO DE TRANSFORMACIÓN OBSERVABLE
 // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 data class TransformStateSnapshot(
@@ -199,7 +199,7 @@ class TransformEngineState(private val engine: TransformBridge) {
     private var lastFrameTime = 0L
     private var isGestureActive = false
     
-    // Para animaciÃ³n fluida del reset
+    // Para animación fluida del reset
     private var isResettingAnimated = false
     private var resetStartTranslateX = 0f
     private var resetStartTranslateY = 0f
@@ -221,7 +221,7 @@ class TransformEngineState(private val engine: TransformBridge) {
     }
     
     /**
-     * Reset animado - transiciÃ³n fluida hacia el estado inicial
+     * Reset animado - transición fluida hacia el estado inicial
      */
     fun resetAnimated() {
         resetStartTranslateX = translateX
@@ -267,9 +267,9 @@ class TransformEngineState(private val engine: TransformBridge) {
         val deltaTime = (currentTimeMillis - lastFrameTime) / 1000f
         lastFrameTime = currentTimeMillis
         
-        // Manejar animaciÃ³n de reset fluido
+        // Manejar animación de reset fluido
         if (isResettingAnimated) {
-            resetProgress += deltaTime * 4f // Velocidad de animaciÃ³n (0.25 segundos)
+            resetProgress += deltaTime * 4f // Velocidad de animación (0.25 segundos)
             if (resetProgress >= 1f) {
                 resetProgress = 1f
                 isResettingAnimated = false
@@ -279,7 +279,7 @@ class TransformEngineState(private val engine: TransformBridge) {
                 return false
             }
             
-            // InterpolaciÃ³n ease-out
+            // Interpolación ease-out
             val t = 1f - (1f - resetProgress) * (1f - resetProgress)
             translateX = resetStartTranslateX * (1f - t)
             translateY = resetStartTranslateY * (1f - t)
@@ -334,7 +334,7 @@ fun Modifier.transformGestures(
 
 fun Modifier.applyTransform(state: TransformEngineState): Modifier = this
     .graphicsLayer {
-        // Usar el CENTRO del componente como pivote para rotaciÃ³n y escala
+        // Usar el CENTRO del componente como pivote para rotación y escala
         transformOrigin = androidx.compose.ui.graphics.TransformOrigin.Center
         
         // Aplicar transformaciones
@@ -346,7 +346,7 @@ fun Modifier.applyTransform(state: TransformEngineState): Modifier = this
     }
 
 /**
- * ExtensiÃ³n de transformGestures con soporte para doble tap para resetear (animado)
+ * Extensión de transformGestures con soporte para doble tap para resetear (animado)
  */
 fun Modifier.transformGesturesWithDoubleTap(
     state: TransformEngineState,

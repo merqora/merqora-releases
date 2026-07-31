@@ -86,8 +86,8 @@ fun GifPickerModal(
     var isLoading by remember { mutableStateOf(false) }
     var showContent by remember { mutableStateOf(false) }
     
-    // GIPHY API Key (usar la key pÃºblica de desarrollo)
-    val giphyApiKey = "hlJ056DinwMhY9aPNSscrUi4R4Xo5ekI"
+    // GIPHY API Key desde BuildConfig
+    val giphyApiKey = com.mercora.app.BuildConfig.GIPHY_API_KEY
     
     // Cargar trending GIFs al abrir
     LaunchedEffect(visible) {
@@ -122,7 +122,7 @@ fun GifPickerModal(
             }
             isLoading = false
         } else if (visible) {
-            // Volver a trending si se borra la bÃºsqueda
+            // Volver a trending si se borra la búsqueda
             isLoading = true
             try {
                 val response = fetchGiphyTrending(giphyApiKey)

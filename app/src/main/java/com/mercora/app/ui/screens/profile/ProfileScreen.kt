@@ -35,8 +35,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.mercora.app.data.model.Highlight
-import com.mercora.app.data.repository.FollowersRepository
-import com.mercora.app.data.repository.NotificationRepository
 import com.mercora.app.data.repository.ProfileRepository
 import com.mercora.app.data.repository.HighlightRepository
 import com.mercora.app.ui.components.HighlightedStories
@@ -73,6 +71,7 @@ import android.util.Log
 import com.mercora.app.data.remote.SupabaseClient
 import kotlinx.coroutines.launch
 import androidx.compose.foundation.BorderStroke
+import androidx.hilt.navigation.compose.hiltViewModel
 
 data class ProfileData(
     val userId: String = "",
@@ -102,7 +101,7 @@ private data class ProfileTab(
 )
 
 private val profileTabs = listOf(
-    ProfileTab("posts", Icons.Default.Menu, "CatÃ¡logo"),
+    ProfileTab("posts", Icons.Default.Menu, "Catálogo"),
     ProfileTab("videos", Icons.Outlined.PlayCircle, "Clips"),
     ProfileTab("details", Icons.Outlined.Info, "Detalles"),
     ProfileTab("points", Icons.Outlined.Star, "Puntos"),
@@ -122,7 +121,8 @@ fun ProfileScreen(
     showNavBar: Boolean = true,
     currentNavRoute: String = "profile",
     onNavNavigate: (String) -> Unit = {},
-    onNavHomeReclick: () -> Unit = {}
+    onNavHomeReclick: () -> Unit = {},
+    viewModel: ProfileViewModel = hiltViewModel()
 ) {
     val scope = rememberCoroutineScope()
     val context = androidx.compose.ui.platform.LocalContext.current
@@ -167,7 +167,7 @@ fun ProfileScreen(
         openPreview(ProductPreviewConfig(
             post = post,
             onContactSeller = {
-                android.widget.Toast.makeText(context, "Esta publicaciÃ³n es tuya", android.widget.Toast.LENGTH_SHORT).show()
+                android.widget.Toast.makeText(context, "Esta publicación es tuya", android.widget.Toast.LENGTH_SHORT).show()
             }
         ))
     }
@@ -182,12 +182,14 @@ fun ProfileScreen(
     // Estado para modal de seguidores/clientes
     var showFollowersList by remember { mutableStateOf(false) }
     
-    // Estado para modal de quitar de guardados (movido aquÃ­ para que se renderice fuera del LazyColumn)
+    // Estado para modal de quitar de guardados (movido aquí para que se renderice fuera del LazyColumn)
     var showUnsaveModal by remember { mutableStateOf(false) }
     var postToUnsave by remember { mutableStateOf<Post?>(null) }
     
-    // Estado para logout - se activa despuÃ©s de limpiar sesiÃ³n
-    var shouldLogout by remember { mutableStateOf(false) }
+    // Estado del dot de nuevas formas - actualizado al entrar a editar perfil
+    var hasNewShapesInProfile by remember { mutableStateOf(com.mercora.app.data.repository.AvatarShapeRepository.hasUnseenShapes()) }
+    
+    val shouldLogout by viewModel.shouldLogout.collectAsState()
     
     // Ejecutar logout fuera de coroutines para evitar problemas de contexto
     LaunchedEffect(shouldLogout) {
@@ -206,154 +208,23 @@ fun ProfileScreen(
         onSettingsModalVisibilityChange(showSettingsModal)
     }
     
-    // Estado del perfil desde el repositorio
-    val profileFromRepo by ProfileRepository.currentProfile.collectAsState()
-    val isLoading by ProfileRepository.isLoading.collectAsState()
-    
-    // Estado de highlights desde Supabase
-    val highlightsFromRepo by HighlightRepository.highlights.collectAsState()
-    
-    // Posts del usuario desde el repositorio
-    val userPosts by PostRepository.userPosts.collectAsState()
-    val isLoadingUserPosts by PostRepository.isLoadingUserPosts.collectAsState()
-    var hasInitiallyLoadedPosts by remember { mutableStateOf(PostRepository.userPosts.value.isNotEmpty()) }
-    
-    // Stories del usuario para halo del avatar
-    val myStories by StoryRepository.myStories.collectAsState()
+    // Estado del perfil desde el ViewModel
+    val profileFromRepo by viewModel.currentProfile.collectAsState()
+    val isLoading by viewModel.isLoading.collectAsState()
+    val highlightsFromRepo by viewModel.highlights.collectAsState()
+    val userPosts by viewModel.userPosts.collectAsState()
+    val isLoadingUserPosts by viewModel.isLoadingUserPosts.collectAsState()
+    var hasInitiallyLoadedPosts by remember { mutableStateOf(viewModel.userPosts.value.isNotEmpty()) }
+    val myStories by viewModel.myStories.collectAsState()
     val hasProfileStories = myStories.isNotEmpty()
     var showMyStoriesViewer by remember { mutableStateOf(false) }
     var isLoadingMyStories by remember { mutableStateOf(false) }
-    
-    // Rends del usuario
-    val userRends by RendRepository.rends.collectAsState()
-    
-    // Posts guardados del usuario
-    var savedPosts by remember { mutableStateOf<List<Post>>(emptyList()) }
-    var isLoadingSaved by remember { mutableStateOf(false) }
-    
-    // Pager state for swipeable tabs
-    var selectedTabIndex by remember { mutableIntStateOf(0) }
+    val userRends by viewModel.userRends.collectAsState()
+    val savedPosts by viewModel.savedPosts.collectAsState()
+    val isLoadingSaved by viewModel.isLoadingSaved.collectAsState()
+    val selectedTabIndex by viewModel.selectedTabIndex.collectAsState()
     val screenConfig = androidx.compose.ui.platform.LocalConfiguration.current
-    
-    // Marcar cuando los posts terminan de cargar por primera vez
-    LaunchedEffect(isLoadingUserPosts) {
-        if (!isLoadingUserPosts && !hasInitiallyLoadedPosts && profileFromRepo != null) {
-            hasInitiallyLoadedPosts = true
-        }
-    }
-    // TambiÃ©n marcar si ya hay posts disponibles
-    LaunchedEffect(userPosts) {
-        if (userPosts.isNotEmpty()) {
-            hasInitiallyLoadedPosts = true
-        }
-    }
 
-    // Estado del dot de nuevas formas - actualizado al entrar a editar perfil
-    var hasNewShapesInProfile by remember { mutableStateOf(com.mercora.app.data.repository.AvatarShapeRepository.hasUnseenShapes()) }
-    
-    // Cargar perfil, highlights, posts y rends del usuario al iniciar
-    LaunchedEffect(Unit) {
-        ProfileRepository.loadCurrentProfile()
-        HighlightRepository.loadHighlights()
-        PostRepository.loadUserPosts()
-        RendRepository.loadRends()
-    }
-
-    // Reaccionar a cambios en seguidores (aceptaciÃ³n de solicitudes)
-    // para actualizar contadores en el propio perfil
-    LaunchedEffect(Unit) {
-        val currentUserId = SupabaseClient.auth.currentUserOrNull()?.id
-        if (currentUserId != null) {
-            FollowersRepository.subscribeToFollowChanges(currentUserId)
-        }
-    }
-
-    LaunchedEffect(Unit) {
-        FollowersRepository.followChangeTrigger.collect { (followerId, followedId) ->
-            if (followedId == profileFromRepo?.userId) {
-                Log.d("ProfileScreen", "ðŸ”„ Follow change detected, refrescando perfil...")
-                ProfileRepository.loadCurrentProfile(forceRefresh = true)
-                PostRepository.loadUserPosts(forceRefresh = true)
-            }
-        }
-    }
-
-    // TambiÃ©n reaccionar al trigger vÃ­a notificaciones (fallback)
-    LaunchedEffect(Unit) {
-        NotificationRepository.profileRefreshTrigger.collect { _ ->
-            if (profileFromRepo != null) {
-                ProfileRepository.loadCurrentProfile(forceRefresh = true)
-            }
-        }
-    }
-
-    // Cargar posts guardados cuando se selecciona el tab Guardados
-    LaunchedEffect(selectedTabIndex) {
-        if (selectedTabIndex == 4 && savedPosts.isEmpty()) {
-            isLoadingSaved = true
-            try {
-                val currentUserId = com.mercora.app.data.remote.SupabaseClient.auth.currentUserOrNull()?.id
-                if (currentUserId != null) {
-                    val saves = com.mercora.app.data.remote.SupabaseClient.database
-                        .from("post_saves")
-                        .select { filter { eq("user_id", currentUserId) } }
-                        .decodeList<com.mercora.app.ui.screens.home.PostSaveDB>()
-                    
-                    val savedPostIds = saves.map { it.postId }.toSet()
-                    
-                    if (savedPostIds.isNotEmpty()) {
-                        val posts = com.mercora.app.data.remote.SupabaseClient.database
-                            .from("posts")
-                            .select()
-                            .decodeList<com.mercora.app.data.model.PostDB>()
-                            .filter { it.id in savedPostIds }
-                        
-                        val userIds = posts.map { it.userId }.distinct()
-                        val usersMap = mutableMapOf<String, com.mercora.app.data.repository.ExploreUserProfile>()
-                        
-                        for (userId in userIds) {
-                            try {
-                                val user = com.mercora.app.data.remote.SupabaseClient.database
-                                    .from("usuarios")
-                                    .select { filter { eq("user_id", userId) } }
-                                    .decodeSingleOrNull<com.mercora.app.data.repository.ExploreUserProfile>()
-                                if (user != null) usersMap[userId] = user
-                            } catch (_: Exception) {}
-                        }
-                        
-                        savedPosts = posts.map { post ->
-                            val user = usersMap[post.userId]
-                            Post(
-                                id = post.id,
-                                userId = post.userId,
-                                title = post.title,
-                                description = post.description,
-                                price = post.price,
-                                previousPrice = post.previousPrice,
-                                category = post.category ?: "",
-                                condition = post.condition ?: "",
-                                images = post.images,
-                                likesCount = post.likesCount,
-                                reviewsCount = post.reviewsCount,
-                                savesCount = post.savesCount,
-                                sharesCount = post.sharesCount,
-                                createdAt = post.createdAt,
-                                username = user?.username ?: "usuario",
-                                userAvatar = user?.avatarUrl ?: "",
-                                userStoreName = user?.nombreTienda,
-                                isSaved = true,
-                                freeShipping = post.freeShipping ?: false
-                            )
-                        }
-                    }
-                }
-            } catch (e: Exception) {
-                android.util.Log.e("ProfileScreen", "Error cargando guardados: ${e.message}")
-            }
-            isLoadingSaved = false
-        }
-    }
-    
     // Usar datos del repositorio o valores por defecto
     val profile = profileFromRepo ?: ProfileData(
         username = "tu_usuario",
@@ -400,7 +271,7 @@ fun ProfileScreen(
     
     Box(modifier = modifier.fillMaxSize().systemBarsPadding()) {
         if (profileFromRepo == null) {
-            // Solo skeleton completo si no hay datos de perfil aÃºn
+            // Solo skeleton completo si no hay datos de perfil aún
             ProfileScreenSkeleton(
                 modifier = Modifier
                     .fillMaxSize()
@@ -418,7 +289,7 @@ fun ProfileScreen(
                 .background(HomeBg)
                 .onSizeChanged { lazyColumnHeightPx = it.height }
         ) {
-            // Header compacto con username y botÃ³n de publicar
+            // Header compacto con username y botón de publicar
             item {
                 OwnProfileHeader(
                     username = profile.username,
@@ -438,7 +309,7 @@ fun ProfileScreen(
                 // Observa el flow del repo: cambia EN TIEMPO REAL al elegir otra forma
                 val repoShape by com.mercora.app.data.repository.AvatarShapeRepository.selectedShapeFlow.collectAsState()
                 val avatarShapeType = try {
-                    // Si el repo tiene un valor distinto al default (circle), Ãºsalo.
+                    // Si el repo tiene un valor distinto al default (circle), úsalo.
                     // Si no, lee del perfil (DB).
                     if (repoShape != com.mercora.app.data.model.AvatarShapeType.CIRCLE || profile.avatarShape.isNullOrBlank()) {
                         repoShape
@@ -460,7 +331,7 @@ fun ProfileScreen(
                 )
             }
             
-            // Botones de acciÃ³n
+            // Botones de acción
             item(key = "profileActions_${hasNewShapesInProfile}") {
                 ProfileActions(
                     onEditProfile = {
@@ -501,18 +372,18 @@ fun ProfileScreen(
                     ProfileTabs(
                         tabs = profileTabs,
                         selectedIndex = selectedTabIndex,
-                        onTabSelected = { index ->
-                            selectedTabIndex = index
-                        }
+                            onTabSelected = { index ->
+                                viewModel.selectTab(index)
+                            }
                     )
                 }
             }
 
             // Contenido del tab seleccionado
             item(key = "tabContent_${selectedTabIndex}") {
-                // Altura EXACTA del Ã¡rea visible bajo el TabBar sticky:
-                // asÃ­ el contenido corto queda contra el borde inferior sin
-                // sobrepasar ni esconderse detrÃ¡s del TabBar al hacer scroll.
+                // Altura EXACTA del área visible bajo el TabBar sticky:
+                // así el contenido corto queda contra el borde inferior sin
+                // sobrepasar ni esconderse detrás del TabBar al hacer scroll.
                 val visibleContentHeight = with(density) {
                     (lazyColumnHeightPx - tabBarHeightPx).coerceAtLeast(0).toDp()
                 }
@@ -589,7 +460,7 @@ fun ProfileScreen(
         }
         } // End of else block for skeleton
         
-        // NavBar embebido - ANTES de todos los modales para que queden SOBRE Ã©l
+        // NavBar embebido - ANTES de todos los modales para que queden SOBRE él
         if (showNavBar) {
             BottomNavBar(
                 currentRoute = currentNavRoute,
@@ -743,7 +614,7 @@ fun ProfileScreen(
                                 android.util.Log.e("ProfileScreen", "Error procesando imagen", e)
                             }
                         }
-                        // Recargar highlights despuÃ©s de agregar todas las imÃ¡genes
+                        // Recargar highlights después de agregar todas las imágenes
                         HighlightRepository.loadHighlights()
                         uploadingHighlightId = null
                         // Incrementar refresh key para que el viewer recargue
@@ -802,14 +673,14 @@ fun ProfileScreen(
                         
                         if (result.isSuccess) {
                             android.util.Log.d("ProfileScreen", "âœ… Highlight creado exitosamente en Supabase")
-                            // El repositorio ya recarga automÃ¡ticamente, pero esperamos un poco
+                            // El repositorio ya recarga automáticamente, pero esperamos un poco
                             kotlinx.coroutines.delay(300)
                             showAddHighlightModal = false
                         } else {
                             android.util.Log.e("ProfileScreen", "âŒ Error al crear highlight: ${result.exceptionOrNull()?.message}")
                         }
                     } catch (e: Exception) {
-                        android.util.Log.e("ProfileScreen", "âŒ ExcepciÃ³n al crear highlight", e)
+                        android.util.Log.e("ProfileScreen", "âŒ Excepción al crear highlight", e)
                     } finally {
                         isCreatingHighlight = false
                     }
@@ -827,7 +698,7 @@ fun ProfileScreen(
             )
         }
         
-        // Modal de opciones de publicaciÃ³n
+        // Modal de opciones de publicación
         PublishOptionsModal(
             isVisible = showPublishModal,
             onDismiss = { showPublishModal = false },
@@ -837,7 +708,7 @@ fun ProfileScreen(
             }
         )
         
-        // Pantalla de publicaciÃ³n
+        // Pantalla de publicación
         if (showPublishScreen) {
             PublishScreen(
                 onClose = { showPublishScreen = false },
@@ -848,7 +719,7 @@ fun ProfileScreen(
             )
         }
         
-        // Modal de configuraciÃ³n/ajustes
+        // Modal de configuración/ajustes
         ProfileSettingsModal(
             isVisible = showSettingsModal,
             onDismiss = { showSettingsModal = false },
@@ -860,17 +731,17 @@ fun ProfileScreen(
             onLogout = {
                 scope.launch {
                     try {
-                        // PRIMERO: Limpiar sesiÃ³n persistida (CRÃTICO)
+                        // PRIMERO: Limpiar sesión persistida (CRÍTICO)
                         com.mercora.app.data.remote.SessionPersistence.clearSession()
-                        // Cerrar sesiÃ³n en Supabase
+                        // Cerrar sesión en Supabase
                         com.mercora.app.data.remote.SupabaseClient.auth.signOut()
                         // Limpiar perfil cargado
                         ProfileRepository.clearProfile()
-                        android.widget.Toast.makeText(context, "SesiÃ³n cerrada", android.widget.Toast.LENGTH_SHORT).show()
-                        // Navegar al login DESPUÃ‰S de limpiar todo
-                        shouldLogout = true
+                        android.widget.Toast.makeText(context, "Sesión cerrada", android.widget.Toast.LENGTH_SHORT).show()
+                        // Navegar al login DESPUÉS de limpiar todo
+                        viewModel.requestLogout()
                     } catch (e: Exception) {
-                        android.widget.Toast.makeText(context, "Error al cerrar sesiÃ³n: ${e.message}", android.widget.Toast.LENGTH_SHORT).show()
+                        android.widget.Toast.makeText(context, "Error al cerrar sesión: ${e.message}", android.widget.Toast.LENGTH_SHORT).show()
                     }
                 }
             }
@@ -927,7 +798,7 @@ fun ProfileScreen(
                         val result = PostRepository.deletePost(postId)
                         
                         if (result.isSuccess) {
-                            android.widget.Toast.makeText(context, "PublicaciÃ³n eliminada", android.widget.Toast.LENGTH_SHORT).show()
+                            android.widget.Toast.makeText(context, "Publicación eliminada", android.widget.Toast.LENGTH_SHORT).show()
                             showEditPostModal = false
                             postForEdit = null
                         } else {
@@ -939,14 +810,14 @@ fun ProfileScreen(
                 }
             },
             onPromote = {
-                android.widget.Toast.makeText(context, "Promocionar publicaciÃ³n", android.widget.Toast.LENGTH_SHORT).show()
+                android.widget.Toast.makeText(context, "Promocionar publicación", android.widget.Toast.LENGTH_SHORT).show()
             },
             onViewStats = {
-                android.widget.Toast.makeText(context, "Ver estadÃ­sticas", android.widget.Toast.LENGTH_SHORT).show()
+                android.widget.Toast.makeText(context, "Ver estadísticas", android.widget.Toast.LENGTH_SHORT).show()
             }
         )
         
-        // Modal de confirmaciÃ³n para quitar de guardados (FUERA del LazyColumn para posicionarse correctamente)
+        // Modal de confirmación para quitar de guardados (FUERA del LazyColumn para posicionarse correctamente)
         if (showUnsaveModal && postToUnsave != null) {
             var isUnsaving by remember { mutableStateOf(false) }
             UnsaveConfirmationModal(
@@ -972,11 +843,11 @@ fun ProfileScreen(
                             }
                             // Spinner breve para feedback visual
                             kotlinx.coroutines.delay(1200)
-                            // Actualizar lista local
-                            savedPosts = savedPosts.filter { it.id != postId }
+                            // El VM se encarga de recargar al seleccionar el tab Guardados
+                            viewModel.refreshAll()
                             android.widget.Toast.makeText(
                                 context,
-                                "PublicaciÃ³n eliminada de guardados",
+                                "Publicación eliminada de guardados",
                                 android.widget.Toast.LENGTH_SHORT
                             ).show()
                         } catch (e: Exception) {
@@ -1031,7 +902,7 @@ fun ProfileScreen(
                         com.mercora.app.data.remote.SessionPersistence.clearSession()
                         com.mercora.app.data.remote.SupabaseClient.auth.signOut()
                         ProfileRepository.clearProfile()
-                        shouldLogout = true
+                        viewModel.requestLogout()
                     } catch (_: Exception) {}
                 }
             }
@@ -1076,7 +947,7 @@ private fun ProfileTopHeader(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        // BotÃ³n volver
+        // Botón volver
         IconButton(
             onClick = onBackClick,
             modifier = Modifier.size(36.dp)
@@ -1102,7 +973,7 @@ private fun ProfileTopHeader(
             )
         }
         
-        // BotÃ³n notificaciones
+        // Botón notificaciones
         IconButton(
             onClick = onNotificationsClick,
             modifier = Modifier.size(36.dp)
@@ -1150,7 +1021,7 @@ private fun ProfileBanner(bannerUrl: String?, username: String = "") {
                 contentDescription = "Banner",
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.fillMaxSize(),
-                onSuccess = { android.util.Log.d("ProfileScreen", "âœ… Banner cargado con Ã©xito") },
+                onSuccess = { android.util.Log.d("ProfileScreen", "âœ… Banner cargado con éxito") },
                 onError = {
                     android.util.Log.e("ProfileScreen", "âŒ Error cargando banner de $username: $finalBannerUrl")
                     android.util.Log.e("ProfileScreen", "Causa: ${it.result.throwable.message}")
@@ -1198,7 +1069,7 @@ private fun ProfileHeader(
 ) {
     val context = androidx.compose.ui.platform.LocalContext.current
 
-    // AnimaciÃ³n de giro del halo (solo gira al cargar stories)
+    // Animación de giro del halo (solo gira al cargar stories)
     val infiniteTransition = rememberInfiniteTransition(label = "profileHalo")
     val rotateRing by infiniteTransition.animateFloat(
         initialValue = 0f,
@@ -1281,7 +1152,7 @@ private fun ProfileHeader(
                                 .crossfade(true)
                                 .memoryCachePolicy(coil.request.CachePolicy.ENABLED)
                                 .diskCachePolicy(coil.request.CachePolicy.ENABLED)
-                                .size(128) // Un poco mÃ¡s grande para perfil
+                                .size(128) // Un poco más grande para perfil
                                 .build()
                         },
                         contentDescription = "Avatar",
@@ -1310,7 +1181,7 @@ private fun ProfileHeader(
         
         Spacer(modifier = Modifier.height(10.dp))
         
-        // Nombre + Badge de verificaciÃ³n (sin badge de reputaciÃ³n - ahora estÃ¡ en el header)
+        // Nombre + Badge de verificación (sin badge de reputación - ahora está en el header)
         Row(
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -1321,14 +1192,14 @@ private fun ProfileHeader(
                 fontWeight = FontWeight.Bold
             )
             
-            // Badge de verificaciÃ³n junto al nombre
+            // Badge de verificación junto al nombre
             if (profile.isVerified) {
                 Spacer(modifier = Modifier.width(3.dp))
                 com.mercora.app.ui.components.VerifiedBadge(size = 14.dp)
             }
         }
         
-        // Bio - sin @username (ahora estÃ¡ en el header)
+        // Bio - sin @username (ahora está en el header)
         if (!profile.descripcion.isNullOrEmpty()) {
             Spacer(modifier = Modifier.height(6.dp))
             Text(
@@ -1452,7 +1323,7 @@ private fun ProfileActions(
             )
         }
         
-        // MÃ¡s opciones - misma altura que los otros botones
+        // Más opciones - misma altura que los otros botones
         Button(
             onClick = onMoreOptions,
             colors = ButtonDefaults.buttonColors(containerColor = Surface),
@@ -1461,7 +1332,7 @@ private fun ProfileActions(
         ) {
             Icon(
                 imageVector = Icons.Default.MoreVert,
-                contentDescription = "MÃ¡s",
+                contentDescription = "Más",
                 tint = IconAccentBlue,
                 modifier = Modifier.size(20.dp)
             )
@@ -1558,13 +1429,13 @@ private fun PostsGrid(
                 )
                 Spacer(modifier = Modifier.height(12.dp))
                 Text(
-                    text = "Sin publicaciones aÃºn",
+                    text = "Sin publicaciones aún",
                     color = TextPrimary,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.SemiBold
                 )
                 Text(
-                    text = "Tus productos aparecerÃ¡n aquÃ­",
+                    text = "Tus productos aparecerán aquí",
                     color = TextMuted,
                     fontSize = 14.sp
                 )
@@ -1600,7 +1471,7 @@ private fun PostsGrid(
                                 )
                         )
                     }
-                    // Rellenar espacios vacÃ­os si la fila no estÃ¡ completa
+                    // Rellenar espacios vacíos si la fila no está completa
                     repeat(3 - rowPosts.size) {
                         Spacer(modifier = Modifier.weight(1f))
                     }
@@ -1629,13 +1500,13 @@ private fun RendsGrid(rends: List<Rend>, onRendClick: (Rend) -> Unit = {}) {
                 )
                 Spacer(modifier = Modifier.height(12.dp))
                 Text(
-                    text = "Sin clips aÃºn",
+                    text = "Sin clips aún",
                     color = TextPrimary,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.SemiBold
                 )
                 Text(
-                    text = "Tus clips aparecerÃ¡n aquÃ­",
+                    text = "Tus clips aparecerán aquí",
                     color = TextMuted,
                     fontSize = 14.sp
                 )
@@ -1726,7 +1597,7 @@ private fun RendsGrid(rends: List<Rend>, onRendClick: (Rend) -> Unit = {}) {
                             }
                         }
                     }
-                    // Rellenar espacios vacÃ­os
+                    // Rellenar espacios vacíos
                     repeat(3 - rowRends.size) {
                         Spacer(modifier = Modifier.weight(1f))
                     }
@@ -1775,7 +1646,7 @@ private fun DetailsSection(profile: ProfileData) {
         reputation >= 80 -> "PRO"
         else -> null
     }
-    val verifiedText = if (profile.isVerified) " â€¢ Verificado" else ""
+    val verifiedText = if (profile.isVerified) " • Verificado" else ""
     
     Column(
         modifier = Modifier
@@ -1783,7 +1654,7 @@ private fun DetailsSection(profile: ProfileData) {
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        // Header con tÃ­tulo elegante
+        // Header con título elegante
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
@@ -1800,14 +1671,14 @@ private fun DetailsSection(profile: ProfileData) {
             )
             Spacer(modifier = Modifier.width(12.dp))
             Text(
-                text = "Sobre mÃ­",
+                text = "Sobre mí",
                 color = TextPrimary,
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold
             )
         }
         
-        // Tarjeta de estadÃ­sticas principales
+        // Tarjeta de estadísticas principales
         Surface(
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(20.dp),
@@ -1828,7 +1699,7 @@ private fun DetailsSection(profile: ProfileData) {
                     StatColumn(
                         icon = Icons.Outlined.Star,
                         value = ratingValue,
-                        label = "ValoraciÃ³n",
+                        label = "Valoración",
                         color = Color(0xFFFF6B35)
                     )
                     StatDivider()
@@ -1842,7 +1713,7 @@ private fun DetailsSection(profile: ProfileData) {
             }
         }
         
-        // Indicador de confianza mejorado (dinÃ¡mico)
+        // Indicador de confianza mejorado (dinámico)
         Surface(
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(16.dp),
@@ -1897,16 +1768,16 @@ private fun DetailsSection(profile: ProfileData) {
             }
         }
         
-        // SecciÃ³n de informaciÃ³n personal
+        // Sección de información personal
         Text(
-            text = "InformaciÃ³n",
+            text = "Información",
             color = TextPrimary,
             fontSize = 16.sp,
             fontWeight = FontWeight.SemiBold,
             modifier = Modifier.padding(top = 8.dp)
         )
         
-        // Grid de informaciÃ³n
+        // Grid de información
         Surface(
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(16.dp),
@@ -1916,7 +1787,7 @@ private fun DetailsSection(profile: ProfileData) {
                 InfoRow(
                     icon = Icons.Outlined.LocationOn,
                     iconColor = IconAccentBlue,
-                    label = "UbicaciÃ³n",
+                    label = "Ubicación",
                     value = profile.ubicacion ?: "No especificada",
                     showDivider = true
                 )
@@ -1931,22 +1802,22 @@ private fun DetailsSection(profile: ProfileData) {
                     icon = Icons.Outlined.Language,
                     iconColor = Color(0xFFFF6B35),
                     label = "Idioma",
-                    value = "EspaÃ±ol",
+                    value = "Español",
                     showDivider = true
                 )
                 InfoRow(
                     icon = Icons.Outlined.LocalShipping,
                     iconColor = Color(0xFFFF6B35),
-                    label = "EnvÃ­os",
-                    value = "A todo el paÃ­s",
+                    label = "Envíos",
+                    value = "A todo el país",
                     showDivider = false
                 )
             }
         }
         
-        // MÃ©todos de pago aceptados
+        // Métodos de pago aceptados
         Text(
-            text = "MÃ©todos de pago",
+            text = "Métodos de pago",
             color = TextPrimary,
             fontSize = 16.sp,
             fontWeight = FontWeight.SemiBold,
@@ -2309,7 +2180,7 @@ private fun OwnProfileHeader(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        // Username alineado a la izquierda con badge de verificaciÃ³n y reputaciÃ³n
+        // Username alineado a la izquierda con badge de verificación y reputación
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(4.dp)
@@ -2320,7 +2191,7 @@ private fun OwnProfileHeader(
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold
             )
-            // Badge de reputaciÃ³n junto al username
+            // Badge de reputación junto al username
             Surface(
                 shape = RoundedCornerShape(6.dp),
                 color = when {
@@ -2335,7 +2206,7 @@ private fun OwnProfileHeader(
                 ) {
                     Icon(
                         imageVector = Icons.Default.Shield,
-                        contentDescription = "ReputaciÃ³n",
+                        contentDescription = "Reputación",
                         tint = when {
                             reputacion >= 90 -> AccentGreen
                             reputacion >= 70 -> Color(0xFFFFA726)
@@ -2358,7 +2229,7 @@ private fun OwnProfileHeader(
             }
         }
         
-        // BotÃ³n para abrir modal de publicaciÃ³n (solo icono, sin fondo)
+        // Botón para abrir modal de publicación (solo icono, sin fondo)
         IconButton(
             onClick = onPublishClick,
             modifier = Modifier.size(32.dp)
@@ -2413,7 +2284,7 @@ private fun SavedPostsGrid(
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = "Las publicaciones que guardes aparecerÃ¡n aquÃ­",
+                    text = "Las publicaciones que guardes aparecerán aquí",
                     fontSize = 14.sp,
                     color = TextSecondary,
                     textAlign = TextAlign.Center
@@ -2480,7 +2351,7 @@ private fun SavedPostsGrid(
                                 }
                             }
                         }
-                        // Espacios vacÃ­os si la fila no estÃ¡ completa
+                        // Espacios vacíos si la fila no está completa
                         repeat(3 - rowPosts.size) {
                             Spacer(modifier = Modifier.weight(1f))
                         }
@@ -2491,7 +2362,7 @@ private fun SavedPostsGrid(
     }
 }
 
-// Modal de confirmaciÃ³n para quitar de guardados - aparece desde abajo con animaciÃ³n
+// Modal de confirmación para quitar de guardados - aparece desde abajo con animación
 @Composable
 private fun UnsaveConfirmationModal(
     post: Post,
@@ -2499,7 +2370,7 @@ private fun UnsaveConfirmationModal(
     onConfirm: () -> Unit,
     onDismiss: () -> Unit
 ) {
-    // AnimaciÃ³n de entrada desde abajo
+    // Animación de entrada desde abajo
     var isVisible by remember { mutableStateOf(false) }
     
     LaunchedEffect(Unit) {
@@ -2584,14 +2455,14 @@ private fun UnsaveConfirmationModal(
                     
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
-                            text = "Â¿Quitar de guardados?",
+                            text = "¿Quitar de guardados?",
                             fontSize = 18.sp,
                             fontWeight = FontWeight.Bold,
                             color = TextPrimary
                         )
                         Spacer(modifier = Modifier.height(4.dp))
                         Text(
-                            text = "Esta publicaciÃ³n se eliminarÃ¡ de tu colecciÃ³n",
+                            text = "Esta publicación se eliminará de tu colección",
                             fontSize = 13.sp,
                             color = TextSecondary
                         )
@@ -2605,7 +2476,7 @@ private fun UnsaveConfirmationModal(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    // BotÃ³n Cancelar
+                    // Botón Cancelar
                     OutlinedButton(
                         onClick = onDismiss,
                         modifier = Modifier
@@ -2622,7 +2493,7 @@ private fun UnsaveConfirmationModal(
                         )
                     }
                     
-                    // BotÃ³n Quitar
+                    // Botón Quitar
                     Button(
                         onClick = onConfirm,
                         enabled = !isLoading,

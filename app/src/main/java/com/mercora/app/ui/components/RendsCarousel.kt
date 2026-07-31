@@ -50,8 +50,8 @@ import com.mercora.app.ui.components.VideoThumbnail
 @androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
 @Composable
 fun RendsCarousel(
-    rends: List<Rend> = emptyList(), // OPTIMIZADO: Recibir como parÃ¡metro
-    isLoading: Boolean = false, // OPTIMIZADO: Recibir como parÃ¡metro
+    rends: List<Rend> = emptyList(), // OPTIMIZADO: Recibir como parámetro
+    isLoading: Boolean = false, // OPTIMIZADO: Recibir como parámetro
     onRendClick: (Rend) -> Unit = {},
     onViewAll: () -> Unit = {},
     modifier: Modifier = Modifier
@@ -89,7 +89,7 @@ fun RendsCarousel(
                 isSectionVisible = yInParent + height > 0f && yInParent < screenHeight
             }
     ) {
-        // LÃ­nea separadora superior
+        // Línea separadora superior
         Divider(
             color = Surface,
             thickness = 1.dp,
@@ -110,7 +110,7 @@ fun RendsCarousel(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                // Icono de Rends - OPTIMIZADO: Gradiente estÃ¡tico fuera del modifier
+                // Icono de Rends - OPTIMIZADO: Gradiente estático fuera del modifier
                 val rendsIconGradient = remember {
                     Brush.linearGradient(colors = listOf(AccentPink, PrimaryPurple))
                 }
@@ -167,7 +167,7 @@ fun RendsCarousel(
                 }
             }
         } else if (rends.isEmpty()) {
-            // Estado vacÃ­o
+            // Estado vacío
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -217,7 +217,7 @@ fun RendsCarousel(
         
         Spacer(modifier = Modifier.height(12.dp))
         
-        // LÃ­nea separadora inferior
+        // Línea separadora inferior
         Divider(
             color = Surface,
             thickness = 1.dp,

@@ -36,7 +36,7 @@ import com.mercora.app.ui.components.VerifiedBadge
  * UNIFIED PRODUCT CARD
  * -------------------------------------------------------------------------------
  * Componente único de tarjeta de producto usado en toda la app.
- * Diseño profesional inspirado en marketplaces pero con estilo original Merqora.
+ * Diseño profesional inspirado en marketplaces pero con estilo original Mercora.
  * 
  * Estructura:
  * - Imagen con swipe (si hay múltiples)

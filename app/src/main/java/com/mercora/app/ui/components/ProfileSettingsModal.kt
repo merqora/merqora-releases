@@ -33,9 +33,9 @@ import com.mercora.app.data.remote.SupabaseClient
 import kotlinx.coroutines.launch
 
 /**
- * Modal de ConfiguraciÃ³n del perfil
- * Accesible desde el BotÃ³n de 3 puntos en ProfileScreen
- * Abre desde la derecha con animaciÃ³n fluida
+ * Modal de Configuración del perfil
+ * Accesible desde el Botón de 3 puntos en ProfileScreen
+ * Abre desde la derecha con animación fluida
  */
 @Composable
 fun ProfileSettingsModal(
@@ -49,7 +49,7 @@ fun ProfileSettingsModal(
     onLogout: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
-    // Estados para pantallas de ConfiguraciÃ³n
+    // Estados para pantallas de Configuración
     var showOrderHistory by remember { mutableStateOf(false) }
     var showFinancial by remember { mutableStateOf(false) }
     var showAddresses by remember { mutableStateOf(false) }
@@ -62,18 +62,18 @@ fun ProfileSettingsModal(
     var showVerification by remember { mutableStateOf(false) }
     var currentUserId by remember { mutableStateOf("") }
     
-    // Estado de VerificaciÃ³n del usuario actual
+    // Estado de Verificación del usuario actual
     var isCurrentUserVerified by remember { mutableStateOf(false) }
     var verificationPending by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
     
-    // Cargar estado de VerificaciÃ³n al abrir
+    // Cargar estado de Verificación al abrir
     LaunchedEffect(isVisible) {
         if (isVisible) {
             val userId = SupabaseClient.auth.currentUserOrNull()?.id
             if (userId != null) {
                 currentUserId = userId
-                // Verificar si estÃ¡ verificado
+                // Verificar si está verificado
                 isCurrentUserVerified = VerificationRepository.isUserVerified(userId)
                 // Verificar si tiene solicitud pendiente
                 val pending = VerificationRepository.getPendingRequest(userId)
@@ -88,7 +88,7 @@ fun ProfileSettingsModal(
     var showTermsAndConditions by remember { mutableStateOf(false) }
     var showPrivacyPolicy by remember { mutableStateOf(false) }
     
-    // AnimaciÃ³n de slide desde la derecha
+    // Animación de slide desde la derecha
     val slideOffset by animateFloatAsState(
         targetValue = if (isVisible) 0f else 1f,
         animationSpec = tween(
@@ -148,7 +148,7 @@ fun ProfileSettingsModal(
                     
                     Column {
                         Text(
-                            text = "ConfiguraciÃ³n",
+                            text = "Configuración",
                             fontSize = 20.sp,
                             fontWeight = FontWeight.Bold,
                             color = TextPrimary
@@ -172,7 +172,7 @@ fun ProfileSettingsModal(
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     // ----------------------------------------------
-                    // SEcciÃ³n: CUENTA
+                    // SEcción: CUENTA
                     // ----------------------------------------------
                     SettingsSectionHeader(title = "Cuenta")
                     
@@ -198,14 +198,14 @@ fun ProfileSettingsModal(
                         icon = Icons.Outlined.LocationOn,
                         iconColor = Color(0xFF1565A0),
                         title = "Direcciones",
-                        subtitle = "Direcciones de EnvÃ­o guardadas",
+                        subtitle = "Direcciones de Envío guardadas",
                         onClick = { showAddresses = true }
                     )
                     
                     Spacer(modifier = Modifier.height(16.dp))
                     
                     // ----------------------------------------------
-                    // SEcciÃ³n: PREFERENCIAS
+                    // SEcción: PREFERENCIAS
                     // ----------------------------------------------
                     SettingsSectionHeader(title = "Preferencias")
                     
@@ -221,7 +221,7 @@ fun ProfileSettingsModal(
                         icon = Icons.Outlined.CreditCard,
                         iconColor = Color(0xFF1565A0),
                         title = "Medios de pago",
-                        subtitle = "Personaliza los mÃ©todos que aceptas",
+                        subtitle = "Personaliza los métodos que aceptas",
                         badge = "NUEVO",
                         badgeColor = Color(0xFF1565A0),
                         onClick = { showPaymentPrefs = true }
@@ -231,14 +231,14 @@ fun ProfileSettingsModal(
                         icon = Icons.Outlined.Language,
                         iconColor = Color(0xFF1565A0),
                         title = "Idioma",
-                        subtitle = "EspaÃ±ol (LatinoamÃ©rica)",
+                        subtitle = "Español (Latinoamérica)",
                         onClick = { showLanguage = true }
                     )
                     
                     Spacer(modifier = Modifier.height(16.dp))
                     
                     // ----------------------------------------------
-                    // SEcciÃ³n: PRIVACIDAD Y SEGURIDAD
+                    // SEcción: PRIVACIDAD Y SEGURIDAD
                     // ----------------------------------------------
                     SettingsSectionHeader(title = "Privacidad y seguridad")
                     
@@ -246,7 +246,7 @@ fun ProfileSettingsModal(
                         icon = Icons.Outlined.Lock,
                         iconColor = Color(0xFFEF4444),
                         title = "Privacidad",
-                        subtitle = "Controla quiÃ©n ve tu contenido",
+                        subtitle = "Controla quién ve tu contenido",
                         onClick = { showPrivacy = true }
                     )
                     
@@ -254,7 +254,7 @@ fun ProfileSettingsModal(
                         icon = Icons.Outlined.Security,
                         iconColor = Color(0xFF2E8B57),
                         title = "Seguridad",
-                        subtitle = "contraseÃ±a y autenticaciÃ³n",
+                        subtitle = "contraseña y autenticación",
                         onClick = { showSecurity = true }
                     )
                     
@@ -269,10 +269,10 @@ fun ProfileSettingsModal(
                     SettingsItem(
                         icon = if (isCurrentUserVerified) Icons.Filled.Verified else Icons.Outlined.VerifiedUser,
                         iconColor = if (isCurrentUserVerified) Color(0xFF22C55E) else Color(0xFF1565A0),
-                        title = "VerificaciÃ³n",
+                        title = "Verificación",
                         subtitle = when {
                             isCurrentUserVerified -> "Cuenta verificada"
-                            verificationPending -> "Solicitud en RevisiÃ³n..."
+                            verificationPending -> "Solicitud en Revisión..."
                             else -> "Verifica tu cuenta"
                         },
                         badge = if (isCurrentUserVerified) "VERIFICADO" else if (!verificationPending) "NUEVO" else null,
@@ -283,7 +283,7 @@ fun ProfileSettingsModal(
                     Spacer(modifier = Modifier.height(16.dp))
                     
                     // ----------------------------------------------
-                    // SEcciÃ³n: SOPORTE
+                    // SEcción: SOPORTE
                     // ----------------------------------------------
                     SettingsSectionHeader(title = "Soporte")
                     
@@ -299,7 +299,7 @@ fun ProfileSettingsModal(
                         icon = Icons.Outlined.Feedback,
                         iconColor = Color(0xFFFF6B35),
                         title = "Enviar comentarios",
-                        subtitle = "AyÃºdanos a mejorar Merqora",
+                        subtitle = "Ayúdanos a mejorar Mercora",
                         onClick = { showFeedback = true }
                     )
                     
@@ -314,38 +314,38 @@ fun ProfileSettingsModal(
                     Spacer(modifier = Modifier.height(16.dp))
                     
                     // ----------------------------------------------
-                    // SEcciÃ³n: INFORMaciÃ³n
+                    // SEcción: INFORMación
                     // ----------------------------------------------
-                    SettingsSectionHeader(title = "InformaciÃ³n")
+                    SettingsSectionHeader(title = "Información")
                     
                     SettingsItem(
                         icon = Icons.Outlined.Info,
                         iconColor = Color(0xFF6366F1),
-                        title = "Acerca de Merqora",
-                        subtitle = "VersiÃ³n 1.0.0",
+                        title = "Acerca de Mercora",
+                        subtitle = "Versión 1.0.0",
                         onClick = { showAbout = true }
                     )
                     
                     SettingsItem(
                         icon = Icons.Outlined.Description,
                         iconColor = Color(0xFF444444),
-                        title = "tÃ©rminos y condiciones",
-                        subtitle = "Lee nuestros TÃ©rminos de uso",
+                        title = "términos y condiciones",
+                        subtitle = "Lee nuestros Términos de uso",
                         onClick = { showTermsAndConditions = true }
                     )
                     
                     SettingsItem(
                         icon = Icons.Outlined.Policy,
                         iconColor = Color(0xFF444444),
-                        title = "polÃ­tica de privacidad",
-                        subtitle = "cÃ³mo manejamos tus datos",
+                        title = "política de privacidad",
+                        subtitle = "cómo manejamos tus datos",
                         onClick = { showPrivacyPolicy = true }
                     )
                     
                     Spacer(modifier = Modifier.height(24.dp))
                     
                     // ----------------------------------------------
-                    // botÃ³n DE CERRAR SESIÃ“N
+                    // botón DE CERRAR SESIÓN
                     // ----------------------------------------------
                     Button(
                         onClick = {
@@ -368,7 +368,7 @@ fun ProfileSettingsModal(
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
-                            text = "Cerrar SesiÃ³n",
+                            text = "Cerrar Sesión",
                             color = Color(0xFFEF4444),
                             fontWeight = FontWeight.SemiBold,
                             modifier = Modifier.padding(vertical = 4.dp)
@@ -440,7 +440,7 @@ fun ProfileSettingsModal(
             onDismiss = { showBlockedUsers = false }
         )
         
-        // Pantalla de VerificaciÃ³n
+        // Pantalla de Verificación
         VerificationScreen(
             isVisible = showVerification,
             onDismiss = { showVerification = false }
@@ -464,19 +464,19 @@ fun ProfileSettingsModal(
             onDismiss = { showReportProblem = false }
         )
         
-        // Pantalla de Acerca de Merqora
+        // Pantalla de Acerca de Mercora
         AboutScreen(
             isVisible = showAbout,
             onDismiss = { showAbout = false }
         )
         
-        // Pantalla de tÃ©rminos y Condiciones
+        // Pantalla de términos y Condiciones
         TermsAndConditionsScreen(
             isVisible = showTermsAndConditions,
             onDismiss = { showTermsAndConditions = false }
         )
         
-        // Pantalla de polÃ­tica de Privacidad
+        // Pantalla de política de Privacidad
         PrivacyPolicyScreen(
             isVisible = showPrivacyPolicy,
             onDismiss = { showPrivacyPolicy = false }

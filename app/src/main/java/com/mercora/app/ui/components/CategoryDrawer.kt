@@ -62,18 +62,18 @@ private val CATEGORY_DEFINITIONS = listOf(
     ),
     "Accesorios" to listOf(
         CategoryItem("bolsos", "Bolsos y Carteras", Icons.Outlined.ShoppingBag, listOf(Color(0xFF2E8B57), Color(0xFFF9A8D4))),
-        CategoryItem("joyeria", "JoyerÃ­a", Icons.Outlined.Diamond, listOf(Color(0xFFFF6B35), Color(0xFFFDE68A))),
+        CategoryItem("joyeria", "Joyería", Icons.Outlined.Diamond, listOf(Color(0xFFFF6B35), Color(0xFFFDE68A))),
         CategoryItem("relojes", "Relojes", Icons.Outlined.Watch, listOf(Color(0xFF6366F1), Color(0xFFA5B4FC))),
         CategoryItem("gafas", "Gafas de Sol", Icons.Outlined.Visibility, listOf(Color(0xFF0EA5E9), Color(0xFF7DD3FC))),
         CategoryItem("sombreros", "Sombreros", Icons.Outlined.Face, listOf(Color(0xFF2E8B57), Color(0xFF6EE7B7)))
     ),
     "Hogar y Deco" to listOf(
         CategoryItem("muebles", "Muebles", Icons.Outlined.Chair, listOf(Color(0xFFFF6B35), Color(0xFFC4B5FD))),
-        CategoryItem("decoracion", "DecoraciÃ³n", Icons.Outlined.Palette, listOf(Color(0xFF2E8B57), Color(0xFFF9A8D4))),
+        CategoryItem("decoracion", "Decoración", Icons.Outlined.Palette, listOf(Color(0xFF2E8B57), Color(0xFFF9A8D4))),
         CategoryItem("plantas", "Plantas", Icons.Outlined.Spa, listOf(Color(0xFF2E8B57), Color(0xFF6EE7B7))),
-        CategoryItem("iluminacion", "iluminaciÃ³n", Icons.Outlined.LightMode, listOf(Color(0xFFFF6B35), Color(0xFFFDE68A)))
+        CategoryItem("iluminacion", "iluminación", Icons.Outlined.LightMode, listOf(Color(0xFFFF6B35), Color(0xFFFDE68A)))
     ),
-    "ElectrÃ³nica" to listOf(
+    "Electrónica" to listOf(
         CategoryItem("smartphones", "Smartphones", Icons.Outlined.PhoneAndroid, listOf(Color(0xFF1565A0), Color(0xFF93C5FD))),
         CategoryItem("laptops", "Laptops", Icons.Outlined.Laptop, listOf(Color(0xFF6366F1), Color(0xFFA5B4FC))),
         CategoryItem("audio", "Audio", Icons.Outlined.Headphones, listOf(Color(0xFF2E8B57), Color(0xFFF9A8D4))),
@@ -336,13 +336,13 @@ fun CategoryDrawer(
                             item(key = "footer_links") {
                                 Column(modifier = Modifier.padding(bottom = 16.dp)) {
                                     FooterLink("Ayuda y Soporte") { onHelpCenter(); onDismiss() }
-                                    FooterLink("PolÃ­tica de Privacidad") { onPrivacyPolicy(); onDismiss() }
-                                    FooterLink("TÃ©rminos y Condiciones") { onTermsAndConditions(); onDismiss() }
+                                    FooterLink("Política de Privacidad") { onPrivacyPolicy(); onDismiss() }
+                                    FooterLink("Términos y Condiciones") { onTermsAndConditions(); onDismiss() }
 
                                     Spacer(modifier = Modifier.height(20.dp))
 
                                     Text(
-                                        text = "Merqora Â© 2024",
+                                        text = "Mercora © 2024",
                                         fontSize = 11.sp,
                                         fontWeight = FontWeight.Medium,
                                         color = TextMuted.copy(alpha = 0.5f)
@@ -389,7 +389,7 @@ private fun DrawerHeader(onDismiss: () -> Unit) {
                 )
                 Spacer(modifier = Modifier.height(2.dp))
                 Text(
-                    text = "Descubre todas nuestras categorÃ­as",
+                    text = "Descubre todas nuestras categorías",
                     fontSize = 13.sp,
                     fontWeight = FontWeight.Normal,
                     color = TextSecondary,
@@ -436,7 +436,7 @@ private fun DrawerSearchBar(
             .padding(horizontal = 16.dp, vertical = 6.dp),
         placeholder = {
             Text(
-                text = "Buscar categorÃ­as...",
+                text = "Buscar categorías...",
                 color = placeholderColor,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Normal
@@ -507,7 +507,7 @@ private fun NoResultsPlaceholder(query: String) {
         )
         Spacer(modifier = Modifier.height(4.dp))
         Text(
-            text = "Prueba con otros tÃ©rminos",
+            text = "Prueba con otros términos",
             fontSize = 12.sp,
             fontWeight = FontWeight.Normal,
             color = TextMuted
@@ -651,7 +651,7 @@ private fun CategoryRow(
                     }
                     if (category.trending) {
                         Text(
-                            text = "Â·",
+                            text = "·",
                             fontSize = 11.sp,
                             fontWeight = FontWeight.Bold,
                             color = TextMuted

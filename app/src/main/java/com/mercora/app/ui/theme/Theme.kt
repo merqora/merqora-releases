@@ -1,4 +1,4 @@
-﻿package com.mercora.app.ui.theme
+package com.mercora.app.ui.theme
 
 import android.app.Activity
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -10,10 +10,13 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalView
+import android.graphics.Color as AndroidColor
 import androidx.core.view.WindowCompat
+import androidx.navigation.compose.currentBackStackEntryAsState
 import com.mercora.app.data.preferences.AppPreferences
 
 // ---------------------------------------------------------------
@@ -73,6 +76,7 @@ val LocalAccentColor = compositionLocalOf { PrimaryPurple }
 
 @Composable
 fun MercoraTheme(
+    navController: androidx.navigation.NavController,
     themeMode: String = AppPreferences.THEME_DARK,
     accentColor: String = AppPreferences.ACCENT_PURPLE,
     content: @Composable () -> Unit
@@ -85,13 +89,12 @@ fun MercoraTheme(
         else -> true
     }
     
-    // Color primario dinámico basado en el acento seleccionado
     val primaryColor = when (accentColor) {
-        AppPreferences.ACCENT_PURPLE -> Color(0xFF0A3D62)  // Azul marino
-        AppPreferences.ACCENT_PINK -> Color(0xFFFF6B35)    // Naranja acento
-        AppPreferences.ACCENT_BLUE -> Color(0xFF0A3D62)    // Azul marino
-        AppPreferences.ACCENT_GREEN -> Color(0xFF2E8B57)   // Verde mar
-        AppPreferences.ACCENT_ORANGE -> Color(0xFFFF6B35)  // Naranja acento
+        AppPreferences.ACCENT_PURPLE -> Color(0xFF0A3D62)
+        AppPreferences.ACCENT_PINK -> Color(0xFFFF6B35)
+        AppPreferences.ACCENT_BLUE -> Color(0xFF0A3D62)
+        AppPreferences.ACCENT_GREEN -> Color(0xFF2E8B57)
+        AppPreferences.ACCENT_ORANGE -> Color(0xFFFF6B35)
         else -> Color(0xFF0A3D62)
     }
     
@@ -101,13 +104,24 @@ fun MercoraTheme(
         LightColorScheme.copy(primary = primaryColor)
     }
     
-    // Actualizar barra de estado
     val view = LocalView.current
     if (!view.isInEditMode) {
+        val navBackStackEntry by navController.currentBackStackEntryAsState()
+        val currentRoute = navBackStackEntry?.destination?.route
+
+        val navBarColor = if (currentRoute == "login" || currentRoute == "register") {
+            colorScheme.background
+        } else {
+            themedNavBarBg()
+        }
+
         SideEffect {
             val window = (view.context as Activity).window
-            window.statusBarColor = if (darkTheme) HomeBg.toArgb() else LightHomeBg.toArgb()
+            window.statusBarColor = colorScheme.background.toArgb()
+            window.navigationBarColor = navBarColor.toArgb()
+            WindowCompat.setDecorFitsSystemWindows(window, false)
             WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = !darkTheme
+            WindowCompat.getInsetsController(window, view).isAppearanceLightNavigationBars = !darkTheme
         }
     }
     

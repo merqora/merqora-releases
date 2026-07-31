@@ -365,7 +365,7 @@ fun ProductPage(
                     isLoading = isCommentsLoading,
                     currentUserAvatar = uiState.currentUserAvatar,
                     currentUsername = uiState.currentUsername,
-                    currentUserId = com.vinzay.app.data.remote.SupabaseClient.auth.currentUserOrNull()?.id
+                    currentUserId = com.mercora.app.data.remote.SupabaseClient.auth.currentUserOrNull()?.id
                 )
 
                 CartModal(

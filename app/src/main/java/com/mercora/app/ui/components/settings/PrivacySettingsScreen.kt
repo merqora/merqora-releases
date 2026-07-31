@@ -122,7 +122,7 @@ fun PrivacySettingsScreen(
             ) {
                 SettingsScreenHeader(
                     title = "Privacidad",
-                    subtitle = "Controla quiÃ©n ve tu contenido",
+                    subtitle = "Controla quién ve tu contenido",
                     icon = Icons.Outlined.Lock,
                     iconColor = Color(0xFFEF4444),
                     onBack = onDismiss
@@ -155,7 +155,7 @@ fun PrivacySettingsScreen(
                         Column {
                             PrivacyOption(
                                 icon = Icons.Outlined.Public,
-                                title = "Perfil pÃºblico",
+                                title = "Perfil público",
                                 subtitle = "Cualquiera puede ver tu perfil y publicaciones",
                                 isSelected = profileVisibility == "public",
                                 onClick = { 
@@ -204,8 +204,8 @@ fun PrivacySettingsScreen(
                         Column {
                             PrivacyToggle(
                                 icon = Icons.Outlined.Circle,
-                                title = "Mostrar estado en lÃ­nea",
-                                subtitle = "Otros ven si estÃ¡s conectado en los chats",
+                                title = "Mostrar estado en línea",
+                                subtitle = "Otros ven si estás conectado en los chats",
                                 isEnabled = showOnlineStatus,
                                 onToggle = { 
                                     showOnlineStatus = it
@@ -216,8 +216,8 @@ fun PrivacySettingsScreen(
                             Divider(color = BorderSubtle, modifier = Modifier.padding(horizontal = 16.dp))
                             PrivacyToggle(
                                 icon = Icons.Outlined.AccessTime,
-                                title = "Mostrar Ãºltima conexiÃ³n",
-                                subtitle = "Muestra cuÃ¡ndo estuviste activo por Ãºltima vez",
+                                title = "Mostrar última conexión",
+                                subtitle = "Muestra cuándo estuviste activo por última vez",
                                 isEnabled = showLastSeen,
                                 onToggle = { 
                                     showLastSeen = it
@@ -291,7 +291,7 @@ fun PrivacySettingsScreen(
                             PrivacyToggle(
                                 icon = Icons.Outlined.Favorite,
                                 title = "Mostrar mis likes",
-                                subtitle = "Los demÃ¡s pueden ver las publicaciones que te gustan",
+                                subtitle = "Los demás pueden ver las publicaciones que te gustan",
                                 isEnabled = showLikes,
                                 onToggle = { 
                                     showLikes = it
@@ -303,7 +303,7 @@ fun PrivacySettingsScreen(
                             PrivacyToggle(
                                 icon = Icons.Outlined.ShoppingBag,
                                 title = "Mostrar actividad de compras",
-                                subtitle = "Los demÃ¡s pueden ver tus compras recientes",
+                                subtitle = "Los demás pueden ver tus compras recientes",
                                 isEnabled = showPurchaseActivity,
                                 onToggle = { 
                                     showPurchaseActivity = it
@@ -329,7 +329,7 @@ fun PrivacySettingsScreen(
                                 icon = Icons.Outlined.VisibilityOff,
                                 title = "Ocultar historias de...",
                                 subtitle = if (hiddenUsersCount > 0) "$hiddenUsersCount usuarios ocultos" 
-                                           else "Selecciona personas que no verÃ¡n tus historias",
+                                           else "Selecciona personas que no verán tus historias",
                                 isEnabled = hideStoryEnabled,
                                 onToggle = { 
                                     hideStoryEnabled = it

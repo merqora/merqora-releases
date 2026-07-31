@@ -54,18 +54,18 @@ function Counter({ target, suffix = '' }) {
 
 /* â•â•â•â•â•â•â•â•â•â•â• Data â•â•â•â•â•â•â•â•â•â•â• */
 const FEATURES = [
-  { icon: Shield, color: '#0A3D62', title: 'Vendedores Verificados', desc: 'Cada vendedor pasa por un proceso de verificaciÃ³n real. ComprÃ¡ con la confianza de saber con quiÃ©n tratÃ¡s.' },
-  { icon: HeartHandshake, color: '#FF6B35', title: 'Sistema Handshake', desc: 'Transacciones presenciales seguras con confirmaciÃ³n QR bilateral. Sin estafas, sin sorpresas.' },
-  { icon: MessageCircle, color: '#2E8B57', title: 'Chat en Tiempo Real', desc: 'MensajerÃ­a instantÃ¡nea con presencia online, reacciones y notificaciones push.' },
-  { icon: Bot, color: '#0A3D62', title: 'Soporte IA 24/7', desc: 'Nuestro asistente inteligente resuelve tus dudas al instante. Si necesitÃ¡s mÃ¡s, escalamos a un humano.' },
-  { icon: Tag, color: '#FF6B35', title: 'Ofertas DinÃ¡micas', desc: 'CampaÃ±as flash, descuentos por tiempo limitado y liquidaciones actualizadas en tiempo real.' },
-  { icon: Users, color: '#2E8B57', title: 'Comunidad Social', desc: 'SeguÃ­ a tus vendedores favoritos, mirÃ¡ stories, dale like y guardÃ¡ lo que te gusta.' },
+  { icon: Shield, color: '#0A3D62', title: 'Vendedores Verificados', desc: 'Cada vendedor pasa por un proceso de verificación real. Comprá con la confianza de saber con quién tratás.' },
+  { icon: HeartHandshake, color: '#FF6B35', title: 'Sistema Handshake', desc: 'Transacciones presenciales seguras con confirmación QR bilateral. Sin estafas, sin sorpresas.' },
+  { icon: MessageCircle, color: '#2E8B57', title: 'Chat en Tiempo Real', desc: 'Mensajería instantánea con presencia online, reacciones y notificaciones push.' },
+  { icon: Bot, color: '#0A3D62', title: 'Soporte IA 24/7', desc: 'Nuestro asistente inteligente resuelve tus dudas al instante. Si necesitás más, escalamos a un humano.' },
+  { icon: Tag, color: '#FF6B35', title: 'Ofertas Dinámicas', desc: 'Campañas flash, descuentos por tiempo limitado y liquidaciones actualizadas en tiempo real.' },
+  { icon: Users, color: '#2E8B57', title: 'Comunidad Social', desc: 'Seguí a tus vendedores favoritos, mirá stories, dale like y guardá lo que te gusta.' },
 ]
 
 const STEPS = [
-  { num: '01', title: 'DescargÃ¡ la App', desc: 'BajÃ¡ Vinzay gratis desde nuestro sitio en segundos.', icon: Download },
-  { num: '02', title: 'CreÃ¡ tu Cuenta', desc: 'Registrate y verificÃ¡ tu perfil para mayor confianza.', icon: CheckCircle },
-  { num: '03', title: 'ComprÃ¡ y VendÃ©', desc: 'ExplorÃ¡ miles de productos o publicÃ¡ los tuyos.', icon: ShoppingBag },
+  { num: '01', title: 'Descargá la App', desc: 'Bajá Mercora gratis desde nuestro sitio en segundos.', icon: Download },
+  { num: '02', title: 'Creá tu Cuenta', desc: 'Registrate y verificá tu perfil para mayor confianza.', icon: CheckCircle },
+  { num: '03', title: 'Comprá y Vendé', desc: 'Explorá miles de productos o publicá los tuyos.', icon: ShoppingBag },
 ]
 
 /* â•â•â•â•â•â•â•â•â•â•â• Navbar â•â•â•â•â•â•â•â•â•â•â• */
@@ -86,13 +86,13 @@ function Navbar() {
           <div className="w-10 h-10 rounded-xl gradient-mercora flex items-center justify-center group-hover:scale-110 transition-transform">
             <ShoppingBag className="w-5 h-5 text-white" />
           </div>
-          <span className="text-xl font-bold text-white">Vinzay</span>
+          <span className="text-xl font-bold text-white">Mercora</span>
         </Link>
 
         {/* Desktop links */}
         <div className="hidden md:flex items-center gap-8">
-          <a href="#features" className="text-text-secondary hover:text-white transition-colors text-sm font-medium">CaracterÃ­sticas</a>
-          <a href="#how" className="text-text-secondary hover:text-white transition-colors text-sm font-medium">CÃ³mo funciona</a>
+          <a href="#features" className="text-text-secondary hover:text-white transition-colors text-sm font-medium">Características</a>
+          <a href="#how" className="text-text-secondary hover:text-white transition-colors text-sm font-medium">Cómo funciona</a>
           <a href="#download" className="text-text-secondary hover:text-white transition-colors text-sm font-medium">Descargar</a>
           <Link to="/download" className="btn-primary px-5 py-2.5 rounded-xl text-sm font-semibold text-white">
             <span className="flex items-center gap-2"><Download className="w-4 h-4" /> Descargar App</span>
@@ -108,8 +108,8 @@ function Navbar() {
       {/* Mobile menu */}
       {mobileOpen && (
         <div className="md:hidden glass-strong mt-2 mx-4 rounded-2xl p-6 space-y-4 animate-slide-down">
-          <a href="#features" onClick={() => setMobileOpen(false)} className="block text-text-secondary hover:text-white py-2">CaracterÃ­sticas</a>
-          <a href="#how" onClick={() => setMobileOpen(false)} className="block text-text-secondary hover:text-white py-2">CÃ³mo funciona</a>
+          <a href="#features" onClick={() => setMobileOpen(false)} className="block text-text-secondary hover:text-white py-2">Características</a>
+          <a href="#how" onClick={() => setMobileOpen(false)} className="block text-text-secondary hover:text-white py-2">Cómo funciona</a>
           <a href="#download" onClick={() => setMobileOpen(false)} className="block text-text-secondary hover:text-white py-2">Descargar</a>
           <Link to="/download" onClick={() => setMobileOpen(false)} className="btn-primary block text-center px-5 py-3 rounded-xl text-white font-semibold">
             <span>Descargar App</span>
@@ -140,11 +140,11 @@ function Hero() {
 
           <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-black leading-[1.1] tracking-tight mb-6 animate-slide-up">
             El marketplace<br />social{' '}
-            <span className="gradient-text">mÃ¡s seguro</span>
+            <span className="gradient-text">más seguro</span>
           </h1>
 
           <p className="text-lg sm:text-xl text-text-secondary max-w-lg mx-auto lg:mx-0 mb-8 leading-relaxed animate-slide-up" style={{ animationDelay: '150ms' }}>
-            Compra, vende y conecta con confianza. Vendedores verificados, transacciones seguras y una comunidad que crece cada dÃ­a.
+            Compra, vende y conecta con confianza. Vendedores verificados, transacciones seguras y una comunidad que crece cada día.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start animate-slide-up" style={{ animationDelay: '300ms' }}>
@@ -155,22 +155,22 @@ function Hero() {
               </span>
             </Link>
             <a href="#features" className="btn-outline px-8 py-4 rounded-2xl text-white font-semibold text-lg flex items-center justify-center gap-2">
-              Conocer mÃ¡s <ArrowRight className="w-5 h-5" />
+              Conocer más <ArrowRight className="w-5 h-5" />
             </a>
           </div>
 
           {/* Social proof */}
           <div className="flex items-center gap-6 mt-10 justify-center lg:justify-start animate-fade-in" style={{ animationDelay: '500ms' }}>
             <div className="flex -space-x-3">
-              {['ðŸŸ£','ðŸ”µ','ðŸŸ¢','ðŸŸ¡','ðŸ”´'].map((c, i) => (
-                <div key={i} className="w-10 h-10 rounded-full border-2 border-Vinzay-bg bg-mercora-surface-elevated flex items-center justify-center text-lg">{c}</div>
+              {['🟣','🔵','🟢','🟡','🔴'].map((c, i) => (
+                <div key={i} className="w-10 h-10 rounded-full border-2 border-mercora-bg bg-mercora-surface-elevated flex items-center justify-center text-lg">{c}</div>
               ))}
             </div>
             <div className="text-left">
               <div className="flex items-center gap-1">
                 {[...Array(5)].map((_, i) => <Star key={i} className="w-4 h-4 fill-accent-gold text-accent-gold" />)}
               </div>
-              <p className="text-text-tertiary text-sm">Usuarios confÃ­an en Vinzay</p>
+              <p className="text-text-tertiary text-sm">Usuarios confían en Mercora</p>
             </div>
           </div>
         </div>
@@ -186,7 +186,7 @@ function Hero() {
                 {/* Fake app UI */}
                 <div className="p-4 pt-10">
                   <div className="flex items-center justify-between mb-6">
-                    <div className="text-lg font-bold text-white">Vinzay</div>
+                    <div className="text-lg font-bold text-white">Mercora</div>
                     <div className="flex gap-2">
                       <div className="w-8 h-8 rounded-full bg-mercora-surface-elevated" />
                     </div>
@@ -254,7 +254,7 @@ function StatsBar() {
             { label: 'Descargas', value: 500, suffix: '+' },
             { label: 'Vendedores Verificados', value: 120, suffix: '+' },
             { label: 'Transacciones Seguras', value: 1800, suffix: '+' },
-            { label: 'ValoraciÃ³n', value: 4.9, suffix: 'â˜…', fixed: true },
+            { label: 'Valoración', value: 4.9, suffix: 'â˜…', fixed: true },
           ].map((s, i) => (
             <div key={i}>
               <div className="text-3xl md:text-4xl font-black text-white">
@@ -277,13 +277,13 @@ function Features() {
         <Reveal>
           <div className="text-center mb-16">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4">
-              <Zap className="w-4 h-4" /> CaracterÃ­sticas
+              <Zap className="w-4 h-4" /> Características
             </div>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white mb-4">
-              Todo lo que necesitÃ¡s<br /><span className="gradient-text">en un solo lugar</span>
+              Todo lo que necesitás<br /><span className="gradient-text">en un solo lugar</span>
             </h2>
             <p className="text-text-secondary max-w-2xl mx-auto text-lg">
-              Vinzay combina lo mejor del marketplace con la seguridad que necesitÃ¡s para comprar y vender tranquilo.
+              Mercora combina lo mejor del marketplace con la seguridad que necesitás para comprar y vender tranquilo.
             </p>
           </div>
         </Reveal>
@@ -314,10 +314,10 @@ function HowItWorks() {
         <Reveal>
           <div className="text-center mb-16">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent-green/10 text-accent-green text-sm font-medium mb-4">
-              <CheckCircle className="w-4 h-4" /> SÃºper fÃ¡cil
+              <CheckCircle className="w-4 h-4" /> Súper fácil
             </div>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white mb-4">
-              EmpezÃ¡ en <span className="gradient-text">3 pasos</span>
+              Empezá en <span className="gradient-text">3 pasos</span>
             </h2>
           </div>
         </Reveal>
@@ -371,7 +371,7 @@ function ProductShowcase() {
               Lo que se <span className="gradient-text">vende ahora</span>
             </h2>
             <p className="text-text-secondary max-w-2xl mx-auto text-lg">
-              Miles de productos publicados por toda Uruguay. EncontrÃ¡ lo que buscÃ¡s cerca tuyo.
+              Miles de productos publicados por toda Uruguay. Encontrá lo que buscás cerca tuyo.
             </p>
           </div>
         </Reveal>
@@ -426,10 +426,10 @@ function SecuritySection() {
             </h2>
             <div className="space-y-5">
               {[
-                { icon: Shield, text: 'VerificaciÃ³n de identidad real para vendedores' },
-                { icon: HeartHandshake, text: 'Sistema Handshake con confirmaciÃ³n QR bilateral' },
-                { icon: Eye, text: 'ReputaciÃ³n transparente basada en transacciones reales' },
-                { icon: Lock, text: 'EncriptaciÃ³n de datos y pagos seguros con MercadoPago' },
+                { icon: Shield, text: 'Verificación de identidad real para vendedores' },
+                { icon: HeartHandshake, text: 'Sistema Handshake con confirmación QR bilateral' },
+                { icon: Eye, text: 'Reputación transparente basada en transacciones reales' },
+                { icon: Lock, text: 'Encriptación de datos y pagos seguros con MercadoPago' },
               ].map((item, i) => (
                 <div key={i} className="flex items-start gap-4">
                   <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
@@ -460,7 +460,7 @@ function SecuritySection() {
                 </div>
                 <div className="text-right">
                   <div className="text-accent-gold font-bold">98%</div>
-                  <div className="text-text-muted text-xs">reputaciÃ³n</div>
+                  <div className="text-text-muted text-xs">reputación</div>
                 </div>
               </div>
               {/* Handshake demo */}
@@ -485,8 +485,8 @@ function SecuritySection() {
               <div className="bg-accent-green/10 rounded-2xl p-4 flex items-center gap-3">
                 <CheckCircle className="w-6 h-6 text-accent-green" />
                 <div>
-                  <div className="font-semibold text-white text-sm">TransacciÃ³n exitosa</div>
-                  <div className="text-text-tertiary text-xs">Ambas partes confirmaron Â· Hace 2 min</div>
+                  <div className="font-semibold text-white text-sm">Transacción exitosa</div>
+                  <div className="text-text-tertiary text-xs">Ambas partes confirmaron · Hace 2 min</div>
                 </div>
               </div>
             </div>
@@ -517,10 +517,10 @@ function DownloadCTA() {
               <Smartphone className="w-10 h-10 text-white" />
             </div>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white mb-4">
-              DescargÃ¡ <span className="gradient-text">Vinzay</span> ahora
+              Descargá <span className="gradient-text">Mercora</span> ahora
             </h2>
             <p className="text-text-secondary text-lg mb-8 max-w-xl mx-auto">
-              Disponible para Android. Descarga directa, sin Play Store. InstalaciÃ³n rÃ¡pida y segura.
+              Disponible para Android. Descarga directa, sin Play Store. Instalación rápida y segura.
             </p>
             <Link to="/download" className="btn-primary inline-flex items-center gap-3 px-10 py-5 rounded-2xl text-white font-bold text-lg download-pulse">
               <span className="flex items-center gap-3">
@@ -529,7 +529,7 @@ function DownloadCTA() {
               </span>
             </Link>
             <p className="text-text-muted text-sm mt-4">
-              Android {latest?.min_sdk || '8.0+'} Â· {latest ? `${(latest.file_size / 1_000_000).toFixed(0)}MB` : 'Menos de 50MB'} Â· 100% Gratis
+              Android {latest?.min_sdk || '8.0+'} · {latest ? `${(latest.file_size / 1_000_000).toFixed(0)}MB` : 'Menos de 50MB'} · 100% Gratis
             </p>
           </div>
         </Reveal>
@@ -549,24 +549,24 @@ function Footer() {
               <div className="w-10 h-10 rounded-xl gradient-mercora flex items-center justify-center">
                 <ShoppingBag className="w-5 h-5 text-white" />
               </div>
-              <span className="text-xl font-bold text-white">Vinzay</span>
+              <span className="text-xl font-bold text-white">Mercora</span>
             </div>
             <p className="text-text-secondary text-sm leading-relaxed max-w-md">
-              El marketplace social mÃ¡s seguro de Uruguay. Compra, vende y conecta con confianza gracias a nuestro sistema de verificaciÃ³n y transacciones seguras.
+              El marketplace social más seguro de Uruguay. Compra, vende y conecta con confianza gracias a nuestro sistema de verificación y transacciones seguras.
             </p>
           </div>
           <div>
             <h4 className="text-white font-semibold mb-4">Producto</h4>
             <div className="space-y-2">
-              <a href="#features" className="block text-text-secondary hover:text-white text-sm transition-colors">CaracterÃ­sticas</a>
-              <a href="#how" className="block text-text-secondary hover:text-white text-sm transition-colors">CÃ³mo funciona</a>
+              <a href="#features" className="block text-text-secondary hover:text-white text-sm transition-colors">Características</a>
+              <a href="#how" className="block text-text-secondary hover:text-white text-sm transition-colors">Cómo funciona</a>
               <Link to="/download" className="block text-text-secondary hover:text-white text-sm transition-colors">Descargar</Link>
             </div>
           </div>
           <div>
             <h4 className="text-white font-semibold mb-4">Legal</h4>
             <div className="space-y-2">
-              <a href="#" className="block text-text-secondary hover:text-white text-sm transition-colors">TÃ©rminos de uso</a>
+              <a href="#" className="block text-text-secondary hover:text-white text-sm transition-colors">Términos de uso</a>
               <a href="#" className="block text-text-secondary hover:text-white text-sm transition-colors">Privacidad</a>
               <a href="#" className="block text-text-secondary hover:text-white text-sm transition-colors">Contacto</a>
             </div>
@@ -574,7 +574,7 @@ function Footer() {
         </div>
         <div className="section-separator mb-6" />
         <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
-          <p className="text-text-muted text-sm">Â© {new Date().getFullYear()} Vinzay. Todos los derechos reservados.</p>
+          <p className="text-text-muted text-sm">© {new Date().getFullYear()} Mercora. Todos los derechos reservados.</p>
           <div className="flex items-center gap-2 text-text-muted text-sm">
             <Heart className="w-4 h-4 text-accent-magenta" />
             <span>Hecho en Uruguay</span>

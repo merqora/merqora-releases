@@ -1,4 +1,4 @@
-# Rendly Cache-First Architecture
+# Mercora Cache-First Architecture
 
 ## Diagrama de Flujo de Datos
 
@@ -111,7 +111,7 @@ Request ──► Memory Hit? ──YES──► Emit ──► Revalidate in BG
 - Genérico y thread-safe
 - Invalidación selectiva por key/pattern
 
-### 2. Room Database (RendlyDatabase)
+### 2. Room Database (MercoraDatabase)
 - Entities normalizadas con indices
 - Campo `cached_at` para TTL
 - Campo `version` para comparación

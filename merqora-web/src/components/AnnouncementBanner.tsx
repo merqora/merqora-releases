@@ -1,14 +1,14 @@
-'use client'
+﻿'use client'
 
 import styles from './AnnouncementBanner.module.css'
 
 const messages = [
-  '📦  Encontrá productos únicos en Vinzay',
+  '📦  Encontrá productos únicos en Mercora',
   '🔥  Los mejores precios están acá',
   '🚚  Conectá con vendedores de toda Latinoamérica',
-  '⭐  Compra segura desde la app',
+  'â­  Compra segura desde la app',
   '💡  Nuevos productos todos los días',
-  '✨  Descubrí lo que buscás en Vinzay',
+  '✨  Descubrí lo que buscás en Mercora',
 ]
 
 export default function AnnouncementBanner() {

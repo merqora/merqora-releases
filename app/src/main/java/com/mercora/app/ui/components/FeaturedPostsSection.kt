@@ -21,7 +21,7 @@ import com.mercora.app.ui.theme.*
  * â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
  * FEATURED POSTS SECTION
  * â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
- * SecciÃ³n de publicaciones destacadas para el Home.
+ * Sección de publicaciones destacadas para el Home.
  * Muestra 6 productos en formato de 2 columnas (3 filas) usando UnifiedProductCard.
  */
 
@@ -54,7 +54,7 @@ fun FeaturedPostsSection(
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    text = "SelecciÃ³n destacada",
+                    text = "Selección destacada",
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
                     color = TextPrimary
@@ -85,14 +85,14 @@ fun FeaturedPostsSection(
                         )
                     }
                 }
-                // Si la fila tiene solo 1 elemento, agregar espacio vacÃ­o
+                // Si la fila tiene solo 1 elemento, agregar espacio vacío
                 if (rowPosts.size == 1) {
                     Spacer(modifier = Modifier.weight(1f))
                 }
             }
         }
         
-        // BotÃ³n "Ver mÃ¡s publicaciones"
+        // Botón "Ver más publicaciones"
         Spacer(modifier = Modifier.height(16.dp))
         
         Button(
@@ -116,7 +116,7 @@ fun FeaturedPostsSection(
             )
             Spacer(modifier = Modifier.width(8.dp))
             Text(
-                text = "Ver mÃ¡s publicaciones",
+                text = "Ver más publicaciones",
                 fontSize = 14.sp,
                 fontWeight = FontWeight.SemiBold
             )

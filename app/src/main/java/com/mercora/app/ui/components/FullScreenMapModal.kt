@@ -207,7 +207,7 @@ fun FullScreenMapModal(
 
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
-                        text = "UbicaciÃ³n",
+                        text = "Ubicación",
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold,
                         color = Color.White
@@ -252,7 +252,7 @@ fun FullScreenMapModal(
                     )
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
-                            text = "UbicaciÃ³n compartida",
+                            text = "Ubicación compartida",
                             fontSize = 13.sp,
                             fontWeight = FontWeight.Medium,
                             color = TextPrimary
@@ -305,9 +305,9 @@ fun FullScreenMapModal(
                             val shareUri = android.net.Uri.parse("https://maps.google.com/maps?q=$latStr,$lngStr")
                             val shareIntent = android.content.Intent(android.content.Intent.ACTION_SEND).apply {
                                 type = "text/plain"
-                                putExtra(android.content.Intent.EXTRA_TEXT, "MirÃ¡ mi ubicaciÃ³n: https://maps.google.com/maps?q=$latStr,$lngStr")
+                                putExtra(android.content.Intent.EXTRA_TEXT, "Mirá mi ubicación: https://maps.google.com/maps?q=$latStr,$lngStr")
                             }
-                            context.startActivity(android.content.Intent.createChooser(shareIntent, "Compartir ubicaciÃ³n"))
+                            context.startActivity(android.content.Intent.createChooser(shareIntent, "Compartir ubicación"))
                         },
                         modifier = Modifier
                             .weight(1f)

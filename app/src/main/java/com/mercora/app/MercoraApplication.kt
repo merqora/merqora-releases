@@ -1,6 +1,7 @@
 ﻿package com.mercora.app
 
 import android.app.Application
+import android.content.Context
 import coil.ImageLoader
 import coil.disk.DiskCache
 import coil.memory.MemoryCache
@@ -9,7 +10,6 @@ import com.mercora.app.data.cache.CacheOrchestrator
 import com.mercora.app.data.cache.sync.CacheSyncWorker
 import com.mercora.app.data.remote.SupabaseClient
 import com.mercora.app.data.repository.NotificationRepository
-import com.mercora.app.data.repository.StoryRepository
 import io.sentry.Sentry
 import io.sentry.android.core.SentryAndroid
 import com.mercora.app.startup.StartupOptimizer
@@ -39,22 +39,19 @@ class MercoraApplication : Application() {
         
         // SESSION PERSISTENCE: Inicializar helpers (operaciï¿½n instantï¿½nea)
         SupabaseClient.init(this)
-        com.vinzay.app.data.remote.SessionPersistence.init(this)
+        com.mercora.app.data.remote.SessionPersistence.init(this)
         
         // Inicializar NotificationRepository para sonidos de notificaciï¿½n
         NotificationRepository.init(this)
         
-        // FASE 2: Diferir todo lo pesado post-first-frame
-        // Se ejecuta desde MainActivity despuï¿½s de setContent()
-        
-        // ? REMOVIDO - Bloqueaba Main Thread ~2000ms
-        // SupabaseClient.client
-        
-        // ? REMOVIDO - Bloqueaba Main Thread ~200ms  
-        // StoryRepository.initialize(this)
-        
-        // ? REMOVIDO - Bloqueaba Main Thread ~500ms
-        // System.loadLibrary("Vinzay-native")
+        // FASE 2: Inicialización diferida post-first-frame
+        // La inicialización pesada se maneja via StartupOptimizer desde MainActivity
+
+        // Inicializar cache system (async - no bloquea main thread)
+        initializeCacheSystem()
+
+        // Registrar observer de conectividad para sync automático
+        registerNetworkSyncTrigger()
     }
     
     /**
@@ -97,7 +94,7 @@ class MercoraApplication : Application() {
      * - Sets up cache maintenance
      */
     private fun initializeCacheSystem() {
-        android.util.Log.i("VinzayApp", "Initializing cache system...")
+        android.util.Log.i("MercoraApp", "Initializing cache system...")
         
         // Initialize cache orchestrator (warms caches)
         CacheOrchestrator.getInstance(this).initialize()
@@ -105,7 +102,22 @@ class MercoraApplication : Application() {
         // Schedule periodic background sync
         CacheSyncWorker.schedulePeriodicSync(this)
         
-        android.util.Log.i("VinzayApp", "Cache system initialized")
+        android.util.Log.i("MercoraApp", "Cache system initialized")
+    }
+
+    /**
+     * Register network connectivity callback to trigger sync on reconnection.
+     */
+    private fun registerNetworkSyncTrigger() {
+        val connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as? android.net.ConnectivityManager
+        connectivityManager?.registerDefaultNetworkCallback(
+            object : android.net.ConnectivityManager.NetworkCallback() {
+                override fun onAvailable(network: android.net.Network) {
+                    super.onAvailable(network)
+                    com.mercora.app.data.cache.sync.NetworkSyncTrigger.onNetworkAvailable(this@MercoraApplication)
+                }
+            }
+        )
     }
     
     override fun onTerminate() {

@@ -2,7 +2,7 @@
 
 /**
  * Shaders GLSL profesionales para ajustes de imagen nivel Instagram/Lightroom
- * Pipeline de color en espacio lineal con conversiÃ³n sRGB correcta
+ * Pipeline de color en espacio lineal con conversión sRGB correcta
  * Optimizado para 60+ FPS en tiempo real
  */
 object AdjustmentShaders {
@@ -23,7 +23,7 @@ object AdjustmentShaders {
 
     // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
     // FRAGMENT SHADER PROFESIONAL - Calidad Instagram/Lightroom
-    // Procesamiento en espacio lineal, grain fotogrÃ¡fico, curvas S
+    // Procesamiento en espacio lineal, grain fotográfico, curvas S
     // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
     const val FRAGMENT_SHADER = """
         precision highp float;
@@ -31,7 +31,7 @@ object AdjustmentShaders {
         varying vec2 vTexCoord;
         uniform sampler2D uTexture;
         
-        // ParÃ¡metros de ajuste (uniforms para cambio instantÃ¡neo)
+        // Parámetros de ajuste (uniforms para cambio instantáneo)
         uniform float uBrightness;    // -1.0 a 1.0
         uniform float uContrast;      // -1.0 a 1.0
         uniform float uSaturation;    // -1.0 a 1.0
@@ -42,10 +42,10 @@ object AdjustmentShaders {
         uniform float uTint;          // -1.0 a 1.0
         uniform float uGrain;         // 0.0 a 1.0
         uniform float uTime;          // Para grain estable
-        uniform vec2 uResolution;     // Para grain dependiente de posiciÃ³n
+        uniform vec2 uResolution;     // Para grain dependiente de posición
         
         // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-        // CONVERSIÃ“N sRGB â†” LINEAR (crÃ­tico para calidad fotogrÃ¡fica)
+        // CONVERSIÓN sRGB â†” LINEAR (crítico para calidad fotográfica)
         // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
         vec3 srgbToLinear(vec3 srgb) {
             vec3 low = srgb / 12.92;
@@ -67,7 +67,7 @@ object AdjustmentShaders {
         }
         
         // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-        // CURVA S PARA CONTRASTE (mÃ¡s natural que lineal)
+        // CURVA S PARA CONTRASTE (más natural que lineal)
         // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
         float sCurve(float x, float contrast) {
             float midpoint = 0.5;
@@ -82,16 +82,16 @@ object AdjustmentShaders {
         
         // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
         // HIGHLIGHTS & SHADOWS (control independiente - nivel PRO)
-        // Curvas adaptativas con protecciÃ³n de detalle
+        // Curvas adaptativas con protección de detalle
         // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
         vec3 applyHighlightsShadows(vec3 color, float highlights, float shadows) {
             float lum = getLuminance(color);
             
-            // MÃ¡scaras suaves con curvas mÃ¡s naturales
+            // Máscaras suaves con curvas más naturales
             float highlightMask = smoothstep(0.35, 0.85, lum);
             float shadowMask = 1.0 - smoothstep(0.15, 0.65, lum);
             
-            // Highlight recovery: compresiÃ³n suave de highlights
+            // Highlight recovery: compresión suave de highlights
             if (highlights < 0.0) {
                 float recovery = -highlights * highlightMask;
                 color = mix(color, color * (1.0 - recovery * 0.4), highlightMask);
@@ -99,7 +99,7 @@ object AdjustmentShaders {
                 color += color * highlights * highlightMask * 0.3;
             }
             
-            // Shadow lift: recuperaciÃ³n de sombras con preservaciÃ³n de detalle
+            // Shadow lift: recuperación de sombras con preservación de detalle
             if (shadows > 0.0) {
                 float lift = shadows * shadowMask * 0.4;
                 color = color + (1.0 - color) * lift * shadowMask;
@@ -127,7 +127,7 @@ object AdjustmentShaders {
         // TEMPERATURA Y TINTE (balance de blancos)
         // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
         vec3 applyTemperatureTint(vec3 color, float temperature, float tint) {
-            // Temperatura: cÃ¡lido (amarillo/naranja) â†” frÃ­o (azul)
+            // Temperatura: cálido (amarillo/naranja) â†” frío (azul)
             color.r += temperature * 0.1;
             color.b -= temperature * 0.1;
             
@@ -140,7 +140,7 @@ object AdjustmentShaders {
         }
         
         // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-        // SATURACIÃ“N PERCEPTUAL (no RGB directo)
+        // SATURACIÓN PERCEPTUAL (no RGB directo)
         // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
         vec3 applySaturation(vec3 color, float saturation) {
             float lum = getLuminance(color);
@@ -149,8 +149,8 @@ object AdjustmentShaders {
         }
         
         // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-        // GRAIN FOTOGRÃFICO PROFESIONAL
-        // - Dependiente de luminancia (mÃ¡s en sombras, menos en highlights)
+        // GRAIN FOTOGRÁFICO PROFESIONAL
+        // - Dependiente de luminancia (más en sombras, menos en highlights)
         // - Hash-based para estabilidad
         // - Blue noise pattern para aspecto natural
         // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
@@ -161,7 +161,7 @@ object AdjustmentShaders {
         }
         
         float blueNoise(vec2 uv) {
-            // AproximaciÃ³n de blue noise con hash multicapa
+            // Aproximación de blue noise con hash multicapa
             float n = hash(uv * 1.0);
             n += hash(uv * 2.0) * 0.5;
             n += hash(uv * 4.0) * 0.25;
@@ -173,23 +173,23 @@ object AdjustmentShaders {
             
             float lum = getLuminance(color);
             
-            // Grain mÃ¡s fuerte en sombras, casi invisible en highlights
+            // Grain más fuerte en sombras, casi invisible en highlights
             float grainStrength = grain * 0.15 * (1.0 - lum * 0.7);
             
-            // Noise estable basado en posiciÃ³n (no cambia con el tiempo)
+            // Noise estable basado en posición (no cambia con el tiempo)
             float noise = blueNoise(uv * uResolution);
             
-            // Aplicar grain con preservaciÃ³n de color
+            // Aplicar grain con preservación de color
             vec3 grainColor = color + vec3(noise * grainStrength);
             
             return grainColor;
         }
         
         // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-        // TEMPERATURA/TINTE CON APROXIMACIÃ“N LMS (mÃ¡s preciso)
+        // TEMPERATURA/TINTE CON APROXIMACIÓN LMS (más preciso)
         // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
         vec3 applyTemperatureTintLMS(vec3 color, float temperature, float tint) {
-            // Matriz RGB a LMS (aproximaciÃ³n Bradford)
+            // Matriz RGB a LMS (aproximación Bradford)
             mat3 rgbToLms = mat3(
                 0.4122214708, 0.5363325363, 0.0514459929,
                 0.2119034982, 0.6806995451, 0.1073969566,
@@ -221,14 +221,14 @@ object AdjustmentShaders {
         
         // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
         // SHADER PRINCIPAL - Pipeline Instagram/Lightroom
-        // Orden correcto para calidad mÃ¡xima
+        // Orden correcto para calidad máxima
         // PASS-THROUGH cuando no hay ajustes para evitar cambio de tono
         // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
         void main() {
             vec4 texColor = texture2D(uTexture, vTexCoord);
             vec3 color = texColor.rgb;
             
-            // Detectar si hay algÃºn ajuste activo
+            // Detectar si hay algún ajuste activo
             bool hasAdjustments = abs(uBrightness) > 0.001 || 
                                   abs(uContrast) > 0.001 || 
                                   abs(uSaturation) > 0.001 || 
@@ -245,16 +245,16 @@ object AdjustmentShaders {
                 return;
             }
             
-            // 1. sRGB â†’ Linear (crÃ­tico para calidad)
+            // 1. sRGB â†’ Linear (crítico para calidad)
             color = srgbToLinear(color);
             
-            // 2. ExposiciÃ³n (multiplicador EV)
+            // 2. Exposición (multiplicador EV)
             if (abs(uExposure) > 0.001) {
                 float exposureMultiplier = pow(2.0, uExposure);
                 color *= exposureMultiplier;
             }
             
-            // 3. Filmic Tone Mapping solo si hay exposiciÃ³n positiva
+            // 3. Filmic Tone Mapping solo si hay exposición positiva
             // Suaviza highlights, previene clipping
             if (uExposure > 0.1) {
                 color = filmicTonemap(color);
@@ -265,7 +265,7 @@ object AdjustmentShaders {
                 color = applyHighlightsShadows(color, uHighlights, uShadows);
             }
             
-            // 5. Temperatura y Tinte (en espacio LMS para precisiÃ³n)
+            // 5. Temperatura y Tinte (en espacio LMS para precisión)
             if (abs(uTemperature) > 0.001 || abs(uTint) > 0.001) {
                 color = applyTemperatureTintLMS(color, uTemperature, uTint);
             }
@@ -283,18 +283,18 @@ object AdjustmentShaders {
                 color *= brightnessFactor;
             }
             
-            // 8. SaturaciÃ³n perceptual
+            // 8. Saturación perceptual
             if (abs(uSaturation) > 0.001) {
                 color = applySaturation(color, uSaturation);
             }
             
-            // 9. Clamp antes de conversiÃ³n
+            // 9. Clamp antes de conversión
             color = clamp(color, 0.0, 1.0);
             
             // 10. Linear â†’ sRGB
             color = linearToSrgb(color);
             
-            // 11. Grain fotogrÃ¡fico (despuÃ©s de sRGB)
+            // 11. Grain fotográfico (después de sRGB)
             if (uGrain > 0.001) {
                 color = applyGrain(color, vTexCoord, uGrain);
             }
@@ -307,7 +307,7 @@ object AdjustmentShaders {
     """
 
     // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-    // NOMBRES DE UNIFORMS PARA ACCESO RÃPIDO
+    // NOMBRES DE UNIFORMS PARA ACCESO RÁPIDO
     // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
     object Uniforms {
         const val TEXTURE = "uTexture"

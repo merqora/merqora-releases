@@ -43,7 +43,7 @@ fun StoriesCarousel(
     // Si no hay stories, no mostrar nada
     if (stories.isEmpty()) return
     
-    // OPTIMIZADO: Memoizar groupBy para evitar recÃ¡lculo en cada recomposiciÃ³n
+    // OPTIMIZADO: Memoizar groupBy para evitar recálculo en cada recomposición
     val storiesByUser = remember(stories) { stories.groupBy { it.userId } }
     val usersList = remember(storiesByUser) { storiesByUser.keys.toList() }
     
@@ -118,7 +118,7 @@ private fun StoryAvatarItem(
     isViewed: Boolean = false,
     onClick: () -> Unit
 ) {
-    // OPTIMIZADO: Memoizar gradientes para evitar recreaciÃ³n en cada frame
+    // OPTIMIZADO: Memoizar gradientes para evitar recreación en cada frame
     val storyGradient = remember(isViewed) {
         if (isViewed) {
             Brush.linearGradient(
@@ -166,7 +166,7 @@ private fun StoryAvatarItem(
                     .background(HomeBg)
             )
             
-            // Avatar optimizado con cachÃ©
+            // Avatar optimizado con caché
             val context = LocalContext.current
             val finalAvatarUrl = remember(avatarUrl, username) {
                 avatarUrl ?: "https://ui-avatars.com/api/?name=$username&background=A78BFA&color=fff&size=200"
@@ -188,7 +188,7 @@ private fun StoryAvatarItem(
                     .clip(CircleShape)
             )
             
-            // Badge de cantidad removido - ya no se muestra el nÃºmero de stories
+            // Badge de cantidad removido - ya no se muestra el número de stories
         }
         
         Spacer(modifier = Modifier.height(6.dp))

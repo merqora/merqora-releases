@@ -1,5 +1,5 @@
-// ═══════════════════════════════════════════════════════════════════════════════
-// RENDLY - FCM Push Notification Edge Function
+﻿// ═══════════════════════════════════════════════════════════════════════════════
+// MERCORA - FCM Push Notification Edge Function
 // Envía notificaciones push a través de Firebase Cloud Messaging
 // ═══════════════════════════════════════════════════════════════════════════════
 
@@ -41,7 +41,7 @@ async function sendToFCM(notification: PushNotification): Promise<{ success: boo
           image: notification.image_url || undefined,
           sound: 'default',
           click_action: 'FLUTTER_NOTIFICATION_CLICK',
-          android_channel_id: 'rendly_notifications',
+          android_channel_id: 'mercora_notifications',
         },
         data: {
           ...notification.data,

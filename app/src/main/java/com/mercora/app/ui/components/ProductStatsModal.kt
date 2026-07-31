@@ -51,7 +51,7 @@ fun ProductStatsModal(
     
     val stockText = when {
         stats.stock > 5 -> "Disponible"
-        stats.stock > 0 -> "Ãšltimas unidades"
+        stats.stock > 0 -> "Últimas unidades"
         else -> "Agotado"
     }
     
@@ -89,7 +89,7 @@ fun ProductStatsModal(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = "InformaciÃ³n",
+                            text = "Información",
                             fontSize = 18.sp,
                             fontWeight = FontWeight.Bold,
                             color = TextPrimary
@@ -148,14 +148,14 @@ fun ProductStatsModal(
                             )
                         }
                         
-                        // Row 2: CondiciÃ³n y Stock
+                        // Row 2: Condición y Stock
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.spacedBy(12.dp)
                         ) {
                             StatCard(
                                 icon = Icons.Default.CheckCircle,
-                                label = "CondiciÃ³n",
+                                label = "Condición",
                                 value = stats.condicion,
                                 color = AccentGreen,
                                 modifier = Modifier.weight(1f)
@@ -169,10 +169,10 @@ fun ProductStatsModal(
                             )
                         }
                         
-                        // Row 3: CategorÃ­a
+                        // Row 3: Categoría
                         StatCard(
                             icon = Icons.Default.Menu,
-                            label = "CategorÃ­a",
+                            label = "Categoría",
                             value = stats.categoria,
                             color = Color(0xFFFF6B35),
                             modifier = Modifier.fillMaxWidth()

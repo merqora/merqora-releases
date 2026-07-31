@@ -20,13 +20,13 @@ enum class AvatarShapeType(
     val displayName: String,
     val dbValue: String
 ) {
-    CIRCLE("circle", "CÃ­rculo", "circle"),
+    CIRCLE("circle", "Círculo", "circle"),
     ROUNDED_SQUARE("rounded_square", "Cuadrado Redondeado", "rounded_square"),
     SQUIRCLE("squircle", "Squircle", "squircle"),
-    TRIANGLE("triangle", "TriÃ¡ngulo", "triangle"),
+    TRIANGLE("triangle", "Triángulo", "triangle"),
     STAR("star", "Estrella", "star"),
-    HEART("heart", "CorazÃ³n", "heart"),
-    HEXAGON("hexagon", "HexÃ¡gono", "hexagon"),
+    HEART("heart", "Corazón", "heart"),
+    HEXAGON("hexagon", "Hexágono", "hexagon"),
     DIAMOND("diamond", "Diamante", "diamond");
 
     fun toShape(): Shape = when (this) {
@@ -58,7 +58,7 @@ data class AvatarShapePack(
 val AVATAR_SHAPE_PACKS = listOf(
     AvatarShapePack(
         id = "shape_pack_basico",
-        title = "Pack BÃ¡sico",
+        title = "Pack Básico",
         description = "Formas esenciales: cuadrado redondeado, squircle y diamante",
         shapes = listOf(AvatarShapeType.ROUNDED_SQUARE, AvatarShapeType.SQUIRCLE, AvatarShapeType.DIAMOND),
         priceCredits = 0,
@@ -66,8 +66,8 @@ val AVATAR_SHAPE_PACKS = listOf(
     ),
     AvatarShapePack(
         id = "shape_pack_geometrico",
-        title = "Pack GeomÃ©trico",
-        description = "Formas geomÃ©tricas: triÃ¡ngulo y hexÃ¡gono",
+        title = "Pack Geométrico",
+        description = "Formas geométricas: triángulo y hexágono",
         shapes = listOf(AvatarShapeType.TRIANGLE, AvatarShapeType.HEXAGON),
         priceCredits = 0,
         icon = "triangle"
@@ -75,7 +75,7 @@ val AVATAR_SHAPE_PACKS = listOf(
     AvatarShapePack(
         id = "shape_pack_premium",
         title = "Pack Premium",
-        description = "Formas premium: estrella y corazÃ³n",
+        description = "Formas premium: estrella y corazón",
         shapes = listOf(AvatarShapeType.STAR, AvatarShapeType.HEART),
         priceCredits = 0,
         icon = "star"

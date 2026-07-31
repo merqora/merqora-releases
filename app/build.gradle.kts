@@ -10,6 +10,15 @@ plugins {
     kotlin("plugin.serialization")
 }
 
+// Keystore de release: credenciales en keystore.properties (gitignored, NO commitear)
+import java.util.Properties
+val keystorePropertiesFile = rootProject.file("keystore.properties")
+val keystoreProperties = Properties().apply {
+    if (keystorePropertiesFile.exists()) {
+        keystorePropertiesFile.inputStream().use { load(it) }
+    }
+}
+
 android {
     namespace = "com.mercora.app"
     compileSdk = 35
@@ -17,7 +26,7 @@ android {
     defaultConfig {
         applicationId = "com.mercora.app"
         minSdk = 26
-        targetSdk = 34
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0.0"
 
@@ -44,10 +53,16 @@ android {
 
     signingConfigs {
         create("release") {
-            storeFile = file(System.getProperty("user.home") + "/.android/mercora-release.keystore")
-            storePassword = "***REMOVED***"
-            keyAlias = "mercora"
-            keyPassword = "***REMOVED***"
+            val storeFileProp = keystoreProperties.getProperty("storeFile")
+                ?.takeIf { it.isNotBlank() }
+            storeFile = if (storeFileProp != null) {
+                file(storeFileProp)
+            } else {
+                file(System.getProperty("user.home") + "/.android/mercora-release.keystore")
+            }
+            storePassword = keystoreProperties.getProperty("storePassword") ?: ""
+            keyAlias = keystoreProperties.getProperty("keyAlias") ?: ""
+            keyPassword = keystoreProperties.getProperty("keyPassword") ?: ""
         }
     }
     
@@ -70,26 +85,19 @@ android {
             // baselineProfile.automaticGenerationDuringBuild = true
             buildConfigField("String", "SUPABASE_URL", "\"${project.findProperty("SUPABASE_URL") ?: "https://xyrpmmnegzjkbysoocpc.supabase.co"}\"")
             buildConfigField("String", "SUPABASE_ANON_KEY", "\"${project.findProperty("SUPABASE_ANON_KEY") ?: ""}\"")
-            buildConfigField("String", "R2_PUBLIC_URL", "\"${project.findProperty("R2_PUBLIC_URL") ?: ""}\"")
             buildConfigField("String", "CLOUDINARY_CLOUD_NAME", "\"${project.findProperty("CLOUDINARY_CLOUD_NAME") ?: ""}\"")
             buildConfigField("String", "IMAGEKIT_URL_ENDPOINT", "\"${project.findProperty("IMAGEKIT_URL_ENDPOINT") ?: ""}\"")
             buildConfigField("String", "IMAGEKIT_PUBLIC_KEY", "\"${project.findProperty("IMAGEKIT_PUBLIC_KEY") ?: ""}\"")
-            buildConfigField("String", "IMAGEKIT_PRIVATE_KEY", "\"${project.findProperty("IMAGEKIT_PRIVATE_KEY") ?: ""}\"")
-            buildConfigField("String", "CLOUDFLARE_ACCOUNT_ID", "\"${project.findProperty("CLOUDFLARE_ACCOUNT_ID") ?: ""}\"")
-            buildConfigField("String", "CLOUDFLARE_ACCESS_KEY_ID", "\"${project.findProperty("CLOUDFLARE_ACCESS_KEY_ID") ?: ""}\"")
-            buildConfigField("String", "CLOUDFLARE_SECRET_ACCESS_KEY", "\"${project.findProperty("CLOUDFLARE_SECRET_ACCESS_KEY") ?: ""}\"")
-            buildConfigField("String", "CLOUDFLARE_BUCKET_NAME", "\"${project.findProperty("CLOUDFLARE_BUCKET_NAME") ?: ""}\"")
             buildConfigField("String", "CLOUDFLARE_PUBLIC_DOMAIN", "\"${project.findProperty("CLOUDFLARE_PUBLIC_DOMAIN") ?: ""}\"")
-            buildConfigField("String", "CLOUDINARY_API_KEY", "\"${project.findProperty("CLOUDINARY_API_KEY") ?: ""}\"")
-            buildConfigField("String", "CLOUDINARY_API_SECRET", "\"${project.findProperty("CLOUDINARY_API_SECRET") ?: ""}\"")
             buildConfigField("String", "MAPBOX_ACCESS_TOKEN", "\"${project.findProperty("MAPBOX_ACCESS_TOKEN") ?: ""}\"")
-            buildConfigField("String", "GOOGLE_MAPS_API_KEY", "\"${project.findProperty("GOOGLE_MAPS_API_KEY") ?: ""}\"")
             // Mercado Pago Checkout API
             buildConfigField("String", "MP_PUBLIC_KEY", "\"${project.findProperty("MP_PUBLIC_KEY") ?: ""}\"")
             // HIGH-2: MP_ACCESS_TOKEN eliminado — solo se usa en Edge Functions del servidor
             buildConfigField("String", "MERCADOPAGO_CLIENT_ID", "\"${project.findProperty("MERCADOPAGO_CLIENT_ID") ?: ""}\"")
             // AI Support Backend URL - deploy to Render and set in gradle.properties
             buildConfigField("String", "AI_SUPPORT_URL", "\"${project.findProperty("AI_SUPPORT_URL") ?: "https://mercora-ai.onrender.com"}\"")
+            // Giphy API
+            buildConfigField("String", "GIPHY_API_KEY", "\"${project.findProperty("GIPHY_API_KEY") ?: ""}\"")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -99,20 +107,11 @@ android {
             isMinifyEnabled = false
             buildConfigField("String", "SUPABASE_URL", "\"${project.findProperty("SUPABASE_URL") ?: "https://xyrpmmnegzjkbysoocpc.supabase.co"}\"")
             buildConfigField("String", "SUPABASE_ANON_KEY", "\"${project.findProperty("SUPABASE_ANON_KEY") ?: ""}\"")
-            buildConfigField("String", "R2_PUBLIC_URL", "\"${project.findProperty("R2_PUBLIC_URL") ?: ""}\"")
             buildConfigField("String", "CLOUDINARY_CLOUD_NAME", "\"${project.findProperty("CLOUDINARY_CLOUD_NAME") ?: ""}\"")
             buildConfigField("String", "IMAGEKIT_URL_ENDPOINT", "\"${project.findProperty("IMAGEKIT_URL_ENDPOINT") ?: ""}\"")
             buildConfigField("String", "IMAGEKIT_PUBLIC_KEY", "\"${project.findProperty("IMAGEKIT_PUBLIC_KEY") ?: ""}\"")
-            buildConfigField("String", "IMAGEKIT_PRIVATE_KEY", "\"${project.findProperty("IMAGEKIT_PRIVATE_KEY") ?: ""}\"")
-            buildConfigField("String", "CLOUDFLARE_ACCOUNT_ID", "\"${project.findProperty("CLOUDFLARE_ACCOUNT_ID") ?: ""}\"")
-            buildConfigField("String", "CLOUDFLARE_ACCESS_KEY_ID", "\"${project.findProperty("CLOUDFLARE_ACCESS_KEY_ID") ?: ""}\"")
-            buildConfigField("String", "CLOUDFLARE_SECRET_ACCESS_KEY", "\"${project.findProperty("CLOUDFLARE_SECRET_ACCESS_KEY") ?: ""}\"")
-            buildConfigField("String", "CLOUDFLARE_BUCKET_NAME", "\"${project.findProperty("CLOUDFLARE_BUCKET_NAME") ?: ""}\"")
             buildConfigField("String", "CLOUDFLARE_PUBLIC_DOMAIN", "\"${project.findProperty("CLOUDFLARE_PUBLIC_DOMAIN") ?: ""}\"")
-            buildConfigField("String", "CLOUDINARY_API_KEY", "\"${project.findProperty("CLOUDINARY_API_KEY") ?: ""}\"")
-            buildConfigField("String", "CLOUDINARY_API_SECRET", "\"${project.findProperty("CLOUDINARY_API_SECRET") ?: ""}\"")
             buildConfigField("String", "MAPBOX_ACCESS_TOKEN", "\"${project.findProperty("MAPBOX_ACCESS_TOKEN") ?: ""}\"")
-            buildConfigField("String", "GOOGLE_MAPS_API_KEY", "\"${project.findProperty("GOOGLE_MAPS_API_KEY") ?: ""}\"")
             // Mercado Pago Checkout API - DEBUG usa credenciales TEST si están configuradas
             // Para obtener credenciales TEST: https://www.mercadopago.com.uy/developers/panel/app -> Credenciales de prueba
             // Agregar MP_TEST_PUBLIC_KEY y MP_TEST_ACCESS_TOKEN en gradle.properties
@@ -121,6 +120,8 @@ android {
             buildConfigField("String", "MERCADOPAGO_CLIENT_ID", "\"${project.findProperty("MERCADOPAGO_CLIENT_ID") ?: ""}\"")
             // AI Support Backend URL - overridable via gradle.properties (AI_SUPPORT_URL)
             buildConfigField("String", "AI_SUPPORT_URL", "\"${project.findProperty("AI_SUPPORT_URL") ?: "https://mercora-ai.onrender.com"}\"")
+            // Giphy API
+            buildConfigField("String", "GIPHY_API_KEY", "\"${project.findProperty("GIPHY_API_KEY") ?: ""}\"")
         }
     }
     
@@ -203,6 +204,9 @@ dependencies {
     implementation("io.coil-kt:coil-compose:2.7.0")
     implementation("io.coil-kt:coil-gif:2.7.0")
 
+    // Lottie Animation
+    implementation("com.airbnb.android:lottie-compose:6.1.0")
+
     // Room Database
     val roomVersion = "2.7.1"
     implementation("androidx.room:room-runtime:$roomVersion")
@@ -277,6 +281,9 @@ dependencies {
     
     // Biometric Authentication
     implementation("androidx.biometric:biometric:1.1.0")
+    
+    // Encrypted SharedPreferences
+    implementation("androidx.security:security-crypto:1.1.0-alpha06")
     
     // Google Play Services Location (GPS for AddressEngine)
     implementation("com.google.android.gms:play-services-location:21.0.1")

@@ -1,8 +1,8 @@
-// Edge Function: process-card-payment
+﻿// Edge Function: process-card-payment
 // Procesa pagos con tarjeta tokenizada usando Mercado Pago Marketplace + Split Payments.
 // Usa el access_token del VENDEDOR (obtenido del order_items, NO del cliente).
 // MP divide automáticamente: vendedor recibe (total - comisión), plataforma recibe comisión.
-// Vinzay NUNCA custodia el dinero real.
+// Mercora NUNCA custodia el dinero real.
 // Deploy: supabase functions deploy process-card-payment
 
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
@@ -178,11 +178,11 @@ serve(async (req) => {
       payer: { email: payer_email },
       external_reference: order_id,
       description: description || `Pedido #${order_id}`,
-      statement_descriptor: 'VINZAY',
+      statement_descriptor: 'MERCORA',
       metadata: {
         order_id,
         seller_id: sellerId,
-        platform: 'vinzay_android',
+        platform: 'mercora_android',
         integration_type: 'marketplace_split',
       },
       notification_url: `${Deno.env.get('SUPABASE_URL')}/functions/v1/mp-webhook`,

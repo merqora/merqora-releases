@@ -11,7 +11,7 @@ private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(na
 
 /**
  * Gestor de preferencias de la app usando DataStore
- * Maneja tema, color de acento, tamaÃ±o de fuente y accesibilidad
+ * Maneja tema, color de acento, tamaño de fuente y accesibilidad
  */
 class AppPreferences(private val context: Context) {
     
@@ -68,7 +68,7 @@ class AppPreferences(private val context: Context) {
     }
     
     // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-    // TAMAÃ‘O DE FUENTE
+    // TAMAÑO DE FUENTE
     // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
     val fontSizeFlow: Flow<String> = context.dataStore.data.map { preferences ->
         preferences[FONT_SIZE_KEY] ?: FONT_MEDIUM

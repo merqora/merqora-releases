@@ -134,10 +134,10 @@ object NotificationRepository {
                 table = "notifications"
                 filter = "recipient_id=eq.$userId"
             }?.onEach { _ ->
-                // Cuando llega una nueva notificaciÃ³n, recargar la lista
-                Log.d(TAG, "ðŸ”” Nueva notificaciÃ³n detectada, recargando...")
+                // Cuando llega una nueva notificación, recargar la lista
+                Log.d(TAG, "🔔 Nueva notificación detectada, recargando...")
                 loadNotifications()
-                // Reproducir sonido de notificaciÃ³n
+                // Reproducir sonido de notificación
                 SoundManager.playNotificationSound()
             }?.launchIn(scope)
             
@@ -162,14 +162,14 @@ object NotificationRepository {
         }
     }
     
-    // Limpiar notificaciÃ³n nueva (despuÃ©s de mostrar toast)
+    // Limpiar notificación nueva (después de mostrar toast)
     fun clearNewNotification() {
         _newNotification.value = null
     }
 
     private var lastFollowRequestNotifCount = 0
     
-    // Crear notificaciÃ³n de LIKE
+    // Crear notificación de LIKE
     suspend fun createLikeNotification(
         recipientId: String,
         postId: String,
@@ -178,7 +178,7 @@ object NotificationRepository {
         try {
             val senderId = getCurrentUserId() ?: return@withContext Result.failure(Exception("No auth"))
             
-            // No notificar si el usuario se da like a sÃ­ mismo
+            // No notificar si el usuario se da like a sí mismo
             if (senderId == recipientId) {
                 return@withContext Result.success(Unit)
             }
@@ -197,13 +197,13 @@ object NotificationRepository {
                     put("created_at", Instant.now().toString())
                 })
             
-            Log.d(TAG, "âœ… NotificaciÃ³n de LIKE creada para $recipientId")
+            Log.d(TAG, "âœ… Notificación de LIKE creada para $recipientId")
             
             // FCM push phone-to-phone
             sendFCMPush(
                 recipientId = recipientId,
                 title = "Nuevo like",
-                body = "${profile?.username ?: "Alguien"} le dio like a tu publicaciÃ³n",
+                body = "${profile?.username ?: "Alguien"} le dio like a tu publicación",
                 data = mapOf(
                     "type" to "like",
                     "sender_id" to senderId,
@@ -220,7 +220,7 @@ object NotificationRepository {
         }
     }
     
-    // Crear notificaciÃ³n de SAVE (guardado)
+    // Crear notificación de SAVE (guardado)
     suspend fun createSaveNotification(
         recipientId: String,
         postId: String,
@@ -248,13 +248,13 @@ object NotificationRepository {
                     put("created_at", Instant.now().toString())
                 })
             
-            Log.d(TAG, "âœ… NotificaciÃ³n de SAVE creada para $recipientId")
+            Log.d(TAG, "âœ… Notificación de SAVE creada para $recipientId")
             
             // FCM push phone-to-phone
             sendFCMPush(
                 recipientId = recipientId,
-                title = "Guardaron tu publicaciÃ³n",
-                body = "${profile?.username ?: "Alguien"} guardÃ³ tu publicaciÃ³n",
+                title = "Guardaron tu publicación",
+                body = "${profile?.username ?: "Alguien"} guardó tu publicación",
                 data = mapOf(
                     "type" to "save",
                     "sender_id" to senderId,
@@ -271,7 +271,7 @@ object NotificationRepository {
         }
     }
     
-    // Crear notificaciÃ³n de COMMENT (comentario/opiniÃ³n)
+    // Crear notificación de COMMENT (comentario/opinión)
     suspend fun createCommentNotification(
         recipientId: String,
         postId: String,
@@ -301,13 +301,13 @@ object NotificationRepository {
                     put("created_at", Instant.now().toString())
                 })
             
-            Log.d(TAG, "âœ… NotificaciÃ³n de COMMENT creada para $recipientId")
+            Log.d(TAG, "âœ… Notificación de COMMENT creada para $recipientId")
             
             // FCM push phone-to-phone
             sendFCMPush(
                 recipientId = recipientId,
-                title = "Nueva opiniÃ³n",
-                body = "${profile?.username ?: "Alguien"} comentÃ³: ${commentText.take(80)}",
+                title = "Nueva opinión",
+                body = "${profile?.username ?: "Alguien"} comentó: ${commentText.take(80)}",
                 data = mapOf(
                     "type" to "comment",
                     "sender_id" to senderId,
@@ -325,7 +325,7 @@ object NotificationRepository {
         }
     }
     
-    // Crear notificaciÃ³n de mensaje
+    // Crear notificación de mensaje
     suspend fun createMessageNotification(
         recipientId: String,
         senderUsername: String,
@@ -347,13 +347,13 @@ object NotificationRepository {
                     put("sender_username", currentUser.username)
                     put("sender_avatar", currentUser.avatarUrl)
                     put("type", "message")
-                    put("message", "$senderUsername te enviÃ³ un mensaje: $messagePreview")
+                    put("message", "$senderUsername te envió un mensaje: $messagePreview")
                     put("created_at", Instant.now().toString())
                 })
             
-            Log.d(TAG, "âœ… NotificaciÃ³n de mensaje creada para $recipientId")
+            Log.d(TAG, "âœ… Notificación de mensaje creada para $recipientId")
             
-            // FCM push phone-to-phone (para cuando la app estÃ¡ cerrada)
+            // FCM push phone-to-phone (para cuando la app está cerrada)
             sendFCMPush(
                 recipientId = recipientId,
                 title = senderUsername,
@@ -374,7 +374,7 @@ object NotificationRepository {
         }
     }
     
-    // Marcar notificaciÃ³n como leÃ­da
+    // Marcar notificación como leída
     suspend fun markAsRead(notificationId: String) = withContext(Dispatchers.IO) {
         try {
             SupabaseClient.database.from("notifications")
@@ -396,7 +396,7 @@ object NotificationRepository {
         }
     }
     
-    // Marcar todas como leÃ­das
+    // Marcar todas como leídas
     suspend fun markAllAsRead() = withContext(Dispatchers.IO) {
         try {
             val userId = getCurrentUserId() ?: return@withContext
@@ -415,14 +415,14 @@ object NotificationRepository {
             _unreadCount.value = 0
             BadgeCountCache.setNotificationCount(0)
             
-            Log.d(TAG, "Todas las notificaciones marcadas como leÃ­das")
+            Log.d(TAG, "Todas las notificaciones marcadas como leídas")
             
         } catch (e: Exception) {
             Log.e(TAG, "Error marking all as read", e)
         }
     }
     
-    // Eliminar notificaciÃ³n
+    // Eliminar notificación
     suspend fun deleteNotification(notificationId: String) = withContext(Dispatchers.IO) {
         try {
             SupabaseClient.database.from("notifications")
@@ -444,7 +444,7 @@ object NotificationRepository {
     // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
     /**
-     * Notificar que alguien empezÃ³ a seguirte (perfil pÃºblico)
+     * Notificar que alguien empezó a seguirte (perfil público)
      */
     suspend fun createFollowNotification(recipientId: String): Result<Unit> = withContext(Dispatchers.IO) {
         try {
@@ -461,16 +461,16 @@ object NotificationRepository {
                     put("sender_username", currentUser.username)
                     put("sender_avatar", currentUser.avatarUrl)
                     put("type", NotificationType.FOLLOW.value)
-                    put("message", "empezÃ³ a seguirte")
+                    put("message", "empezó a seguirte")
                     put("created_at", Instant.now().toString())
                 })
 
-            Log.d(TAG, "âœ… NotificaciÃ³n FOLLOW creada para $recipientId")
+            Log.d(TAG, "âœ… Notificación FOLLOW creada para $recipientId")
 
             sendFCMPush(
                 recipientId = recipientId,
                 title = "Nuevo seguidor",
-                body = "@${currentUser.username} empezÃ³ a seguirte",
+                body = "@${currentUser.username} empezó a seguirte",
                 data = mapOf(
                     "type" to "follow",
                     "sender_id" to currentUser.userId,
@@ -490,7 +490,7 @@ object NotificationRepository {
     // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
     /**
-     * Notificar al dueÃ±o del perfil privado que alguien quiere seguirle
+     * Notificar al dueño del perfil privado que alguien quiere seguirle
      */
     suspend fun createFollowRequestNotification(
         profileOwnerId: String
@@ -514,7 +514,7 @@ object NotificationRepository {
                     put("created_at", Instant.now().toString())
                 })
 
-            Log.d(TAG, "âœ… NotificaciÃ³n FOLLOW_REQUEST creada para $profileOwnerId")
+            Log.d(TAG, "âœ… Notificación FOLLOW_REQUEST creada para $profileOwnerId")
 
             sendFCMPush(
                 recipientId = profileOwnerId,
@@ -550,16 +550,16 @@ object NotificationRepository {
                     put("sender_username", currentUser.username)
                     put("sender_avatar", currentUser.avatarUrl)
                     put("type", NotificationType.FOLLOW_ACCEPTED.value)
-                    put("message", "aceptÃ³ tu solicitud de seguimiento")
+                    put("message", "aceptó tu solicitud de seguimiento")
                     put("created_at", Instant.now().toString())
                 })
 
-            Log.d(TAG, "âœ… NotificaciÃ³n FOLLOW_ACCEPTED creada para $requesterId")
+            Log.d(TAG, "âœ… Notificación FOLLOW_ACCEPTED creada para $requesterId")
 
             sendFCMPush(
                 recipientId = requesterId,
                 title = "Solicitud aceptada",
-                body = "@${currentUser.username} aceptÃ³ tu solicitud de seguimiento",
+                body = "@${currentUser.username} aceptó tu solicitud de seguimiento",
                 data = mapOf(
                     "type" to "follow_accepted",
                     "sender_id" to currentUser.userId,
@@ -590,11 +590,11 @@ object NotificationRepository {
                     put("sender_username", currentUser.username)
                     put("sender_avatar", currentUser.avatarUrl)
                     put("type", NotificationType.FOLLOW_REJECTED.value)
-                    put("message", "no aceptÃ³ tu solicitud de seguimiento")
+                    put("message", "no aceptó tu solicitud de seguimiento")
                     put("created_at", Instant.now().toString())
                 })
 
-            Log.d(TAG, "âœ… NotificaciÃ³n FOLLOW_REJECTED creada para $requesterId")
+            Log.d(TAG, "âœ… Notificación FOLLOW_REJECTED creada para $requesterId")
             Result.success(Unit)
         } catch (e: Exception) {
             Log.e(TAG, "Error creating follow rejected notification", e)
@@ -632,7 +632,7 @@ object NotificationRepository {
                     put("created_at", Instant.now().toString())
                 })
             
-            Log.d(TAG, "âœ… NotificaciÃ³n CLIENT_REQUEST creada para vendedor $sellerId")
+            Log.d(TAG, "âœ… Notificación CLIENT_REQUEST creada para vendedor $sellerId")
             
             sendFCMPush(
                 recipientId = sellerId,
@@ -654,7 +654,7 @@ object NotificationRepository {
     }
     
     /**
-     * Notificar al solicitante que su solicitud estÃ¡ pendiente
+     * Notificar al solicitante que su solicitud está pendiente
      */
     suspend fun createClientPendingNotification(
         requesterId: String,
@@ -670,11 +670,11 @@ object NotificationRepository {
                     put("sender_username", currentUser.username)
                     put("sender_avatar", currentUser.avatarUrl)
                     put("type", NotificationType.CLIENT_PENDING.value)
-                    put("message", "Tu solicitud para ser cliente de @$sellerUsername estÃ¡ pendiente")
+                    put("message", "Tu solicitud para ser cliente de @$sellerUsername está pendiente")
                     put("created_at", Instant.now().toString())
                 })
             
-            Log.d(TAG, "âœ… NotificaciÃ³n CLIENT_PENDING creada para solicitante $requesterId")
+            Log.d(TAG, "âœ… Notificación CLIENT_PENDING creada para solicitante $requesterId")
             Result.success(Unit)
             
         } catch (e: Exception) {
@@ -685,7 +685,7 @@ object NotificationRepository {
     
     /**
      * Notificar al solicitante que fue aceptado como cliente
-     * ACTUALIZA la notificaciÃ³n PENDING existente en lugar de crear una nueva
+     * ACTUALIZA la notificación PENDING existente en lugar de crear una nueva
      */
     suspend fun createClientAcceptedNotification(
         requesterId: String,
@@ -694,7 +694,7 @@ object NotificationRepository {
         try {
             val currentUser = getCurrentUserProfile() ?: return@withContext Result.failure(Exception("No user"))
             
-            // Buscar la notificaciÃ³n PENDING existente para este usuario
+            // Buscar la notificación PENDING existente para este usuario
             val existingNotifications = SupabaseClient.database
                 .from("notifications")
                 .select {
@@ -707,20 +707,20 @@ object NotificationRepository {
                 .decodeList<NotificationDB>()
             
             if (existingNotifications.isNotEmpty()) {
-                // Actualizar la notificaciÃ³n existente a CLIENT_ACCEPTED
+                // Actualizar la notificación existente a CLIENT_ACCEPTED
                 val notificationId = existingNotifications.first().id
                 SupabaseClient.database.from("notifications")
                     .update(buildJsonObject {
                         put("type", NotificationType.CLIENT_ACCEPTED.value)
-                        put("message", "te aceptÃ³ como cliente")
-                        put("is_read", false) // Marcar como no leÃ­da para que el usuario la vea
+                        put("message", "te aceptó como cliente")
+                        put("is_read", false) // Marcar como no leída para que el usuario la vea
                         put("created_at", Instant.now().toString()) // Actualizar timestamp
                     }) {
                         filter {
                             eq("id", notificationId)
                         }
                     }
-                Log.d(TAG, "âœ… NotificaciÃ³n PENDING actualizada a ACCEPTED para $requesterId")
+                Log.d(TAG, "âœ… Notificación PENDING actualizada a ACCEPTED para $requesterId")
             } else {
                 // Si no existe PENDING (caso raro), crear nueva
                 SupabaseClient.database.from("notifications")
@@ -730,16 +730,16 @@ object NotificationRepository {
                         put("sender_username", currentUser.username)
                         put("sender_avatar", currentUser.avatarUrl)
                         put("type", NotificationType.CLIENT_ACCEPTED.value)
-                        put("message", "te aceptÃ³ como cliente")
+                        put("message", "te aceptó como cliente")
                         put("created_at", Instant.now().toString())
                     })
-                Log.d(TAG, "âœ… NotificaciÃ³n CLIENT_ACCEPTED creada (sin PENDING previo) para $requesterId")
+                Log.d(TAG, "âœ… Notificación CLIENT_ACCEPTED creada (sin PENDING previo) para $requesterId")
             }
             
             sendFCMPush(
                 recipientId = requesterId,
                 title = "Solicitud aceptada",
-                body = "@$sellerUsername te aceptÃ³ como cliente",
+                body = "@$sellerUsername te aceptó como cliente",
                 data = mapOf(
                     "type" to "client_accepted",
                     "sender_id" to currentUser.userId,
@@ -767,7 +767,7 @@ object NotificationRepository {
             val currentUser = getCurrentUserProfile() ?: return@withContext Result.failure(Exception("No user"))
             
             // Mensaje base sin @ del solicitante, solo vendedor
-            val message = "no aceptÃ³ tu solicitud de cliente"
+            val message = "no aceptó tu solicitud de cliente"
             
             SupabaseClient.database.from("notifications")
                 .insert(buildJsonObject {
@@ -781,7 +781,7 @@ object NotificationRepository {
                     put("created_at", Instant.now().toString())
                 })
             
-            Log.d(TAG, "âœ… NotificaciÃ³n CLIENT_REJECTED creada para $requesterId")
+            Log.d(TAG, "âœ… Notificación CLIENT_REJECTED creada para $requesterId")
             Result.success(Unit)
             
         } catch (e: Exception) {
@@ -792,7 +792,7 @@ object NotificationRepository {
     
     // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
     // FCM PUSH - Enviar push notifications via Supabase Edge Function
-    // Para comunicaciÃ³n phone-to-phone en tiempo real
+    // Para comunicación phone-to-phone en tiempo real
     // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
     
     @kotlinx.serialization.Serializable
@@ -824,7 +824,7 @@ object NotificationRepository {
                 .decodeList<FcmTokenRow>()
             
             val tokenList = tokens.map { it.token }
-            Log.d(TAG, "ðŸ“± Tokens FCM para $userId: ${tokenList.size}")
+            Log.d(TAG, "📱 Tokens FCM para $userId: ${tokenList.size}")
             tokenList
         } catch (e: Exception) {
             Log.e(TAG, "Error obteniendo tokens FCM: ${e.message}", e)
@@ -833,9 +833,9 @@ object NotificationRepository {
     }
     
     /**
-     * EnvÃ­a push notification via Supabase Edge Function (FCM v1 API).
-     * Esto permite que las notificaciones lleguen al otro telÃ©fono incluso
-     * cuando la app estÃ¡ cerrada.
+     * Envía push notification via Supabase Edge Function (FCM v1 API).
+     * Esto permite que las notificaciones lleguen al otro teléfono incluso
+     * cuando la app está cerrada.
      */
     suspend fun sendFCMPush(
         recipientId: String,
@@ -850,7 +850,7 @@ object NotificationRepository {
                 return@withContext
             }
             
-            Log.d(TAG, "ðŸ“¤ Enviando FCM push a $recipientId (${tokens.size} tokens)")
+            Log.d(TAG, "📤 Enviando FCM push a $recipientId (${tokens.size} tokens)")
             
             val request = FcmPushRequest(
                 tokens = tokens,

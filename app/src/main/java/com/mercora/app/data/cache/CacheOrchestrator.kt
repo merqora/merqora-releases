@@ -3,7 +3,7 @@
 import android.content.Context
 import android.util.Log
 import com.mercora.app.data.cache.core.CachePolicy
-import com.mercora.app.data.cache.db.VinzayDatabase
+import com.mercora.app.data.cache.db.MercoraDatabase
 import com.mercora.app.data.cache.repository.CachedRendRepository
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
@@ -157,7 +157,7 @@ class CacheOrchestrator private constructor(
         }
         
         // Clear database
-        VinzayDatabase.clearAllCaches(context)
+        MercoraDatabase.clearAllCaches(context)
         
         Log.i(TAG, "All caches invalidated")
     }
@@ -225,7 +225,7 @@ class CacheOrchestrator private constructor(
     
     private suspend fun updateCacheStats() {
         try {
-            val database = VinzayDatabase.getInstance(context)
+            val database = MercoraDatabase.getInstance(context)
             val rendCount = database.cachedRendDao().count()
             val postCount = database.cachedPostDao().count()
             val userCount = database.cachedUserDao().count()

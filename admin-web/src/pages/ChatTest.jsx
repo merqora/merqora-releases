@@ -17,7 +17,7 @@ import { supabase } from '../supabaseClient'
 const SUPABASE_URL = 'https://xyrpmmnegzjkbysoocpc.supabase.co'
 const SUPABASE_ANON_KEY = '***REMOVED_ANON_KEY***'
 
-// FunciÃ³n para enviar push notification via Supabase Edge Function (FCM v1 API)
+// Función para enviar push notification via Supabase Edge Function (FCM v1 API)
 async function sendPushNotification(tokens, title, body, data = {}) {
   if (!tokens || tokens.length === 0) {
     console.log('âš ï¸ No hay tokens FCM para enviar')
@@ -36,7 +36,7 @@ async function sendPushNotification(tokens, title, body, data = {}) {
     })
 
     const result = await response.json()
-    console.log('ðŸ“¬ FCM v1 Response:', result)
+    console.log('📬 FCM v1 Response:', result)
     return result.success ? { success: true, result } : { success: false, error: result.error || 'Error desconocido' }
   } catch (error) {
     console.error('âŒ Error enviando push:', error)
@@ -44,7 +44,7 @@ async function sendPushNotification(tokens, title, body, data = {}) {
   }
 }
 
-// Obtener tokens FCM de un usuario usando funciÃ³n RPC
+// Obtener tokens FCM de un usuario usando función RPC
 async function getUserFCMTokens(userId) {
   const { data, error } = await supabase.rpc('get_user_fcm_tokens', { target_user_id: userId })
   if (error) {
@@ -64,7 +64,7 @@ function ChatTest() {
   const [searchQuery, setSearchQuery] = useState('')
   const [searching, setSearching] = useState(false)
   const [selectedUser, setSelectedUser] = useState(null)
-  const [senderUser, setSenderUser] = useState(null) // Usuario que "envÃ­a" el mensaje
+  const [senderUser, setSenderUser] = useState(null) // Usuario que "envía" el mensaje
   const [messages, setMessages] = useState([])
   const [newMessage, setNewMessage] = useState('')
   const [loading, setLoading] = useState(false)
@@ -89,7 +89,7 @@ function ChatTest() {
           table: 'messages'
         },
         (payload) => {
-          console.log('ðŸ”” Nuevo mensaje:', payload.new)
+          console.log('🔔 Nuevo mensaje:', payload.new)
           if (conversationId && payload.new.conversation_id === conversationId) {
             setMessages(prev => [...prev, payload.new])
           }
@@ -145,7 +145,7 @@ function ChatTest() {
     setConversationId(null)
     setMessages([])
     
-    // Si ya hay un remitente, buscar o crear conversaciÃ³n
+    // Si ya hay un remitente, buscar o crear conversación
     if (senderUser) {
       await findOrCreateConversation(senderUser.user_id, user.user_id)
     }
@@ -154,7 +154,7 @@ function ChatTest() {
   async function selectSender(user) {
     setSenderUser(user)
     
-    // Si ya hay un destinatario, buscar o crear conversaciÃ³n
+    // Si ya hay un destinatario, buscar o crear conversación
     if (selectedUser) {
       await findOrCreateConversation(user.user_id, selectedUser.user_id)
     }
@@ -163,7 +163,7 @@ function ChatTest() {
   async function findOrCreateConversation(senderId, recipientId) {
     setLoading(true)
     try {
-      // Buscar conversaciÃ³n existente entre estos dos usuarios
+      // Buscar conversación existente entre estos dos usuarios
       const { data: senderParticipations } = await supabase
         .from('conversation_participants')
         .select('conversation_id')
@@ -179,16 +179,16 @@ function ChatTest() {
           .in('conversation_id', senderConvIds)
 
         if (recipientParticipations?.length > 0) {
-          // ConversaciÃ³n encontrada
+          // Conversación encontrada
           const convId = recipientParticipations[0].conversation_id
           setConversationId(convId)
           await loadMessages(convId)
-          showNotificationToast('âœ… ConversaciÃ³n existente encontrada', 'success')
+          showNotificationToast('âœ… Conversación existente encontrada', 'success')
           return
         }
       }
 
-      // Crear nueva conversaciÃ³n
+      // Crear nueva conversación
       const { data: newConv, error: convError } = await supabase
         .from('conversations')
         .insert({})
@@ -205,7 +205,7 @@ function ChatTest() {
 
       setConversationId(newConv.id)
       setMessages([])
-      showNotificationToast('âœ… Nueva conversaciÃ³n creada', 'success')
+      showNotificationToast('âœ… Nueva conversación creada', 'success')
 
     } catch (error) {
       console.error('Error finding/creating conversation:', error)
@@ -250,7 +250,7 @@ function ChatTest() {
 
       if (msgError) throw msgError
 
-      // Actualizar conversaciÃ³n
+      // Actualizar conversación
       await supabase
         .from('conversations')
         .update({
@@ -277,9 +277,9 @@ function ChatTest() {
 
       setNewMessage('')
       
-      // ðŸ”” ENVIAR PUSH NOTIFICATION
+      // 🔔 ENVIAR PUSH NOTIFICATION
       const tokens = await getUserFCMTokens(selectedUser.user_id)
-      console.log(`ðŸ“± Tokens FCM encontrados: ${tokens.length}`)
+      console.log(`📱 Tokens FCM encontrados: ${tokens.length}`)
       
       if (tokens.length > 0) {
         const pushResult = await sendPushNotification(
@@ -297,7 +297,7 @@ function ChatTest() {
         if (pushResult.success) {
           showNotificationToast(`âœ… Mensaje + Push enviado a @${selectedUser.username}`, 'success')
         } else {
-          showNotificationToast(`âœ… Mensaje enviado (push fallÃ³)`, 'warning')
+          showNotificationToast(`âœ… Mensaje enviado (push falló)`, 'warning')
         }
       } else {
         showNotificationToast(`âœ… Mensaje enviado a @${selectedUser.username}`, 'success')
@@ -338,7 +338,7 @@ function ChatTest() {
             Test de Chat
           </h1>
           <p className="text-text-muted mt-1">
-            EnvÃ­a mensajes como cualquier usuario a cualquier otro usuario. Verifica el badge en la app.
+            Envía mensajes como cualquier usuario a cualquier otro usuario. Verifica el badge en la app.
           </p>
         </div>
 
@@ -369,12 +369,12 @@ function ChatTest() {
 
       {/* Info box */}
       <div className="bg-blue-500/10 border border-blue-500/30 rounded-xl p-4">
-        <h3 className="font-semibold text-blue-400 mb-2">ðŸ’¬ CÃ³mo funciona:</h3>
+        <h3 className="font-semibold text-blue-400 mb-2">💬 Cómo funciona:</h3>
         <ol className="list-decimal list-inside space-y-1 text-text-secondary text-sm">
-          <li>Busca y selecciona el usuario <strong>destinatario</strong> (quien recibirÃ¡ el mensaje)</li>
-          <li>Busca y selecciona el usuario <strong>remitente</strong> (en nombre de quiÃ©n envÃ­as)</li>
-          <li>Escribe un mensaje y envÃ­a</li>
-          <li>El destinatario verÃ¡ el badge azul con el nÃºmero en el icono de chat ðŸ’¬</li>
+          <li>Busca y selecciona el usuario <strong>destinatario</strong> (quien recibirá el mensaje)</li>
+          <li>Busca y selecciona el usuario <strong>remitente</strong> (en nombre de quién envías)</li>
+          <li>Escribe un mensaje y envía</li>
+          <li>El destinatario verá el badge azul con el número en el icono de chat 💬</li>
         </ol>
       </div>
 
@@ -559,7 +559,7 @@ function ChatTest() {
           <p className="text-lg font-bold text-text-primary">{messages.length}</p>
         </div>
         <div className="bg-mercora-surface p-4 rounded-xl">
-          <p className="text-text-muted text-sm">ConversaciÃ³n</p>
+          <p className="text-text-muted text-sm">Conversación</p>
           <p className="text-lg font-bold text-text-primary">
             {conversationId ? 'âœ…' : 'âŒ'}
           </p>

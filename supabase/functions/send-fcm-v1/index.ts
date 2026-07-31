@@ -157,7 +157,6 @@ serve(async (req) => {
   }
   
   try {
-    // ── JWT obligatorio ──
     const authHeader = req.headers.get('authorization') || ''
     const supabase = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
@@ -174,6 +173,7 @@ serve(async (req) => {
     } catch {
       return new Response(JSON.stringify({ error: 'No autorizado' }), { status: 401, headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' } })
     }
+    // const authenticatedUserId = 'debug_user'; // Temporalmente para depuración
 
     const { tokens, title, body, data, image_url } = await req.json()
     
@@ -190,6 +190,10 @@ serve(async (req) => {
         { status: 400, headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' } }
       )
     }
+    
+    console.log(`[DEBUG] FIREBASE_PROJECT_ID: ${FIREBASE_PROJECT_ID}`);
+    console.log(`[DEBUG] FIREBASE_CLIENT_EMAIL: ${FIREBASE_CLIENT_EMAIL}`);
+    console.log(`[DEBUG] FIREBASE_PRIVATE_KEY is set: ${FIREBASE_PRIVATE_KEY ? 'Yes' : 'No'}`);
     
     // Verificar que las credenciales estén configuradas
     if (!FIREBASE_CLIENT_EMAIL || !FIREBASE_PRIVATE_KEY) {

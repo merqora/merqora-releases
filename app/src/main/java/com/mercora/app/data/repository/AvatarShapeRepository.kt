@@ -76,7 +76,7 @@ object AvatarShapeRepository {
     fun getAllOwnedShapes(): Set<AvatarShapeType> {
         val packs = getOwnedPacks()
         val shapes = mutableSetOf(AvatarShapeType.CIRCLE)
-        for (pack in com.vinzay.app.data.model.AVATAR_SHAPE_PACKS) {
+        for (pack in com.mercora.app.data.model.AVATAR_SHAPE_PACKS) {
             if (pack.id in packs) {
                 shapes.addAll(pack.shapes)
             }
@@ -101,8 +101,8 @@ object AvatarShapeRepository {
     suspend fun syncSelectedShapeToServer() = withContext(Dispatchers.IO) {
         try {
             val shape = getSelectedShape()
-            val userId = com.vinzay.app.data.remote.SupabaseClient.auth.currentUserOrNull()?.id ?: return@withContext
-            com.vinzay.app.data.remote.SupabaseClient.database
+            val userId = com.mercora.app.data.remote.SupabaseClient.auth.currentUserOrNull()?.id ?: return@withContext
+            com.mercora.app.data.remote.SupabaseClient.database
                 .from("usuarios")
                 .update(mapOf("avatar_shape" to shape.dbValue)) {
                     filter { eq("user_id", userId) }

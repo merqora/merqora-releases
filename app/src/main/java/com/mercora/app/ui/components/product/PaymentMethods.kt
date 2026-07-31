@@ -55,7 +55,7 @@ fun PaymentMethodsSection(sellerId: String? = null) {
         if (effectivePrefs.maxInstallments > 1) {
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = "Hasta ${effectivePrefs.maxInstallments} cuotas sin interÃ©s",
+                text = "Hasta ${effectivePrefs.maxInstallments} cuotas sin interés",
                 fontSize = 13.sp,
                 color = AccentGreen,
                 fontWeight = FontWeight.SemiBold

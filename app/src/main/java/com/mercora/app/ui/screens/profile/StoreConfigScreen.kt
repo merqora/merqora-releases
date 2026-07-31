@@ -29,15 +29,15 @@ import com.mercora.app.ui.theme.*
 
 /**
  * â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
- * STORE CONFIG SCREEN - ConfiguraciÃ³n de tienda profesional
+ * STORE CONFIG SCREEN - Configuración de tienda profesional
  * â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
  * 
- * Esta pantalla permite al usuario configurar si tiene una tienda fÃ­sica/online
- * o si es un vendedor casual. Dependiendo de la selecciÃ³n, se mostrarÃ¡n
- * diferentes opciones en ProductPage y tarjetas de artÃ­culos.
+ * Esta pantalla permite al usuario configurar si tiene una tienda física/online
+ * o si es un vendedor casual. Dependiendo de la selección, se mostrarán
+ * diferentes opciones en ProductPage y tarjetas de artículos.
  * 
- * - CON TIENDA: MÃ¡s colores, condiciÃ³n, categorÃ­a, disponibilidad, garantÃ­a, etc.
- * - SIN TIENDA: VersiÃ³n reducida pero igualmente profesional
+ * - CON TIENDA: Más colores, condición, categoría, disponibilidad, garantía, etc.
+ * - SIN TIENDA: Versión reducida pero igualmente profesional
  * 
  * â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
  */
@@ -56,14 +56,14 @@ private val STORE_TYPE_OPTIONS = listOf(
     StoreTypeOption(
         id = "full_store",
         title = "Tienda Completa",
-        description = "Tengo una tienda fÃ­sica u online con inventario de productos",
+        description = "Tengo una tienda física u online con inventario de productos",
         icon = Icons.Outlined.Storefront,
         benefits = listOf(
-            "MÃºltiples variantes de color y talle",
-            "GestiÃ³n de stock e inventario",
-            "CategorÃ­as y subcategorÃ­as",
-            "GarantÃ­a y polÃ­ticas de devoluciÃ³n",
-            "EstadÃ­sticas avanzadas de ventas",
+            "Múltiples variantes de color y talle",
+            "Gestión de stock e inventario",
+            "Categorías y subcategorías",
+            "Garantía y políticas de devolución",
+            "Estadísticas avanzadas de ventas",
             "Badge de tienda verificada"
         ),
         accentColor = AccentPink,
@@ -72,13 +72,13 @@ private val STORE_TYPE_OPTIONS = listOf(
     StoreTypeOption(
         id = "casual_seller",
         title = "Vendedor Casual",
-        description = "Vendo artÃ­culos ocasionalmente sin tienda formal",
+        description = "Vendo artículos ocasionalmente sin tienda formal",
         icon = Icons.Outlined.Person,
         benefits = listOf(
-            "PublicaciÃ³n rÃ¡pida y sencilla",
+            "Publicación rápida y sencilla",
             "Perfil de vendedor confiable",
             "Chat directo con compradores",
-            "Sistema de reputaciÃ³n",
+            "Sistema de reputación",
             "Sin comisiones adicionales"
         ),
         accentColor = PrimaryPurple,
@@ -298,7 +298,7 @@ private fun StoreTypeSelection(
 ) {
     Column {
         Text(
-            text = "Â¿CÃ³mo vendes?",
+            text = "¿Cómo vendes?",
             fontSize = 26.sp,
             fontWeight = FontWeight.Bold,
             color = TextPrimary
@@ -307,7 +307,7 @@ private fun StoreTypeSelection(
         Spacer(modifier = Modifier.height(8.dp))
         
         Text(
-            text = "Elige el tipo de vendedor que mejor te represente. Esto determinarÃ¡ las opciones disponibles en tus publicaciones.",
+            text = "Elige el tipo de vendedor que mejor te represente. Esto determinará las opciones disponibles en tus publicaciones.",
             fontSize = 14.sp,
             color = TextSecondary,
             lineHeight = 20.sp
@@ -496,15 +496,15 @@ private fun StoreBasicInfo(
     onStoreCategoryChange: (String) -> Unit
 ) {
     val categories = listOf(
-        "Ropa y Accesorios", "Calzado", "TecnologÃ­a", "Hogar y DecoraciÃ³n",
-        "Belleza y Cuidado Personal", "Deportes", "JoyerÃ­a y Bijouterie",
-        "Arte y Manualidades", "Libros y PapelerÃ­a", "Otros"
+        "Ropa y Accesorios", "Calzado", "Tecnología", "Hogar y Decoración",
+        "Belleza y Cuidado Personal", "Deportes", "Joyería y Bijouterie",
+        "Arte y Manualidades", "Libros y Papelería", "Otros"
     )
     var expandedCategory by remember { mutableStateOf(false) }
     
     Column {
         Text(
-            text = "InformaciÃ³n de tu tienda",
+            text = "Información de tu tienda",
             fontSize = 26.sp,
             fontWeight = FontWeight.Bold,
             color = TextPrimary
@@ -513,7 +513,7 @@ private fun StoreBasicInfo(
         Spacer(modifier = Modifier.height(8.dp))
         
         Text(
-            text = "Esta informaciÃ³n serÃ¡ visible para tus compradores y ayudarÃ¡ a generar confianza.",
+            text = "Esta información será visible para tus compradores y ayudará a generar confianza.",
             fontSize = 14.sp,
             color = TextSecondary,
             lineHeight = 20.sp
@@ -559,7 +559,7 @@ private fun StoreBasicInfo(
         
         // Store description
         Text(
-            text = "DESCRIPCIÃ“N",
+            text = "DESCRIPCIÓN",
             fontSize = 11.sp,
             fontWeight = FontWeight.Bold,
             color = TextMuted,
@@ -569,7 +569,7 @@ private fun StoreBasicInfo(
         OutlinedTextField(
             value = storeDescription,
             onValueChange = onStoreDescriptionChange,
-            placeholder = { Text("CuÃ©ntale a tus clientes sobre tu tienda...", color = TextMuted) },
+            placeholder = { Text("Cuéntale a tus clientes sobre tu tienda...", color = TextMuted) },
             modifier = Modifier
                 .fillMaxWidth()
                 .height(120.dp),
@@ -590,7 +590,7 @@ private fun StoreBasicInfo(
         
         // Category dropdown
         Text(
-            text = "CATEGORÃA PRINCIPAL",
+            text = "CATEGORÍA PRINCIPAL",
             fontSize = 11.sp,
             fontWeight = FontWeight.Bold,
             color = TextMuted,
@@ -606,7 +606,7 @@ private fun StoreBasicInfo(
                 value = storeCategory,
                 onValueChange = {},
                 readOnly = true,
-                placeholder = { Text("Selecciona una categorÃ­a", color = TextMuted) },
+                placeholder = { Text("Selecciona una categoría", color = TextMuted) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .menuAnchor(),
@@ -685,7 +685,7 @@ private fun StoreBasicInfo(
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
-                        text = "Un nombre memorable y una descripciÃ³n clara aumentan la confianza de tus compradores hasta un 40%.",
+                        text = "Un nombre memorable y una descripción clara aumentan la confianza de tus compradores hasta un 40%.",
                         fontSize = 12.sp,
                         color = TextSecondary,
                         lineHeight = 17.sp
@@ -700,7 +700,7 @@ private fun StoreBasicInfo(
 private fun CasualSellerInfo() {
     Column {
         Text(
-            text = "Â¡Perfecto!",
+            text = "¡Perfecto!",
             fontSize = 26.sp,
             fontWeight = FontWeight.Bold,
             color = TextPrimary
@@ -709,7 +709,7 @@ private fun CasualSellerInfo() {
         Spacer(modifier = Modifier.height(8.dp))
         
         Text(
-            text = "Como vendedor casual, tendrÃ¡s acceso a todas las herramientas esenciales para vender de forma rÃ¡pida y segura.",
+            text = "Como vendedor casual, tendrás acceso a todas las herramientas esenciales para vender de forma rápida y segura.",
             fontSize = 14.sp,
             color = TextSecondary,
             lineHeight = 20.sp
@@ -719,10 +719,10 @@ private fun CasualSellerInfo() {
         
         // Features
         val features = listOf(
-            Triple(Icons.Outlined.CameraAlt, "Publica en segundos", "Sube fotos y describe tu producto rÃ¡pidamente"),
-            Triple(Icons.Outlined.Chat, "Chat directo", "ComunÃ­cate con compradores interesados"),
+            Triple(Icons.Outlined.CameraAlt, "Publica en segundos", "Sube fotos y describe tu producto rápidamente"),
+            Triple(Icons.Outlined.Chat, "Chat directo", "Comunícate con compradores interesados"),
             Triple(Icons.Outlined.Shield, "Transacciones seguras", "Protegemos tu dinero y tus datos"),
-            Triple(Icons.Outlined.Star, "Sistema de reputaciÃ³n", "Construye confianza con cada venta")
+            Triple(Icons.Outlined.Star, "Sistema de reputación", "Construye confianza con cada venta")
         )
         
         features.forEach { (icon, title, description) ->
@@ -784,7 +784,7 @@ private fun CasualSellerInfo() {
                 Spacer(modifier = Modifier.width(12.dp))
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = "Â¿Empezaste a vender mÃ¡s?",
+                        text = "¿Empezaste a vender más?",
                         fontSize = 14.sp,
                         fontWeight = FontWeight.SemiBold,
                         color = TextPrimary
@@ -809,7 +809,7 @@ private fun StoreLocationAndShipping(
 ) {
     Column {
         Text(
-            text = "UbicaciÃ³n y envÃ­os",
+            text = "Ubicación y envíos",
             fontSize = 26.sp,
             fontWeight = FontWeight.Bold,
             color = TextPrimary
@@ -818,7 +818,7 @@ private fun StoreLocationAndShipping(
         Spacer(modifier = Modifier.height(8.dp))
         
         Text(
-            text = "Configura dÃ³nde se encuentra tu tienda y cÃ³mo realizas los envÃ­os.",
+            text = "Configura dónde se encuentra tu tienda y cómo realizas los envíos.",
             fontSize = 14.sp,
             color = TextSecondary,
             lineHeight = 20.sp
@@ -830,8 +830,8 @@ private fun StoreLocationAndShipping(
         SettingToggleCard(
             icon = Icons.Outlined.LocationOn,
             iconColor = Color(0xFF1565A0),
-            title = "Tengo local fÃ­sico",
-            description = "Los compradores podrÃ¡n visitarte o retirar en persona",
+            title = "Tengo local físico",
+            description = "Los compradores podrán visitarte o retirar en persona",
             isEnabled = hasPhysicalLocation,
             onToggle = onPhysicalLocationChange
         )
@@ -842,8 +842,8 @@ private fun StoreLocationAndShipping(
         SettingToggleCard(
             icon = Icons.Outlined.LocalShipping,
             iconColor = Color(0xFF2E8B57),
-            title = "EnvÃ­os a todo el paÃ­s",
-            description = "Realizo envÃ­os a cualquier parte del paÃ­s",
+            title = "Envíos a todo el país",
+            description = "Realizo envíos a cualquier parte del país",
             isEnabled = shipsNationwide,
             onToggle = onShipsNationwideChange
         )
@@ -852,7 +852,7 @@ private fun StoreLocationAndShipping(
         
         // Shipping methods
         Text(
-            text = "MÃ‰TODOS DE ENVÃO DISPONIBLES",
+            text = "MÉTODOS DE ENVÍO DISPONIBLES",
             fontSize = 11.sp,
             fontWeight = FontWeight.Bold,
             color = TextMuted,
@@ -863,7 +863,7 @@ private fun StoreLocationAndShipping(
         
         val shippingMethods = listOf(
             Triple("Correo Argentino", Icons.Outlined.LocalPostOffice, true),
-            Triple("Mercado EnvÃ­os", Icons.Outlined.Inventory2, true),
+            Triple("Mercado Envíos", Icons.Outlined.Inventory2, true),
             Triple("Moto / Flex", Icons.Outlined.TwoWheeler, false),
             Triple("Retiro en sucursal", Icons.Outlined.Store, hasPhysicalLocation)
         )
@@ -927,7 +927,7 @@ private fun StorePoliciesAndPayments(
 ) {
     Column {
         Text(
-            text = "PolÃ­ticas y pagos",
+            text = "Políticas y pagos",
             fontSize = 26.sp,
             fontWeight = FontWeight.Bold,
             color = TextPrimary
@@ -936,7 +936,7 @@ private fun StorePoliciesAndPayments(
         Spacer(modifier = Modifier.height(8.dp))
         
         Text(
-            text = "Define tus polÃ­ticas de devoluciÃ³n, garantÃ­a y mÃ©todos de pago aceptados.",
+            text = "Define tus políticas de devolución, garantía y métodos de pago aceptados.",
             fontSize = 14.sp,
             color = TextSecondary,
             lineHeight = 20.sp
@@ -960,8 +960,8 @@ private fun StorePoliciesAndPayments(
         SettingToggleCard(
             icon = Icons.Outlined.Verified,
             iconColor = Color(0xFF2E8B57),
-            title = "Ofrezco garantÃ­a",
-            description = "GarantÃ­a por defectos de fabricaciÃ³n",
+            title = "Ofrezco garantía",
+            description = "Garantía por defectos de fabricación",
             isEnabled = offersWarranty,
             onToggle = onOffersWarrantyChange
         )
@@ -972,7 +972,7 @@ private fun StorePoliciesAndPayments(
                 OutlinedTextField(
                     value = warrantyDays,
                     onValueChange = { if (it.all { c -> c.isDigit() }) onWarrantyDaysChange(it) },
-                    label = { Text("DÃ­as de garantÃ­a", color = TextMuted) },
+                    label = { Text("Días de garantía", color = TextMuted) },
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(14.dp),
                     colors = OutlinedTextFieldDefaults.colors(
@@ -985,7 +985,7 @@ private fun StorePoliciesAndPayments(
                         unfocusedTextColor = TextPrimary
                     ),
                     singleLine = true,
-                    suffix = { Text("dÃ­as", color = TextMuted) }
+                    suffix = { Text("días", color = TextMuted) }
                 )
             }
         }
@@ -994,7 +994,7 @@ private fun StorePoliciesAndPayments(
         
         // Payment methods
         Text(
-            text = "MÃ‰TODOS DE PAGO",
+            text = "MÉTODOS DE PAGO",
             fontSize = 11.sp,
             fontWeight = FontWeight.Bold,
             color = TextMuted,
@@ -1194,7 +1194,7 @@ private fun StoreConfigBottomAction(
                 )
             ) {
                 Text(
-                    text = if (isLastStep) "Guardar configuraciÃ³n" else "Continuar",
+                    text = if (isLastStep) "Guardar configuración" else "Continuar",
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color.White

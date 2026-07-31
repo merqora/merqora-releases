@@ -36,7 +36,7 @@ fun SearchBar(
     placeholder: String = "Buscar productos, tiendas...",
     modifier: Modifier = Modifier,
     onClick: (() -> Unit)? = null,
-    onSearch: ((String) -> Unit)? = null // Callback para cuando se realiza bÃºsqueda
+    onSearch: ((String) -> Unit)? = null // Callback para cuando se realiza búsqueda
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
     var isFocused by remember { mutableStateOf(false) }
@@ -114,7 +114,7 @@ fun SearchBar(
                 )
             }
             
-            // BotÃ³n buscar (sin padding extra, spinner de carga breve)
+            // Botón buscar (sin padding extra, spinner de carga breve)
             if (query.isNotEmpty()) {
                 Spacer(modifier = Modifier.width(8.dp))
                 Box(

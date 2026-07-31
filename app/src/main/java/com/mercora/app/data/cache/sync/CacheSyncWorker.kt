@@ -4,10 +4,16 @@ import android.content.Context
 import android.util.Log
 import androidx.work.*
 import com.mercora.app.data.cache.db.PendingOperationEntity
-import com.mercora.app.data.cache.db.VinzayDatabase
+import com.mercora.app.data.cache.db.MercoraDatabase
 import com.mercora.app.data.cache.repository.CachedRendRepository
+import com.mercora.app.data.remote.SupabaseClient
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.put
 import java.util.concurrent.TimeUnit
 
 /**
@@ -126,7 +132,7 @@ class CacheSyncWorker(
      * Sync any pending offline operations to the server.
      */
     private suspend fun syncPendingOperations() {
-        val database = VinzayDatabase.getInstance(applicationContext)
+        val database = MercoraDatabase.getInstance(applicationContext)
         val pendingOps = database.pendingOperationDao().getPending()
         
         if (pendingOps.isEmpty()) {
@@ -157,20 +163,55 @@ class CacheSyncWorker(
     }
     
     private suspend fun syncOperation(op: PendingOperationEntity) {
-        // Implement actual sync logic based on operation type
-        when (op.operationType) {
-            "create" -> {
-                // Create entity on server
-            }
-            "update" -> {
-                // Update entity on server
-            }
-            "delete" -> {
-                // Delete entity on server
-            }
+        val jsonPayload = try {
+            Json.parseToJsonElement(op.payload).jsonObject
+        } catch (e: Exception) {
+            Log.w(TAG, "Invalid payload JSON for operation ${op.id}")
+            return
         }
-        
-        Log.d(TAG, "Synced operation: ${op.operationType} ${op.entityType} ${op.entityId}")
+
+        val tableName = when (op.entityType) {
+            "post", "rend" -> "posts"
+            "message" -> "messages"
+            "story" -> "stories"
+            "comment" -> "comments"
+            "product" -> "products"
+            else -> op.entityType
+        }
+
+        try {
+            when (op.operationType) {
+                "create" -> {
+                    SupabaseClient.database
+                        .from(tableName)
+                        .insert<JsonObject>(jsonPayload)
+                    Log.d(TAG, "Created $tableName entity")
+                }
+                "update" -> {
+                    op.entityId?.let { id ->
+                        SupabaseClient.database
+                            .from(tableName)
+                            .update<JsonObject>(jsonPayload) {
+                                filter { eq("id", id) }
+                            }
+                        Log.d(TAG, "Updated $tableName entity $id")
+                    }
+                }
+                "delete" -> {
+                    op.entityId?.let { id ->
+                        SupabaseClient.database
+                            .from(tableName)
+                            .delete {
+                                filter { eq("id", id) }
+                            }
+                        Log.d(TAG, "Deleted $tableName entity $id")
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Supabase sync failed: ${e.message}")
+            throw e
+        }
     }
     
     /**
@@ -198,13 +239,13 @@ class CacheSyncWorker(
     private suspend fun cleanupExpiredEntries() {
         Log.d(TAG, "Cleaning up expired entries...")
         
-        val database = VinzayDatabase.getInstance(applicationContext)
+        val database = MercoraDatabase.getInstance(applicationContext)
         val now = System.currentTimeMillis()
         
         // Calculate cutoff times for each policy
-        val rendCutoff = now - com.vinzay.app.data.cache.core.CachePolicy.RENDS.diskTtlMs
-        val storyCutoff = now - com.vinzay.app.data.cache.core.CachePolicy.STORIES.diskTtlMs
-        val messageCutoff = now - com.vinzay.app.data.cache.core.CachePolicy.MESSAGES.diskTtlMs
+        val rendCutoff = now - com.mercora.app.data.cache.core.CachePolicy.RENDS.diskTtlMs
+        val storyCutoff = now - com.mercora.app.data.cache.core.CachePolicy.STORIES.diskTtlMs
+        val messageCutoff = now - com.mercora.app.data.cache.core.CachePolicy.MESSAGES.diskTtlMs
         
         database.cachedRendDao().deleteExpired(rendCutoff)
         database.cachedStoryDao().deleteExpired(storyCutoff)

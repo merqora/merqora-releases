@@ -44,14 +44,14 @@ import com.mercora.app.ui.theme.*
  * â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
  * SEARCH RESULTS SCREEN - Componente independiente
  * â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
- * Pantalla de resultados de bÃºsqueda con diseÃ±o profesional.
- * - Header minimalista: solo buscador con flecha atrÃ¡s
+ * Pantalla de resultados de búsqueda con diseño profesional.
+ * - Header minimalista: solo buscador con flecha atrás
  * - Tarjetas de altura uniforme
- * - ImÃ¡genes deslizables con dots
+ * - Imágenes deslizables con dots
  * - Avatar y username del vendedor
  */
 
-// CategorÃ­as disponibles para filtrado
+// Categorías disponibles para filtrado
 private data class SearchCategory(
     val id: String,
     val name: String,
@@ -63,7 +63,7 @@ private val SEARCH_CATEGORIES = listOf(
     SearchCategory("ropa", "Ropa", Icons.Outlined.Checkroom),
     SearchCategory("zapatos", "Zapatos", Icons.Outlined.Hiking),
     SearchCategory("accesorios", "Accesorios", Icons.Outlined.Watch),
-    SearchCategory("electronica", "ElectrÃ³nica", Icons.Outlined.Devices),
+    SearchCategory("electronica", "Electrónica", Icons.Outlined.Devices),
     SearchCategory("hogar", "Hogar", Icons.Outlined.Home),
     SearchCategory("deportes", "Deportes", Icons.Outlined.FitnessCenter)
 )
@@ -78,8 +78,8 @@ private val SORT_OPTIONS = listOf(
     SortOption("relevance", "Relevancia", Icons.Outlined.Sort),
     SortOption("price_low", "Menor precio", Icons.Outlined.ArrowDownward),
     SortOption("price_high", "Mayor precio", Icons.Outlined.ArrowUpward),
-    SortOption("newest", "MÃ¡s recientes", Icons.Outlined.Schedule),
-    SortOption("popular", "MÃ¡s populares", Icons.Outlined.TrendingUp)
+    SortOption("newest", "Más recientes", Icons.Outlined.Schedule),
+    SortOption("popular", "Más populares", Icons.Outlined.TrendingUp)
 )
 
 // Known category IDs from CategoryDrawer
@@ -105,14 +105,14 @@ private fun getCategoryDisplayName(id: String?): String? {
         "trajes" -> "Trajes"
         "zapatos_h" -> "Zapatos Hombre"
         "bolsos" -> "Bolsos y Carteras"
-        "joyeria" -> "JoyerÃ­a"
+        "joyeria" -> "Joyería"
         "relojes" -> "Relojes"
         "gafas" -> "Gafas de Sol"
         "sombreros" -> "Sombreros"
         "muebles" -> "Muebles"
-        "decoracion" -> "DecoraciÃ³n"
+        "decoracion" -> "Decoración"
         "plantas" -> "Plantas"
-        "iluminacion" -> "IluminaciÃ³n"
+        "iluminacion" -> "Iluminación"
         "smartphones" -> "Smartphones"
         "laptops" -> "Laptops"
         "audio" -> "Audio"
@@ -146,7 +146,7 @@ fun SearchResultsScreen(
     val isLoading by ExploreRepository.isLoading.collectAsState()
     val listState = rememberLazyListState()
     
-    // Detectar scroll para ocultar/mostrar carrusel de categorÃ­as
+    // Detectar scroll para ocultar/mostrar carrusel de categorías
     val isScrolled by remember {
         derivedStateOf { listState.firstVisibleItemIndex > 0 || listState.firstVisibleItemScrollOffset > 50 }
     }
@@ -155,7 +155,7 @@ fun SearchResultsScreen(
     val effectiveIsCategory = isCategory || categoryDisplayName != null
     val headerQuery = categoryDisplayName ?: searchQuery
     
-    // Filtrar items segÃºn bÃºsqueda, categorÃ­a y ordenamiento
+    // Filtrar items según búsqueda, categoría y ordenamiento
     val filteredItems = remember(exploreItems, searchQuery, selectedCategory, filterByCategoryId, selectedSort, filterState) {
         val baseItems = if (filterByCategoryId != null) {
             ExploreRepository.getItemsByCategory(filterByCategoryId!!)
@@ -165,7 +165,7 @@ fun SearchResultsScreen(
         
         var items = baseItems
         
-        // Filtrar por bÃºsqueda
+        // Filtrar por búsqueda
         if (searchQuery.isNotEmpty()) {
             items = items.filter { item ->
                 item.title.contains(searchQuery, ignoreCase = true) ||
@@ -174,7 +174,7 @@ fun SearchResultsScreen(
             }
         }
         
-        // Filtrar por categorÃ­a del carrusel
+        // Filtrar por categoría del carrusel
         if (selectedCategory != null && selectedCategory != "all") {
             items = items.filter { item ->
                 item.category.contains(selectedCategory!!, ignoreCase = true)
@@ -182,11 +182,11 @@ fun SearchResultsScreen(
         }
         
         // --- FILTROS AVANZADOS ---
-        // Precio mÃ­nimo
+        // Precio mínimo
         filterState.minPrice?.let { min ->
             items = items.filter { it.price >= min }
         }
-        // Precio mÃ¡ximo
+        // Precio máximo
         filterState.maxPrice?.let { max ->
             items = items.filter { it.price <= max }
         }
@@ -194,13 +194,13 @@ fun SearchResultsScreen(
         filterState.condition?.let { cond ->
             items = items.filter { it.condition?.contains(cond, ignoreCase = true) == true }
         }
-        // EnvÃ­o gratis
+        // Envío gratis
         if (filterState.freeShipping) {
             items = items.filter { it.freeShipping }
         }
-        // UbicaciÃ³n
+        // Ubicación
         filterState.location?.let { loc ->
-            // SimulaciÃ³n de filtro por ubicaciÃ³n (en un caso real vendrÃ­a de la DB)
+            // Simulación de filtro por ubicación (en un caso real vendría de la DB)
             if (loc == "Tu ciudad") {
                 // Filtro placeholder
             }
@@ -237,7 +237,7 @@ fun SearchResultsScreen(
                 CircularProgressIndicator(color = PrimaryPurple)
             }
         } else if (filteredItems.isEmpty()) {
-            // Estado vacÃ­o
+            // Estado vacío
             Box(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
@@ -261,7 +261,7 @@ fun SearchResultsScreen(
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
-                        text = "Intenta con otros tÃ©rminos",
+                        text = "Intenta con otros términos",
                         fontSize = 14.sp,
                         color = TextMuted
                     )
@@ -269,7 +269,7 @@ fun SearchResultsScreen(
             }
         } else {
             // Grid de productos con padding superior para dejar espacio al header fijo
-            // Cuando las categorÃ­as estÃ¡n ocultas (por scroll o por category filter), menos padding
+            // Cuando las categorías están ocultas (por scroll o por category filter), menos padding
             val topPadding = if (categoryDisplayName != null || isScrolled) 160.dp else 200.dp
             LazyColumn(
                 state = listState,
@@ -315,7 +315,7 @@ fun SearchResultsScreen(
                 .background(HomeBg)
                 .align(Alignment.TopCenter)
         ) {
-            // Buscador con flecha atrÃ¡s
+            // Buscador con flecha atrás
             MinimalSearchHeader(
                 query = headerQuery,
                 onQueryChange = { 
@@ -329,7 +329,7 @@ fun SearchResultsScreen(
                 isCategory = effectiveIsCategory
             )
             
-            // Carrusel de categorÃ­as con animaciÃ³n de ocultar al scroll
+            // Carrusel de categorías con animación de ocultar al scroll
             AnimatedVisibility(
                 visible = categoryDisplayName == null && !isScrolled,
                 enter = expandVertically() + fadeIn(),
@@ -342,7 +342,7 @@ fun SearchResultsScreen(
                 )
             }
             
-            // Chip de categorÃ­a filtrada
+            // Chip de categoría filtrada
             if (categoryDisplayName != null) {
                 Row(
                     modifier = Modifier
@@ -406,7 +406,7 @@ fun SearchResultsScreen(
     }
 }
 
-// ExtensiÃ³n toProductCardData ahora estÃ¡ en UnifiedProductCard.kt
+// Extensión toProductCardData ahora está en UnifiedProductCard.kt
 
 @Composable
 private fun MinimalSearchHeader(
@@ -427,7 +427,7 @@ private fun MinimalSearchHeader(
                 .padding(horizontal = 8.dp, vertical = 10.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // BotÃ³n volver
+            // Botón volver
             IconButton(onClick = onBack) {
                 Icon(
                     imageVector = Icons.Default.ArrowBack,
@@ -436,7 +436,7 @@ private fun MinimalSearchHeader(
                 )
             }
             
-            // Campo de bÃºsqueda
+            // Campo de búsqueda
             Surface(
                 modifier = Modifier
                     .weight(1f)
@@ -624,7 +624,7 @@ private fun SortToolbar(
             .padding(horizontal = 12.dp, vertical = 8.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        // BotÃ³n de ordenar
+        // Botón de ordenar
         Surface(
             modifier = Modifier
                 .weight(1f)
@@ -689,7 +689,7 @@ private fun SortToolbar(
             }
         }
         
-        // BotÃ³n de filtros
+        // Botón de filtros
         Surface(
             modifier = Modifier.clickable { onFilterClick() },
             shape = RoundedCornerShape(10.dp),

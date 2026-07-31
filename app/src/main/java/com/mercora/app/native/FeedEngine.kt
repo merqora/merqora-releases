@@ -8,7 +8,7 @@ import android.util.Log
  * ------------------------------------------------------------------------------
  * 
  * ARQUITECTURA:
- * - C++ (FeedEngine.cpp): 100% de física de scroll, inercia, prefetch
+ * - C++ (scroll_physics.cpp): 100% de física de scroll, inercia, prefetch
  * - Kotlin: Solo consulta valores y los aplica al LazyColumn
  * 
  * USO:
@@ -25,20 +25,22 @@ object FeedEngine {
     
     init {
         try {
-            System.loadLibrary("Vinzay-native")
+            System.loadLibrary("mercora_media_optimizer")
             isLoaded = true
-            Log.i(TAG, "? Native feed engine loaded")
+            Log.i(TAG, "Native feed engine loaded")
         } catch (e: UnsatisfiedLinkError) {
-            Log.e(TAG, "? Failed to load native library", e)
+            Log.e(TAG, "Failed to load native library", e)
             isLoaded = false
         }
     }
-    
     /** Inicializa el motor con dimensiones del viewport y contenido */
     fun init(viewportHeight: Float, contentHeight: Float) {
         if (!isLoaded) return
         nativeInit(viewportHeight, contentHeight)
     }
+    
+    /** Verifica si el motor nativo está disponible */
+    fun isAvailable(): Boolean = isLoaded
     
     /** Notifica inicio de drag */
     fun onDragStart() {

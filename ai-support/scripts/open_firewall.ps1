@@ -2,7 +2,7 @@
 # DEBE EJECUTARSE COMO ADMINISTRADOR
 
 Write-Host "========================================" -ForegroundColor Cyan
-Write-Host "  Configurando Firewall para Rendly AI" -ForegroundColor Cyan
+Write-Host "  Configurando Firewall para Mercora AI" -ForegroundColor Cyan
 Write-Host "========================================" -ForegroundColor Cyan
 
 # Verificar si se ejecuta como admin
@@ -27,7 +27,7 @@ New-NetFirewallRule -DisplayName "Mercora AI Support - TCP 8000" `
     -Action Allow `
     -Profile Any `
     -RemoteAddress Any `
-    -Description "Permite conexiones al servidor AI de Rendly desde cualquier dispositivo"
+    -Description "Permite conexiones al servidor AI de Mercora desde cualquier dispositivo"
 
 # Crear regla para permitir Python
 Write-Host "Creando regla para Python..." -ForegroundColor Yellow
@@ -39,7 +39,7 @@ if (Test-Path $pythonPath) {
         -Action Allow `
         -Profile Any `
         -RemoteAddress Any `
-        -Description "Permite conexiones entrantes a Python para Rendly AI"
+        -Description "Permite conexiones entrantes a Python para Mercora AI"
 }
 
 # Crear regla para ICMP (ping) - Ãºtil para diagnÃ³stico

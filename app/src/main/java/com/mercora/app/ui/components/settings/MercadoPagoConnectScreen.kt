@@ -121,7 +121,7 @@ fun MercadoPagoConnectScreen(
                             color = TextPrimary
                         )
                         Text(
-                            "ConectÃ¡ tu cuenta para cobrar ventas",
+                            "Conectá tu cuenta para cobrar ventas",
                             fontSize = 12.sp,
                             color = TextSecondary
                         )
@@ -142,7 +142,7 @@ fun MercadoPagoConnectScreen(
                                 errorMessage = null
                                 val clientId = BuildConfig.MERCADOPAGO_CLIENT_ID
                                 if (clientId.isBlank()) {
-                                    errorMessage = "ConfiguraciÃ³n de Mercado Pago no disponible"
+                                    errorMessage = "Configuración de Mercado Pago no disponible"
                                     isProcessing = false
                                     return@DisconnectedContent
                                 }
@@ -229,7 +229,7 @@ private fun DisconnectedContent(
         Spacer(modifier = Modifier.height(24.dp))
 
         Text(
-            "ConectÃ¡ tu cuenta de Mercado Pago",
+            "Conectá tu cuenta de Mercado Pago",
             fontSize = 22.sp,
             fontWeight = FontWeight.Bold,
             color = TextPrimary,
@@ -256,7 +256,7 @@ private fun DisconnectedContent(
             Column(modifier = Modifier.padding(16.dp)) {
                 BenefitRow(
                     icon = Icons.Default.FlashOn,
-                    title = "Cobros automÃ¡ticos",
+                    title = "Cobros automáticos",
                     subtitle = "Los pagos llegan directo a tu cuenta de MP",
                     color = Color(0xFF22C55E)
                 )
@@ -264,7 +264,7 @@ private fun DisconnectedContent(
                 BenefitRow(
                     icon = Icons.Default.Security,
                     title = "Seguridad",
-                    subtitle = "Mercado Pago protege cada transacciÃ³n",
+                    subtitle = "Mercado Pago protege cada transacción",
                     color = Color(0xFF1565A0)
                 )
                 Spacer(modifier = Modifier.height(16.dp))
@@ -324,7 +324,7 @@ private fun DisconnectedContent(
         Spacer(modifier = Modifier.height(16.dp))
 
         Text(
-            "Al conectarte, aceptÃ¡s los tÃ©rminos de Mercado Pago.",
+            "Al conectarte, aceptás los términos de Mercado Pago.",
             fontSize = 11.sp,
             color = TextMuted,
             textAlign = TextAlign.Center
@@ -333,7 +333,7 @@ private fun DisconnectedContent(
         Spacer(modifier = Modifier.height(12.dp))
 
         Text(
-            "Merqora usa Split Payments de Mercado Pago. Nunca retenemos tu dinero.",
+            "Mercora usa Split Payments de Mercado Pago. Nunca retenemos tu dinero.",
             fontSize = 11.sp,
             color = TextMuted,
             textAlign = TextAlign.Center
@@ -374,7 +374,7 @@ private fun ConnectedContent(
         Spacer(modifier = Modifier.height(24.dp))
 
         Text(
-            "Â¡Mercado Pago conectado!",
+            "¡Mercado Pago conectado!",
             fontSize = 22.sp,
             fontWeight = FontWeight.Bold,
             color = TextPrimary,
@@ -418,7 +418,7 @@ private fun ConnectedContent(
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 InfoRow(
-                    label = "ComisiÃ³n Merqora",
+                    label = "Comisión Mercora",
                     value = "10%"
                 )
             }
@@ -443,7 +443,7 @@ private fun ConnectedContent(
                 )
                 Spacer(modifier = Modifier.width(12.dp))
                 Text(
-                    "Los pagos de tus ventas se acreditan automÃ¡ticamente en tu cuenta de Mercado Pago. Merqora nunca retiene tu dinero.",
+                    "Los pagos de tus ventas se acreditan automáticamente en tu cuenta de Mercado Pago. Mercora nunca retiene tu dinero.",
                     fontSize = 12.sp,
                     color = TextSecondary,
                     lineHeight = 17.sp
@@ -508,7 +508,7 @@ private fun ErrorContent(
         )
         Spacer(modifier = Modifier.height(16.dp))
         Text(
-            "Error de conexiÃ³n",
+            "Error de conexión",
             fontSize = 20.sp,
             fontWeight = FontWeight.Bold,
             color = TextPrimary
@@ -583,7 +583,7 @@ private fun DisconnectConfirmDialog(
         },
         text = {
             Text(
-                "Si desconectÃ¡s tu cuenta, no vas a poder recibir pagos de nuevas ventas. Las ventas existentes no se ven afectadas.",
+                "Si desconectás tu cuenta, no vas a poder recibir pagos de nuevas ventas. Las ventas existentes no se ven afectadas.",
                 fontSize = 14.sp
             )
         },

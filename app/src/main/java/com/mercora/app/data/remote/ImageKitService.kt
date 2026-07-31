@@ -2,7 +2,6 @@
 
 import android.content.Context
 import android.net.Uri
-import android.util.Base64
 import android.util.Log
 import com.mercora.app.BuildConfig
 import kotlinx.coroutines.Dispatchers
@@ -20,7 +19,7 @@ import java.util.concurrent.TimeUnit
 /**
  * ImageKit: Rends (videos) + media de chat
  * - RendRepository: videos de rends
- * - ChatRepository: imÃ¡genes, audios y media del chat
+ * - ChatRepository: imágenes, audios y media del chat
  * No usar para: posts, avatares, banners, stories, highlights
  */
 object ImageKitService {
@@ -29,7 +28,6 @@ object ImageKitService {
     // ImageKit configuration
     private const val UPLOAD_URL = "https://upload.imagekit.io/api/v1/files/upload"
     private val PUBLIC_KEY = BuildConfig.IMAGEKIT_PUBLIC_KEY
-    private val PRIVATE_KEY = BuildConfig.IMAGEKIT_PRIVATE_KEY
     val URL_ENDPOINT = BuildConfig.IMAGEKIT_URL_ENDPOINT
     
     private val client = OkHttpClient.Builder()
@@ -78,13 +76,8 @@ object ImageKitService {
             
             onProgress(0.25f)
             
-            // Create auth header (Basic auth with private key)
-            val credentials = "$PRIVATE_KEY:"
-            val basicAuth = "Basic ${Base64.encodeToString(credentials.toByteArray(), Base64.NO_WRAP)}"
-            
             val request = Request.Builder()
                 .url(UPLOAD_URL)
-                .header("Authorization", basicAuth)
                 .post(requestBody)
                 .build()
             
@@ -105,9 +98,9 @@ object ImageKitService {
             } else {
                 Log.e(TAG, "Upload failed: ${response.code} - $responseBody")
                 val errorMsg = when (response.code) {
-                    403 -> "Error de autenticaciÃ³n ImageKit (403). Verifica las credenciales."
-                    401 -> "No autorizado (401). API key invÃ¡lida."
-                    413 -> "Video demasiado grande. MÃ¡ximo 25MB."
+                    403 -> "Error de autenticación ImageKit (403). Verifica las credenciales."
+                    401 -> "No autorizado (401). API key inválida."
+                    413 -> "Video demasiado grande. Máximo 25MB."
                     else -> "Error de subida: ${response.code}"
                 }
                 Result.failure(Exception(errorMsg))
@@ -150,13 +143,8 @@ object ImageKitService {
             
             onProgress(0.25f)
             
-            // Create auth header
-            val credentials = "$PRIVATE_KEY:"
-            val basicAuth = "Basic ${Base64.encodeToString(credentials.toByteArray(), Base64.NO_WRAP)}"
-            
             val request = Request.Builder()
                 .url(UPLOAD_URL)
-                .header("Authorization", basicAuth)
                 .post(requestBody)
                 .build()
             
@@ -213,12 +201,8 @@ object ImageKitService {
             
             onProgress(0.3f)
             
-            val credentials = "$PRIVATE_KEY:"
-            val basicAuth = "Basic ${Base64.encodeToString(credentials.toByteArray(), Base64.NO_WRAP)}"
-            
             val request = Request.Builder()
                 .url(UPLOAD_URL)
-                .header("Authorization", basicAuth)
                 .post(requestBody)
                 .build()
             
@@ -275,12 +259,8 @@ object ImageKitService {
             
             onProgress(0.3f)
             
-            val credentials = "$PRIVATE_KEY:"
-            val basicAuth = "Basic ${Base64.encodeToString(credentials.toByteArray(), Base64.NO_WRAP)}"
-            
             val request = Request.Builder()
                 .url(UPLOAD_URL)
-                .header("Authorization", basicAuth)
                 .post(requestBody)
                 .build()
             

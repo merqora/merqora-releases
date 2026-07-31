@@ -46,7 +46,7 @@ fun ClientBenefitsScreen(
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    // Beneficios simulados (luego el vendedor los configurarÃ¡)
+    // Beneficios simulados (luego el vendedor los configurará)
     val benefits = remember {
         listOf(
             ClientBenefit(
@@ -61,24 +61,24 @@ fun ClientBenefitsScreen(
                 id = "early_access",
                 icon = Icons.Outlined.Bolt,
                 title = "Acceso Anticipado",
-                description = "SÃ© el primero en ver y comprar nuevos productos antes que nadie.",
+                description = "Sé el primero en ver y comprar nuevos productos antes que nadie.",
                 highlight = "24h antes",
                 accentColor = Color(0xFFFF6B35)
             ),
             ClientBenefit(
                 id = "free_shipping",
                 icon = Icons.Outlined.LocalShipping,
-                title = "EnvÃ­o Gratis",
-                description = "Disfruta de envÃ­o gratuito en todas tus compras sin monto mÃ­nimo.",
-                highlight = "Sin mÃ­nimo",
+                title = "Envío Gratis",
+                description = "Disfruta de envío gratuito en todas tus compras sin monto mínimo.",
+                highlight = "Sin mínimo",
                 accentColor = Color(0xFF1565A0)
             ),
             ClientBenefit(
                 id = "priority_support",
                 icon = Icons.Outlined.SupportAgent,
-                title = "AtenciÃ³n Prioritaria",
-                description = "Tus consultas y mensajes serÃ¡n respondidos con prioridad mÃ¡xima.",
-                highlight = "Respuesta rÃ¡pida",
+                title = "Atención Prioritaria",
+                description = "Tus consultas y mensajes serán respondidos con prioridad máxima.",
+                highlight = "Respuesta rápida",
                 accentColor = Color(0xFFFF6B35)
             ),
             ClientBenefit(
@@ -93,7 +93,7 @@ fun ClientBenefitsScreen(
                 id = "rewards",
                 icon = Icons.Outlined.CardGiftcard,
                 title = "Programa de Recompensas",
-                description = "Acumula puntos con cada compra y canjÃ©alos por productos o descuentos.",
+                description = "Acumula puntos con cada compra y canjéalos por productos o descuentos.",
                 highlight = "Gana puntos",
                 accentColor = Color(0xFFEF4444)
             )
@@ -130,7 +130,7 @@ fun ClientBenefitsScreen(
                     )
                 }
                 
-                // TÃ­tulo de secciÃ³n
+                // Título de sección
                 item {
                     Text(
                         text = "Tus Beneficios VIP",
@@ -172,7 +172,7 @@ fun ClientBenefitsScreen(
                             )
                             Spacer(modifier = Modifier.width(12.dp))
                             Text(
-                                text = "Los beneficios pueden variar segÃºn las polÃ­ticas del vendedor. Mantente atento a nuevas ofertas exclusivas.",
+                                text = "Los beneficios pueden variar según las políticas del vendedor. Mantente atento a nuevas ofertas exclusivas.",
                                 fontSize = 13.sp,
                                 color = TextSecondary,
                                 lineHeight = 18.sp
@@ -182,7 +182,7 @@ fun ClientBenefitsScreen(
                 }
             }
             
-            // BotÃ³n flotante
+            // Botón flotante
             Button(
                 onClick = onDismiss,
                 modifier = Modifier
@@ -202,7 +202,7 @@ fun ClientBenefitsScreen(
                 )
                 Spacer(modifier = Modifier.width(10.dp))
                 Text(
-                    text = "Â¡Empezar a disfrutar!",
+                    text = "¡Empezar a disfrutar!",
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold
                 )
@@ -297,7 +297,7 @@ private fun BenefitsHeader(
             
             // Congratulations text
             Text(
-                text = "Â¡Felicidades!",
+                text = "¡Felicidades!",
                 fontSize = 28.sp,
                 fontWeight = FontWeight.ExtraBold,
                 color = Color(0xFF2E8B57)

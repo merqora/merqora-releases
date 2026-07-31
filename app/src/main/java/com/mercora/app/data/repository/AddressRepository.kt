@@ -16,7 +16,7 @@ import javax.inject.Singleton
 
 /**
  * â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
- * ADDRESS REPOSITORY - GestiÃ³n de direcciones con Supabase y motor C++
+ * ADDRESS REPOSITORY - Gestión de direcciones con Supabase y motor C++
  * â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
  */
 @Singleton
@@ -62,7 +62,7 @@ class AddressRepository @Inject constructor() {
     }
     
     /**
-     * Obtiene una direcciÃ³n por ID
+     * Obtiene una dirección por ID
      */
     suspend fun getAddressById(addressId: String): Result<Address?> = withContext(Dispatchers.IO) {
         try {
@@ -82,7 +82,7 @@ class AddressRepository @Inject constructor() {
     }
     
     /**
-     * Crea una nueva direcciÃ³n con validaciÃ³n del motor C++
+     * Crea una nueva dirección con validación del motor C++
      */
     suspend fun createAddress(
         request: AddressCreateRequest,
@@ -111,7 +111,7 @@ class AddressRepository @Inject constructor() {
             // Map source for DB compatibility (DB enum may not have 'map' yet)
             val dbSafeSource = if (request.source == AddressSource.MAP) AddressSource.AUTOCOMPLETE else request.source
             
-            // Crear request con mÃ©tricas de validaciÃ³n
+            // Crear request con métricas de validación
             val enrichedRequest = request.copy(
                 source = dbSafeSource,
                 confidenceScore = validation.confidenceScore,
@@ -173,20 +173,20 @@ class AddressRepository @Inject constructor() {
                     Result.success(savedAddress)
                 } else {
                     Log.e(TAG, "âŒ Insert returned success but address not found on reload")
-                    Result.failure(Exception("La direcciÃ³n se guardÃ³ pero no se pudo verificar. Recarga la lista."))
+                    Result.failure(Exception("La dirección se guardó pero no se pudo verificar. Recarga la lista."))
                 }
             }
         } catch (e: Exception) {
             Log.e(TAG, "Error creating address: ${e.message}", e)
             // Ensure we have a meaningful error message
             val errorMessage = when {
-                e.message?.contains("401") == true -> "SesiÃ³n expirada. Por favor, vuelve a iniciar sesiÃ³n."
-                e.message?.contains("403") == true -> "No tienes permiso para realizar esta acciÃ³n."
+                e.message?.contains("401") == true -> "Sesión expirada. Por favor, vuelve a iniciar sesión."
+                e.message?.contains("403") == true -> "No tienes permiso para realizar esta acción."
                 e.message?.contains("404") == true -> "Recurso no encontrado."
-                e.message?.contains("409") == true -> "Ya existe una direcciÃ³n similar."
+                e.message?.contains("409") == true -> "Ya existe una dirección similar."
                 e.message?.contains("network") == true || e.message?.contains("connect") == true -> 
-                    "Error de conexiÃ³n. Verifica tu internet."
-                e.message.isNullOrBlank() -> "Error al guardar la direcciÃ³n. IntÃ©ntalo de nuevo."
+                    "Error de conexión. Verifica tu internet."
+                e.message.isNullOrBlank() -> "Error al guardar la dirección. Inténtalo de nuevo."
                 else -> e.message ?: "Error desconocido al guardar"
             }
             Result.failure(Exception(errorMessage, e))
@@ -196,7 +196,7 @@ class AddressRepository @Inject constructor() {
     }
     
     /**
-     * Actualiza una direcciÃ³n existente
+     * Actualiza una dirección existente
      */
     suspend fun updateAddress(
         addressId: String,
@@ -229,7 +229,7 @@ class AddressRepository @Inject constructor() {
     }
     
     /**
-     * Establece una direcciÃ³n como default
+     * Establece una dirección como default
      */
     suspend fun setDefaultAddress(addressId: String, userId: String): Result<Boolean> = withContext(Dispatchers.IO) {
         try {
@@ -272,7 +272,7 @@ class AddressRepository @Inject constructor() {
     }
     
     /**
-     * Elimina una direcciÃ³n de Supabase
+     * Elimina una dirección de Supabase
      */
     suspend fun deleteAddress(addressId: String): Result<Boolean> = withContext(Dispatchers.IO) {
         try {
@@ -297,7 +297,7 @@ class AddressRepository @Inject constructor() {
     }
     
     /**
-     * Valida una direcciÃ³n usando el motor C++
+     * Valida una dirección usando el motor C++
      */
     suspend fun validateAddressWithEngine(
         formattedAddress: String,
@@ -323,7 +323,7 @@ class AddressRepository @Inject constructor() {
     }
     
     /**
-     * Normaliza una direcciÃ³n usando el motor C++
+     * Normaliza una dirección usando el motor C++
      */
     suspend fun normalizeAddress(rawInput: String): String {
         return AddressEngine.normalizeAddress(rawInput)
@@ -338,7 +338,7 @@ class AddressRepository @Inject constructor() {
     }
     
     /**
-     * Obtiene la direcciÃ³n default de un usuario
+     * Obtiene la dirección default de un usuario
      */
     suspend fun getDefaultAddress(userId: String): Address? {
         return _addresses.value.find { it.isDefault } 

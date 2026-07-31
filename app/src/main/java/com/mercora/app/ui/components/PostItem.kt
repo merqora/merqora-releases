@@ -80,10 +80,10 @@ fun PostItem(
     val haptic = LocalHapticFeedback.current
     val scope = rememberCoroutineScope()
     
-    // Nueva animaciÃ³n optimizada estilo Instagram
+    // Nueva animación optimizada estilo Instagram
     val animationState = rememberDoubleTapAnimationState()
     
-    // ImÃ¡genes del producto - memoizado
+    // Imágenes del producto - memoizado
     val images = remember(post.producto.imagenUrl) {
         post.producto.imagenUrl.ifEmpty { listOf("") }
     }
@@ -116,7 +116,7 @@ fun PostItem(
                 horizontalArrangement = Arrangement.spacedBy(10.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // Avatar optimizado con cachÃ©
+                // Avatar optimizado con caché
                 AsyncImage(
                     model = remember(avatarUrl) {
                         ImageRequest.Builder(context)
@@ -182,7 +182,7 @@ fun PostItem(
                         onPostClick()
                     },
                     onDoubleTap = { offset ->
-                        // Dar like SOLO si no estÃ¡ likeado (nunca quitar)
+                        // Dar like SOLO si no está likeado (nunca quitar)
                         if (!post.isLiked) {
                             onLikeClick()
                         }
@@ -190,7 +190,7 @@ fun PostItem(
                         // Haptic feedback
                         haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                         
-                        // Disparar animaciÃ³n optimizada
+                        // Disparar animación optimizada
                         scope.launch {
                             animationState.trigger(Offset(offset.x, offset.y))
                         }
@@ -198,7 +198,7 @@ fun PostItem(
                     modifier = Modifier.fillMaxSize()
                 )
                 
-                // Overlay de animaciÃ³n optimizado estilo Instagram
+                // Overlay de animación optimizado estilo Instagram
                 DoubleTapAnimationOverlay(
                     state = animationState,
                     modifier = Modifier.fillMaxSize()
@@ -224,7 +224,7 @@ fun PostItem(
                     verticalArrangement = Arrangement.Center
                 ) {
                     Text(
-                        text = "ðŸ“·",
+                        text = "📷",
                         fontSize = 48.sp
                     )
                     Spacer(modifier = Modifier.height(12.dp))
@@ -239,10 +239,10 @@ fun PostItem(
         }
         
         // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-        // SECCIÃ“N ECOMMERCE + RED SOCIAL REDISEÃ‘ADA - MÃS COMPACTA
+        // SECCIÓN ECOMMERCE + RED SOCIAL REDISEÑADA - MÁS COMPACTA
         // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
         
-        // OPTIMIZADO: Memoizar cÃ¡lculos derivados del post
+        // OPTIMIZADO: Memoizar cálculos derivados del post
         val hasTitle = remember(post.producto.titulo) { post.producto.titulo.isNotBlank() }
         val hasPrice = remember(post.producto.precio) { post.producto.precio > 0.0 }
         val hasReviews = remember(post.comments) { post.comments > 0 }
@@ -256,7 +256,7 @@ fun PostItem(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 6.dp) // MÃ¡s compacto
+                .padding(horizontal = 16.dp, vertical = 6.dp) // Más compacto
         ) {
             // Row 1: Acciones sociales (Like + Save + Reenviar) + Consultar a la derecha
             Row(
@@ -291,7 +291,7 @@ fun PostItem(
                         }
                     )
                     
-                    // BotÃ³n Reenviar con contador
+                    // Botón Reenviar con contador
                     ActionButton(
                         icon = Icons.Outlined.Send,
                         count = if (post.sharesCount > 0) post.sharesCount else null,
@@ -305,7 +305,7 @@ fun PostItem(
                     )
                 }
                 
-                // Derecha: BotÃ³n Consultar - DiseÃ±o minimalista con acento naranja
+                // Derecha: Botón Consultar - Diseño minimalista con acento naranja
                 Surface(
                     onClick = {
                         haptic.performHapticFeedback(HapticFeedbackType.LongPress)
@@ -345,9 +345,9 @@ fun PostItem(
                 }
             }
             
-            Spacer(modifier = Modifier.height(6.dp)) // MÃ¡s compacto
+            Spacer(modifier = Modifier.height(6.dp)) // Más compacto
             
-            // Row 2: Solo tÃ­tulo del producto (username ya estÃ¡ en header sobre imagen)
+            // Row 2: Solo título del producto (username ya está en header sobre imagen)
             if (hasTitle) {
                 Text(
                     text = post.producto.titulo,
@@ -361,9 +361,9 @@ fun PostItem(
             
             Spacer(modifier = Modifier.height(6.dp))
             
-            // Row 3: NUEVO DISEÃ‘O DE PRECIOS - Profesional para maximizar ventas
+            // Row 3: NUEVO DISEÑO DE PRECIOS - Profesional para maximizar ventas
             if (hasPrice) {
-                // OPTIMIZADO: Memoizar cÃ¡lculos y strings formateados
+                // OPTIMIZADO: Memoizar cálculos y strings formateados
                 val precioActual = post.producto.precio
                 val priceStrings = remember(precioActual) {
                     val precioAnterior = precioActual * 1.25
@@ -377,7 +377,7 @@ fun PostItem(
                     )
                 }
                 
-                // LÃ­nea 1: Precio tachado arriba (mÃ¡s pequeÃ±o)
+                // Línea 1: Precio tachado arriba (más pequeño)
                 Text(
                     text = priceStrings.precioAnteriorText,
                     fontSize = 12.sp,
@@ -388,7 +388,7 @@ fun PostItem(
                 
                 Spacer(modifier = Modifier.height(2.dp))
                 
-                // LÃ­nea 2: Precio actual + Badge descuento + Ahorro alineado derecha
+                // Línea 2: Precio actual + Badge descuento + Ahorro alineado derecha
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
@@ -491,7 +491,7 @@ fun PostItem(
                     )
                 }
             } else {
-                // Sin opiniones: Mostrar texto "SÃ© el primero en opinar" debajo del precio
+                // Sin opiniones: Mostrar texto "Sé el primero en opinar" debajo del precio
                 Row(
                     modifier = Modifier
                         .clickable(
@@ -512,7 +512,7 @@ fun PostItem(
                         tint = TextMuted
                     )
                     Text(
-                        text = "SÃ© el primero en opinar",
+                        text = "Sé el primero en opinar",
                         fontSize = 12.sp,
                         fontWeight = FontWeight.Normal,
                         color = TextMuted
@@ -602,7 +602,7 @@ private fun ActionButton(
 }
 
 // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-// PREMIUM SHARE BUTTON - BotÃ³n Reenviar profesional estilo Instagram
+// PREMIUM SHARE BUTTON - Botón Reenviar profesional estilo Instagram
 // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 @Composable
 private fun PremiumShareButton(
@@ -620,7 +620,7 @@ private fun PremiumShareButton(
         label = "share_scale"
     )
     
-    // OPTIMIZADO: Memoizar gradiente estÃ¡tico
+    // OPTIMIZADO: Memoizar gradiente estático
     val shareButtonGradient = remember {
         Brush.linearGradient(colors = listOf(Color(0xFF667EEA), Color(0xFF764BA2)))
     }
@@ -671,7 +671,7 @@ private fun PremiumShareButton(
 }
 
 // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-// PRODUCT INFO PANEL - Con animaciÃ³n staggered como Vinzary
+// PRODUCT INFO PANEL - Con animación staggered como Vinzary
 // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 private data class InfoDataItem(
     val id: String,
@@ -689,7 +689,7 @@ private fun ProductInfoPanel(
 ) {
     val stockText = when {
         producto.stock == 0 -> "Agotado"
-        producto.stock == 1 -> "Â¡Ãšltimo!"
+        producto.stock == 1 -> "¡Último!"
         producto.stock <= 3 -> "Solo ${producto.stock}"
         else -> "${producto.stock} unidades"
     }
@@ -704,7 +704,7 @@ private fun ProductInfoPanel(
         listOf(
             InfoDataItem("price", null, PrimaryPurple, "Precio", "$${producto.precio}", Icons.Outlined.LocalOffer),
             InfoDataItem("condition", null, AccentGreen, "Estado", producto.condicion.ifEmpty { "Nuevo" }, Icons.Outlined.StarOutline),
-            InfoDataItem("size", null, AccentPink, "Talle", producto.talle.ifEmpty { "Ãšnico" }, Icons.Outlined.Checkroom),
+            InfoDataItem("size", null, AccentPink, "Talle", producto.talle.ifEmpty { "Único" }, Icons.Outlined.Checkroom),
             InfoDataItem("stock", null, stockColor, "Disponible", stockText, Icons.Outlined.Inventory)
         )
     }
@@ -872,8 +872,8 @@ fun VideoPostItem(
         else "https://xyrpmmnegzjkbysoocpc.supabase.co/storage/v1/object/public/avatars_new/${rend.userAvatar}"
     }
     
-    // PERF: El ExoPlayer reutilizable del pool (mÃ¡x 2 vivos en todo el feed)
-    // PatrÃ³n Instagram: solo el video con >50% visible reproduce, el resto muestra thumbnail
+    // PERF: El ExoPlayer reutilizable del pool (máx 2 vivos en todo el feed)
+    // Patrón Instagram: solo el video con >50% visible reproduce, el resto muestra thumbnail
     var exoPlayer by remember { mutableStateOf<ExoPlayer?>(null) }
 
     DisposableEffect(isVisible, videoEnded, rend.videoUrl) {
@@ -1065,7 +1065,7 @@ fun VideoPostItem(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.spacedBy(20.dp)
                     ) {
-                        // "Ver mÃ¡s rends" button - palette-matching design
+                        // "Ver más rends" button - palette-matching design
                         Surface(
                             onClick = onRendClick,
                             shape = RoundedCornerShape(24.dp),
@@ -1083,7 +1083,7 @@ fun VideoPostItem(
                                     modifier = Modifier.size(20.dp)
                                 )
                                 Text(
-                                    "Ver mÃ¡s rends",
+                                    "Ver más rends",
                                     fontSize = 14.sp,
                                     fontWeight = FontWeight.Bold,
                                     color = Color.White
@@ -1270,7 +1270,7 @@ fun VideoPostItem(
         }
         
         // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-        // COMMENTS SECTION - "SÃ© el primero en comentar"
+        // COMMENTS SECTION - "Sé el primero en comentar"
         // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
         Row(
             modifier = Modifier
@@ -1292,7 +1292,7 @@ fun VideoPostItem(
                 tint = TextMuted
             )
             Text(
-                text = if (rend.reviewsCount > 0) "Ver ${rend.reviewsCount} comentarios" else "SÃ© el primero en comentar",
+                text = if (rend.reviewsCount > 0) "Ver ${rend.reviewsCount} comentarios" else "Sé el primero en comentar",
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Normal,
                 color = TextMuted

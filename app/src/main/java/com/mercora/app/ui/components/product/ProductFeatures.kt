@@ -43,7 +43,7 @@ fun ProductFeaturesCompact(
         ) {
             FeatureChip(
                 icon = Icons.Outlined.LocalShipping,
-                text = "envÃ­o gratis",
+                text = "envío gratis",
                 isActive = freeShipping,
                 activeColor = AccentGreen
             )
@@ -55,7 +55,7 @@ fun ProductFeaturesCompact(
             )
             FeatureChip(
                 icon = Icons.Outlined.Autorenew,
-                text = "DevoluciÃ³n",
+                text = "Devolución",
                 isActive = returnsAccepted,
                 activeColor = ReturnGreen
             )

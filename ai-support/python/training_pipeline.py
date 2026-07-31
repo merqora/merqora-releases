@@ -124,7 +124,7 @@ STOPWORDS_ES = {
 def normalize_text(text: str) -> str:
     """Normalize Spanish text"""
     text = text.lower().strip()
-    replacements = {'Ã¡': 'a', 'Ã©': 'e', 'Ã­': 'i', 'Ã³': 'o', 'Ãº': 'u', 'Ã¼': 'u', 'Ã±': 'n'}
+    replacements = {'á': 'a', 'é': 'e', 'í': 'i', 'ó': 'o', 'ú': 'u', 'ü': 'u', 'ñ': 'n'}
     for old, new in replacements.items():
         text = text.replace(old, new)
     return text

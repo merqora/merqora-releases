@@ -183,9 +183,9 @@ fun OrderHistoryScreen(
                                     Spacer(modifier = Modifier.height(16.dp))
                                     Text(
                                         when (filter) {
-                                            OrderFilter.ALL -> "No hay pedidos aÃºn"
-                                            OrderFilter.PURCHASES -> "No hay compras aÃºn"
-                                            OrderFilter.SALES -> "No hay ventas aÃºn"
+                                            OrderFilter.ALL -> "No hay pedidos aún"
+                                            OrderFilter.PURCHASES -> "No hay compras aún"
+                                            OrderFilter.SALES -> "No hay ventas aún"
                                         },
                                         fontSize = 16.sp,
                                         fontWeight = FontWeight.Medium,
@@ -193,9 +193,9 @@ fun OrderHistoryScreen(
                                     )
                                     Text(
                                         when (filter) {
-                                            OrderFilter.ALL -> "Tus pedidos aparecerÃ¡n aquÃ­"
-                                            OrderFilter.PURCHASES -> "Los productos que compres aparecerÃ¡n aquÃ­"
-                                            OrderFilter.SALES -> "Cuando te compren aparecerÃ¡ aquÃ­"
+                                            OrderFilter.ALL -> "Tus pedidos aparecerán aquí"
+                                            OrderFilter.PURCHASES -> "Los productos que compres aparecerán aquí"
+                                            OrderFilter.SALES -> "Cuando te compren aparecerá aquí"
                                         },
                                         fontSize = 12.sp,
                                         color = TextMuted.copy(alpha = 0.7f)
@@ -233,7 +233,7 @@ fun OrderHistoryScreen(
                 title = { Text("Eliminar pedido", fontWeight = FontWeight.Bold) },
                 text = {
                     Column {
-                        Text("Â¿Eliminar definitivamente el pedido #${orderToDelete.orderNumber}? Esta acciÃ³n no se puede deshacer.")
+                        Text("¿Eliminar definitivamente el pedido #${orderToDelete.orderNumber}? Esta acción no se puede deshacer.")
                         if (deleteError != null) {
                             Spacer(modifier = Modifier.height(8.dp))
                             Text(deleteError!!, color = Color(0xFFEF4444), fontSize = 12.sp)
@@ -298,7 +298,7 @@ fun OrderHistoryScreen(
                         Column {
                             Text("Pedido #${order.orderNumber}", fontWeight = FontWeight.Bold, fontSize = 18.sp, color = TextPrimary)
                             Text(
-                                if (isSale) "VENTA Â· ${order.buyerUsername ?: "Comprador"}" else "COMPRA",
+                                if (isSale) "VENTA · ${order.buyerUsername ?: "Comprador"}" else "COMPRA",
                                 fontSize = 12.sp,
                                 color = if (isSale) Color(0xFF7C4DFF) else Color(0xFF1565A0),
                                 fontWeight = FontWeight.SemiBold
@@ -345,7 +345,7 @@ fun OrderHistoryScreen(
                                     }
                                     Column(modifier = Modifier.weight(1f)) {
                                         Text(item.title, fontSize = 13.sp, fontWeight = FontWeight.Medium, color = TextPrimary, maxLines = 2, overflow = TextOverflow.Ellipsis)
-                                        Text("Cant: ${item.quantity} Â· $${String.format("%,.0f", item.unitPrice)}", fontSize = 11.sp, color = TextMuted)
+                                        Text("Cant: ${item.quantity} · $${String.format("%,.0f", item.unitPrice)}", fontSize = 11.sp, color = TextMuted)
                                     }
                                     Text("$${String.format("%,.0f", item.totalPrice)}", fontSize = 14.sp, fontWeight = FontWeight.Bold, color = TextPrimary)
                                 }
@@ -362,7 +362,7 @@ fun OrderHistoryScreen(
 
                         // Details
                         Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                            Text("NÂ° de pedido: #${order.orderNumber}", fontSize = 12.sp, color = TextMuted)
+                            Text("N° de pedido: #${order.orderNumber}", fontSize = 12.sp, color = TextMuted)
                             Text("Fecha: ${order.formattedDate}", fontSize = 12.sp, color = TextMuted)
                             if (order.trackingNumber != null) {
                                 Text("Tracking: ${order.trackingNumber}", fontSize = 12.sp, color = TextMuted)
@@ -555,7 +555,7 @@ private fun EnhancedOrderCard(
                         overflow = TextOverflow.Ellipsis
                     )
                     Text(
-                        text = "#${order.orderNumber} Â· ${order.formattedDate}",
+                        text = "#${order.orderNumber} · ${order.formattedDate}",
                         fontSize = 11.sp,
                         color = TextMuted
                     )

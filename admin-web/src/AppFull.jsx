@@ -33,20 +33,20 @@ function Sidebar({ isOpen, setIsOpen }) {
 
   const navItems = [
     { path: '/admin', icon: BarChart3, label: 'Dashboard' },
-    { path: '/admin/app-manager', icon: Package, label: 'ðŸ“± App Manager' },
-    { path: '/admin/live', icon: Video, label: 'ðŸ”´ En Vivo' },
-    { path: '/admin/handshake-test', icon: Grip, label: 'ðŸ§ª Test Handshake' },
-    { path: '/admin/notification-test', icon: Bell, label: 'ðŸ”” Test Notificaciones' },
-    { path: '/admin/chat-test', icon: MessageSquare, label: 'ðŸ’¬ Test Chat' },
-    { path: '/admin/verification', icon: BadgeCheck, label: 'VerificaciÃ³n' },
+    { path: '/admin/app-manager', icon: Package, label: '📱 App Manager' },
+    { path: '/admin/live', icon: Video, label: '🔴 En Vivo' },
+    { path: '/admin/handshake-test', icon: Grip, label: '🧪 Test Handshake' },
+    { path: '/admin/notification-test', icon: Bell, label: '🔔 Test Notificaciones' },
+    { path: '/admin/chat-test', icon: MessageSquare, label: '💬 Test Chat' },
+    { path: '/admin/verification', icon: BadgeCheck, label: 'Verificación' },
     { path: '/admin/escalations', icon: AlertCircle, label: 'Escalaciones' },
     { path: '/admin/conversations', icon: MessageSquare, label: 'Conversaciones' },
     { path: '/admin/ai-learning', icon: Brain, label: 'Aprendizaje IA' },
     { path: '/admin/training-pipeline', icon: TrendingUp, label: 'Training Pipeline' },
     { path: '/admin/feedback', icon: MessageCircle, label: 'Feedback' },
     { path: '/admin/bug-reports', icon: Bug, label: 'Bug Reports' },
-    { path: '/admin/content-reports', icon: AlertCircle, label: 'ðŸš¨ Reportes' },
-    { path: '/admin/stats', icon: TrendingUp, label: 'EstadÃ­sticas' },
+    { path: '/admin/content-reports', icon: AlertCircle, label: '🚨 Reportes' },
+    { path: '/admin/stats', icon: TrendingUp, label: 'Estadísticas' },
   ]
 
   return (
@@ -65,7 +65,7 @@ function Sidebar({ isOpen, setIsOpen }) {
               <ShoppingBag className="w-5 h-5 text-white" />
             </div>
             <div>
-              <h1 className="text-lg font-bold text-text-primary">Vinzay</h1>
+              <h1 className="text-lg font-bold text-text-primary">Mercora</h1>
               <p className="text-xs text-text-tertiary">Admin Panel</p>
             </div>
           </Link>
@@ -111,7 +111,7 @@ function Header({ setIsOpen, user, onLogout }) {
       <div className="hidden md:flex flex-1 max-w-md mx-4">
         <input
           type="text"
-          placeholder="Buscar conversaciÃ³n, usuario..."
+          placeholder="Buscar conversación, usuario..."
           className="w-full px-4 py-2 bg-mercora-bg border border-primary/20 rounded-xl text-text-primary placeholder-text-muted focus:outline-none focus:border-primary transition-colors"
         />
       </div>
@@ -134,7 +134,7 @@ function Header({ setIsOpen, user, onLogout }) {
           <div className="w-10 h-10 rounded-full gradient-mercora flex items-center justify-center text-white font-bold">
             {user?.email?.[0]?.toUpperCase() || 'A'}
           </div>
-          <button onClick={onLogout} className="p-2 text-text-muted hover:text-accent-magenta transition-colors" title="Cerrar sesiÃ³n">
+          <button onClick={onLogout} className="p-2 text-text-muted hover:text-accent-magenta transition-colors" title="Cerrar sesión">
             <LogOut className="w-5 h-5" />
           </button>
         </div>
@@ -192,7 +192,7 @@ function AccessDenied({ onLogout }) {
             <span>Volver al inicio</span>
           </Link>
           <button onClick={onLogout} className="text-text-muted hover:text-text-primary text-sm transition-colors">
-            Cerrar sesiÃ³n
+            Cerrar sesión
           </button>
         </div>
       </div>

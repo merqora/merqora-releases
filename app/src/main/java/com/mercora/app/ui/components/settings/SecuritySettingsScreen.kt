@@ -78,7 +78,7 @@ fun SecuritySettingsScreen(
             isLoading = true
             val userId = SupabaseClient.auth.currentUserOrNull()?.id
             if (userId != null) {
-                // Crear configuraciÃ³n si no existe
+                // Crear configuración si no existe
                 val existingSettings = SecurityRepository.getSecuritySettings(userId)
                 if (existingSettings == null) {
                     SecurityRepository.createSecuritySettings(userId)
@@ -116,7 +116,7 @@ fun SecuritySettingsScreen(
             },
             text = { 
                 Text(
-                    "Se cerrarÃ¡n todas las sesiones en todos los dispositivos. TendrÃ¡s que volver a iniciar sesiÃ³n.",
+                    "Se cerrarán todas las sesiones en todos los dispositivos. Tendrás que volver a iniciar sesión.",
                     color = TextSecondary
                 ) 
             },
@@ -128,10 +128,10 @@ fun SecuritySettingsScreen(
                             if (userId != null) {
                                 val closed = SecurityRepository.endAllSessions(userId)
                                 activeSessionsCount = 0
-                                Toast.makeText(context, "$closed sesiones cerradas. Cerrando sesiÃ³n...", Toast.LENGTH_SHORT).show()
-                                // PRIMERO limpiar sesiÃ³n persistida
-                                com.vinzay.app.data.remote.SessionPersistence.clearSession()
-                                // Luego cerrar sesiÃ³n en Supabase
+                                Toast.makeText(context, "$closed sesiones cerradas. Cerrando sesión...", Toast.LENGTH_SHORT).show()
+                                // PRIMERO limpiar sesión persistida
+                                com.mercora.app.data.remote.SessionPersistence.clearSession()
+                                // Luego cerrar sesión en Supabase
                                 kotlinx.coroutines.delay(500)
                                 SupabaseClient.auth.signOut()
                                 shouldLogout = true
@@ -196,8 +196,8 @@ fun SecuritySettingsScreen(
                     ) {
                         Spacer(modifier = Modifier.height(8.dp))
                         
-                        // ContraseÃ±a
-                        SettingsSectionTitle("ContraseÃ±a")
+                        // Contraseña
+                        SettingsSectionTitle("Contraseña")
                         
                         Surface(
                             modifier = Modifier.fillMaxWidth(),
@@ -207,7 +207,7 @@ fun SecuritySettingsScreen(
                             Column {
                                 SecurityItem(
                                     icon = Icons.Outlined.Key,
-                                    title = "Cambiar contraseÃ±a",
+                                    title = "Cambiar contraseña",
                                     subtitle = formatLastPasswordChange(settings?.last_password_change),
                                     onClick = { showChangePassword = true },
                                     iconColor = PrimaryPurple
@@ -217,8 +217,8 @@ fun SecuritySettingsScreen(
                         
                         Spacer(modifier = Modifier.height(24.dp))
                         
-                        // AutenticaciÃ³n
-                        SettingsSectionTitle("AutenticaciÃ³n")
+                        // Autenticación
+                        SettingsSectionTitle("Autenticación")
                         
                         Surface(
                             modifier = Modifier.fillMaxWidth(),
@@ -228,8 +228,8 @@ fun SecuritySettingsScreen(
                             Column {
                                 SecurityToggle(
                                     icon = Icons.Outlined.PhonelinkLock,
-                                    title = "AutenticaciÃ³n de dos factores",
-                                    subtitle = if (settings?.two_factor_enabled == true) "Activada - TOTP" else "AÃ±ade una capa extra de seguridad",
+                                    title = "Autenticación de dos factores",
+                                    subtitle = if (settings?.two_factor_enabled == true) "Activada - TOTP" else "Añade una capa extra de seguridad",
                                     isEnabled = settings?.two_factor_enabled ?: false,
                                     onToggle = { enabled ->
                                         scope.launch {
@@ -252,8 +252,8 @@ fun SecuritySettingsScreen(
                                 Divider(color = BorderSubtle, modifier = Modifier.padding(horizontal = 16.dp))
                                 SecurityToggle(
                                     icon = Icons.Outlined.NotificationsActive,
-                                    title = "Alertas de inicio de sesiÃ³n",
-                                    subtitle = "Notificar cuando alguien inicie sesiÃ³n",
+                                    title = "Alertas de inicio de sesión",
+                                    subtitle = "Notificar cuando alguien inicie sesión",
                                     isEnabled = settings?.login_alerts_enabled ?: true,
                                     onToggle = { enabled ->
                                         scope.launch {
@@ -271,8 +271,8 @@ fun SecuritySettingsScreen(
                         
                         Spacer(modifier = Modifier.height(24.dp))
 
-                        // Datos biomÃ©tricos
-                        SettingsSectionTitle("Datos biomÃ©tricos")
+                        // Datos biométricos
+                        SettingsSectionTitle("Datos biométricos")
 
                         Surface(
                             modifier = Modifier.fillMaxWidth(),
@@ -283,7 +283,7 @@ fun SecuritySettingsScreen(
                                 SecurityItem(
                                     icon = Icons.Outlined.Fingerprint,
                                     title = if (isBiometricEnrolled) "Huella digital configurada" else "Configurar huella digital",
-                                    subtitle = if (isBiometricEnrolled) "Toca para administrar o reconfigurar" else "Accede rÃ¡pidamente con tu huella",
+                                    subtitle = if (isBiometricEnrolled) "Toca para administrar o reconfigurar" else "Accede rápidamente con tu huella",
                                     onClick = {
                                         val uid = SupabaseClient.auth.currentUserOrNull()?.id
                                         if (uid != null) {
@@ -322,7 +322,7 @@ fun SecuritySettingsScreen(
                                 SecurityItem(
                                     icon = Icons.Outlined.Laptop,
                                     title = "Sesiones activas",
-                                    subtitle = "$activeSessionsCount sesiÃ³n${if (activeSessionsCount != 1) "es" else ""} activa${if (activeSessionsCount != 1) "s" else ""}",
+                                    subtitle = "$activeSessionsCount sesión${if (activeSessionsCount != 1) "es" else ""} activa${if (activeSessionsCount != 1) "s" else ""}",
                                     onClick = { showActiveSessions = true },
                                     iconColor = Color(0xFF2E8B57),
                                     showArrow = true
@@ -331,7 +331,7 @@ fun SecuritySettingsScreen(
                                 SecurityItem(
                                     icon = Icons.Outlined.ExitToApp,
                                     title = "Cerrar todas las sesiones",
-                                    subtitle = "Cierra sesiÃ³n en todos los dispositivos",
+                                    subtitle = "Cierra sesión en todos los dispositivos",
                                     onClick = { showEndAllSessionsDialog = true },
                                     iconColor = Color(0xFFEF4444)
                                 )
@@ -352,7 +352,7 @@ fun SecuritySettingsScreen(
                                 SecurityItem(
                                     icon = Icons.Outlined.History,
                                     title = "Historial de actividad",
-                                    subtitle = "Ver inicios de sesiÃ³n recientes",
+                                    subtitle = "Ver inicios de sesión recientes",
                                     onClick = { showActivityHistory = true },
                                     iconColor = Color(0xFF6B7280),
                                     showArrow = true
@@ -361,7 +361,7 @@ fun SecuritySettingsScreen(
                                 SecurityItem(
                                     icon = Icons.Outlined.Report,
                                     title = "Actividad sospechosa",
-                                    subtitle = if (suspiciousCount > 0) "$suspiciousCount alerta${if (suspiciousCount != 1) "s" else ""} sin revisar" else "No se detectÃ³ actividad inusual",
+                                    subtitle = if (suspiciousCount > 0) "$suspiciousCount alerta${if (suspiciousCount != 1) "s" else ""} sin revisar" else "No se detectó actividad inusual",
                                     onClick = { showSuspiciousActivity = true },
                                     iconColor = if (suspiciousCount > 0) Color(0xFFEF4444) else Color(0xFF2E8B57),
                                 )
@@ -382,7 +382,7 @@ fun SecuritySettingsScreen(
                                 SecurityItem(
                                     icon = Icons.Outlined.PersonOff,
                                     title = "Desactivar cuenta",
-                                    subtitle = "Tu cuenta se ocultarÃ¡ temporalmente",
+                                    subtitle = "Tu cuenta se ocultará temporalmente",
                                     onClick = { showDeactivateAccountDialog = true },
                                     iconColor = Color(0xFFFF6B35)
                                 )
@@ -390,7 +390,7 @@ fun SecuritySettingsScreen(
                                 SecurityItem(
                                     icon = Icons.Outlined.DeleteForever,
                                     title = "Eliminar cuenta",
-                                    subtitle = "Esta acciÃ³n es irreversible",
+                                    subtitle = "Esta acción es irreversible",
                                     onClick = { showDeleteAccountDialog = true },
                                     iconColor = Color(0xFFEF4444)
                                 )
@@ -479,7 +479,7 @@ fun SecuritySettingsScreen(
         if (showBiometricEnrollment) {
             val uid = SupabaseClient.auth.currentUserOrNull()?.id ?: ""
             Box(modifier = Modifier.fillMaxSize()) {
-                com.vinzay.app.ui.screens.auth.BiometricEnrollmentScreen(
+                com.mercora.app.ui.screens.auth.BiometricEnrollmentScreen(
                     userId = uid,
                     onComplete = {
                         showBiometricEnrollment = false
@@ -501,7 +501,7 @@ fun SecuritySettingsScreen(
                 },
                 text = {
                     Text(
-                        "Se eliminarÃ¡ la configuraciÃ³n de huella digital de esta cuenta en este dispositivo. PodrÃ¡s volver a configurarla cuando quieras.",
+                        "Se eliminará la configuración de huella digital de esta cuenta en este dispositivo. Podrás volver a configurarla cuando quieras.",
                         color = TextSecondary
                     )
                 },
@@ -547,17 +547,17 @@ fun SecuritySettingsScreen(
                 text = { 
                     Column {
                         Text(
-                            "Tu cuenta serÃ¡ desactivada temporalmente:",
+                            "Tu cuenta será desactivada temporalmente:",
                             color = TextSecondary,
                             fontSize = 14.sp
                         )
                         Spacer(modifier = Modifier.height(12.dp))
-                        Text("â€¢ Tu perfil no serÃ¡ visible para otros usuarios", color = TextMuted, fontSize = 13.sp)
-                        Text("â€¢ Tus posts y contenido se ocultarÃ¡n", color = TextMuted, fontSize = 13.sp)
-                        Text("â€¢ PodrÃ¡s reactivar tu cuenta en cualquier momento", color = TextMuted, fontSize = 13.sp)
+                        Text("• Tu perfil no será visible para otros usuarios", color = TextMuted, fontSize = 13.sp)
+                        Text("• Tus posts y contenido se ocultarán", color = TextMuted, fontSize = 13.sp)
+                        Text("• Podrás reactivar tu cuenta en cualquier momento", color = TextMuted, fontSize = 13.sp)
                         Spacer(modifier = Modifier.height(12.dp))
                         Text(
-                            "Para reactivar, solo inicia sesiÃ³n nuevamente.",
+                            "Para reactivar, solo inicia sesión nuevamente.",
                             color = Color(0xFF2E8B57),
                             fontSize = 13.sp,
                             fontWeight = FontWeight.Medium
@@ -574,8 +574,8 @@ fun SecuritySettingsScreen(
                                     val success = SecurityRepository.deactivateAccount(userId)
                                     if (success) {
                                         Toast.makeText(context, "Cuenta desactivada", Toast.LENGTH_SHORT).show()
-                                        // PRIMERO limpiar sesiÃ³n persistida
-                                        com.vinzay.app.data.remote.SessionPersistence.clearSession()
+                                        // PRIMERO limpiar sesión persistida
+                                        com.mercora.app.data.remote.SessionPersistence.clearSession()
                                         SupabaseClient.auth.signOut()
                                         shouldLogout = true
                                     } else {
@@ -635,19 +635,19 @@ fun SecuritySettingsScreen(
                 text = { 
                     Column {
                         Text(
-                            "âš ï¸ Esta acciÃ³n es IRREVERSIBLE",
+                            "âš ï¸ Esta acción es IRREVERSIBLE",
                             color = Color(0xFFEF4444),
                             fontSize = 14.sp,
                             fontWeight = FontWeight.Bold
                         )
                         Spacer(modifier = Modifier.height(12.dp))
-                        Text("Se eliminarÃ¡n permanentemente:", color = TextSecondary, fontSize = 14.sp)
+                        Text("Se eliminarán permanentemente:", color = TextSecondary, fontSize = 14.sp)
                         Spacer(modifier = Modifier.height(8.dp))
-                        Text("â€¢ Tu perfil y toda tu informaciÃ³n", color = TextMuted, fontSize = 13.sp)
-                        Text("â€¢ Todos tus posts, rends y stories", color = TextMuted, fontSize = 13.sp)
-                        Text("â€¢ Tus mensajes y conversaciones", color = TextMuted, fontSize = 13.sp)
-                        Text("â€¢ Tus seguidores y siguiendo", color = TextMuted, fontSize = 13.sp)
-                        Text("â€¢ Tu historial de pedidos", color = TextMuted, fontSize = 13.sp)
+                        Text("• Tu perfil y toda tu información", color = TextMuted, fontSize = 13.sp)
+                        Text("• Todos tus posts, rends y stories", color = TextMuted, fontSize = 13.sp)
+                        Text("• Tus mensajes y conversaciones", color = TextMuted, fontSize = 13.sp)
+                        Text("• Tus seguidores y siguiendo", color = TextMuted, fontSize = 13.sp)
+                        Text("• Tu historial de pedidos", color = TextMuted, fontSize = 13.sp)
                         Spacer(modifier = Modifier.height(16.dp))
                         Text(
                             "Escribe \"ELIMINAR\" para confirmar:",
@@ -681,8 +681,8 @@ fun SecuritySettingsScreen(
                                     val success = SecurityRepository.deleteAccount(userId)
                                     if (success) {
                                         Toast.makeText(context, "Cuenta eliminada permanentemente", Toast.LENGTH_LONG).show()
-                                        // PRIMERO limpiar sesiÃ³n persistida
-                                        com.vinzay.app.data.remote.SessionPersistence.clearSession()
+                                        // PRIMERO limpiar sesión persistida
+                                        com.mercora.app.data.remote.SessionPersistence.clearSession()
                                         SupabaseClient.auth.signOut()
                                         shouldLogout = true
                                     } else {
@@ -742,10 +742,10 @@ private fun formatLastPasswordChange(dateString: String?): String {
         when {
             diffDays == 0L -> "Actualizada hoy"
             diffDays == 1L -> "Actualizada ayer"
-            diffDays < 7 -> "Hace $diffDays dÃ­as"
+            diffDays < 7 -> "Hace $diffDays días"
             diffDays < 30 -> "Hace ${diffDays / 7} semana${if (diffDays / 7 > 1) "s" else ""}"
             diffDays < 365 -> "Hace ${diffDays / 30} mes${if (diffDays / 30 > 1) "es" else ""}"
-            else -> "Hace mÃ¡s de un aÃ±o"
+            else -> "Hace más de un año"
         }
     } catch (e: Exception) {
         "Desconocido"

@@ -25,15 +25,15 @@ import androidx.compose.ui.unit.sp
 import com.mercora.app.ui.theme.*
 
 /**
- * Pantalla de "PrÃ³ximamente" para la secciÃ³n En Vivo del Explore
- * Accesible desde los accesos rÃ¡pidos del header de ExploreScreen
+ * Pantalla de "Próximamente" para la sección En Vivo del Explore
+ * Accesible desde los accesos rápidos del header de ExploreScreen
  */
 @Composable
 fun LiveComingSoonScreen(
     onBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    // Solo animaciÃ³n del borde giratorio
+    // Solo animación del borde giratorio
     val infiniteTransition = rememberInfiniteTransition(label = "liveComingSoon")
     
     val rotateRing by infiniteTransition.animateFloat(
@@ -72,7 +72,7 @@ fun LiveComingSoonScreen(
                 .statusBarsPadding()
                 .navigationBarsPadding()
         ) {
-            // Top bar con botÃ³n de volver
+            // Top bar con botón de volver
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -111,7 +111,7 @@ fun LiveComingSoonScreen(
                                 .background(Color(0xFFEF4444))
                         )
                         Text(
-                            text = "PRÃ“XIMAMENTE",
+                            text = "PRÓXIMAMENTE",
                             color = Color(0xFFEF4444),
                             fontSize = 11.sp,
                             fontWeight = FontWeight.Bold,
@@ -138,7 +138,7 @@ fun LiveComingSoonScreen(
                     Box(
                         contentAlignment = Alignment.Center
                     ) {
-                        // Anillo exterior rotando (Ãºnica animaciÃ³n)
+                        // Anillo exterior rotando (única animación)
                         Box(
                             modifier = Modifier
                                 .size(140.dp)
@@ -157,7 +157,7 @@ fun LiveComingSoonScreen(
                                 )
                         )
                         
-                        // CÃ­rculo principal (sin animaciÃ³n)
+                        // Círculo principal (sin animación)
                         Box(
                             modifier = Modifier
                                 .size(120.dp)
@@ -183,9 +183,9 @@ fun LiveComingSoonScreen(
                     
                     Spacer(modifier = Modifier.height(40.dp))
                     
-                    // TÃ­tulo
+                    // Título
                     Text(
-                        text = "Â¡Transmisiones en Vivo!",
+                        text = "¡Transmisiones en Vivo!",
                         color = TextPrimary,
                         fontSize = 26.sp,
                         fontWeight = FontWeight.Bold,
@@ -194,9 +194,9 @@ fun LiveComingSoonScreen(
                     
                     Spacer(modifier = Modifier.height(12.dp))
                     
-                    // SubtÃ­tulo
+                    // Subtítulo
                     Text(
-                        text = "Muy pronto podrÃ¡s ver transmisiones en vivo\nde tus vendedores favoritos y descubrir\nproductos en tiempo real.",
+                        text = "Muy pronto podrás ver transmisiones en vivo\nde tus vendedores favoritos y descubrir\nproductos en tiempo real.",
                         color = TextSecondary,
                         fontSize = 15.sp,
                         textAlign = TextAlign.Center,
@@ -205,7 +205,7 @@ fun LiveComingSoonScreen(
                     
                     Spacer(modifier = Modifier.height(32.dp))
                     
-                    // Features que vendrÃ¡n - compactos
+                    // Features que vendrán - compactos
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(12.dp)

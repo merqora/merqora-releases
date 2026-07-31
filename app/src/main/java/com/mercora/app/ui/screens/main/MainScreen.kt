@@ -57,7 +57,7 @@ fun MainScreen(
     var showEditProfile by remember { mutableStateOf(false) }
     var isSavingProfile by remember { mutableStateOf(false) }
     
-    // URIs de imÃ¡genes seleccionadas en EditProfile
+    // URIs de imágenes seleccionadas en EditProfile
     var selectedAvatarUri by remember { mutableStateOf<android.net.Uri?>(null) }
     var selectedBannerUri by remember { mutableStateOf<android.net.Uri?>(null) }
     
@@ -67,7 +67,7 @@ fun MainScreen(
     
     // Estado para chat activo - solo necesitamos el usuario
     var activeChatUser by remember { mutableStateOf<Usuario?>(null) }
-    // ID de conversaciÃ³n del chat activo
+    // ID de conversación del chat activo
     var activeChatConversationId by remember { mutableStateOf<String?>(null) }
     
     // Estado para ocultar navbar cuando se ven ciertos overlays
@@ -92,7 +92,7 @@ fun MainScreen(
     
     // Estado para HashtagDetailScreen
     var showHashtagDetail by remember { mutableStateOf(false) }
-    var selectedHashtagItem by remember { mutableStateOf<com.vinzay.app.data.repository.TrendingTagItem?>(null) }
+    var selectedHashtagItem by remember { mutableStateOf<com.mercora.app.data.repository.TrendingTagItem?>(null) }
     
     // Product preview â€” delegated to centralized overlay via CompositionLocal
     val openPreview = LocalOpenProductPreview.current
@@ -104,11 +104,11 @@ fun MainScreen(
     // Estado para recargar Home al pulsar icono Home estando en Home
     var homeReclickTrigger by remember { mutableIntStateOf(0) }
     
-    // Estado de navegaciÃ³n - navegaciÃ³n simple por estado
+    // Estado de navegación - navegación simple por estado
     var currentRoute by remember { mutableStateOf("home") }
     
     // LazyListState del Home preservado en MainScreen para que sobreviva
-    // a la destrucciÃ³n/recreaciÃ³n de HomeContent al cambiar de tab
+    // a la destrucción/recreación de HomeContent al cambiar de tab
     val homeListState = rememberLazyListState()
     
     Box(
@@ -117,7 +117,7 @@ fun MainScreen(
             .background(HomeBg)
             // systemBarsPadding movido a cada pantalla individual para evitar saltos durante el deslizamiento
     ) {
-        // NavegaciÃ³n simple por estado - sin deslizamiento horizontal
+        // Navegación simple por estado - sin deslizamiento horizontal
         when (currentRoute) {
             "home" -> HomeContent(
                 homeListState = homeListState,
@@ -201,7 +201,7 @@ fun MainScreen(
             )
         }
         
-        // ProfileScreen: SOLO se renderiza cuando estÃ¡ activa
+        // ProfileScreen: SOLO se renderiza cuando está activa
         if (currentRoute == "profile") {
             ProfileScreen(
                 onEditProfile = { showEditProfile = true },
@@ -228,7 +228,7 @@ fun MainScreen(
             )
         }
         
-        // NavBar REMOVIDO de aquÃ­ - ahora estÃ¡ embebido en cada pantalla individual
+        // NavBar REMOVIDO de aquí - ahora está embebido en cada pantalla individual
         // Esto evita el salto visual al deslizar hacia/desde Publish
         
         // Modal de Editar Perfil - ocupa toda la pantalla sin navbar
@@ -283,7 +283,7 @@ fun MainScreen(
                                     showEditProfile = false
                                 }
                             } catch (e: Exception) {
-                                android.util.Log.e("MainScreen", "ExcepciÃ³n: ${e.message}", e)
+                                android.util.Log.e("MainScreen", "Excepción: ${e.message}", e)
                                 isSavingProfile = false
                             }
                         }
@@ -313,11 +313,14 @@ fun MainScreen(
         
         OptimizedNotificationsDrawer(
             isVisible = showNotificationsDrawer,
-            onDismiss = { showNotificationsDrawer = false }
+            onDismiss = { showNotificationsDrawer = false },
+            onNavigateToProfile = { userId ->
+                navController.navigate(Screen.Profile.createRoute(userId))
+            }
         )
     }
     
-    // Chat Screen con animaciÃ³n de slide fluido hacia la derecha
+    // Chat Screen con animación de slide fluido hacia la derecha
     val chatUser = activeChatUser
     val chatOffsetX = remember { Animatable(if (chatUser != null) 0f else 1f) }
     
@@ -342,7 +345,7 @@ fun MainScreen(
                 .background(HomeBg)
                 .systemBarsPadding()
         ) {
-            // Mantener referencia al usuario actual para evitar null durante animaciÃ³n
+            // Mantener referencia al usuario actual para evitar null durante animación
             val currentChatUser = activeChatUser ?: chatUser
             currentChatUser?.let { user ->
                 ChatScreen(
@@ -353,7 +356,7 @@ fun MainScreen(
                         activeChatConversationId = null
                     },
                     onOpenChatList = {
-                        // Solo cerrar el chat - el drawer ya estÃ¡ visible debajo
+                        // Solo cerrar el chat - el drawer ya está visible debajo
                         activeChatUser = null
                         activeChatConversationId = null
                     },
@@ -412,7 +415,7 @@ fun MainScreen(
         }
     }
     
-    // StoriesViewer a nivel raÃ­z - FUERA del Box con systemBarsPadding para ocupar toda la pantalla
+    // StoriesViewer a nivel raíz - FUERA del Box con systemBarsPadding para ocupar toda la pantalla
     if (showStoriesViewerFullscreen && storiesViewerData.isNotEmpty()) {
         StoriesViewer(
             userStories = storiesViewerData,
@@ -437,16 +440,16 @@ fun MainScreen(
             onReply = { storyId, message ->
                 // Enviar respuesta de story al chat del usuario
                 scope.launch {
-                    // Buscar a quÃ© usuario pertenece esta story
+                    // Buscar a qué usuario pertenece esta story
                     val storyOwner = storiesViewerData.flatMap { it.stories }
                         .find { it.id == storyId }
                     
                     storyOwner?.let { story ->
-                        val conversationId = com.vinzay.app.data.repository.ChatRepository.getOrCreateConversation(story.userId)
+                        val conversationId = com.mercora.app.data.repository.ChatRepository.getOrCreateConversation(story.userId)
                         if (conversationId != null) {
                             // Formato profesional estilo Instagram
-                            val storyReplyMessage = "ðŸ“· RespondiÃ³ a tu historia\n\n\"$message\""
-                            com.vinzay.app.data.repository.ChatRepository.sendMessage(conversationId, storyReplyMessage)
+                            val storyReplyMessage = "📷 Respondió a tu historia\n\n\"$message\""
+                            com.mercora.app.data.repository.ChatRepository.sendMessage(conversationId, storyReplyMessage)
                             android.widget.Toast.makeText(context, "Mensaje enviado", android.widget.Toast.LENGTH_SHORT).show()
                         }
                     }
@@ -470,7 +473,7 @@ fun MainScreen(
                 onTrendClick = { trendItem ->
                     // Navigate to videos section with this specific rend
                     showTendenciasScreen = false
-                    com.vinzay.app.data.repository.RendRepository.setPendingRendId(trendItem.id)
+                    com.mercora.app.data.repository.RendRepository.setPendingRendId(trendItem.id)
                     currentRoute = "videos"
                 },
                 onHashtagClick = { hashtagItem ->
@@ -489,7 +492,7 @@ fun MainScreen(
                 .zIndex(150f)
                 .background(HomeBg)
         ) {
-            com.vinzay.app.ui.screens.videos.HashtagDetailScreen(
+            com.mercora.app.ui.screens.videos.HashtagDetailScreen(
                 hashtag = selectedHashtagItem!!,
                 onBack = {
                     showHashtagDetail = false
@@ -499,7 +502,7 @@ fun MainScreen(
                     showHashtagDetail = false
                     selectedHashtagItem = null
                     showTendenciasScreen = false
-                    com.vinzay.app.data.repository.RendRepository.setPendingRendId(trendItem.id)
+                    com.mercora.app.data.repository.RendRepository.setPendingRendId(trendItem.id)
                     currentRoute = "videos"
                 }
             )
@@ -566,7 +569,7 @@ private fun PlaceholderScreen(title: String, emoji: String) {
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = "PrÃ³ximamente",
+                text = "Próximamente",
                 fontSize = 14.sp,
                 color = TextMuted
             )

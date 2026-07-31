@@ -1,5 +1,5 @@
 /**
- * Rendly Media Optimizer - C++ Native Engine
+ * Mercora Media Optimizer - C++ Native Engine
  * 
  * High-performance image optimization via JNI:
  * - Lanczos3 resampling (superior quality vs bilinear)
@@ -17,7 +17,7 @@
 #include <cstdint>
 #include <vector>
 
-#define LOG_TAG "RendlyMediaOptimizer"
+#define LOG_TAG "MercoraMediaOptimizer"
 #define LOGI(...) __android_log_print(ANDROID_LOG_INFO, LOG_TAG, __VA_ARGS__)
 #define LOGE(...) __android_log_print(ANDROID_LOG_ERROR, LOG_TAG, __VA_ARGS__)
 
@@ -166,7 +166,7 @@ extern "C" {
  * @return Optimal JPEG quality (minQuality..maxQuality)
  */
 JNIEXPORT jint JNICALL
-Java_com_rendly_app_media_NativeMediaEngine_analyzeAndGetQuality(
+Java_com_mercora_app_media_NativeMediaEngine_analyzeAndGetQuality(
     JNIEnv* env,
     jobject /* this */,
     jobject bitmap,
@@ -223,7 +223,7 @@ Java_com_rendly_app_media_NativeMediaEngine_analyzeAndGetQuality(
  * Returns a new resized Bitmap.
  */
 JNIEXPORT jobject JNICALL
-Java_com_rendly_app_media_NativeMediaEngine_lanczosResize(
+Java_com_mercora_app_media_NativeMediaEngine_lanczosResize(
     JNIEnv* env,
     jobject /* this */,
     jobject srcBitmap,
@@ -345,7 +345,7 @@ Java_com_rendly_app_media_NativeMediaEngine_lanczosResize(
  * Used by Kotlin to make decisions about compression strategy.
  */
 JNIEXPORT jfloat JNICALL
-Java_com_rendly_app_media_NativeMediaEngine_getComplexityScore(
+Java_com_mercora_app_media_NativeMediaEngine_getComplexityScore(
     JNIEnv* env,
     jobject /* this */,
     jobject bitmap
@@ -372,7 +372,7 @@ Java_com_rendly_app_media_NativeMediaEngine_getComplexityScore(
  * Uses Shannon entropy approximation on pixel data.
  */
 JNIEXPORT jlong JNICALL
-Java_com_rendly_app_media_NativeMediaEngine_estimateCompressedSize(
+Java_com_mercora_app_media_NativeMediaEngine_estimateCompressedSize(
     JNIEnv* env,
     jobject /* this */,
     jobject bitmap,

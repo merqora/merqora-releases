@@ -11,6 +11,7 @@ add_library(
     media_optimizer_jni.cpp
     feed_engine.cpp
     feed_engine_jni.cpp
+    scroll_physics.cpp
 )
 
 # Link Android libraries

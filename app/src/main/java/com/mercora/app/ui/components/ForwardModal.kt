@@ -168,7 +168,7 @@ fun ForwardModal(
                         modifier = Modifier.weight(1f)
                     ) { user ->
                         if (user == null) {
-                            // BÃºsqueda de usuarios
+                            // Búsqueda de usuarios
                             UserSearchContent(
                                 searchQuery = searchQuery,
                                 onSearchChange = { searchQuery = it },
@@ -178,7 +178,7 @@ fun ForwardModal(
                                 onUserSelect = { selectedUser = it }
                             )
                         } else {
-                            // Usuario seleccionado - mostrar Ã¡rea de mensaje
+                            // Usuario seleccionado - mostrar área de mensaje
                             SelectedUserContent(
                                 user = user,
                                 showSuccess = showSuccess
@@ -246,7 +246,7 @@ private fun PostPreviewCard(post: Post) {
             
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = post.producto.titulo.ifEmpty { "Sin tÃ­tulo" },
+                    text = post.producto.titulo.ifEmpty { "Sin título" },
                     fontSize = 14.sp,
                     fontWeight = FontWeight.SemiBold,
                     color = TextPrimary,
@@ -281,7 +281,7 @@ private fun UserSearchContent(
     onUserSelect: (Usuario) -> Unit
 ) {
     Column {
-        // Campo de bÃºsqueda
+        // Campo de búsqueda
         Surface(
             modifier = Modifier
                 .fillMaxWidth()
@@ -440,7 +440,7 @@ private fun UserSelectItem(
                 )
             }
             
-            // Indicador de selecciÃ³n
+            // Indicador de selección
             Icon(
                 imageVector = Icons.Default.ChevronRight,
                 contentDescription = null,
@@ -518,7 +518,7 @@ private fun SelectedUserContent(
                     )
                     Spacer(modifier = Modifier.width(12.dp))
                     Text(
-                        text = "Â¡Enviado con Ã©xito!",
+                        text = "¡Enviado con éxito!",
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold,
                         color = AccentGreen
@@ -546,7 +546,7 @@ private fun MessageInputBar(
     focusRequester: FocusRequester,
     onSend: () -> Unit
 ) {
-    // Input sin fondo, solo el campo con botÃ³n
+    // Input sin fondo, solo el campo con botón
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -593,7 +593,7 @@ private fun MessageInputBar(
             )
         }
         
-        // BotÃ³n de enviar centrado
+        // Botón de enviar centrado
         IconButton(
             onClick = onSend,
             enabled = !isSending,

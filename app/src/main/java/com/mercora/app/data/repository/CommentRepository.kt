@@ -112,17 +112,17 @@ object CommentRepository {
     private var cachedUserAvatar: String? = null
     
     private suspend fun ensureCurrentUserData(passedName: String?, passedAvatar: String?): Pair<String, String?> {
-        // Si ya tenemos datos vÃ¡lidos del caller, usarlos
-        if (!passedName.isNullOrBlank() && passedName != "Usuario" && passedName != "TÃº") {
+        // Si ya tenemos datos válidos del caller, usarlos
+        if (!passedName.isNullOrBlank() && passedName != "Usuario" && passedName != "Tú") {
             cachedUserName = passedName
             cachedUserAvatar = passedAvatar
             return Pair(passedName, passedAvatar)
         }
-        // Si tenemos cache vÃ¡lido, usarlo
+        // Si tenemos cache válido, usarlo
         if (!cachedUserName.isNullOrBlank()) {
             return Pair(cachedUserName!!, cachedUserAvatar)
         }
-        // Fetch desde DB como Ãºltimo recurso
+        // Fetch desde DB como último recurso
         try {
             val userId = getCurrentUserId() ?: return Pair(passedName ?: "Usuario", passedAvatar)
             val user = SupabaseClient.database
@@ -148,7 +148,7 @@ object CommentRepository {
             currentPostId = postId
             currentIsRend = isRend
             
-            // Usar tabla correcta segÃºn si es Rend o Post
+            // Usar tabla correcta según si es Rend o Post
             val tableName = if (isRend) "rend_comments" else "comments"
             val idColumn = if (isRend) "rend_id" else "post_id"
             
@@ -203,7 +203,7 @@ object CommentRepository {
                 )
             }
             
-            // Construir Ã¡rbol: agrupar respuestas bajo sus padres
+            // Construir árbol: agrupar respuestas bajo sus padres
             _comments.value = buildCommentTree(allCommentsWithUser)
             
         } catch (e: Exception) {
@@ -329,7 +329,7 @@ object CommentRepository {
                 Log.e(TAG, "Error cargando comentarios de rends: ${e.message}")
             }
             
-            // Ordenar todos los comentarios por fecha (mÃ¡s recientes primero)
+            // Ordenar todos los comentarios por fecha (más recientes primero)
             val sortedComments = allComments.sortedByDescending { it.createdAt }
             
             Log.d(TAG, "Total comentarios combinados: ${sortedComments.size}")
@@ -355,7 +355,7 @@ object CommentRepository {
             
             val commentId = UUID.randomUUID().toString()
             
-            // Usar tabla y columna correcta segÃºn si es Rend o Post
+            // Usar tabla y columna correcta según si es Rend o Post
             val tableName = if (isRend) "rend_comments" else "comments"
             val idColumn = if (isRend) "rend_id" else "post_id"
             
@@ -376,7 +376,7 @@ object CommentRepository {
             
             Log.d(TAG, "Comentario agregado exitosamente: $commentId")
             
-            // El trigger de Supabase se encarga de incrementar reviews_count automÃ¡ticamente
+            // El trigger de Supabase se encarga de incrementar reviews_count automáticamente
             
             // Usar directamente el avatar y username pasados desde la UI
             val localComment = CommentWithUser(
@@ -420,7 +420,7 @@ object CommentRepository {
                 )
                 _comments.value = currentComments
                 
-                // Usar tabla correcta segÃºn contexto actual
+                // Usar tabla correcta según contexto actual
                 val tableName = if (currentIsRend) "rend_comments" else "comments"
                 SupabaseClient.database
                     .from(tableName)
@@ -431,7 +431,7 @@ object CommentRepository {
         } catch (e: Exception) {
             Log.e(TAG, "Error likeando comentario: ${e.message}", e)
         }
-        Unit // Retornar Unit explÃ­citamente
+        Unit // Retornar Unit explícitamente
     }
     
     fun clearComments() {
@@ -451,7 +451,7 @@ object CommentRepository {
     
     /**
      * Obtiene el product_id de un Post dado su ID.
-     * Ãštil cuando un Rend tiene product_link apuntando a un Post.
+     * Útil cuando un Rend tiene product_link apuntando a un Post.
      */
     suspend fun getProductIdFromPostId(postId: String): String? = withContext(Dispatchers.IO) {
         try {
@@ -463,7 +463,7 @@ object CommentRepository {
                 }
                 .decodeSingleOrNull<ProductIdResponse>()
             
-            Log.d(TAG, "ðŸ“¦ product_id encontrado: ${result?.productId}")
+            Log.d(TAG, "📦 product_id encontrado: ${result?.productId}")
             result?.productId
         } catch (e: Exception) {
             Log.e(TAG, "Error obteniendo product_id: ${e.message}", e)
@@ -484,7 +484,7 @@ object CommentRepository {
                 }
                 .decodeSingleOrNull<ProductIdResponse>()
             
-            Log.d(TAG, "ðŸ“¦ product_id de rend encontrado: ${result?.productId}")
+            Log.d(TAG, "📦 product_id de rend encontrado: ${result?.productId}")
             result?.productId
         } catch (e: Exception) {
             Log.e(TAG, "Error obteniendo product_id de rend: ${e.message}", e)
@@ -501,7 +501,7 @@ object CommentRepository {
             _isLoading.value = true
             currentProductId = productId
             
-            Log.d(TAG, "ðŸ“¦ Cargando reviews para product_id: $productId")
+            Log.d(TAG, "📦 Cargando reviews para product_id: $productId")
             
             val reviews = SupabaseClient.database
                 .from("product_reviews")
@@ -511,7 +511,7 @@ object CommentRepository {
                 .decodeList<ProductReviewDB>()
                 .sortedByDescending { it.createdAt }
             
-            Log.d(TAG, "ðŸ“¦ Reviews encontradas: ${reviews.size}")
+            Log.d(TAG, "📦 Reviews encontradas: ${reviews.size}")
             
             // Obtener usuarios
             val userIds = reviews.map { it.userId }.distinct()
@@ -549,9 +549,9 @@ object CommentRepository {
                 )
             }
             
-            // Construir Ã¡rbol de comentarios con respuestas anidadas
+            // Construir árbol de comentarios con respuestas anidadas
             _comments.value = buildCommentTree(commentsWithUser)
-            Log.d(TAG, "âœ… Reviews cargadas: ${commentsWithUser.size} (${_comments.value.size} raÃ­z)")
+            Log.d(TAG, "âœ… Reviews cargadas: ${commentsWithUser.size} (${_comments.value.size} raíz)")
             
         } catch (e: Exception) {
             Log.e(TAG, "Error cargando product reviews: ${e.message}", e)
@@ -600,7 +600,7 @@ object CommentRepository {
             
             Log.d(TAG, "âœ… Review agregada exitosamente: $reviewId (user=$resolvedName)")
             
-            // El trigger de Supabase se encarga de incrementar reviews_count automÃ¡ticamente
+            // El trigger de Supabase se encarga de incrementar reviews_count automáticamente
             
             // Agregar localmente con datos de usuario resueltos
             // Usar ProfileRepository como fallback para isVerified (evita race condition)
@@ -639,7 +639,7 @@ object CommentRepository {
             val index = currentComments.indexOfFirst { it.id == reviewId }
             
             if (index >= 0) {
-                // Like en comentario raÃ­z
+                // Like en comentario raíz
                 val comment = currentComments[index]
                 val newLikes = if (comment.isLiked) comment.likes - 1 else comment.likes + 1
                 currentComments[index] = comment.copy(
@@ -697,7 +697,7 @@ object CommentRepository {
                     filter { eq("id", reviewId) }
                 }
             
-            // Eliminar localmente - buscar en raÃ­z y en respuestas
+            // Eliminar localmente - buscar en raíz y en respuestas
             val currentComments = _comments.value.toMutableList()
             val rootIndex = currentComments.indexOfFirst { it.id == reviewId }
             if (rootIndex >= 0) {
@@ -735,8 +735,8 @@ object CommentRepository {
     // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
     
     /**
-     * Construye un Ã¡rbol de comentarios agrupando respuestas bajo sus padres.
-     * Los comentarios raÃ­z (parentId == null) se muestran como principales,
+     * Construye un árbol de comentarios agrupando respuestas bajo sus padres.
+     * Los comentarios raíz (parentId == null) se muestran como principales,
      * y sus respuestas se anidan dentro del campo `replies`.
      */
     private fun buildCommentTree(allComments: List<CommentWithUser>): List<CommentWithUser> {
@@ -784,7 +784,7 @@ object CommentRepository {
                 put("parent_id", parentId)
             }
             
-            Log.d(TAG, "ðŸ’¬ Insertando respuesta en product_reviews: parent=$parentId")
+            Log.d(TAG, "💬 Insertando respuesta en product_reviews: parent=$parentId")
             
             SupabaseClient.database
                 .from("product_reviews")

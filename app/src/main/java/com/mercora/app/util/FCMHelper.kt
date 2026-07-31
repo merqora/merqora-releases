@@ -11,6 +11,8 @@ import androidx.core.content.ContextCompat
 import com.google.firebase.messaging.FirebaseMessaging
 import com.mercora.app.data.remote.SupabaseClient
 import kotlinx.coroutines.tasks.await
+import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.put
 
 /**
  * -------------------------------------------------------------------------------
@@ -21,7 +23,7 @@ import kotlinx.coroutines.tasks.await
 object FCMHelper {
     
     private const val TAG = "FCMHelper"
-    private const val PREFS_NAME = "vinzay_fcm"
+    private const val PREFS_NAME = "mercora_fcm"
     private const val KEY_PENDING_TOKEN = "pending_fcm_token"
     
     /**
@@ -104,7 +106,9 @@ object FCMHelper {
             // Marcar token como inactivo en Supabase
             SupabaseClient.database
                 .from("fcm_tokens")
-                .update(mapOf("is_active" to false)) {
+                .update(buildJsonObject {
+                    put("is_active", false)
+                }) {
                     filter {
                         eq("token", token)
                     }
@@ -197,14 +201,14 @@ object FCMHelper {
             
             SupabaseClient.database
                 .from("fcm_tokens")
-                .upsert(mapOf(
-                    "user_id" to userId,
-                    "token" to token,
-                    "device_info" to deviceInfo,
-                    "platform" to "android",
-                    "app_version" to getAppVersion(context),
-                    "is_active" to true
-                ))
+                .upsert(buildJsonObject {
+                    put("user_id", userId)
+                    put("token", token)
+                    put("device_info", deviceInfo)
+                    put("platform", "android")
+                    put("app_version", getAppVersion(context))
+                    put("is_active", true)
+                })
             
             Log.d(TAG, "? Token FCM guardado en Supabase")
         } catch (e: Exception) {

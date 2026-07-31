@@ -58,8 +58,8 @@ fun TermsAndConditionsScreen(
             ) {
                 // Header
                 SettingsScreenHeader(
-                    title = "tÃ©rminos y Condiciones",
-                    subtitle = "Ãºltima actualizaciÃ³n: Enero 2026",
+                    title = "términos y Condiciones",
+                    subtitle = "última actualización: Enero 2026",
                     icon = Icons.Outlined.Description,
                     iconColor = Color(0xFF444444),
                     onBack = onDismiss
@@ -99,7 +99,7 @@ fun TermsAndConditionsScreen(
                                 )
                                 Spacer(modifier = Modifier.height(4.dp))
                                 Text(
-                                    text = "Merqora estÃ¡ actualmente en fase de lanzamiento. Estos TÃ©rminos pueden actualizarse a medida que la plataforma evolucione y se incorporen nuevas funcionalidades.",
+                                    text = "Mercora está actualmente en fase de lanzamiento. Estos Términos pueden actualizarse a medida que la plataforma evolucione y se incorporen nuevas funcionalidades.",
                                     fontSize = 13.sp,
                                     color = TextSecondary,
                                     lineHeight = 18.sp
@@ -110,21 +110,21 @@ fun TermsAndConditionsScreen(
                     
                     Spacer(modifier = Modifier.height(24.dp))
                     
-                    // 1. QUÃ‰ ES Merqora
+                    // 1. QUÉ ES Mercora
                     TermsSection(
                         number = "1",
-                        title = "Â¿QuÃ© es Merqora?",
+                        title = "¿Qué es Mercora?",
                         icon = Icons.Outlined.Store,
                         iconColor = Color(0xFF1565A0)
                     ) {
                         TermsParagraph(
-                            text = "Merqora es una plataforma de comercio social que conecta a personas que desean comprar y vender productos. Actualmente operamos Ãºnicamente en Uruguay."
+                            text = "Mercora es una plataforma de comercio social que conecta a personas que desean comprar y vender productos. Actualmente operamos únicamente en Uruguay."
                         )
                         TermsParagraph(
-                            text = "Merqora actÃºa exclusivamente como intermediario. Esto significa que facilitamos el contacto entre usuarios, pero no participamos directamente en las transacciones, EnvÃ­os ni acuerdos entre las partes."
+                            text = "Mercora actúa exclusivamente como intermediario. Esto significa que facilitamos el contacto entre usuarios, pero no participamos directamente en las transacciones, Envíos ni acuerdos entre las partes."
                         )
                         TermsParagraph(
-                            text = "En esta etapa, la plataforma ofrece funcionalidades BÃ¡sicas de PublicaciÃ³n, mensajerÃ­a y descubrimiento de productos. Nuevas caracterÃ­sticas se irÃ¡n incorporando progresivamente."
+                            text = "En esta etapa, la plataforma ofrece funcionalidades Básicas de Publicación, mensajería y descubrimiento de productos. Nuevas características se irán incorporando progresivamente."
                         )
                     }
                     
@@ -136,13 +136,13 @@ fun TermsAndConditionsScreen(
                         iconColor = Color(0xFF2E8B57)
                     ) {
                         TermsParagraph(
-                            text = "Para usar Merqora debes tener al menos 18 AÃ±os. Al registrarte, te comprometes a proporcionar InformaciÃ³n veraz y a mantenerla actualizada."
+                            text = "Para usar Mercora debes tener al menos 18 Años. Al registrarte, te comprometes a proporcionar Información veraz y a mantenerla actualizada."
                         )
                         TermsParagraph(
-                            text = "Eres responsable de tu cuenta y de todo lo que ocurra en ella. MantenÃ© tu ContraseÃ±a segura y no la compartas con nadie."
+                            text = "Eres responsable de tu cuenta y de todo lo que ocurra en ella. Mantené tu Contraseña segura y no la compartas con nadie."
                         )
                         TermsParagraph(
-                            text = "Podemos suspender o eliminar cuentas que incumplan estos TÃ©rminos, realicen actividades fraudulentas o hagan un uso indebido de la plataforma."
+                            text = "Podemos suspender o eliminar cuentas que incumplan estos Términos, realicen actividades fraudulentas o hagan un uso indebido de la plataforma."
                         )
                     }
                     
@@ -154,11 +154,11 @@ fun TermsAndConditionsScreen(
                         iconColor = Color(0xFFFF6B35)
                     ) {
                         TermsParagraph(
-                            text = "Al usar Merqora, te comprometÃ©s a hacerlo de manera responsable y legal."
+                            text = "Al usar Mercora, te comprometés a hacerlo de manera responsable y legal."
                         )
                         
                         Text(
-                            text = "No estÃ¡ permitido:",
+                            text = "No está permitido:",
                             fontSize = 13.sp,
                             fontWeight = FontWeight.SemiBold,
                             color = TextPrimary,
@@ -166,11 +166,11 @@ fun TermsAndConditionsScreen(
                         )
                         
                         ProhibitedItem("Publicar productos ilegales, falsificados o robados")
-                        ProhibitedItem("Realizar estafas o engaÃ±ar a otros usuarios")
+                        ProhibitedItem("Realizar estafas o engañar a otros usuarios")
                         ProhibitedItem("Acosar, amenazar o molestar a otras personas")
                         ProhibitedItem("Publicar contenido ofensivo, violento u obsceno")
                         ProhibitedItem("Crear cuentas falsas o hacerse pasar por otro")
-                        ProhibitedItem("Intentar daÃ±ar o vulnerar la seguridad de la plataforma")
+                        ProhibitedItem("Intentar dañar o vulnerar la seguridad de la plataforma")
                     }
                     
                     // 4. TRANSACCIONES ENTRE USUARIOS
@@ -181,16 +181,16 @@ fun TermsAndConditionsScreen(
                         iconColor = Color(0xFFFF6B35)
                     ) {
                         TermsParagraph(
-                            text = "Las transacciones en Vinzay se realizan directamente entre usuarios. Merqora no participa en los acuerdos de precio, pago, EnvÃ­o ni entrega."
+                            text = "Las transacciones en Mercora se realizan directamente entre usuarios. Mercora no participa en los acuerdos de precio, pago, Envío ni entrega."
                         )
                         TermsParagraph(
                             text = "Como vendedor, sos responsable de la veracidad de tus publicaciones y de cumplir con lo acordado con el comprador."
                         )
                         TermsParagraph(
-                            text = "Como comprador, te recomendamos verificar la InformaciÃ³n del producto y acordar claramente las condiciones antes de concretar una compra."
+                            text = "Como comprador, te recomendamos verificar la Información del producto y acordar claramente las condiciones antes de concretar una compra."
                         )
                         TermsParagraph(
-                            text = "Merqora no garantiza las transacciones, EnvÃ­os, calidad de productos ni el comportamiento de otros usuarios. Cada usuario es responsable de sus propias acciones y decisiones."
+                            text = "Mercora no garantiza las transacciones, Envíos, calidad de productos ni el comportamiento de otros usuarios. Cada usuario es responsable de sus propias acciones y decisiones."
                         )
                     }
                     
@@ -202,13 +202,13 @@ fun TermsAndConditionsScreen(
                         iconColor = Color(0xFF2E8B57)
                     ) {
                         TermsParagraph(
-                            text = "Vos mantenÃ©s la propiedad de todo el contenido que publicÃ¡s (fotos, descripciones, etc.). Al subirlo a Merqora, nos das permiso para mostrarlo en la plataforma."
+                            text = "Vos mantenés la propiedad de todo el contenido que publicás (fotos, descripciones, etc.). Al subirlo a Mercora, nos das permiso para mostrarlo en la plataforma."
                         )
                         TermsParagraph(
                             text = "No publiques contenido que infrinja derechos de terceros o que no tengas derecho a compartir."
                         )
                         TermsParagraph(
-                            text = "Podemos eliminar contenido que viole estos TÃ©rminos o que consideremos inapropiado."
+                            text = "Podemos eliminar contenido que viole estos Términos o que consideremos inapropiado."
                         )
                     }
                     
@@ -220,17 +220,17 @@ fun TermsAndConditionsScreen(
                         iconColor = Color(0xFFEF4444)
                     ) {
                         TermsParagraph(
-                            text = "Merqora se ofrece \"tal cual estÃ¡\" y \"SegÃºn disponibilidad\". Al estar en etapa inicial, pueden existir errores, interrupciones o funcionalidades incompletas."
+                            text = "Mercora se ofrece \"tal cual está\" y \"Según disponibilidad\". Al estar en etapa inicial, pueden existir errores, interrupciones o funcionalidades incompletas."
                         )
                         TermsParagraph(
-                            text = "No nos hacemos responsables por problemas entre usuarios, transacciones fallidas, productos defectuosos, incumplimientos de EnvÃ­o ni cualquier DaÃ±o derivado del uso de la plataforma."
+                            text = "No nos hacemos responsables por problemas entre usuarios, transacciones fallidas, productos defectuosos, incumplimientos de Envío ni cualquier Daño derivado del uso de la plataforma."
                         )
                         TermsParagraph(
-                            text = "No garantizamos resultados EspecÃ­ficos ni la disponibilidad continua del servicio. Haremos nuestro mejor esfuerzo, pero no podemos prometer perfecciÃ³n."
+                            text = "No garantizamos resultados Específicos ni la disponibilidad continua del servicio. Haremos nuestro mejor esfuerzo, pero no podemos prometer perfección."
                         )
                     }
                     
-                    // 7. CAMBIOS Y EVOLuciÃ³n
+                    // 7. CAMBIOS Y EVOLución
                     TermsSection(
                         number = "7",
                         title = "Cambios en la Plataforma",
@@ -238,10 +238,10 @@ fun TermsAndConditionsScreen(
                         iconColor = Color(0xFF6366F1)
                     ) {
                         TermsParagraph(
-                            text = "Como plataforma en desarrollo, Merqora puede cambiar en cualquier momento. Podemos agregar, modificar o eliminar funcionalidades SegÃºn las necesidades del servicio."
+                            text = "Como plataforma en desarrollo, Mercora puede cambiar en cualquier momento. Podemos agregar, modificar o eliminar funcionalidades Según las necesidades del servicio."
                         )
                         TermsParagraph(
-                            text = "Estos TÃ©rminos tambiÃ©n pueden actualizarse. Te notificaremos sobre cambios importantes y el uso continuado de la app implica aceptaciÃ³n de las nuevas condiciones."
+                            text = "Estos Términos también pueden actualizarse. Te notificaremos sobre cambios importantes y el uso continuado de la app implica aceptación de las nuevas condiciones."
                         )
                     }
                     
@@ -253,10 +253,10 @@ fun TermsAndConditionsScreen(
                         iconColor = Color(0xFF444444)
                     ) {
                         TermsParagraph(
-                            text = "Estos TÃ©rminos se rigen por las leyes de la RepÃºblica Oriental del Uruguay."
+                            text = "Estos Términos se rigen por las leyes de la República Oriental del Uruguay."
                         )
                         TermsParagraph(
-                            text = "Cualquier disputa relacionada con el uso de Merqora serÃ¡ resuelta en los tribunales competentes de Uruguay."
+                            text = "Cualquier disputa relacionada con el uso de Mercora será resuelta en los tribunales competentes de Uruguay."
                         )
                     }
                     
@@ -268,7 +268,7 @@ fun TermsAndConditionsScreen(
                         iconColor = Color(0xFF2E8B57)
                     ) {
                         TermsParagraph(
-                            text = "Si tenÃ©s dudas o consultas sobre estos TÃ©rminos, podÃ©s escribirnos a:"
+                            text = "Si tenés dudas o consultas sobre estos Términos, podés escribirnos a:"
                         )
                         
                         Spacer(modifier = Modifier.height(12.dp))
@@ -276,13 +276,13 @@ fun TermsAndConditionsScreen(
                         ContactInfoCard(
                             icon = Icons.Outlined.Email,
                             label = "Email",
-                            value = "soporte@Merqora.app"
+                            value = "soporte@Mercora.app"
                         )
                     }
                     
                     Spacer(modifier = Modifier.height(32.dp))
                     
-                    // Footer con VersiÃ³n
+                    // Footer con Versión
                     Surface(
                         modifier = Modifier.fillMaxWidth(),
                         shape = RoundedCornerShape(12.dp),
@@ -295,14 +295,14 @@ fun TermsAndConditionsScreen(
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
                             Text(
-                                text = "VersiÃ³n 1.0 - Enero 2026",
+                                text = "Versión 1.0 - Enero 2026",
                                 fontSize = 12.sp,
                                 color = TextMuted,
                                 textAlign = TextAlign.Center
                             )
                             Spacer(modifier = Modifier.height(4.dp))
                             Text(
-                                text = "Merqora Â© Uruguay",
+                                text = "Mercora © Uruguay",
                                 fontSize = 11.sp,
                                 color = TextMuted.copy(alpha = 0.7f),
                                 textAlign = TextAlign.Center
@@ -326,12 +326,12 @@ private fun TermsSection(
     content: @Composable ColumnScope.() -> Unit
 ) {
     Column(modifier = Modifier.padding(bottom = 24.dp)) {
-        // Header de SecciÃ³n
+        // Header de Sección
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.padding(bottom = 12.dp)
         ) {
-            // nÃºmero con gradiente
+            // número con gradiente
             Box(
                 modifier = Modifier
                     .size(32.dp)
@@ -369,7 +369,7 @@ private fun TermsSection(
             )
         }
         
-        // Contenido de la SecciÃ³n
+        // Contenido de la Sección
         Surface(
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(14.dp),

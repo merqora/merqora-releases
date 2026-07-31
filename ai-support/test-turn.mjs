@@ -2,7 +2,7 @@
 
 // Try to connect to our TURN server
 connect('turn:192.168.1.16:3479?transport=udp', {
-  username: 'rendly',
+  username: 'mercora',
   password: '***REMOVED***',
   autoRefresh: false,
 }, (err, socket) => {

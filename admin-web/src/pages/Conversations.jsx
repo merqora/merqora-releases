@@ -98,7 +98,7 @@ export default function Conversations() {
       
       if (error) throw error
       
-      // Cargar conteo de mensajes y Ãºltimo mensaje
+      // Cargar conteo de mensajes y último mensaje
       const conversationsWithMeta = await Promise.all(
         (data || []).map(async (conv) => {
           const { data: messages, count } = await supabase
@@ -195,7 +195,7 @@ export default function Conversations() {
             No hay conversaciones
           </h3>
           <p className="text-text-tertiary">
-            Las conversaciones aparecerÃ¡n aquÃ­ cuando los usuarios contacten al soporte
+            Las conversaciones aparecerán aquí cuando los usuarios contacten al soporte
           </p>
         </div>
       )}

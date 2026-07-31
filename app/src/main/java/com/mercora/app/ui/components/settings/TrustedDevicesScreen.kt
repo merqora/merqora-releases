@@ -61,7 +61,7 @@ fun TrustedDevicesScreen(
     
     if (!isVisible && slideOffset == 1f) return
     
-    // Dialog de confirmaciÃ³n para eliminar
+    // Dialog de confirmación para eliminar
     if (deviceToRemove != null) {
         AlertDialog(
             onDismissRequest = { deviceToRemove = null },
@@ -74,7 +74,7 @@ fun TrustedDevicesScreen(
             },
             text = { 
                 Text(
-                    "Â¿estÃ¡s seguro de que quieres eliminar \"${deviceToRemove?.device_name}\" de la lista de dispositivos de confianza?",
+                    "¿estás seguro de que quieres eliminar \"${deviceToRemove?.device_name}\" de la lista de dispositivos de confianza?",
                     color = TextSecondary
                 ) 
             },
@@ -236,7 +236,7 @@ fun TrustedDevicesScreen(
                                     )
                                     Spacer(modifier = Modifier.width(12.dp))
                                     Text(
-                                        text = "Los dispositivos de confianza pueden acceder a tu cuenta sin VerificaciÃ³n adicional. Elimina los que ya no uses para mayor seguridad.",
+                                        text = "Los dispositivos de confianza pueden acceder a tu cuenta sin Verificación adicional. Elimina los que ya no uses para mayor seguridad.",
                                         fontSize = 13.sp,
                                         color = TextSecondary
                                     )
@@ -324,7 +324,7 @@ private fun DeviceItem(
                 Spacer(modifier = Modifier.height(4.dp))
                 
                 Text(
-                    text = "${device.os_version ?: device.device_type} \u00b7 ${device.app_version ?: "vinzay"}",
+                    text = "${device.os_version ?: device.device_type} \u00b7 ${device.app_version ?: "Mercora"}",
                     fontSize = 12.sp,
                     color = TextSecondary
                 )
@@ -399,7 +399,7 @@ private fun formatDate(dateString: String?): String {
         when {
             diffDays == 0L -> "Hoy"
             diffDays == 1L -> "Ayer"
-            diffDays < 7 -> "Hace $diffDays DÃ­as"
+            diffDays < 7 -> "Hace $diffDays Días"
             else -> {
                 val outputFormat = SimpleDateFormat("dd MMM", Locale("es", "ES"))
                 outputFormat.format(date)

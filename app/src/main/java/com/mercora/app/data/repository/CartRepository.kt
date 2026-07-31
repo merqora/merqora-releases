@@ -18,7 +18,7 @@ import com.mercora.app.data.cache.BadgeCountCache
 
 /**
  * Repositorio para manejar el carrito de compras
- * Sincroniza automÃ¡ticamente con Supabase
+ * Sincroniza automáticamente con Supabase
  */
 object CartRepository {
     private const val TAG = "CartRepository"
@@ -190,11 +190,11 @@ object CartRepository {
     }
     
     // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-    // FUNCIONES DE SINCRONIZACIÃ“N CON SUPABASE
+    // FUNCIONES DE SINCRONIZACIÓN CON SUPABASE
     // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
     
     /**
-     * Cargar carrito desde Supabase al iniciar sesiÃ³n
+     * Cargar carrito desde Supabase al iniciar sesión
      */
     suspend fun loadCartFromSupabase() = withContext(Dispatchers.IO) {
         try {
@@ -207,7 +207,7 @@ object CartRepository {
                 .decodeList<CartItemDB>()
             
             if (cartItemsDB.isEmpty()) {
-                Log.d(TAG, "Carrito vacÃ­o en Supabase")
+                Log.d(TAG, "Carrito vacío en Supabase")
                 return@withContext
             }
             
@@ -251,7 +251,7 @@ object CartRepository {
                 return
             }
             
-            Log.d(TAG, "ðŸ“¦ Sincronizando carrito: postId=$postId, userId=$userId, qty=$quantity")
+            Log.d(TAG, "📦 Sincronizando carrito: postId=$postId, userId=$userId, qty=$quantity")
             
             // Primero eliminar si existe (para evitar conflicto de unique constraint)
             try {
@@ -266,7 +266,7 @@ object CartRepository {
                         }
                     }
             } catch (deleteError: Exception) {
-                Log.w(TAG, "Delete previo fallÃ³ (puede ser normal): ${deleteError.message}")
+                Log.w(TAG, "Delete previo falló (puede ser normal): ${deleteError.message}")
             }
             
             // Insertar nuevo item

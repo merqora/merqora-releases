@@ -1,8 +1,8 @@
 {
   "d7bb2ccf17bce8b8": {
     "question_hash": "d7bb2ccf17bce8b8",
-    "question_text": "Hola, como puedo vender en Vinzay?",
-    "response_text": "Para brindarte la mejor asistencia con tu consulta, te voy a conectar con un agente de soporte humano.\n\nUn miembro del equipo Vinzay te atenderá en breve. ¡Gracias por contactarnos! 🙏",
+    "question_text": "Hola, como puedo vender en Mercora?",
+    "response_text": "Para brindarte la mejor asistencia con tu consulta, te voy a conectar con un agente de soporte humano.\n\nUn miembro del equipo Mercora te atenderá en breve. ¡Gracias por contactarnos! 🙏",
     "intent": "sell_how",
     "category": "ventas",
     "confidence_score": 95,
@@ -16,7 +16,7 @@
   "ded156ea85adf401": {
     "question_hash": "ded156ea85adf401",
     "question_text": "Hola, buenas tardes",
-    "response_text": "¡Hola! 👋 Bienvenido al soporte de Vinzay.\n\nSoy el asistente virtual y estoy aquí para ayudarte. Puedo responder preguntas sobre:\n\n• 🛒 **Compras** - Pedidos, rastreo, cancelaciones, devoluciones\n• 💰 **Pagos** - Métodos, reembolsos, billetera\n• 👤 **Cuenta** - Contraseña, verificación, privacidad\n• 📦 **Envíos** - Direcciones, tiempos, problemas\n• 🏪 **Ventas** - Publicar, comisiones, cobros\n• 🔒 **Seguridad** - 2FA, reportes, protección\n• 📱 **App** - Historias, Rends, chat, Lives\n\n¿En qué puedo ayudarte hoy?",
+    "response_text": "¡Hola! 👋 Bienvenido al soporte de Mercora.\n\nSoy el asistente virtual y estoy aquí para ayudarte. Puedo responder preguntas sobre:\n\n• 🛒 **Compras** - Pedidos, rastreo, cancelaciones, devoluciones\n• 💰 **Pagos** - Métodos, reembolsos, billetera\n• 👤 **Cuenta** - Contraseña, verificación, privacidad\n• 📦 **Envíos** - Direcciones, tiempos, problemas\n• 🏪 **Ventas** - Publicar, comisiones, cobros\n• 🔒 **Seguridad** - 2FA, reportes, protección\n• 📱 **App** - Historias, Rends, chat, Lives\n\n¿En qué puedo ayudarte hoy?",
     "intent": "greeting",
     "category": "general",
     "confidence_score": 52,
@@ -30,7 +30,7 @@
   "445371bc33fac414": {
     "question_hash": "445371bc33fac414",
     "question_text": "Cuando llega mi pedido?",
-    "response_text": "Lamento que hayas tenido este problema. Para reportarlo:\n\n1. Ve a **Perfil** → **Historial de pedidos** → selecciona el pedido\n2. Toca **\"Reportar problema\"**\n3. Selecciona el tipo de problema:\n   • Producto dañado\n   • Producto diferente\n   • No llegó\n   • Otro\n4. Adjunta fotos como evidencia\n5. Describe el problema\n\n**Tienes 7 días** desde la entrega para reportar. Vinzay protege tus compras.",
+    "response_text": "Lamento que hayas tenido este problema. Para reportarlo:\n\n1. Ve a **Perfil** → **Historial de pedidos** → selecciona el pedido\n2. Toca **\"Reportar problema\"**\n3. Selecciona el tipo de problema:\n   • Producto dañado\n   • Producto diferente\n   • No llegó\n   • Otro\n4. Adjunta fotos como evidencia\n5. Describe el problema\n\n**Tienes 7 días** desde la entrega para reportar. Mercora protege tus compras.",
     "intent": "purchase_status",
     "category": "compras",
     "confidence_score": 54,
@@ -58,7 +58,7 @@
   "f320c4d1e6054728": {
     "question_hash": "f320c4d1e6054728",
     "question_text": "Que metodos de pago aceptan?",
-    "response_text": "En Vinzay aceptamos:\n\n💳 **Tarjetas de crédito/débito**\n• Visa, Mastercard, American Express\n\n🏦 **Transferencia bancaria**\n• SPEI (México)\n• Transferencia directa\n\n💰 **Billetera Vinzay**\n• Saldo disponible de ventas\n• Recargas\n\n📱 **Otros**\n• PayPal\n• Mercado Pago (en algunos países)\n\nPara agregar un método: **Perfil** → **Métodos de pago** → **Agregar**",
+    "response_text": "En Mercora aceptamos:\n\n💳 **Tarjetas de crédito/débito**\n• Visa, Mastercard, American Express\n\n🏦 **Transferencia bancaria**\n• SPEI (México)\n• Transferencia directa\n\n💰 **Billetera Mercora**\n• Saldo disponible de ventas\n• Recargas\n\n📱 **Otros**\n• PayPal\n• Mercado Pago (en algunos países)\n\nPara agregar un método: **Perfil** → **Métodos de pago** → **Agregar**",
     "intent": "payment_methods",
     "category": "pagos",
     "confidence_score": 65,
@@ -99,8 +99,8 @@
   },
   "9bb6ce5d58b1501c": {
     "question_hash": "9bb6ce5d58b1501c",
-    "question_text": "Hola! Estoy pensando en comprar un iPhone publicado en Vinzay pero me da desconfianza porque el precio es muy bajo. Como se si el vendedor es confiable?",
-    "response_text": "🤔 Puedes verificar la **calificación del vendedor** en su perfil, que se encuentra en la publicación del producto. También puedes leer las **reseñas de otros compradores** para tener una idea de su experiencia con el vendedor. Además, asegúrate de que el vendedor tenga una **ubicación verificada** y que la **descripción del producto** sea detallada y honesta. Si todavía tienes dudas, puedes **contactar con el vendedor** a través del chat de Vinzay para hacer preguntas sobre el producto antes de realizar la compra 📱.",
+    "question_text": "Hola! Estoy pensando en comprar un iPhone publicado en Mercora pero me da desconfianza porque el precio es muy bajo. Como se si el vendedor es confiable?",
+    "response_text": "🤔 Puedes verificar la **calificación del vendedor** en su perfil, que se encuentra en la publicación del producto. También puedes leer las **reseñas de otros compradores** para tener una idea de su experiencia con el vendedor. Además, asegúrate de que el vendedor tenga una **ubicación verificada** y que la **descripción del producto** sea detallada y honesta. Si todavía tienes dudas, puedes **contactar con el vendedor** a través del chat de Mercora para hacer preguntas sobre el producto antes de realizar la compra 📱.",
     "intent": "seller_problem",
     "category": "compras",
     "confidence_score": 90,
@@ -137,6 +137,48 @@
     "use_count": 0,
     "created_at": "2026-07-18T14:49:44.517735",
     "last_used": "2026-07-18T14:49:44.517743",
+    "action_buttons": []
+  },
+  "a512ce37db4c8343": {
+    "question_hash": "a512ce37db4c8343",
+    "question_text": "¿Cómo puedo vender un producto en Mercora?",
+    "response_text": "Para vender en Mercora:\n\n1. **Verifica tu cuenta** (Perfil → Verificación)\n2. Toca el botón **\"+\"** en la barra inferior\n3. Selecciona **\"Publicación\"**\n4. Sube fotos de calidad de tu producto\n5. Completa:\n   • Título descriptivo\n   • Precio\n   • Categoría\n   • Descripción detallada\n   • Opciones de envío\n6. Toca **\"Publicar\"**\n\n💡 **Tips para vender más:**\n• Usa buena iluminación en las fotos\n• Describe medidas y condición\n• Responde rápido a los interesados\n• Precio competitivo\n\n¡Tu producto estará visible inmediatamente!",
+    "intent": "sell_how",
+    "category": "ventas",
+    "confidence_score": 70,
+    "helpful_count": 0,
+    "unhelpful_count": 0,
+    "use_count": 0,
+    "created_at": "2026-07-18T21:26:31.779483",
+    "last_used": "2026-07-18T21:26:31.779495",
+    "action_buttons": []
+  },
+  "e11b5792970a96d4": {
+    "question_hash": "e11b5792970a96d4",
+    "question_text": "¿Cómo funciona el pago de Mercora?",
+    "response_text": "**Pagos** en Mercora son seguros y fáciles 📈. Puedes gestionar tus **Métodos de pago** en **Perfil > Metodos de pago**. También puedes consultar tu **Billetera** en **Perfil > Billetera** para ver tus saldos y movimientos. Si tienes alguna pregunta o inquietud, no dudes en contactarnos por **Soporte 24/7 por chat** 💬.",
+    "intent": "payment_methods",
+    "category": "pagos",
+    "confidence_score": 90,
+    "helpful_count": 0,
+    "unhelpful_count": 0,
+    "use_count": 0,
+    "created_at": "2026-07-18T21:26:41.290664",
+    "last_used": "2026-07-18T21:26:41.290680",
+    "action_buttons": []
+  },
+  "e0faa795ab589746": {
+    "question_hash": "e0faa795ab589746",
+    "question_text": "¿Está protegido el comprador en Mercora?",
+    "response_text": "¡Claro! 🛍️ En Mercora, el comprador está protegido a través de nuestra **Política de Devolución** y **Reembolso**. Si no estás satisfecho con tu compra, puedes solicitar un reembolso dentro de los **7 días** siguientes a la entrega. Además, nuestros tiempos de **Reembolso en tarjeta** son de **5-10 días hábiles**. Si tienes algún problema con tu compra, puedes contactarnos en cualquier momento a través de nuestro **Soporte 24/7 por chat**. 📲",
+    "intent": "purchase_status",
+    "category": "compras",
+    "confidence_score": 90,
+    "helpful_count": 0,
+    "unhelpful_count": 0,
+    "use_count": 0,
+    "created_at": "2026-07-18T21:26:50.391275",
+    "last_used": "2026-07-18T21:26:50.391288",
     "action_buttons": []
   }
 }

@@ -97,7 +97,7 @@ object OffersRepository {
             _isLoading.value = true
             Log.d(TAG, "Loading offers from Supabase...")
 
-            // 1. Cargar campaÃ±as activas
+            // 1. Cargar campañas activas
             val campaignsDB = try {
                 SupabaseClient.database
                     .from("offer_campaigns")
@@ -159,7 +159,7 @@ object OffersRepository {
                 } catch (_: Exception) {}
             }
 
-            // 4. Armar campaÃ±as con productos
+            // 4. Armar campañas con productos
             val campaigns = campaignsDB.map { campaign ->
                 val campaignItems = allOfferItems.filter { it.campaignId == campaign.id }
                 val products = campaignItems.mapNotNull { item ->
@@ -228,7 +228,7 @@ object OffersRepository {
 
     /**
      * Fallback: genera ofertas a partir de los items del ExploreRepository
-     * cuando no hay tabla offer_campaigns o estÃ¡ vacÃ­a.
+     * cuando no hay tabla offer_campaigns o está vacía.
      */
     private fun generateFallbackOffers() {
         val exploreItems = ExploreRepository.exploreItems.value
@@ -242,7 +242,7 @@ object OffersRepository {
             Triple("flash", "Flash Sale", 70),
             Triple("today", "Solo Hoy", 50),
             Triple("week", "Esta Semana", 40),
-            Triple("clearance", "LiquidaciÃ³n", 60)
+            Triple("clearance", "Liquidación", 60)
         )
         val gradients = listOf(
             "#FF6B35" to "#0A3D62",

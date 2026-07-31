@@ -275,8 +275,8 @@ private fun FollowersListContent(
                         Spacer(modifier = Modifier.height(12.dp))
                         Text(
                             text = if (searchQuery.isNotEmpty()) "Sin resultados para \"$searchQuery\""
-                                   else if (selectedTab == FollowersTab.SEGUIDORES) "Sin seguidores aÃºn"
-                                   else "Sin clientes aÃºn",
+                                   else if (selectedTab == FollowersTab.SEGUIDORES) "Sin seguidores aún"
+                                   else "Sin clientes aún",
                             color = TextMuted,
                             fontSize = 14.sp,
                             textAlign = TextAlign.Center

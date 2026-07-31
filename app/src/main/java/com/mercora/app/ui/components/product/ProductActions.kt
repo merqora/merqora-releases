@@ -304,7 +304,7 @@ fun ProductActionButtons(
                 )
                 Spacer(modifier = Modifier.width(10.dp))
                 Text(
-                    text = "Editar publicaciÃ³n",
+                    text = "Editar publicación",
                     fontWeight = FontWeight.Bold,
                     fontSize = 16.sp,
                     color = Color.White
@@ -357,7 +357,7 @@ fun ProductActionButtons(
                 ) {
                     Icon(
                         imageVector = Icons.Outlined.BarChart,
-                        contentDescription = "EstadÃ­sticas",
+                        contentDescription = "Estadísticas",
                         tint = Color(0xFFFF6B35),
                         modifier = Modifier.size(24.dp)
                     )

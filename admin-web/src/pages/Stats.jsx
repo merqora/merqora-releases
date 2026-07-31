@@ -74,7 +74,7 @@ export default function Stats() {
   
   async function loadStats() {
     try {
-      // Cargar estadÃ­sticas diarias
+      // Cargar estadísticas diarias
       const { data: daily } = await supabase
         .from('ai_stats_daily')
         .select('*')
@@ -96,7 +96,7 @@ export default function Stats() {
         setStats(totals)
       }
       
-      // Cargar intents mÃ¡s comunes
+      // Cargar intents más comunes
       const { data: messages } = await supabase
         .from('support_messages')
         .select('detected_intent')
@@ -146,8 +146,8 @@ export default function Stats() {
     <div className="space-y-6 fade-in">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-text-primary">EstadÃ­sticas</h1>
-        <p className="text-text-tertiary">MÃ©tricas de rendimiento del sistema de IA</p>
+        <h1 className="text-2xl font-bold text-text-primary">Estadísticas</h1>
+        <p className="text-text-tertiary">Métricas de rendimiento del sistema de IA</p>
       </div>
       
       {/* Main Stats */}
@@ -155,14 +155,14 @@ export default function Stats() {
         <StatCard
           title="Mensajes Totales"
           value={stats.totalMessages.toLocaleString()}
-          subtitle="Ãšltimos 30 dÃ­as"
+          subtitle="Últimos 30 días"
           icon={MessageSquare}
           color="bg-primary"
         />
         <StatCard
           title="Resueltos por IA"
           value={stats.aiResolved.toLocaleString()}
-          subtitle={`${resolutionRate}% tasa de resoluciÃ³n`}
+          subtitle={`${resolutionRate}% tasa de resolución`}
           icon={Bot}
           color="bg-accent-green"
           trend={resolutionRate > 70 ? 5 : -3}
@@ -175,9 +175,9 @@ export default function Stats() {
           color="bg-accent-magenta"
         />
         <StatCard
-          title="SatisfacciÃ³n"
+          title="Satisfacción"
           value={`${satisfactionRate}%`}
-          subtitle={`${stats.helpfulCount} Ãºtiles / ${stats.notHelpfulCount} no Ãºtiles`}
+          subtitle={`${stats.helpfulCount} útiles / ${stats.notHelpfulCount} no útiles`}
           icon={ThumbsUp}
           color="bg-accent-blue"
           trend={satisfactionRate > 80 ? 2 : -1}
@@ -188,7 +188,7 @@ export default function Stats() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Resolution Rate */}
         <div className="bg-mercora-surface rounded-2xl p-6 border border-primary/10">
-          <h3 className="text-lg font-semibold text-text-primary mb-6">Tasa de ResoluciÃ³n</h3>
+          <h3 className="text-lg font-semibold text-text-primary mb-6">Tasa de Resolución</h3>
           
           <div className="flex items-center justify-center mb-6">
             <div className="relative w-40 h-40">
@@ -236,7 +236,7 @@ export default function Stats() {
         
         {/* Top Intents */}
         <div className="bg-mercora-surface rounded-2xl p-6 border border-primary/10">
-          <h3 className="text-lg font-semibold text-text-primary mb-6">Intents MÃ¡s Comunes</h3>
+          <h3 className="text-lg font-semibold text-text-primary mb-6">Intents Más Comunes</h3>
           
           <div className="space-y-4">
             {topIntents.length > 0 ? (
@@ -251,7 +251,7 @@ export default function Stats() {
               ))
             ) : (
               <p className="text-text-tertiary text-center py-8">
-                No hay datos de intents todavÃ­a
+                No hay datos de intents todavía
               </p>
             )}
           </div>
@@ -260,7 +260,7 @@ export default function Stats() {
       
       {/* Performance Metrics */}
       <div className="bg-mercora-surface rounded-2xl p-6 border border-primary/10">
-        <h3 className="text-lg font-semibold text-text-primary mb-6">MÃ©tricas de Rendimiento</h3>
+        <h3 className="text-lg font-semibold text-text-primary mb-6">Métricas de Rendimiento</h3>
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="text-center p-6 bg-mercora-bg rounded-xl">
@@ -272,7 +272,7 @@ export default function Stats() {
           <div className="text-center p-6 bg-mercora-bg rounded-xl">
             <Target className="w-8 h-8 text-primary mx-auto mb-3" />
             <p className="text-2xl font-bold text-text-primary">85%</p>
-            <p className="text-text-tertiary">PrecisiÃ³n promedio</p>
+            <p className="text-text-tertiary">Precisión promedio</p>
           </div>
           
           <div className="text-center p-6 bg-mercora-bg rounded-xl">

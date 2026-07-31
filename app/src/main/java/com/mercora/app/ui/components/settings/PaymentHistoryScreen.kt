@@ -135,7 +135,7 @@ fun PaymentHistoryScreen(
         if (isVisible) {
             isLoading = true
             try {
-                val userId = com.vinzay.app.data.remote.SessionPersistence.getUserId()
+                val userId = com.mercora.app.data.remote.SessionPersistence.getUserId()
                 if (userId != null) {
                     val response = SupabaseClient.database
                         .from("disbursements")
@@ -205,8 +205,8 @@ fun PaymentHistoryScreen(
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             Icon(Icons.Outlined.AccountBalanceWallet, contentDescription = null, tint = TextMuted.copy(alpha = 0.5f), modifier = Modifier.size(48.dp))
                             Spacer(modifier = Modifier.height(12.dp))
-                            Text("Sin pagos aÃºn", fontSize = 16.sp, fontWeight = FontWeight.Medium, color = TextMuted)
-                            Text("Los pagos que recibas aparecerÃ¡n aquÃ­", fontSize = 12.sp, color = TextMuted.copy(alpha = 0.7f))
+                            Text("Sin pagos aún", fontSize = 16.sp, fontWeight = FontWeight.Medium, color = TextMuted)
+                            Text("Los pagos que recibas aparecerán aquí", fontSize = 12.sp, color = TextMuted.copy(alpha = 0.7f))
                         }
                     }
                 } else {
@@ -346,7 +346,7 @@ private fun PayoutCard(payout: PayoutItem) {
                     Text(text = payout.reference, fontSize = 14.sp, fontWeight = FontWeight.Medium, color = TextPrimary, maxLines = 1)
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(text = payout.method, fontSize = 11.sp, color = TextMuted)
-                        Text(text = " Â· ", fontSize = 11.sp, color = TextMuted)
+                        Text(text = " · ", fontSize = 11.sp, color = TextMuted)
                         Text(text = payout.date.substring(0, 10), fontSize = 11.sp, color = TextMuted)
                     }
                 }

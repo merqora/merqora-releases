@@ -97,7 +97,7 @@ fun UserProfileSettingsModal(
                     
                     Spacer(modifier = Modifier.height(20.dp))
                     
-                    // TÃ­tulo
+                    // Título
                     Text(
                         text = "Opciones de @$username",
                         fontSize = 18.sp,
@@ -138,7 +138,7 @@ fun UserProfileSettingsModal(
                     ProfileSettingOption(
                         icon = if (isMuted) Icons.Filled.VolumeOff else Icons.Outlined.VolumeOff,
                         title = if (isMuted) "Dejar de silenciar" else "Silenciar a @$username",
-                        subtitle = if (isMuted) "Volver a ver publicaciones" else "No verÃ¡s sus publicaciones en tu feed",
+                        subtitle = if (isMuted) "Volver a ver publicaciones" else "No verás sus publicaciones en tu feed",
                         iconColor = Color(0xFFFF6B35),
                         onClick = {
                             haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
@@ -149,7 +149,7 @@ fun UserProfileSettingsModal(
                     ProfileSettingOption(
                         icon = if (isBlocked) Icons.Filled.Block else Icons.Outlined.Block,
                         title = if (isBlocked) "Desbloquear a @$username" else "Bloquear a @$username",
-                        subtitle = if (isBlocked) "PodrÃ¡ ver tu perfil de nuevo" else "No podrÃ¡ ver tu perfil ni contactarte",
+                        subtitle = if (isBlocked) "Podrá ver tu perfil de nuevo" else "No podrá ver tu perfil ni contactarte",
                         iconColor = Color(0xFFEF4444),
                         onClick = {
                             haptic.performHapticFeedback(HapticFeedbackType.LongPress)

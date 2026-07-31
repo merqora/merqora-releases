@@ -59,7 +59,7 @@ fun GalleryFilterModal(
     currentFilter: GalleryFilterState,
     albums: List<AlbumOption> = listOf(
         AlbumOption("Recientes", 0, Icons.Outlined.AccessTime),
-        AlbumOption("CÃ¡mara", 0, Icons.Outlined.CameraAlt),
+        AlbumOption("Cámara", 0, Icons.Outlined.CameraAlt),
         AlbumOption("Capturas", 0, Icons.Outlined.Screenshot),
         AlbumOption("Descargas", 0, Icons.Outlined.Download),
         AlbumOption("WhatsApp", 0, Icons.Outlined.Chat)
@@ -122,7 +122,7 @@ fun GalleryFilterModal(
                         
                         // Title
                         Text(
-                            text = "Filtrar galerÃ­a",
+                            text = "Filtrar galería",
                             color = TextPrimary,
                             fontSize = 20.sp,
                             fontWeight = FontWeight.Bold,
@@ -158,7 +158,7 @@ fun GalleryFilterModal(
                                         modifier = Modifier.weight(1f)
                                     )
                                     FilterChipItem(
-                                        label = "ImÃ¡genes",
+                                        label = "Imágenes",
                                         icon = Icons.Outlined.Image,
                                         isSelected = localFilter.filterType == GalleryFilterType.IMAGES_ONLY,
                                         accentColor = AccentPink,
@@ -197,7 +197,7 @@ fun GalleryFilterModal(
                                         horizontalArrangement = Arrangement.spacedBy(12.dp)
                                     ) {
                                         SortOptionChip(
-                                            label = "MÃ¡s recientes",
+                                            label = "Más recientes",
                                             icon = Icons.Outlined.Schedule,
                                             isSelected = localFilter.sortOrder == GallerySortOrder.RECENT_FIRST,
                                             onClick = {
@@ -206,7 +206,7 @@ fun GalleryFilterModal(
                                             modifier = Modifier.weight(1f)
                                         )
                                         SortOptionChip(
-                                            label = "MÃ¡s antiguos",
+                                            label = "Más antiguos",
                                             icon = Icons.Outlined.History,
                                             isSelected = localFilter.sortOrder == GallerySortOrder.OLDEST_FIRST,
                                             onClick = {
@@ -219,7 +219,7 @@ fun GalleryFilterModal(
                                         horizontalArrangement = Arrangement.spacedBy(12.dp)
                                     ) {
                                         SortOptionChip(
-                                            label = "Mayor tamaÃ±o",
+                                            label = "Mayor tamaño",
                                             icon = Icons.Outlined.PhotoSizeSelectLarge,
                                             isSelected = localFilter.sortOrder == GallerySortOrder.LARGEST_FIRST,
                                             onClick = {
@@ -228,7 +228,7 @@ fun GalleryFilterModal(
                                             modifier = Modifier.weight(1f)
                                         )
                                         SortOptionChip(
-                                            label = "Menor tamaÃ±o",
+                                            label = "Menor tamaño",
                                             icon = Icons.Outlined.PhotoSizeSelectSmall,
                                             isSelected = localFilter.sortOrder == GallerySortOrder.SMALLEST_FIRST,
                                             onClick = {
@@ -240,10 +240,10 @@ fun GalleryFilterModal(
                                 }
                             }
                             
-                            // Ãlbumes section
+                            // Álbumes section
                             item {
                                 Spacer(modifier = Modifier.height(16.dp))
-                                FilterSection(title = "Ãlbumes")
+                                FilterSection(title = "Álbumes")
                             }
                             
                             items(albums) { album ->

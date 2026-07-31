@@ -66,7 +66,7 @@ object HighlightRepository {
         onProgress: (Float) -> Unit = {}
     ): Result<Highlight> = withContext(Dispatchers.IO) {
         try {
-            Log.d(TAG, "=== INICIANDO CREACIÃ“N DE HIGHLIGHT ===")
+            Log.d(TAG, "=== INICIANDO CREACIÓN DE HIGHLIGHT ===")
             val userId = getCurrentUserId()
             Log.d(TAG, "User ID: $userId")
             Log.d(TAG, "Title: $title, Category: $category, FrameStyle: $frameStyle")
@@ -79,7 +79,7 @@ object HighlightRepository {
                 val result = CloudflareService.uploadImage(
                     bitmap = coverBitmap,
                     folder = "highlights/$userId",
-                    mediaType = com.vinzay.app.media.MediaOptimizer.MediaType.HIGHLIGHT,
+                    mediaType = com.mercora.app.media.MediaOptimizer.MediaType.HIGHLIGHT,
                     onProgress = { progress -> onProgress(0.2f + progress * 0.6f) }
                 )
                 
@@ -169,7 +169,7 @@ object HighlightRepository {
             Log.d(TAG, "âœ… HIGHLIGHT CREADO COMPLETAMENTE: $highlightId")
             Result.success(highlight)
         } catch (e: Exception) {
-            Log.e(TAG, "âŒ ERROR CRÃTICO AL CREAR HIGHLIGHT", e)
+            Log.e(TAG, "âŒ ERROR CRÍTICO AL CREAR HIGHLIGHT", e)
             Log.e(TAG, "Stack trace:", e)
             Result.failure(e)
         }
@@ -187,13 +187,13 @@ object HighlightRepository {
                 CloudflareService.uploadImage(
                     bitmap = mediaBitmap,
                     folder = "highlights/stories",
-                    mediaType = com.vinzay.app.media.MediaOptimizer.MediaType.HIGHLIGHT
+                    mediaType = com.mercora.app.media.MediaOptimizer.MediaType.HIGHLIGHT
                 ).getOrThrow()
             } else {
                 throw Exception("Se requiere imagen o URL")
             }
             
-            // Obtener posiciÃ³n actual
+            // Obtener posición actual
             val existingStories = SupabaseClient.database
                 .from("highlight_stories")
                 .select {

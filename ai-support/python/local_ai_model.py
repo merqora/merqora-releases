@@ -1,5 +1,5 @@
 """
-Local AI Model - Modelo de IA entrenable para Vinzay
+Local AI Model - Modelo de IA entrenable para Mercora
 
 Sistema de IA local que:
 - Aprende de ejemplos de entrenamiento
@@ -289,7 +289,7 @@ Puedo asistirte con:
 
 class LocalAIModel:
     """
-    Modelo de IA local entrenable para Vinzay
+    Modelo de IA local entrenable para Mercora
     
     Características:
     - Clasificación de intents con Naive Bayes
@@ -321,7 +321,7 @@ class LocalAIModel:
             TrainingExample(
                 query="como publico un producto",
                 intent="sell_publish",
-                response="""Para publicar un producto en Vinzay:
+                response="""Para publicar un producto en Mercora:
 
 1. Toca el botón **"+"** en la barra inferior
 2. Selecciona **"Publicación"**
@@ -414,7 +414,7 @@ Si tienes el número de seguimiento, puedes rastrearlo en la web de la paqueter�
 **Tiempos de reembolso:**
 • Tarjeta: 5-10 días hábiles
 • OXXO: 3-5 días hábiles
-• Billetera Vinzay: Inmediato
+• Billetera Mercora: Inmediato
 
 ⚠️ Tienes 7 días desde la entrega para solicitar devolución.""",
                 keywords=["reembolso", "devolucion", "dinero", "regresar"],
@@ -530,14 +530,14 @@ Si tienes el número de seguimiento, puedes rastrearlo en la web de la paqueter�
             TrainingExample(
                 query="cuanto cobran de comision",
                 intent="sell_commission",
-                response="""**Comisiones de Vinzay:**
+                response="""**Comisiones de Mercora:**
 
 • **Comisión por venta:** 10% del precio de venta
 • **Sin costo de publicación:** Publicar es gratis
 • **Sin mensualidades:** Solo pagas cuando vendes
 
 **Ejemplo:**
-Si vendes algo en $1,000, Vinzay cobra $100 de comisión y tú recibes $900.
+Si vendes algo en $1,000, Mercora cobra $100 de comisión y tú recibes $900.
 
 💡 La comisión cubre:
 • Protección al comprador
@@ -580,7 +580,7 @@ Si pasaron más de 15 días, abriremos una disputa automática.""",
             TrainingExample(
                 query="como verifico mi cuenta",
                 intent="account_verify",
-                response="""Para verificar tu cuenta en Vinzay:
+                response="""Para verificar tu cuenta en Mercora:
 
 1. Ve a **Perfil → Verificación**
 2. Sube tu identificación oficial (INE, pasaporte)
@@ -600,7 +600,7 @@ Si pasaron más de 15 días, abriremos una disputa automática.""",
             TrainingExample(
                 query="como retiro mi dinero",
                 intent="wallet_withdraw",
-                response="""Para retirar dinero de tu Billetera Vinzay:
+                response="""Para retirar dinero de tu Billetera Mercora:
 
 1. Ve a **Perfil → Billetera**
 2. Toca **"Retirar fondos"**
@@ -622,7 +622,7 @@ Si pasaron más de 15 días, abriremos una disputa automática.""",
             TrainingExample(
                 query="como funciona el handshake",
                 intent="handshake_info",
-                response="""El Handshake es el sistema de compra presencial de Vinzay:
+                response="""El Handshake es el sistema de compra presencial de Mercora:
 
 1. Acuerda con el comprador/vendedor por chat
 2. Inicia el Handshake desde el chat (botón +)
@@ -709,7 +709,7 @@ También puedes configurar:
             TrainingExample(
                 query="como hago una oferta",
                 intent="offer_make",
-                response="""Para hacer una oferta en Vinzay:
+                response="""Para hacer una oferta en Mercora:
 
 1. Ve a la publicación del producto
 2. Toca **"Hacer oferta"**
@@ -773,7 +773,7 @@ Si necesitas algo más, no dudes en escribirme. Estoy disponible 24/7.
                 intent="escalation_request",
                 response="""Entiendo que prefieres hablar con una persona. Voy a transferirte con un agente de soporte humano.
 
-Un momento por favor, alguien del equipo de Vinzay se comunicará contigo en breve. 🙏""",
+Un momento por favor, alguien del equipo de Mercora se comunicará contigo en breve. 🙏""",
                 keywords=["humano", "persona", "agente", "transferir"],
                 variations=[
                     "hablar con un humano",

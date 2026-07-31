@@ -15,6 +15,7 @@
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
     
     <!-- Location permissions for GPS -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
@@ -37,7 +38,7 @@
 
     <application
         android:name=".MercoraApplication"
-        android:usesCleartextTraffic="true"
+        android:networkSecurityConfig="@xml/network_security_config"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -68,13 +69,8 @@
                 android:value="androidx.startup"
                 tools:node="remove" />
                 
-            <!-- Custom initializers disabled - adding overhead in debug builds -->
-            <!-- TODO: Re-enable for release builds after signing setup -->
-            <!--
-            <meta-data
-                android:name="com.mercora.app.startup.DeferredInitializer"
-                android:value="androidx.startup" />
-            -->
+            <!-- Custom initializers for release builds -->
+
         </provider>
         
         <!-- Disable Emoji2 auto-init (adds ~50ms) -->
@@ -166,6 +162,11 @@
             </intent-filter>
         </service>
         
+        <!-- Sentry DSN -->
+        <meta-data
+            android:name="io.sentry.dsn"
+            android:value="https://cf9d2a01688263e58b44e36419d224ea@o4511757401915392.ingest.us.sentry.io/4511757409452032" />
+            
         <!-- FCM Default Notification Channel -->
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_channel_id"

@@ -1,5 +1,6 @@
 ﻿package com.mercora.app.ui.screens.live
 
+import android.widget.Toast
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -135,7 +136,7 @@ fun LiveViewerScreen(
         if (text.isEmpty()) return
         interactionManager?.let { mgr ->
             scope.launch {
-                val session = com.vinzay.app.data.remote.SupabaseClient.auth.currentSessionOrNull()
+                val session = com.mercora.app.data.remote.SupabaseClient.auth.currentSessionOrNull()
                 val uid = session?.user?.id ?: "local"
                 val uname = session?.user?.userMetadata?.get("username")?.toString()?.removeSurrounding("\"") ?: "Espectador"
                 mgr.sendComment(uid, uname, text)
@@ -147,7 +148,7 @@ fun LiveViewerScreen(
     fun sendLike() {
         interactionManager?.let { mgr ->
             scope.launch {
-                val session = com.vinzay.app.data.remote.SupabaseClient.auth.currentSessionOrNull()
+                val session = com.mercora.app.data.remote.SupabaseClient.auth.currentSessionOrNull()
                 val uid = session?.user?.id ?: "local"
                 val uname = session?.user?.userMetadata?.get("username")?.toString()?.removeSurrounding("\"") ?: "Espectador"
                 mgr.sendLike(uid, uname)
@@ -163,7 +164,7 @@ fun LiveViewerScreen(
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 CircularProgressIndicator(color = ViewerPink, modifier = Modifier.size(36.dp))
                 Spacer(Modifier.height(14.dp))
-                Text("Cargando transmisiÃ³n...", color = Color.White.copy(alpha = 0.6f), fontSize = 13.sp)
+                Text("Cargando transmisión...", color = Color.White.copy(alpha = 0.6f), fontSize = 13.sp)
             }
         }
         return
@@ -230,7 +231,7 @@ fun LiveViewerScreen(
                             horizontalArrangement = Arrangement.spacedBy(6.dp)
                         ) {
                             Text(
-                                "vinzay",
+                                "Mercora",
                                 fontSize = 15.sp,
                                 fontWeight = FontWeight.ExtraBold,
                                 color = Color.White
@@ -422,7 +423,7 @@ fun LiveViewerScreen(
                         }
                     }
 
-                    // CÃ³digo rÃ¡pido bar
+                    // Código rápido bar
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -434,7 +435,7 @@ fun LiveViewerScreen(
                         horizontalArrangement = Arrangement.spacedBy(6.dp)
                     ) {
                         Text(
-                            "CÃ³digo rÃ¡pido",
+                            "Código rápido",
                             fontSize = 10.sp, color = Color.White.copy(alpha = 0.55f),
                             fontWeight = FontWeight.Medium
                         )
@@ -442,7 +443,7 @@ fun LiveViewerScreen(
                             value = codeInput,
                             onValueChange = { codeInput = it },
                             placeholder = {
-                                Text("ingresÃ¡ cÃ³digo...", color = Color.White.copy(alpha = 0.3f), fontSize = 11.sp)
+                                Text("ingresá código...", color = Color.White.copy(alpha = 0.3f), fontSize = 11.sp)
                             },
                             singleLine = true,
                             textStyle = LocalTextStyle.current.copy(color = Color.White, fontSize = 12.sp),
@@ -461,7 +462,21 @@ fun LiveViewerScreen(
                             modifier = Modifier.clickable(
                                 interactionSource = remember { MutableInteractionSource() },
                                 indication = null
-                            ) { /* TODO: buscar producto por cÃ³digo */ }
+                            ) {
+                                val code = codeInput.trim().lowercase()
+                                if (code.isNotEmpty()) {
+                                    val found = broadcasterPosts.firstOrNull { post ->
+                                        post.id.lowercase() == code ||
+                                        post.title.lowercase().contains(code) ||
+                                        (post.productId?.lowercase() == code)
+                                    }
+                                    if (found != null) {
+                                        Toast.makeText(context, "Producto encontrado: ${found.title}", Toast.LENGTH_SHORT).show()
+                                    } else {
+                                        Toast.makeText(context, "Producto no encontrado", Toast.LENGTH_SHORT).show()
+                                    }
+                                }
+                            }
                         ) {
                             Text(
                                 "Buscar",
@@ -524,7 +539,7 @@ fun LiveViewerScreen(
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Icon(Icons.Default.WifiOff, null, tint = ViewerPink, modifier = Modifier.size(48.dp))
                     Spacer(Modifier.height(16.dp))
-                    Text("Error de conexiÃ³n", color = Color.White, fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                    Text("Error de conexión", color = Color.White, fontSize = 18.sp, fontWeight = FontWeight.Bold)
                     Spacer(Modifier.height(8.dp))
                     Text(
                         (liveKitState as LiveKitState.Error).message,

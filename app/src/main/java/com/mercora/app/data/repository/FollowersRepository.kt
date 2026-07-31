@@ -111,21 +111,21 @@ object FollowersRepository {
     }
     
     /**
-     * Calcula la reputaciÃ³n basada en clientes
+     * Calcula la reputación basada en clientes
      */
     suspend fun getReputation(userId: String): Int = withContext(Dispatchers.IO) {
         try {
             val clientsCount = getClientsCount(userId)
-            // Base 70% + 2% por cada cliente (mÃ¡ximo 100%)
+            // Base 70% + 2% por cada cliente (máximo 100%)
             minOf(100, 70 + (clientsCount * 2))
         } catch (e: Exception) {
-            Log.e(TAG, "Error calculando reputaciÃ³n", e)
-            70 // ReputaciÃ³n base por defecto
+            Log.e(TAG, "Error calculando reputación", e)
+            70 // Reputación base por defecto
         }
     }
     
     /**
-     * Verifica el tipo de relaciÃ³n entre dos usuarios
+     * Verifica el tipo de relación entre dos usuarios
      */
     suspend fun getFollowType(followerId: String, followedId: String): FollowType = withContext(Dispatchers.IO) {
         try {
@@ -147,7 +147,7 @@ object FollowersRepository {
                 Log.d(TAG, "  - follower_id=${rel.followerId}, is_client=${rel.isClient}, is_pending=${rel.isPending}")
             }
             
-            // Buscar la relaciÃ³n especÃ­fica
+            // Buscar la relación específica
             val relation = allRelations.find { it.followerId == followerId }
             
             val result = when {
@@ -158,7 +158,7 @@ object FollowersRepository {
                 else -> FollowType.FOLLOWER
             }
             
-            Log.d(TAG, "âœ“ Resultado: $result (relaciÃ³n encontrada=${relation != null})")
+            Log.d(TAG, "âœ“ Resultado: $result (relación encontrada=${relation != null})")
             if (relation != null) {
                 Log.d(TAG, "  Detalles: is_client=${relation.isClient}, is_pending=${relation.isPending}")
             }
@@ -184,7 +184,7 @@ object FollowersRepository {
                 return@withContext Result.failure(Exception("No puedes seguirte a ti mismo"))
             }
             
-            // Verificar si ya existe la relaciÃ³n
+            // Verificar si ya existe la relación
             val existingRelation = getFollowType(currentUserId, followedId)
             if (existingRelation != FollowType.NONE) {
                 Log.d(TAG, "Ya sigues a este usuario: $existingRelation")
@@ -209,7 +209,7 @@ object FollowersRepository {
             Log.e(TAG, "Error al seguir: ${e.message}", e)
             // Si el error es de duplicado, considerarlo exitoso
             if (e.message?.contains("duplicate") == true || e.message?.contains("unique") == true) {
-                Log.d(TAG, "RelaciÃ³n ya existe, considerando exitoso")
+                Log.d(TAG, "Relación ya existe, considerando exitoso")
                 return@withContext Result.success(Unit)
             }
             Result.failure(e)
@@ -219,7 +219,7 @@ object FollowersRepository {
     }
     
     /**
-     * Solicitar seguir a un usuario con perfil privado (requiere aceptaciÃ³n)
+     * Solicitar seguir a un usuario con perfil privado (requiere aceptación)
      */
     suspend fun requestFollow(followedId: String): Result<Unit> = withContext(Dispatchers.IO) {
         try {
@@ -233,10 +233,10 @@ object FollowersRepository {
 
             Log.d(TAG, "Solicitando seguir a perfil privado: $followedId")
 
-            // Verificar si ya existe la relaciÃ³n
+            // Verificar si ya existe la relación
             val existingRelation = getFollowType(currentUserId, followedId)
             if (existingRelation != FollowType.NONE) {
-                Log.d(TAG, "Ya tienes una relaciÃ³n con este usuario: $existingRelation")
+                Log.d(TAG, "Ya tienes una relación con este usuario: $existingRelation")
                 return@withContext Result.success(Unit)
             }
 
@@ -264,7 +264,7 @@ object FollowersRepository {
     }
 
     /**
-     * Aceptar solicitud de seguimiento (para dueÃ±os de perfiles privados)
+     * Aceptar solicitud de seguimiento (para dueños de perfiles privados)
      * Cambia is_pending a false, convirtiendo al solicitante en seguidor
      */
     suspend fun acceptFollowRequest(followerId: String): Result<Unit> = withContext(Dispatchers.IO) {
@@ -277,7 +277,7 @@ object FollowersRepository {
             Log.d(TAG, "follower_id (quien solicita): $followerId")
             Log.d(TAG, "followed_id (yo): $currentUserId")
 
-            // Buscar la relaciÃ³n especÃ­fica
+            // Buscar la relación específica
             val allRelations = SupabaseClient.database
                 .from("followers")
                 .select {
@@ -291,12 +291,12 @@ object FollowersRepository {
             Log.d(TAG, "Relaciones encontradas: ${allRelations.size}")
             val relation = allRelations.firstOrNull()
             if (relation == null) {
-                Log.e(TAG, "âœ– No existe relaciÃ³n para aceptar")
+                Log.e(TAG, "âœ– No existe relación para aceptar")
                 return@withContext Result.failure(Exception("No existe solicitud pendiente"))
             }
 
             if (relation.isClient || !relation.isPending) {
-                Log.e(TAG, "âœ– La relaciÃ³n no es una solicitud pendiente de seguimiento")
+                Log.e(TAG, "âœ– La relación no es una solicitud pendiente de seguimiento")
                 return@withContext Result.failure(Exception("No hay solicitud pendiente"))
             }
 
@@ -324,7 +324,7 @@ object FollowersRepository {
                 Log.d(TAG, "âœ“ VERIFICADO: is_pending ahora es FALSE")
             } else {
                 Log.e(TAG, "âœ– FALLO: is_pending sigue siendo ${verifyRelation?.isPending}")
-                return@withContext Result.failure(Exception("Update no funcionÃ³ - verificar RLS"))
+                return@withContext Result.failure(Exception("Update no funcionó - verificar RLS"))
             }
 
             Log.d(TAG, "â•â•â• FIN ACEPTAR SEGUIMIENTO â•â•â•")
@@ -338,8 +338,8 @@ object FollowersRepository {
     }
 
     /**
-     * Rechazar solicitud de seguimiento (para dueÃ±os de perfiles privados)
-     * Elimina la relaciÃ³n pendiente
+     * Rechazar solicitud de seguimiento (para dueños de perfiles privados)
+     * Elimina la relación pendiente
      */
     suspend fun rejectFollowRequest(followerId: String): Result<Unit> = withContext(Dispatchers.IO) {
         try {
@@ -349,7 +349,7 @@ object FollowersRepository {
 
             Log.d(TAG, "Rechazando solicitud de seguimiento: $followerId")
 
-            // Eliminar la relaciÃ³n pendiente
+            // Eliminar la relación pendiente
             SupabaseClient.database
                 .from("followers")
                 .delete {
@@ -371,7 +371,7 @@ object FollowersRepository {
     }
 
     /**
-     * Solicitar ser cliente de un usuario (requiere aceptaciÃ³n del vendedor)
+     * Solicitar ser cliente de un usuario (requiere aceptación del vendedor)
      */
     suspend fun requestClient(followedId: String): Result<Unit> = withContext(Dispatchers.IO) {
         try {
@@ -395,7 +395,7 @@ object FollowersRepository {
             }
             
             if (existingRelation == FollowType.NONE) {
-                // Crear nueva relaciÃ³n como solicitud de cliente pendiente
+                // Crear nueva relación como solicitud de cliente pendiente
                 SupabaseClient.database
                     .from("followers")
                     .insert(buildJsonObject {
@@ -405,7 +405,7 @@ object FollowersRepository {
                         put("is_pending", true)
                     })
             } else if (existingRelation == FollowType.FOLLOWER) {
-                // Actualizar relaciÃ³n existente a solicitud de cliente
+                // Actualizar relación existente a solicitud de cliente
                 SupabaseClient.database
                     .from("followers")
                     .update(buildJsonObject {
@@ -442,7 +442,7 @@ object FollowersRepository {
             Log.d(TAG, "follower_id (quien solicita): $followerId")
             Log.d(TAG, "followed_id (yo/vendedor): $currentUserId")
             
-            // Primero obtener el registro especÃ­fico para conseguir su ID
+            // Primero obtener el registro específico para conseguir su ID
             val allRelations = SupabaseClient.database
                 .from("followers")
                 .select {
@@ -460,18 +460,18 @@ object FollowersRepository {
             
             val relation = allRelations.firstOrNull()
             if (relation == null) {
-                Log.e(TAG, "âœ– No existe relaciÃ³n para aceptar")
+                Log.e(TAG, "âœ– No existe relación para aceptar")
                 return@withContext Result.failure(Exception("No existe solicitud pendiente"))
             }
             
             if (!relation.isClient || !relation.isPending) {
-                Log.e(TAG, "âœ– La relaciÃ³n no es una solicitud pendiente de cliente")
+                Log.e(TAG, "âœ– La relación no es una solicitud pendiente de cliente")
                 return@withContext Result.failure(Exception("No hay solicitud pendiente"))
             }
             
             Log.d(TAG, "Actualizando registro con ID: ${relation.id}")
             
-            // Actualizar usando el ID especÃ­fico del registro
+            // Actualizar usando el ID específico del registro
             SupabaseClient.database
                 .from("followers")
                 .update(buildJsonObject {
@@ -482,7 +482,7 @@ object FollowersRepository {
                     }
                 }
             
-            // Verificar que se actualizÃ³ correctamente
+            // Verificar que se actualizó correctamente
             val verifyRelation = SupabaseClient.database
                 .from("followers")
                 .select {
@@ -497,7 +497,7 @@ object FollowersRepository {
                 Log.d(TAG, "âœ“ VERIFICADO: is_pending ahora es FALSE")
             } else {
                 Log.e(TAG, "âœ– FALLO: is_pending sigue siendo ${verifyRelation?.isPending}")
-                return@withContext Result.failure(Exception("Update no funcionÃ³ - verificar RLS"))
+                return@withContext Result.failure(Exception("Update no funcionó - verificar RLS"))
             }
             
             Log.d(TAG, "â•â•â• FIN ACEPTAR CLIENTE â•â•â•")
@@ -736,7 +736,7 @@ object FollowersRepository {
 
     // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
     // REALTIME: Seguimiento de cambios en followers
-    // SuscripciÃ³n directa a la tabla followers para actualizar la UI
+    // Suscripción directa a la tabla followers para actualizar la UI
     // cuando una solicitud de seguimiento es aceptada/rechazada
     // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
@@ -764,7 +764,7 @@ object FollowersRepository {
                 filter = "follower_id=eq.$currentUserId"
             }?.onEach { action ->
                 val followedId = action.record["followed_id"]?.toString() ?: return@onEach
-                Log.d(TAG, "ðŸ”” Follow change detected: follower=$currentUserId followed=$followedId")
+                Log.d(TAG, "🔔 Follow change detected: follower=$currentUserId followed=$followedId")
                 _followChangeTrigger.value = Pair(currentUserId, followedId)
             }?.launchIn(followScope)
 

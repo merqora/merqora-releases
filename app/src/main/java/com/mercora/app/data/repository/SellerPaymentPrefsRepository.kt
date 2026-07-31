@@ -14,9 +14,9 @@ import java.util.concurrent.ConcurrentHashMap
 
 /**
  * Preferencias de medios de pago que un vendedor acepta en sus ventas.
- * - Cache en memoria por vendedor (ConcurrentHashMap) para pintado instantÃ¡neo en ProductPage
+ * - Cache en memoria por vendedor (ConcurrentHashMap) para pintado instantáneo en ProductPage
  * - StateFlow para las prefs propias (reactivo en tiempo real al editarlas)
- * - Upsert atÃ³mico contra Supabase (onConflict user_id)
+ * - Upsert atómico contra Supabase (onConflict user_id)
  */
 object SellerPaymentPrefsRepository {
     private const val TAG = "SellerPaymentPrefs"
@@ -33,17 +33,17 @@ object SellerPaymentPrefsRepository {
         @SerialName("max_installments") val maxInstallments: Int = 12
     )
 
-    /** Defaults cuando el vendedor nunca configurÃ³ sus medios de pago */
+    /** Defaults cuando el vendedor nunca configuró sus medios de pago */
     val DEFAULTS = SellerPaymentPrefs()
 
     // Cache por vendedor: ProductPage pinta al instante en visitas repetidas
     private val sellerCache = ConcurrentHashMap<String, SellerPaymentPrefs>()
 
-    // Prefs del usuario actual, reactivas para la pantalla de configuraciÃ³n
+    // Prefs del usuario actual, reactivas para la pantalla de configuración
     private val _myPrefs = MutableStateFlow<SellerPaymentPrefs?>(null)
     val myPrefs: StateFlow<SellerPaymentPrefs?> = _myPrefs.asStateFlow()
 
-    /** Lectura instantÃ¡nea (sin red) del cache en memoria */
+    /** Lectura instantánea (sin red) del cache en memoria */
     fun peekCached(sellerId: String): SellerPaymentPrefs? = sellerCache[sellerId]
 
     /**

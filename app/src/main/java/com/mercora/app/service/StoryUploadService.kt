@@ -22,8 +22,8 @@ object StoryUploadService {
     
     fun createNotificationChannel(context: Context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val name = "PublicaciÃ³n de Historia"
-            val descriptionText = "Muestra el progreso de publicaciÃ³n de historias"
+            val name = "Publicación de Historia"
+            val descriptionText = "Muestra el progreso de publicación de historias"
             val importance = NotificationManager.IMPORTANCE_LOW
             val channel = NotificationChannel(CHANNEL_ID, name, importance).apply {
                 description = descriptionText
@@ -62,7 +62,7 @@ object StoryUploadService {
             .setContentIntent(pendingIntent)
             .setOnlyAlertOnce(true)
         
-        // Mostrar notificaciÃ³n inicial
+        // Mostrar notificación inicial
         try {
             notificationManager.notify(NOTIFICATION_ID, builder.build())
         } catch (e: SecurityException) {
@@ -116,7 +116,7 @@ object StoryUploadService {
                         80 to "Guardando en servidor...",
                         90 to "Verificando...",
                         95 to "Casi listo...",
-                        100 to "Â¡Completado!"
+                        100 to "¡Completado!"
                     )
                     
                     for ((progress, text) in finalSteps) {
@@ -128,8 +128,8 @@ object StoryUploadService {
                         } catch (e: SecurityException) { }
                     }
                     
-                    builder.setContentTitle("Â¡Historia publicada!")
-                        .setContentText("Tu historia estÃ¡ visible por 24 horas âœ¨")
+                    builder.setContentTitle("¡Historia publicada!")
+                        .setContentText("Tu historia está visible por 24 horas âœ¨")
                         .setProgress(0, 0, false)
                         .setOngoing(false)
                         .setAutoCancel(true)

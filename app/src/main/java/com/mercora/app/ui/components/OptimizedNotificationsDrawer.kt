@@ -96,7 +96,7 @@ private fun formatTimeAgo(isoDate: String): String {
             minutes < 60 -> "Hace ${minutes}m"
             hours < 24 -> "Hace ${hours}h"
             days == 1L -> "Ayer"
-            days < 7 -> "Hace ${days} dÃ­as"
+            days < 7 -> "Hace ${days} días"
             else -> "Hace ${days / 7} sem"
         }
     } catch (e: Exception) {
@@ -129,7 +129,8 @@ private fun getDayGroup(isoDate: String): String {
 fun OptimizedNotificationsDrawer(
     isVisible: Boolean,
     onDismiss: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onNavigateToProfile: (String) -> Unit = {}
 ) {
     val scope = rememberCoroutineScope()
     val offsetX = remember { Animatable(1f, visibilityThreshold = 0.001f) }
@@ -216,7 +217,7 @@ fun OptimizedNotificationsDrawer(
                     color = HomeBg,
                     shadowElevation = 24.dp
                 ) {
-                    NotificationsContent(onClose = onDismiss)
+                    NotificationsContent(onClose = onDismiss, onNavigateToProfile = onNavigateToProfile)
                 }
             }
         }
@@ -226,7 +227,7 @@ fun OptimizedNotificationsDrawer(
 /* -------------------- CONTENIDO -------------------- */
 
 @Composable
-private fun NotificationsContent(onClose: () -> Unit) {
+private fun NotificationsContent(onClose: () -> Unit, onNavigateToProfile: (String) -> Unit = {}) {
     val scope = rememberCoroutineScope()
     val context = androidx.compose.ui.platform.LocalContext.current
     
@@ -246,7 +247,7 @@ private fun NotificationsContent(onClose: () -> Unit) {
         SystemNotificationRepository.refresh()
     }
     
-    // Convertir notificaciones reales a formato de UI con agrupaciÃ³n por dÃ­a
+    // Convertir notificaciones reales a formato de UI con agrupación por día
     val notifications = remember(realNotifications) {
         realNotifications.map { notif ->
             NotificationItem(
@@ -269,18 +270,18 @@ private fun NotificationsContent(onClose: () -> Unit) {
                 username = notif.senderUsername,
                 avatarUrl = notif.senderAvatar,
                 message = when (notif.type) {
-                    NotificationType.LIKE -> "le gustÃ³ tu publicaciÃ³n"
-                    NotificationType.SAVE -> "guardÃ³ tu publicaciÃ³n"
-                    NotificationType.FOLLOW -> "comenzÃ³ a seguirte"
-                    NotificationType.COMMENT -> notif.message ?: "comentÃ³ tu publicaciÃ³n"
-                    NotificationType.MENTION -> "te mencionÃ³"
+                    NotificationType.LIKE -> "le gustó tu publicación"
+                    NotificationType.SAVE -> "guardó tu publicación"
+                    NotificationType.FOLLOW -> "comenzó a seguirte"
+                    NotificationType.COMMENT -> notif.message ?: "comentó tu publicación"
+                    NotificationType.MENTION -> "te mencionó"
                     NotificationType.CLIENT_REQUEST -> "quiere ser tu cliente"
-                    NotificationType.CLIENT_ACCEPTED -> notif.message ?: "te aceptÃ³ como cliente"
-                    NotificationType.CLIENT_REJECTED -> notif.message ?: "no aceptÃ³ tu solicitud"
+                    NotificationType.CLIENT_ACCEPTED -> notif.message ?: "te aceptó como cliente"
+                    NotificationType.CLIENT_REJECTED -> notif.message ?: "no aceptó tu solicitud"
                     NotificationType.CLIENT_PENDING -> notif.message ?: "solicitud pendiente"
                     NotificationType.FOLLOW_REQUEST -> "quiere seguirte"
-                    NotificationType.FOLLOW_ACCEPTED -> notif.message ?: "aceptÃ³ tu solicitud de seguimiento"
-                    NotificationType.FOLLOW_REJECTED -> notif.message ?: "no aceptÃ³ tu solicitud de seguimiento"
+                    NotificationType.FOLLOW_ACCEPTED -> notif.message ?: "aceptó tu solicitud de seguimiento"
+                    NotificationType.FOLLOW_REJECTED -> notif.message ?: "no aceptó tu solicitud de seguimiento"
                     else -> "nueva actividad"
                 },
                 timestamp = formatTimeAgo(notif.createdAt),
@@ -318,7 +319,7 @@ private fun NotificationsContent(onClose: () -> Unit) {
     var isRefreshing by remember { mutableStateOf(false) }
     val listState = rememberLazyListState()
     
-    // Estado para selecciÃ³n mÃºltiple
+    // Estado para selección múltiple
     var isSelectionMode by remember { mutableStateOf(false) }
     var selectedNotifications by remember { mutableStateOf(setOf<String>()) }
     var isDeleting by remember { mutableStateOf(false) }
@@ -355,12 +356,12 @@ private fun NotificationsContent(onClose: () -> Unit) {
         (normalNotifications + systemNotificationItems).sortedByDescending { it.timestamp }
     }
     
-    // Agrupar notificaciones por dÃ­a (normales + sistema)
+    // Agrupar notificaciones por día (normales + sistema)
     val groupedNotifications = remember(allNormalNotifications) {
         allNormalNotifications.groupBy { it.dayGroup }
     }
     
-    // Agrupar solicitudes por dÃ­a
+    // Agrupar solicitudes por día
     val groupedSolicitudes = remember(solicitudesNotifications) {
         solicitudesNotifications.groupBy { it.dayGroup }
     }
@@ -463,7 +464,8 @@ private fun NotificationsContent(onClose: () -> Unit) {
                         selectedNotifications = emptySet()
                     }
                 },
-                isDeleting = isDeleting
+                isDeleting = isDeleting,
+                onNavigateToProfile = onNavigateToProfile
             )
         } else {
         /* ---------- HEADER MEJORADO ---------- */
@@ -473,7 +475,7 @@ private fun NotificationsContent(onClose: () -> Unit) {
             shadowElevation = 2.dp
         ) {
             if (isSelectionMode) {
-                // Header de selecciÃ³n mÃºltiple - compacto y profesional (acciones como iconos)
+                // Header de selección múltiple - compacto y profesional (acciones como iconos)
                 val allSelected = notifications.isNotEmpty() && selectedNotifications.size == notifications.size
                 Row(
                     modifier = Modifier
@@ -481,7 +483,7 @@ private fun NotificationsContent(onClose: () -> Unit) {
                         .padding(start = 6.dp, end = 6.dp, top = 10.dp, bottom = 10.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    // Cerrar selecciÃ³n
+                    // Cerrar selección
                     IconButton(
                         onClick = {
                             isSelectionMode = false
@@ -603,7 +605,7 @@ private fun NotificationsContent(onClose: () -> Unit) {
                         }
                     }
                     
-                    // BotÃ³n de marcar todo como leÃ­do
+                    // Botón de marcar todo como leído
                     IconButton(
                         onClick = { 
                             scope.launch { NotificationRepository.markAllAsRead() }
@@ -615,7 +617,7 @@ private fun NotificationsContent(onClose: () -> Unit) {
                     ) {
                         Icon(
                             imageVector = Icons.Default.Done,
-                            contentDescription = "Marcar como leÃ­do",
+                            contentDescription = "Marcar como leído",
                             tint = AccentPink,
                             modifier = Modifier.size(20.dp)
                         )
@@ -640,7 +642,7 @@ private fun NotificationsContent(onClose: () -> Unit) {
                 )
         )
         
-        /* ---------- BOTÃ“N SOLICITUDES ---------- */
+        /* ---------- BOTÓN SOLICITUDES ---------- */
         if (!isSelectionMode && !showSolicitudesView) {
             Surface(
                 modifier = Modifier
@@ -701,7 +703,7 @@ private fun NotificationsContent(onClose: () -> Unit) {
                 }
             }
             
-            // Divider despuÃ©s del botÃ³n
+            // Divider después del botón
             Divider(
                 modifier = Modifier.padding(horizontal = 16.dp),
                 thickness = 0.5.dp,
@@ -764,7 +766,7 @@ private fun NotificationsContent(onClose: () -> Unit) {
                 }
             }
             if (notifications.isEmpty() && !isLoading) {
-                // Estado vacÃ­o
+                // Estado vacío
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
@@ -800,7 +802,7 @@ private fun NotificationsContent(onClose: () -> Unit) {
                     modifier = Modifier.fillMaxSize(),
                     contentPadding = PaddingValues(vertical = 4.dp)
                 ) {
-                    // Mostrar notificaciones agrupadas por dÃ­a
+                    // Mostrar notificaciones agrupadas por día
                     val dayOrder = listOf("Hoy", "Ayer", "Esta semana", "Este mes", "Anteriores", "Reciente")
                     dayOrder.forEach { dayGroup ->
                         val dayNotifications = groupedNotifications[dayGroup] ?: emptyList()
@@ -936,7 +938,7 @@ private fun NotificationsContent(onClose: () -> Unit) {
                                             }
                                         },
                                         onViewHistory = {
-                                            // TODO: Navigate to user history
+                                            onNavigateToProfile(notification.senderId)
                                         },
                                         onLongPress = {
                                             isSelectionMode = true
@@ -1093,7 +1095,7 @@ private fun NotificationItemView(
                 .padding(horizontal = 20.dp, vertical = 12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Checkbox de selecciÃ³n
+            // Checkbox de selección
             if (isSelectionMode) {
                 Checkbox(
                     checked = isSelected,
@@ -1221,7 +1223,7 @@ private fun NotificationItemView(
                 Spacer(modifier = Modifier.width(8.dp))
             }
             
-            // Indicador de no leÃ­do (puntito)
+            // Indicador de no leído (puntito)
             if (!notification.isRead) {
                 Box(
                     modifier = Modifier
@@ -1273,7 +1275,7 @@ private fun ClientRequestNotificationItem(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // Avatar pequeÃ±o
+                // Avatar pequeño
                 Box(
                     modifier = Modifier
                         .size(40.dp)
@@ -1323,7 +1325,7 @@ private fun ClientRequestNotificationItem(
                         }
                     }
                     Text(
-                        text = "Quiere ser tu cliente â€¢ ${notification.timestamp}",
+                        text = "Quiere ser tu cliente • ${notification.timestamp}",
                         fontSize = 11.sp,
                         color = TextMuted
                     )
@@ -1421,7 +1423,7 @@ private fun ClientRequestNotificationItem(
                 }
             }
             
-            // Checkbox de selecciÃ³n en modo selecciÃ³n
+            // Checkbox de selección en modo selección
             if (isSelectionMode) {
                 Spacer(modifier = Modifier.height(8.dp))
                 Row(
@@ -1441,7 +1443,7 @@ private fun ClientRequestNotificationItem(
         }
     }
     
-    // DiÃ¡logo de rechazo
+    // Diálogo de rechazo
     if (showRejectDialog) {
         AlertDialog(
             onDismissRequest = { showRejectDialog = false },
@@ -1456,7 +1458,7 @@ private fun ClientRequestNotificationItem(
             text = {
                 Column {
                     Text(
-                        "Â¿Por quÃ© rechazas a @${notification.username}? (opcional)",
+                        "¿Por qué rechazas a @${notification.username}? (opcional)",
                         color = TextSecondary,
                         fontSize = 14.sp
                     )
@@ -1549,7 +1551,7 @@ private fun ClientAcceptedNotificationItem(
                 Column(modifier = Modifier.weight(1f)) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(
-                            text = "Â¡Felicidades!",
+                            text = "¡Felicidades!",
                             fontSize = 16.sp,
                             fontWeight = FontWeight.Bold,
                             color = Color(0xFF2E8B57)
@@ -1748,7 +1750,7 @@ private fun ClientRejectedNotificationItem(
                 }
             }
             
-            // Mostrar botÃ³n de motivo solo si hay extraData
+            // Mostrar botón de motivo solo si hay extraData
             if (!notification.extraData.isNullOrBlank()) {
                 Spacer(modifier = Modifier.height(12.dp))
                 
@@ -1772,7 +1774,7 @@ private fun ClientRejectedNotificationItem(
         }
     }
     
-    // DiÃ¡logo con el motivo
+    // Diálogo con el motivo
     if (showReasonDialog && !notification.extraData.isNullOrBlank()) {
         AlertDialog(
             onDismissRequest = { showReasonDialog = false },
@@ -1798,7 +1800,7 @@ private fun ClientRejectedNotificationItem(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = "@${notification.username} indicÃ³:",
+                        text = "@${notification.username} indicó:",
                         color = TextMuted,
                         fontSize = 13.sp
                     )
@@ -1865,7 +1867,7 @@ private fun ClientPendingNotificationItem(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // Pending icon con animaciÃ³n
+                // Pending icon con animación
                 Box(
                     modifier = Modifier
                         .size(50.dp)
@@ -1950,7 +1952,7 @@ private fun ClientPendingNotificationItem(
                     )
                     Spacer(modifier = Modifier.width(10.dp))
                     Text(
-                        text = "El vendedor revisarÃ¡ tu solicitud y te notificarÃ¡ cuando sea aceptada.",
+                        text = "El vendedor revisará tu solicitud y te notificará cuando sea aceptada.",
                         fontSize = 12.sp,
                         color = TextSecondary,
                         lineHeight = 16.sp
@@ -2045,7 +2047,7 @@ private fun FollowRequestNotificationItem(
                         }
                     }
                     Text(
-                        text = "Quiere seguirte â€¢ ${notification.timestamp}",
+                        text = "Quiere seguirte • ${notification.timestamp}",
                         fontSize = 11.sp,
                         color = TextMuted
                     )
@@ -2324,7 +2326,8 @@ private fun SolicitudesView(
     onMarkAsRead: (String) -> Unit,
     onCancelSelection: () -> Unit,
     onDeleteSelected: () -> Unit,
-    isDeleting: Boolean
+    isDeleting: Boolean,
+    onNavigateToProfile: (String) -> Unit = {}
 ) {
     Column(modifier = Modifier.fillMaxSize()) {
         // Header de solicitudes
@@ -2334,7 +2337,7 @@ private fun SolicitudesView(
             shadowElevation = 2.dp
         ) {
             if (isSelectionMode) {
-                // Header de selecciÃ³n mÃºltiple
+                // Header de selección múltiple
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -2490,7 +2493,7 @@ private fun SolicitudesView(
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
-                        text = "Las solicitudes de seguidores y clientes aparecerÃ¡n aquÃ­",
+                        text = "Las solicitudes de seguidores y clientes aparecerán aquí",
                         fontSize = 14.sp,
                         color = TextMuted,
                         textAlign = TextAlign.Center
@@ -2521,7 +2524,7 @@ private fun SolicitudesView(
                                         onSelect = { onSelectNotification(notification.id) },
                                         onAccept = { onAccept(notification) },
                                         onReject = { reason -> onReject(notification, reason) },
-                                        onViewHistory = { },
+                                        onViewHistory = { onNavigateToProfile(notification.senderId) },
                                         onLongPress = { onLongPress(notification.id) }
                                     )
                                 }

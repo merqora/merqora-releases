@@ -58,7 +58,7 @@ fun HelpCenterScreen(
     var searchQuery by remember { mutableStateOf("") }
     var expandedFaqIndex by remember { mutableStateOf<Int?>(null) }
     
-    // Estados para pantallas de CategorÃ­as
+    // Estados para pantallas de Categorías
     var showPurchasesHelp by remember { mutableStateOf(false) }
     var showSalesHelp by remember { mutableStateOf(false) }
     var showAccountHelp by remember { mutableStateOf(false) }
@@ -98,7 +98,7 @@ fun HelpCenterScreen(
                 // Header
                 SettingsScreenHeader(
                     title = "Centro de ayuda",
-                    subtitle = "Â¿En quÃ© podemos ayudarte?",
+                    subtitle = "¿En qué podemos ayudarte?",
                     icon = Icons.Outlined.HelpOutline,
                     iconColor = Color(0xFF1565A0),
                     onBack = onDismiss
@@ -112,7 +112,7 @@ fun HelpCenterScreen(
                 ) {
                     Spacer(modifier = Modifier.height(16.dp))
                     
-                    // Barra de BÃºsqueda
+                    // Barra de Búsqueda
                     OutlinedTextField(
                         value = searchQuery,
                         onValueChange = { searchQuery = it },
@@ -142,9 +142,9 @@ fun HelpCenterScreen(
                     
                     Spacer(modifier = Modifier.height(24.dp))
                     
-                    // categorÃ­as de ayuda
+                    // categorías de ayuda
                     Text(
-                        text = "categorÃ­as",
+                        text = "categorías",
                         fontSize = 16.sp,
                         fontWeight = FontWeight.SemiBold,
                         color = TextPrimary
@@ -202,7 +202,7 @@ fun HelpCenterScreen(
                     ) {
                         HelpCategoryCard(
                             icon = Icons.Outlined.LocalShipping,
-                            title = "envÃ­os",
+                            title = "envíos",
                             color = Color(0xFF2E8B57),
                             modifier = Modifier.weight(1f),
                             onClick = { showShippingHelp = true }
@@ -229,13 +229,13 @@ fun HelpCenterScreen(
                     Spacer(modifier = Modifier.height(12.dp))
                     
                     val faqs = listOf(
-                        "Â¿CÃ³mo puedo crear una PublicaciÃ³n?" to "Para crear una PublicaciÃ³n, ve a la PestaÃ±a 'Vender' en la barra de NavegaciÃ³n inferior. Toma fotos del producto, agrega TÃ­tulo, DescripciÃ³n, precio y CategorÃ­a. Finalmente, pulsa 'Publicar'.",
-                        "Â¿CÃ³mo funciona el sistema de pagos?" to "Merqora utiliza pagos seguros a travÃ©s de pasarelas certificadas. El dinero de tus ventas se deposita en tu billetera Merqora, desde donde puedes transferirlo a tu cuenta bancaria.",
-                        "Â¿Puedo cancelar una compra?" to "SÃ­, puedes cancelar una compra antes de que el vendedor envÃ­e el producto. Ve a 'Mis compras', selecciona el pedido y pulsa 'Cancelar'. Si ya fue enviado, deberÃ¡s solicitar una DevoluciÃ³n.",
-                        "Â¿CÃ³mo verifico mi cuenta?" to "Ve a ConfiguraciÃ³n > VerificaciÃ³n y sigue los pasos. NecesitarÃ¡s proporcionar un documento de identidad VÃ¡lido y verificar tu NÃºmero de TelÃ©fono.",
-                        "Â¿QuÃ© hago si tengo un problema con un producto?" to "Contacta primero al vendedor a travÃ©s del chat. Si no se resuelve, abre una disputa desde 'Mis compras' > 'Reportar problema'. Nuestro equipo mediarÃ¡ para encontrar una SoluciÃ³n.",
-                        "Â¿CÃ³mo funcionan las Stories?" to "Las Stories son contenido efÃ­mero que desaparece en 24 horas. Puedes subir fotos o videos cortos para mostrar tus productos de forma dinÃ¡mica. AparecerÃ¡n en la parte superior del feed.",
-                        "Â¿CuÃ¡les son las comisiones de venta?" to "Merqora cobra una pequeÃ±a comisiÃ³n del 5% sobre cada venta completada. No hay costos de PublicaciÃ³n ni tarifas mensuales."
+                        "¿Cómo puedo crear una Publicación?" to "Para crear una Publicación, ve a la Pestaña 'Vender' en la barra de Navegación inferior. Toma fotos del producto, agrega Título, Descripción, precio y Categoría. Finalmente, pulsa 'Publicar'.",
+                        "¿Cómo funciona el sistema de pagos?" to "Mercora utiliza pagos seguros a través de pasarelas certificadas. El dinero de tus ventas se deposita en tu billetera Mercora, desde donde puedes transferirlo a tu cuenta bancaria.",
+                        "¿Puedo cancelar una compra?" to "Sí, puedes cancelar una compra antes de que el vendedor envíe el producto. Ve a 'Mis compras', selecciona el pedido y pulsa 'Cancelar'. Si ya fue enviado, deberás solicitar una Devolución.",
+                        "¿Cómo verifico mi cuenta?" to "Ve a Configuración > Verificación y sigue los pasos. Necesitarás proporcionar un documento de identidad Válido y verificar tu Número de Teléfono.",
+                        "¿Qué hago si tengo un problema con un producto?" to "Contacta primero al vendedor a través del chat. Si no se resuelve, abre una disputa desde 'Mis compras' > 'Reportar problema'. Nuestro equipo mediará para encontrar una Solución.",
+                        "¿Cómo funcionan las Stories?" to "Las Stories son contenido efímero que desaparece en 24 horas. Puedes subir fotos o videos cortos para mostrar tus productos de forma dinámica. Aparecerán en la parte superior del feed.",
+                        "¿Cuáles son las comisiones de venta?" to "Mercora cobra una pequeña comisión del 5% sobre cada venta completada. No hay costos de Publicación ni tarifas mensuales."
                     )
                     
                     faqs.forEachIndexed { index, (question, answer) ->
@@ -256,7 +256,7 @@ fun HelpCenterScreen(
                     
                     // Contacto directo
                     Text(
-                        text = "Â¿Necesitas MÃ¡s ayuda?",
+                        text = "¿Necesitas Más ayuda?",
                         fontSize = 16.sp,
                         fontWeight = FontWeight.SemiBold,
                         color = TextPrimary
@@ -356,7 +356,7 @@ fun HelpCenterScreen(
                                     color = TextPrimary
                                 )
                                 Text(
-                                    text = "soporte@Merqora.com",
+                                    text = "soporte@Mercora.com",
                                     fontSize = 13.sp,
                                     color = TextMuted
                                 )
@@ -375,7 +375,7 @@ fun HelpCenterScreen(
             }
         }
         
-        // Pantallas de CategorÃ­as de ayuda
+        // Pantallas de Categorías de ayuda
         PurchasesHelpScreen(isVisible = showPurchasesHelp, onDismiss = { showPurchasesHelp = false })
         SalesHelpScreen(isVisible = showSalesHelp, onDismiss = { showSalesHelp = false })
         AccountHelpScreen(isVisible = showAccountHelp, onDismiss = { showAccountHelp = false })
@@ -542,29 +542,29 @@ private fun PurchasesHelpScreen(
                     Spacer(modifier = Modifier.height(16.dp))
                     
                     HelpSection(
-                        title = "Â¿CÃ³mo realizar una compra?",
-                        content = "1. Encuentra el producto que deseas\n2. Pulsa el BotÃ³n 'Comprar' o 'Agregar al carrito'\n3. Revisa tu carrito y procede al pago\n4. Selecciona mÃ©todo de pago y DirecciÃ³n de EnvÃ­o\n5. Confirma tu pedido",
+                        title = "¿Cómo realizar una compra?",
+                        content = "1. Encuentra el producto que deseas\n2. Pulsa el Botón 'Comprar' o 'Agregar al carrito'\n3. Revisa tu carrito y procede al pago\n4. Selecciona método de pago y Dirección de Envío\n5. Confirma tu pedido",
                         icon = Icons.Outlined.ShoppingCart,
                         color = Color(0xFF2E8B57)
                     )
                     
                     HelpSection(
                         title = "Estados del pedido",
-                        content = "â€¢ Pendiente: Esperando confirmaciÃ³n del vendedor\nâ€¢ Confirmado: El vendedor aceptÃ³ tu pedido\nâ€¢ Preparando: El producto estÃ¡ siendo preparado\nâ€¢ Enviado: Tu pedido estÃ¡ en camino\nâ€¢ Entregado: Recibiste tu pedido\nâ€¢ Cancelado: El pedido fue cancelado",
+                        content = "• Pendiente: Esperando confirmación del vendedor\n• Confirmado: El vendedor aceptó tu pedido\n• Preparando: El producto está siendo preparado\n• Enviado: Tu pedido está en camino\n• Entregado: Recibiste tu pedido\n• Cancelado: El pedido fue cancelado",
                         icon = Icons.Outlined.LocalShipping,
                         color = Color(0xFF1565A0)
                     )
                     
                     HelpSection(
-                        title = "Â¿CÃ³mo cancelar una compra?",
-                        content = "Puedes cancelar tu compra desde 'Mis compras' siempre que el vendedor no haya enviado el producto. Una vez enviado, deberÃ¡s solicitar una DevoluciÃ³n.",
+                        title = "¿Cómo cancelar una compra?",
+                        content = "Puedes cancelar tu compra desde 'Mis compras' siempre que el vendedor no haya enviado el producto. Una vez enviado, deberás solicitar una Devolución.",
                         icon = Icons.Outlined.Cancel,
                         color = Color(0xFFEF4444)
                     )
                     
                     HelpSection(
-                        title = "ProtecciÃ³n al comprador",
-                        content = "Todas las compras en Vinzay estÃ¡n protegidas. Si el producto no llega o no coincide con la DescripciÃ³n, puedes abrir una disputa y te devolveremos tu dinero.",
+                        title = "Protección al comprador",
+                        content = "Todas las compras en Mercora están protegidas. Si el producto no llega o no coincide con la Descripción, puedes abrir una disputa y te devolveremos tu dinero.",
                         icon = Icons.Outlined.VerifiedUser,
                         color = Color(0xFFFF6B35)
                     )
@@ -628,29 +628,29 @@ private fun SalesHelpScreen(
                     Spacer(modifier = Modifier.height(16.dp))
                     
                     HelpSection(
-                        title = "Â¿CÃ³mo publicar un producto?",
-                        content = "1. Pulsa el BotÃ³n '+' en la barra de NavegaciÃ³n\n2. Selecciona 'PublicaciÃ³n'\n3. Toma o selecciona fotos del producto\n4. Agrega TÃ­tulo, DescripciÃ³n y precio\n5. Selecciona CategorÃ­a y CondiciÃ³n\n6. Publica y listo!",
+                        title = "¿Cómo publicar un producto?",
+                        content = "1. Pulsa el Botón '+' en la barra de Navegación\n2. Selecciona 'Publicación'\n3. Toma o selecciona fotos del producto\n4. Agrega Título, Descripción y precio\n5. Selecciona Categoría y Condición\n6. Publica y listo!",
                         icon = Icons.Outlined.AddBox,
                         color = Color(0xFF2E8B57)
                     )
                     
                     HelpSection(
                         title = "Comisiones de venta",
-                        content = "Merqora cobra una comisiÃ³n del 5% sobre cada venta completada. No hay costos de PublicaciÃ³n, tarifas mensuales ni cargos ocultos.",
+                        content = "Mercora cobra una comisión del 5% sobre cada venta completada. No hay costos de Publicación, tarifas mensuales ni cargos ocultos.",
                         icon = Icons.Outlined.Percent,
                         color = Color(0xFFFF6B35)
                     )
                     
                     HelpSection(
-                        title = "Â¿CÃ³mo recibir pagos?",
-                        content = "El dinero de tus ventas se deposita en tu billetera Merqora. Desde allÃ­ puedes transferirlo a tu cuenta bancaria en cualquier momento.",
+                        title = "¿Cómo recibir pagos?",
+                        content = "El dinero de tus ventas se deposita en tu billetera Mercora. Desde allí puedes transferirlo a tu cuenta bancaria en cualquier momento.",
                         icon = Icons.Outlined.AccountBalance,
                         color = Color(0xFF1565A0)
                     )
                     
                     HelpSection(
-                        title = "Tips para vender MÃ¡s",
-                        content = "â€¢ Usa fotos de alta calidad con buena IluminaciÃ³n\nâ€¢ Escribe descripciones detalladas\nâ€¢ Responde RÃ¡pido a los mensajes\nâ€¢ Ofrece EnvÃ­o gratis cuando sea posible\nâ€¢ MantÃ©n precios competitivos",
+                        title = "Tips para vender Más",
+                        content = "• Usa fotos de alta calidad con buena Iluminación\n• Escribe descripciones detalladas\n• Responde Rápido a los mensajes\n• Ofrece Envío gratis cuando sea posible\n• Mantén precios competitivos",
                         icon = Icons.Outlined.TipsAndUpdates,
                         color = Color(0xFFFF6B35)
                     )
@@ -715,28 +715,28 @@ private fun AccountHelpScreen(
                     
                     HelpSection(
                         title = "Editar perfil",
-                        content = "Desde tu perfil, pulsa 'Editar perfil' para cambiar tu foto, nombre, DescripciÃ³n, UbicaciÃ³n y redes sociales.",
+                        content = "Desde tu perfil, pulsa 'Editar perfil' para cambiar tu foto, nombre, Descripción, Ubicación y redes sociales.",
                         icon = Icons.Outlined.Edit,
                         color = Color(0xFFFF6B35)
                     )
                     
                     HelpSection(
                         title = "Verificar cuenta",
-                        content = "Verifica tu cuenta para obtener la insignia azul y generar MÃ¡s confianza. Ve a ConfiguraciÃ³n > VerificaciÃ³n y sigue los pasos.",
+                        content = "Verifica tu cuenta para obtener la insignia azul y generar Más confianza. Ve a Configuración > Verificación y sigue los pasos.",
                         icon = Icons.Outlined.Verified,
                         color = Color(0xFF1565A0)
                     )
                     
                     HelpSection(
-                        title = "Cambiar ContraseÃ±a",
-                        content = "Ve a ConfiguraciÃ³n > Seguridad > Cambiar ContraseÃ±a. NecesitarÃ¡s tu ContraseÃ±a actual para realizar el cambio.",
+                        title = "Cambiar Contraseña",
+                        content = "Ve a Configuración > Seguridad > Cambiar Contraseña. Necesitarás tu Contraseña actual para realizar el cambio.",
                         icon = Icons.Outlined.Lock,
                         color = Color(0xFF2E8B57)
                     )
                     
                     HelpSection(
                         title = "Eliminar cuenta",
-                        content = "Si deseas eliminar tu cuenta permanentemente, contacta a soporte. Ten en cuenta que esta AcciÃ³n es irreversible y perderÃ¡s todo tu historial.",
+                        content = "Si deseas eliminar tu cuenta permanentemente, contacta a soporte. Ten en cuenta que esta Acción es irreversible y perderás todo tu historial.",
                         icon = Icons.Outlined.DeleteForever,
                         color = Color(0xFFEF4444)
                     )
@@ -785,7 +785,7 @@ private fun PaymentsHelpScreen(
             ) {
                 SettingsScreenHeader(
                     title = "Pagos",
-                    subtitle = "MÃ©todos de pago y billetera",
+                    subtitle = "Métodos de pago y billetera",
                     icon = Icons.Outlined.Payment,
                     iconColor = Color(0xFFFF6B35),
                     onBack = onDismiss
@@ -800,29 +800,29 @@ private fun PaymentsHelpScreen(
                     Spacer(modifier = Modifier.height(16.dp))
                     
                     HelpSection(
-                        title = "MÃ©todos de pago aceptados",
-                        content = "â€¢ Tarjetas de crÃ©dito y dÃ©bito (Visa, Mastercard, Amex)\nâ€¢ Transferencia bancaria\nâ€¢ Billetera Merqora\nâ€¢ MercadoPago\nâ€¢ Efectivo (acordar con vendedor)",
+                        title = "Métodos de pago aceptados",
+                        content = "• Tarjetas de crédito y débito (Visa, Mastercard, Amex)\n• Transferencia bancaria\n• Billetera Mercora\n• MercadoPago\n• Efectivo (acordar con vendedor)",
                         icon = Icons.Outlined.CreditCard,
                         color = Color(0xFF1565A0)
                     )
                     
                     HelpSection(
-                        title = "Billetera Merqora",
-                        content = "Tu billetera Merqora almacena el dinero de tus ventas. Puedes usarlo para comprar en la plataforma o transferirlo a tu cuenta bancaria sin comisiÃ³n.",
+                        title = "Billetera Mercora",
+                        content = "Tu billetera Mercora almacena el dinero de tus ventas. Puedes usarlo para comprar en la plataforma o transferirlo a tu cuenta bancaria sin comisión.",
                         icon = Icons.Outlined.AccountBalanceWallet,
                         color = Color(0xFF2E8B57)
                     )
                     
                     HelpSection(
-                        title = "Â¿CÃ³mo agregar mÃ©todo de pago?",
-                        content = "1. Ve a tu perfil > ConfiguraciÃ³n\n2. Selecciona 'MÃ©todos de pago'\n3. Pulsa 'Agregar mÃ©todo'\n4. Ingresa los datos de tu tarjeta o cuenta",
+                        title = "¿Cómo agregar método de pago?",
+                        content = "1. Ve a tu perfil > Configuración\n2. Selecciona 'Métodos de pago'\n3. Pulsa 'Agregar método'\n4. Ingresa los datos de tu tarjeta o cuenta",
                         icon = Icons.Outlined.AddCard,
                         color = Color(0xFFFF6B35)
                     )
                     
                     HelpSection(
                         title = "Reembolsos",
-                        content = "Los reembolsos se procesan al mismo mÃ©todo de pago utilizado. El tiempo de acreditaciÃ³n depende de tu banco (3-15 DÃ­as hÃ¡biles).",
+                        content = "Los reembolsos se procesan al mismo método de pago utilizado. El tiempo de acreditación depende de tu banco (3-15 Días hábiles).",
                         icon = Icons.Outlined.Replay,
                         color = Color(0xFFFF6B35)
                     )
@@ -835,7 +835,7 @@ private fun PaymentsHelpScreen(
 }
 
 // ---------------------------------------------------------------
-// PANTALLA DE AYUDA: envÃ­oS
+// PANTALLA DE AYUDA: envíoS
 // ---------------------------------------------------------------
 @Composable
 private fun ShippingHelpScreen(
@@ -870,8 +870,8 @@ private fun ShippingHelpScreen(
                     .navigationBarsPadding()
             ) {
                 SettingsScreenHeader(
-                    title = "envÃ­os",
-                    subtitle = "InformaciÃ³n de entregas",
+                    title = "envíos",
+                    subtitle = "Información de entregas",
                     icon = Icons.Outlined.LocalShipping,
                     iconColor = Color(0xFF2E8B57),
                     onBack = onDismiss
@@ -886,29 +886,29 @@ private fun ShippingHelpScreen(
                     Spacer(modifier = Modifier.height(16.dp))
                     
                     HelpSection(
-                        title = "Opciones de EnvÃ­o",
-                        content = "â€¢ envÃ­o estÃ¡ndar: 3-7 DÃ­as hÃ¡biles\nâ€¢ envÃ­o express: 1-3 DÃ­as hÃ¡biles\nâ€¢ Retiro en persona: Acordar con vendedor\nâ€¢ envÃ­o gratis: Disponible en productos seleccionados",
+                        title = "Opciones de Envío",
+                        content = "• envío estándar: 3-7 Días hábiles\n• envío express: 1-3 Días hábiles\n• Retiro en persona: Acordar con vendedor\n• envío gratis: Disponible en productos seleccionados",
                         icon = Icons.Outlined.Inventory,
                         color = Color(0xFF2E8B57)
                     )
                     
                     HelpSection(
-                        title = "Â¿CÃ³mo rastrear mi pedido?",
-                        content = "1. Ve a 'Mis compras'\n2. Selecciona el pedido\n3. Pulsa 'Rastrear EnvÃ­o'\n4. VerÃ¡s el estado actual y UbicaciÃ³n del paquete",
+                        title = "¿Cómo rastrear mi pedido?",
+                        content = "1. Ve a 'Mis compras'\n2. Selecciona el pedido\n3. Pulsa 'Rastrear Envío'\n4. Verás el estado actual y Ubicación del paquete",
                         icon = Icons.Outlined.LocationOn,
                         color = Color(0xFF1565A0)
                     )
                     
                     HelpSection(
-                        title = "Mi paquete no llegÃ³",
-                        content = "Si han pasado MÃ¡s DÃ­as de los estimados:\n1. Verifica el tracking\n2. Contacta al vendedor\n3. Si no hay respuesta, abre una disputa desde 'Mis compras'",
+                        title = "Mi paquete no llegó",
+                        content = "Si han pasado Más Días de los estimados:\n1. Verifica el tracking\n2. Contacta al vendedor\n3. Si no hay respuesta, abre una disputa desde 'Mis compras'",
                         icon = Icons.Outlined.Report,
                         color = Color(0xFFEF4444)
                     )
                     
                     HelpSection(
                         title = "Devoluciones",
-                        content = "Tienes 7 DÃ­as despuÃ©s de recibir el producto para solicitar una DevoluciÃ³n. El producto debe estar en las mismas condiciones en que lo recibiste.",
+                        content = "Tienes 7 Días después de recibir el producto para solicitar una Devolución. El producto debe estar en las mismas condiciones en que lo recibiste.",
                         icon = Icons.Outlined.AssignmentReturn,
                         color = Color(0xFF2E8B57)
                     )
@@ -972,29 +972,29 @@ private fun SecurityHelpScreen(
                     Spacer(modifier = Modifier.height(16.dp))
                     
                     HelpSection(
-                        title = "AutenticaciÃ³n de dos factores",
-                        content = "Activa la VerificaciÃ³n en dos pasos para mayor seguridad. RecibirÃ¡s un CÃ³digo por SMS o email cada vez que inicies SesiÃ³n.",
+                        title = "Autenticación de dos factores",
+                        content = "Activa la Verificación en dos pasos para mayor seguridad. Recibirás un Código por SMS o email cada vez que inicies Sesión.",
                         icon = Icons.Outlined.PhonelinkLock,
                         color = Color(0xFF2E8B57)
                     )
                     
                     HelpSection(
-                        title = "contraseÃ±a segura",
-                        content = "Tu ContraseÃ±a debe tener:\nâ€¢ mÃ­nimo 8 caracteres\nâ€¢ Al menos una mayÃºscula\nâ€¢ Al menos un NÃºmero\nâ€¢ Al menos un sÃ­mbolo especial",
+                        title = "contraseña segura",
+                        content = "Tu Contraseña debe tener:\n• mínimo 8 caracteres\n• Al menos una mayúscula\n• Al menos un Número\n• Al menos un símbolo especial",
                         icon = Icons.Outlined.Lock,
                         color = Color(0xFF1565A0)
                     )
                     
                     HelpSection(
                         title = "Actividad sospechosa",
-                        content = "Si detectas actividad inusual en tu cuenta:\n1. Cambia tu ContraseÃ±a inmediatamente\n2. Revisa tus sesiones activas\n3. Contacta a soporte\n4. Activa la VerificaciÃ³n en dos pasos",
+                        content = "Si detectas actividad inusual en tu cuenta:\n1. Cambia tu Contraseña inmediatamente\n2. Revisa tus sesiones activas\n3. Contacta a soporte\n4. Activa la Verificación en dos pasos",
                         icon = Icons.Outlined.Warning,
                         color = Color(0xFFFF6B35)
                     )
                     
                     HelpSection(
                         title = "Reportar fraude",
-                        content = "Si detectas un vendedor o comprador fraudulento, repÃ³rtalo inmediatamente. Ve al perfil del usuario > MenÃº > Reportar. Nuestro equipo lo investigarÃ¡.",
+                        content = "Si detectas un vendedor o comprador fraudulento, repórtalo inmediatamente. Ve al perfil del usuario > Menú > Reportar. Nuestro equipo lo investigará.",
                         icon = Icons.Outlined.Report,
                         color = Color(0xFFEF4444)
                     )
@@ -1007,7 +1007,7 @@ private fun SecurityHelpScreen(
 }
 
 // ---------------------------------------------------------------
-// COMPONENTE: SEcciÃ³n DE AYUDA
+// COMPONENTE: SEcción DE AYUDA
 // ---------------------------------------------------------------
 @Composable
 private fun HelpSection(
@@ -1080,7 +1080,7 @@ private fun SupportChatScreen(
     var messages by remember { mutableStateOf(listOf(
         SupportMessage(
             id = "welcome",
-            content = "Â¡Hola! Soy el asistente virtual de Merqora. Estoy aquÃ­ para ayudarte con cualquier consulta sobre compras, ventas, pagos, envÃ­os y mÃ¡s.\n\nÂ¿En quÃ© puedo ayudarte hoy?",
+            content = "¡Hola! Soy el asistente virtual de Mercora. Estoy aquí para ayudarte con cualquier consulta sobre compras, ventas, pagos, envíos y más.\n\n¿En qué puedo ayudarte hoy?",
             isFromSupport = true,
             timestamp = System.currentTimeMillis()
         )
@@ -1116,7 +1116,7 @@ private fun SupportChatScreen(
                 realtime.connect()
                 delay(500)
             } catch (e: Exception) {
-                // Ignorar si ya estÃ¡ conectado
+                // Ignorar si ya está conectado
             }
             
             // Channel name matches what admin-web uses
@@ -1146,16 +1146,16 @@ private fun SupportChatScreen(
                     
                     android.util.Log.d("SupportChat", "Mensaje recibido - convId: $msgConversationId, role: $msgRole, myConvId: $conversationId")
                     
-                    // Mensajes del agente humano o del sistema para esta conversaciÃ³n
+                    // Mensajes del agente humano o del sistema para esta conversación
                     if (msgConversationId == conversationId && (msgRole == "human_support" || msgRole == "system")) {
                         // Si es mensaje especial de rating, NO agregarlo como mensaje visible
                         // Solo mostrar el rating interactivo
                         if (msgRole == "system" && msgContent.contains("__RATING_REQUEST__")) {
                             isConversationClosed = true
-                            // Agregar solo el mensaje interactivo de calificaciÃ³n (sin el __RATING_REQUEST__)
+                            // Agregar solo el mensaje interactivo de calificación (sin el __RATING_REQUEST__)
                             val ratingMsg = SupportMessage(
                                 id = "rating_${System.currentTimeMillis()}",
-                                content = "? Tu consulta ha sido resuelta\n\nÂ¿CÃ³mo calificarÃ­as la ayuda recibida?",
+                                content = "? Tu consulta ha sido resuelta\n\n¿Cómo calificarías la ayuda recibida?",
                                 isFromSupport = true,
                                 timestamp = System.currentTimeMillis(),
                                 isSystemMessage = true,
@@ -1163,7 +1163,7 @@ private fun SupportChatScreen(
                             )
                             messages = messages + ratingMsg
                             isAgentTyping = false
-                            android.util.Log.d("SupportChat", "? ConversaciÃ³n cerrada, mostrando rating interactivo")
+                            android.util.Log.d("SupportChat", "? Conversación cerrada, mostrando rating interactivo")
                             return@onEach
                         }
                         
@@ -1195,7 +1195,7 @@ private fun SupportChatScreen(
                     val typing = payload["is_typing"]?.toString()?.toBoolean() ?: false
                     isAgentTyping = typing
                     
-                    // Auto-reset despuÃ©s de 3 segundos
+                    // Auto-reset después de 3 segundos
                     if (typing) {
                         delay(3000)
                         if (isAgentTyping) {
@@ -1245,7 +1245,7 @@ private fun SupportChatScreen(
                         delay(500)
                         val escalationNote = SupportMessage(
                             id = "escalation_${System.currentTimeMillis()}",
-                            content = "Tu consulta ha sido registrada. Un agente humano te contactarÃ¡ pronto. RecibirÃ¡s sus mensajes en tiempo real.",
+                            content = "Tu consulta ha sido registrada. Un agente humano te contactará pronto. Recibirás sus mensajes en tiempo real.",
                             isFromSupport = true,
                             timestamp = System.currentTimeMillis()
                         )
@@ -1283,7 +1283,7 @@ private fun SupportChatScreen(
     
     if (!isVisible && slideOffset == 1f) return
     
-    // Scroll al Ãºltimo mensaje
+    // Scroll al último mensaje
     LaunchedEffect(messages.size) {
         if (messages.isNotEmpty()) {
             listState.animateScrollToItem(messages.size - 1)
@@ -1328,7 +1328,7 @@ private fun SupportChatScreen(
                             )
                         }
                         
-                        // Avatar de soporte con gradiente Merqora
+                        // Avatar de soporte con gradiente Mercora
                         Box(
                             modifier = Modifier
                                 .size(44.dp)
@@ -1353,7 +1353,7 @@ private fun SupportChatScreen(
                         Column(modifier = Modifier.weight(1f)) {
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Text(
-                                    text = "Soporte Merqora",
+                                    text = "Soporte Mercora",
                                     color = TextPrimary,
                                     fontSize = 16.sp,
                                     fontWeight = FontWeight.Bold
@@ -1371,7 +1371,7 @@ private fun SupportChatScreen(
                                     isAgentTyping -> "Agente escribiendo..."
                                     isTyping -> "IA procesando..."
                                     isEscalated -> "Conectado con agente"
-                                    else -> "En lÃ­nea - Respuesta RÃ¡pida"
+                                    else -> "En línea - Respuesta Rápida"
                                 },
                                 color = when {
                                     isAgentTyping -> Color(0xFF2196F3)
@@ -1405,12 +1405,12 @@ private fun SupportChatScreen(
                     QuickActionChip("Reembolso") {
                         val userMsg = SupportMessage(
                             id = "user_${System.currentTimeMillis()}",
-                            content = "Â¿CÃ³mo funciona el reembolso?",
+                            content = "¿Cómo funciona el reembolso?",
                             isFromSupport = false,
                             timestamp = System.currentTimeMillis()
                         )
                         messages = messages + userMsg
-                        sendMessageToAI("Â¿CÃ³mo funciona el reembolso?")
+                        sendMessageToAI("¿Cómo funciona el reembolso?")
                     }
                 }
                 
@@ -1424,7 +1424,7 @@ private fun SupportChatScreen(
                     verticalArrangement = Arrangement.spacedBy(8.dp),
                     contentPadding = PaddingValues(vertical = 16.dp)
                 ) {
-                    // Detectar Ã­ndice del primer mensaje del agente para mostrar banner
+                    // Detectar índice del primer mensaje del agente para mostrar banner
                     val firstAgentMessageIndex = messages.indexOfFirst { it.isFromAgent }
                     
                     items(messages.size) { index ->
@@ -1454,27 +1454,27 @@ private fun SupportChatScreen(
                                             conversationId = currentConversationId ?: "",
                                             userId = userId,
                                             rating = selectedRating,
-                                            feedbackText = ratingComment.ifEmpty { "CalificaciÃ³n: $selectedRating/5 estrellas" }
+                                            feedbackText = ratingComment.ifEmpty { "Calificación: $selectedRating/5 estrellas" }
                                         )
                                         
                                         if (success) {
-                                            // Generar NÃºmero de ticket Ãºnico
+                                            // Generar Número de ticket único
                                             val ticketNumber = "TKT-${System.currentTimeMillis().toString().takeLast(8)}"
                                             
                                             // Mensaje de cierre con ticket
                                             val closureMsg = SupportMessage(
                                                 id = "closure_${System.currentTimeMillis()}",
                                                 content = """
-                                                    |Â¡Gracias por tu calificaciÃ³n!
+                                                    |¡Gracias por tu calificación!
                                                     |
                                                     |??????????????????????
                                                     |?? TICKET: $ticketNumber
-                                                    |? CalificaciÃ³n: $selectedRating/5
+                                                    |? Calificación: $selectedRating/5
                                                     |?? ${java.text.SimpleDateFormat("dd/MM/yyyy HH:mm", java.util.Locale.getDefault()).format(java.util.Date())}
                                                     |??????????????????????
                                                     |
-                                                    |Tu conversaciÃ³n ha sido archivada.
-                                                    |Guarda este NÃºmero de ticket para futuras referencias.
+                                                    |Tu conversación ha sido archivada.
+                                                    |Guarda este Número de ticket para futuras referencias.
                                                 """.trimMargin(),
                                                 isFromSupport = true,
                                                 timestamp = System.currentTimeMillis(),
@@ -1525,9 +1525,9 @@ private fun SupportChatScreen(
                     }
                 }
                 
-                // Footer: input de mensaje o banner de conversaciÃ³n cerrada
+                // Footer: input de mensaje o banner de conversación cerrada
                 if (isConversationClosed) {
-                    // Banner de conversaciÃ³n cerrada con BotÃ³n de nueva conversaciÃ³n
+                    // Banner de conversación cerrada con Botón de nueva conversación
                     Surface(
                         modifier = Modifier.fillMaxWidth(),
                         color = Surface,
@@ -1550,7 +1550,7 @@ private fun SupportChatScreen(
                                 )
                                 Spacer(modifier = Modifier.width(8.dp))
                                 Text(
-                                    text = "ConversaciÃ³n cerrada",
+                                    text = "Conversación cerrada",
                                     color = Color(0xFF2E8B57),
                                     fontSize = 14.sp,
                                     fontWeight = FontWeight.Medium
@@ -1559,14 +1559,14 @@ private fun SupportChatScreen(
                             
                             Spacer(modifier = Modifier.height(12.dp))
                             
-                            // botÃ³n para nueva conversaciÃ³n
+                            // botón para nueva conversación
                             Button(
                                 onClick = {
-                                    // Reiniciar todo para nueva conversaciÃ³n
+                                    // Reiniciar todo para nueva conversación
                                     messages = listOf(
                                         SupportMessage(
                                             id = "welcome_new",
-                                            content = "Â¡Hola de nuevo! Â¿En quÃ© puedo ayudarte hoy?",
+                                            content = "¡Hola de nuevo! ¿En qué puedo ayudarte hoy?",
                                             isFromSupport = true,
                                             timestamp = System.currentTimeMillis()
                                         )
@@ -1590,7 +1590,7 @@ private fun SupportChatScreen(
                                 )
                                 Spacer(modifier = Modifier.width(8.dp))
                                 Text(
-                                    text = "Nueva conversaciÃ³n",
+                                    text = "Nueva conversación",
                                     fontSize = 14.sp,
                                     fontWeight = FontWeight.SemiBold
                                 )
@@ -1638,7 +1638,7 @@ private fun SupportChatScreen(
                             
                             Spacer(modifier = Modifier.width(8.dp))
                             
-                            // botÃ³n enviar
+                            // botón enviar
                             IconButton(
                                 onClick = {
                                     if (messageText.isNotBlank()) {
@@ -1652,7 +1652,7 @@ private fun SupportChatScreen(
                                         messages = messages + userMsg
                                         messageText = ""
                                         
-                                        // Si estÃ¡ escalado, enviar directo a Supabase (no a la IA)
+                                        // Si está escalado, enviar directo a Supabase (no a la IA)
                                         if (isEscalated && currentConversationId != null) {
                                             scope.launch {
                                                 val success = AISupportRepository.sendDirectMessage(
@@ -1707,8 +1707,8 @@ private data class SupportMessage(
     val actionButtons: List<AISupportRepository.ActionButton> = emptyList(),
     val isFromAgent: Boolean = false, // true = agente humano, false = IA
     val isSystemMessage: Boolean = false, // true = mensaje del sistema
-    val isRatingRequest: Boolean = false, // true = mensaje interactivo de calificaciÃ³n
-    val isTicketClosure: Boolean = false // true = mensaje de cierre con NÃºmero de ticket
+    val isRatingRequest: Boolean = false, // true = mensaje interactivo de calificación
+    val isTicketClosure: Boolean = false // true = mensaje de cierre con Número de ticket
 )
 
 @Composable
@@ -1852,7 +1852,7 @@ private fun AgentHandoffBanner() {
                     color = Color(0xFF1976D2)
                 )
                 Text(
-                    text = "Ahora estÃ¡s hablando con soporte humano",
+                    text = "Ahora estás hablando con soporte humano",
                     fontSize = 11.sp,
                     color = Color(0xFF2196F3).copy(alpha = 0.8f)
                 )

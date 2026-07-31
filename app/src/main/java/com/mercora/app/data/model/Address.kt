@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 
 /**
  * â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
- * ADDRESS MODEL - Modelo de direcciÃ³n con validaciÃ³n y scoring
+ * ADDRESS MODEL - Modelo de dirección con validación y scoring
  * â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
  */
 
@@ -39,7 +39,7 @@ data class Address(
     @SerialName("user_id")
     val userId: String = "",
     
-    val label: String = "Mi direcciÃ³n",
+    val label: String = "Mi dirección",
     
     @SerialName("address_type")
     val addressType: AddressType = AddressType.HOME,
@@ -161,14 +161,14 @@ data class Address(
     
     fun getStatusText(): String = when (status) {
         AddressStatus.VALID -> "Verificada"
-        AddressStatus.SUSPICIOUS -> "Pendiente de verificaciÃ³n"
-        AddressStatus.INVALID -> "DirecciÃ³n invÃ¡lida"
+        AddressStatus.SUSPICIOUS -> "Pendiente de verificación"
+        AddressStatus.INVALID -> "Dirección inválida"
         AddressStatus.PENDING -> "Pendiente"
     }
 }
 
 /**
- * DTO para crear/actualizar una direcciÃ³n
+ * DTO para crear/actualizar una dirección
  */
 @Serializable
 data class AddressCreateRequest(
@@ -248,7 +248,7 @@ data class AddressCreateRequest(
 )
 
 /**
- * Resultado de geocodificaciÃ³n
+ * Resultado de geocodificación
  */
 data class GeocodingResult(
     val formattedAddress: String,
@@ -267,7 +267,7 @@ data class GeocodingResult(
 )
 
 /**
- * PredicciÃ³n de autocompletado
+ * Predicción de autocompletado
  */
 data class AddressPrediction(
     val placeId: String,

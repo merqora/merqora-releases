@@ -49,12 +49,15 @@ class LoginViewModel @Inject constructor(
     }
     
     private fun checkBiometricAvailability() {
+        val pm = application.packageManager
+        val hasFingerprint = pm.hasSystemFeature("android.hardware.fingerprint")
         val biometricManager = androidx.biometric.BiometricManager.from(application)
         val authResult = biometricManager.canAuthenticate(
             androidx.biometric.BiometricManager.Authenticators.BIOMETRIC_STRONG or
             androidx.biometric.BiometricManager.Authenticators.DEVICE_CREDENTIAL
         )
-        _uiState.update { it.copy(isBiometricAvailable = authResult == androidx.biometric.BiometricManager.BIOMETRIC_SUCCESS) }
+        val hasHardware = hasFingerprint || authResult != androidx.biometric.BiometricManager.BIOMETRIC_ERROR_NO_HARDWARE
+        _uiState.update { it.copy(isBiometricAvailable = hasHardware) }
     }
     
     fun validateEmail(emailOrUsername: String) {
@@ -66,7 +69,7 @@ class LoginViewModel @Inject constructor(
         if (trimmed.contains("@")) {
             val emailRegex = Regex("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")
             if (!emailRegex.matches(trimmed)) {
-                _uiState.update { it.copy(emailError = "Correo electrÃ³nico no vÃ¡lido") }
+                _uiState.update { it.copy(emailError = "Correo electrónico no válido") }
                 return
             }
         }
@@ -79,7 +82,7 @@ class LoginViewModel @Inject constructor(
             return
         }
         if (password.length < 6) {
-            _uiState.update { it.copy(passwordError = "MÃ­nimo 6 caracteres") }
+            _uiState.update { it.copy(passwordError = "Mínimo 6 caracteres") }
             return
         }
         _uiState.update { it.copy(passwordError = null) }
@@ -95,11 +98,11 @@ class LoginViewModel @Inject constructor(
                 return@launch
             }
             if (password.isEmpty()) {
-                _uiState.update { it.copy(isLoading = false, passwordError = "Ingresa tu contraseÃ±a") }
+                _uiState.update { it.copy(isLoading = false, passwordError = "Ingresa tu contraseña") }
                 return@launch
             }
             if (password.length < 6) {
-                _uiState.update { it.copy(isLoading = false, passwordError = "ContraseÃ±a demasiado corta") }
+                _uiState.update { it.copy(isLoading = false, passwordError = "Contraseña demasiado corta") }
                 return@launch
             }
             
@@ -134,15 +137,17 @@ class LoginViewModel @Inject constructor(
                 
                 val userId = SupabaseClient.auth.currentUserOrNull()?.id
                 if (userId == null) {
-                    _uiState.update { it.copy(isLoading = false, errorMessage = "Error al obtener sesiÃ³n") }
+                    _uiState.update { it.copy(isLoading = false, errorMessage = "Error al obtener sesión") }
                     return@launch
                 }
                 
+                // Procesar token FCM pendiente
+                FCMHelper.onUserLogin(application, userId)
+
                 // Sync user profile
                 val username = syncUserProfile(userId, emailToUse, rememberMe)
                 SessionPersistence.saveSession(userId, username)
-                FCMHelper.forceTokenRefresh(application)
-
+                
                 // Save credentials for biometric re-login
                 BiometricEnrollmentManager.saveLoginCredentials(
                     application.applicationContext,
@@ -155,7 +160,7 @@ class LoginViewModel @Inject constructor(
             } catch (e: RestException) {
                 Log.e(TAG, "RestException: ${e.message}", e)
                 val message = when {
-                    e.message?.contains("Invalid login credentials") == true -> "ContraseÃ±a incorrecta"
+                    e.message?.contains("Invalid login credentials") == true -> "Contraseña incorrecta"
                     e.message?.contains("Email not confirmed") == true -> "Email no confirmado. Revisa tu correo."
                     e.message?.contains("User not found") == true -> "Usuario no encontrado"
                     else -> "Error: ${e.message?.take(50) ?: "desconocido"}"
@@ -164,7 +169,7 @@ class LoginViewModel @Inject constructor(
             } catch (e: Exception) {
                 Log.e(TAG, "Exception: ${e.javaClass.simpleName} - ${e.message}", e)
                 val message = when {
-                    e.message?.contains("Unable to resolve host") == true || e.message?.contains("Network") == true -> "Sin conexiÃ³n a internet"
+                    e.message?.contains("Unable to resolve host") == true || e.message?.contains("Network") == true -> "Sin conexión a internet"
                     e.message?.contains("timeout") == true -> "Tiempo de espera agotado. Intenta de nuevo."
                     else -> "Error: ${e.message?.take(50) ?: "desconocido"}"
                 }
@@ -215,7 +220,7 @@ class LoginViewModel @Inject constructor(
             _uiState.update { it.copy(isLoading = true, errorMessage = "") }
             try {
                 val guestUsername = "usuario#${System.currentTimeMillis()}"
-                val guestEmail = "guest_${System.currentTimeMillis()}@merqora.temp"
+                val guestEmail = "guest_${System.currentTimeMillis()}@mercora.temp"
                 val guestPassword = java.util.UUID.randomUUID().toString()
                 
                 SupabaseClient.auth.signUpWith(io.github.jan.supabase.gotrue.providers.builtin.Email) {
@@ -224,7 +229,7 @@ class LoginViewModel @Inject constructor(
                 }
                 
                 val userId = SupabaseClient.auth.currentUserOrNull()?.id ?: run {
-                    _uiState.update { it.copy(isLoading = false, errorMessage = "Error al crear sesiÃ³n de invitado") }
+                    _uiState.update { it.copy(isLoading = false, errorMessage = "Error al crear sesión de invitado") }
                     return@launch
                 }
                 
@@ -245,7 +250,7 @@ class LoginViewModel @Inject constructor(
                 _uiState.update { it.copy(isLoading = false, isAuthenticated = true, isAnonymous = true) }
             } catch (e: Exception) {
                 Log.e(TAG, "Guest login error", e)
-                _uiState.update { it.copy(isLoading = false, errorMessage = "No se pudo crear sesiÃ³n de invitado") }
+                _uiState.update { it.copy(isLoading = false, errorMessage = "No se pudo crear sesión de invitado") }
             }
         }
     }
@@ -260,7 +265,7 @@ class LoginViewModel @Inject constructor(
                 FCMHelper.onUserLogout(application)
                 SupabaseClient.auth.signOut()
                 SessionPersistence.clearSession()
-                com.vinzay.app.data.cache.BadgeCountCache.clearAll()
+                com.mercora.app.data.cache.BadgeCountCache.clearAll()
                 _uiState.update { it.copy(isAuthenticated = false, isAnonymous = false) }
             } catch (e: Exception) {
                 Log.e(TAG, "Sign out error", e)

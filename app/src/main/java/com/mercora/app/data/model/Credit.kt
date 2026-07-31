@@ -39,7 +39,7 @@ val CREDIT_PACKS = listOf(
         priceUyu = 1.0, priceUsd = 0.03
     ),
     CreditPack(
-        id = "basic", name = "BÃ¡sico", credits = 300,
+        id = "basic", name = "Básico", credits = 300,
         bonusCredits = 20, priceUyu = 99.0, priceUsd = 2.99,
         isPopular = true
     ),

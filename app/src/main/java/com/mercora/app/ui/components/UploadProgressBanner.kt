@@ -48,7 +48,7 @@ fun UploadProgressBanner(
         }
     }
     
-    // Auto-ocultar error despuÃ©s de 10 segundos
+    // Auto-ocultar error después de 10 segundos
     LaunchedEffect(hasError) {
         if (hasError) {
             kotlinx.coroutines.delay(10000)
@@ -118,8 +118,8 @@ fun UploadProgressBanner(
                             Text(
                                 text = when {
                                     hasError -> "Error al publicar"
-                                    isComplete -> if (type == "post") "Â¡PublicaciÃ³n lista!" else "Â¡Historia publicada!"
-                                    else -> if (type == "post") "Subiendo publicaciÃ³n..." else "Subiendo historia..."
+                                    isComplete -> if (type == "post") "¡Publicación lista!" else "¡Historia publicada!"
+                                    else -> if (type == "post") "Subiendo publicación..." else "Subiendo historia..."
                                 },
                                 color = if (hasError) Color.Red else TextPrimary,
                                 fontSize = 15.sp,
@@ -128,7 +128,7 @@ fun UploadProgressBanner(
                             Text(
                                 text = when {
                                     hasError -> error ?: "Error desconocido"
-                                    isComplete -> "Tu contenido ya estÃ¡ visible"
+                                    isComplete -> "Tu contenido ya está visible"
                                     else -> "${(animatedProgress * 100).toInt()}% completado"
                                 },
                                 color = if (hasError) Color.Red.copy(alpha = 0.7f) else TextMuted,

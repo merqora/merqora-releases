@@ -44,7 +44,7 @@ object UserSizesRepository {
     private var prefs: SharedPreferences? = null
     private val json = Json { ignoreUnknownKeys = true }
 
-    // Cache en memoria para acceso instantÃ¡neo dentro de la misma sesiÃ³n
+    // Cache en memoria para acceso instantáneo dentro de la misma sesión
     @Volatile
     private var memoryCache: UserSizesDB? = null
 
@@ -55,7 +55,7 @@ object UserSizesRepository {
     }
 
     /**
-     * Devuelve las tallas cacheadas (memoria â†’ disco) de forma instantÃ¡nea.
+     * Devuelve las tallas cacheadas (memoria â†’ disco) de forma instantánea.
      * Retorna null si no hay cache para este usuario.
      */
     fun getCachedSizes(userId: String): UserSizesDB? {
@@ -94,7 +94,7 @@ object UserSizesRepository {
                 .from(TABLE)
                 .select { filter { eq("user_id", userId) } }
                 .decodeSingleOrNull<UserSizesDB>()
-            // Actualizar cache con lo Ãºltimo del servidor
+            // Actualizar cache con lo último del servidor
             if (remote != null) cacheSizes(remote)
             remote
         } catch (e: Exception) {
@@ -144,12 +144,12 @@ object UserSizesRepository {
                 put("updated_at", java.time.Instant.now().toString())
             }
 
-            // Upsert atÃ³mico: inserta o actualiza segÃºn user_id
+            // Upsert atómico: inserta o actualiza según user_id
             SupabaseClient.database
                 .from(TABLE)
                 .upsert(body, onConflict = "user_id")
 
-            // Actualizar cache local inmediatamente para que al reabrir estÃ© todo listo
+            // Actualizar cache local inmediatamente para que al reabrir esté todo listo
             cacheSizes(
                 UserSizesDB(
                     userId = userId,

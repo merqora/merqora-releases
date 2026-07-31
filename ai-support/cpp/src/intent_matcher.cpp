@@ -2,11 +2,11 @@
 #include <algorithm>
 #include <cmath>
 
-namespace vinzay {
+namespace mercora {
 namespace ai {
 
 IntentMatcher::IntentMatcher() {
-    // Load default Vinzay support intents
+    // Load default Mercora support intents
     patterns_ = {
         // Compras
         {
@@ -210,4 +210,4 @@ std::pair<std::string, float> IntentMatcher::match_intent(
 }
 
 } // namespace ai
-} // namespace vinzay
+} // namespace mercora

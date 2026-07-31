@@ -1,5 +1,5 @@
 # ═══════════════════════════════════════════════════════════════════════════════
-# Rendly ProGuard/R8 Rules - Cold Start Optimized
+# Mercora ProGuard/R8 Rules - Cold Start Optimized
 # Target: < 1000ms cold start
 # ═══════════════════════════════════════════════════════════════════════════════
 
@@ -21,14 +21,17 @@
     public static int v(...);
     public static int d(...);
     public static int i(...);
+    public static int w(...);
+    public static int e(...);
+    public static java.lang.String getStackTraceString(java.lang.Throwable);
 }
 
 # ─────────────────────────────────────────────────────────────────────────────────
 # STARTUP CRITICAL - Keep startup path classes
 # ─────────────────────────────────────────────────────────────────────────────────
--keep class com.vinzay.app.MainActivity { *; }
--keep class com.vinzay.app.RendlyApplication { *; }
--keep class com.vinzay.app.startup.** { *; }
+-keep class com.mercora.app.MainActivity { *; }
+-keep class com.mercora.app.MercoraApplication { *; }
+-keep class com.mercora.app.startup.** { *; }
 
 # ─────────────────────────────────────────────────────────────────────────────────
 # NATIVE METHODS
@@ -71,11 +74,11 @@
 # ─────────────────────────────────────────────────────────────────────────────────
 -keepattributes *Annotation*, InnerClasses
 -dontnote kotlinx.serialization.AnnotationsKt
--keep,includedescriptorclasses class com.vinzay.app.**$$serializer { *; }
--keepclassmembers class com.vinzay.app.** {
+-keep,includedescriptorclasses class com.mercora.app.**$$serializer { *; }
+-keepclassmembers class com.mercora.app.** {
     *** Companion;
 }
--keepclasseswithmembers class com.vinzay.app.** {
+-keepclasseswithmembers class com.mercora.app.** {
     kotlinx.serialization.KSerializer serializer(...);
 }
 
@@ -92,6 +95,13 @@
 -keep class io.github.jan.supabase.** { *; }
 -keepclassmembers class io.github.jan.supabase.** { *; }
 -dontwarn io.github.jan.supabase.**
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# LIVEKIT
+# ─────────────────────────────────────────────────────────────────────────────────
+-keep class io.livekit.** { *; }
+-keepclassmembers class io.livekit.** { *; }
+-dontwarn io.livekit.**
 
 # ─────────────────────────────────────────────────────────────────────────────────
 # ROOM

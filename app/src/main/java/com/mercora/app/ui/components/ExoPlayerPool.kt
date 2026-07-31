@@ -8,13 +8,13 @@ import androidx.media3.exoplayer.ExoPlayer
 /**
  * ExoPlayerPool - Pool reutilizable de instancias ExoPlayer
  * 
- * PatrÃ³n Instagram: en lugar de crear/destruir un ExoPlayer por cada
- * item de video en el feed, reutilizamos un pool pequeÃ±o (mÃ¡x 2).
+ * Patrón Instagram: en lugar de crear/destruir un ExoPlayer por cada
+ * item de video en el feed, reutilizamos un pool pequeño (máx 2).
  * 
  * Impacto:
- * - Elimina GC pressure por creaciÃ³n repetida de players
+ * - Elimina GC pressure por creación repetida de players
  * - Reduce time-to-play del segundo video a ~50ms (vs ~200ms cold)
- * - Previene memory spikes durante scroll rÃ¡pido de videos
+ * - Previene memory spikes durante scroll rápido de videos
  * 
  * Uso:
  *   val player = ExoPlayerPool.acquire(context)
@@ -29,8 +29,8 @@ object ExoPlayerPool {
     private val lock = Any()
 
     /**
-     * Obtiene un ExoPlayer del pool o crea uno nuevo si el pool estÃ¡ vacÃ­o.
-     * El player devuelto estÃ¡ vacÃ­o (sin MediaItem) y en estado IDLE.
+     * Obtiene un ExoPlayer del pool o crea uno nuevo si el pool está vacío.
+     * El player devuelto está vacío (sin MediaItem) y en estado IDLE.
      */
     fun acquire(context: Context): ExoPlayer {
         synchronized(lock) {
@@ -41,13 +41,13 @@ object ExoPlayerPool {
                 return player
             }
         }
-        // Pool vacÃ­o â€” crear nueva instancia
+        // Pool vacío â€” crear nueva instancia
         return ExoPlayer.Builder(context.applicationContext).build()
     }
 
     /**
-     * Devuelve un ExoPlayer al pool para reutilizaciÃ³n.
-     * Si el pool estÃ¡ lleno, el player se libera.
+     * Devuelve un ExoPlayer al pool para reutilización.
+     * Si el pool está lleno, el player se libera.
      */
     fun release(player: ExoPlayer) {
         synchronized(lock) {

@@ -102,7 +102,7 @@ import androidx.compose.foundation.gestures.calculateZoom
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.geometry.Offset
 
-// State machine para el flujo de publicaciÃ³n
+// State machine para el flujo de publicación
 sealed class PublicationStep {
     object Gallery : PublicationStep()
     object Preview : PublicationStep()
@@ -112,11 +112,11 @@ sealed class PublicationStep {
 
 // Aspect ratio para el preview de imagen (como Instagram)
 enum class PreviewAspectRatio {
-    PORTRAIT,   // 4:5 - MÃ¡s alto que ancho (ideal para fotos verticales)
-    LANDSCAPE   // 1.91:1 - MÃ¡s ancho que alto (ideal para fotos horizontales)
+    PORTRAIT,   // 4:5 - Más alto que ancho (ideal para fotos verticales)
+    LANDSCAPE   // 1.91:1 - Más ancho que alto (ideal para fotos horizontales)
 }
 
-// Modelo para imÃ¡genes de galerÃ­a
+// Modelo para imágenes de galería
 data class GalleryImage(
     val id: Long,
     val uri: Uri,
@@ -138,19 +138,19 @@ fun PublicationScreen(
     // State machine
     var currentStep by remember { mutableStateOf<PublicationStep>(PublicationStep.Gallery) }
     
-    // GalerÃ­a
+    // Galería
     var galleryImages by remember { mutableStateOf<List<GalleryImage>>(emptyList()) }
     var selectedImageUri by remember { mutableStateOf<Uri?>(null) }
     var selectedBitmap by remember { mutableStateOf<Bitmap?>(null) }
     var selectedImageUris by remember { mutableStateOf<List<Uri>>(emptyList()) }
     
-    // Aspect ratio del preview (se detecta automÃ¡ticamente pero puede cambiarse)
+    // Aspect ratio del preview (se detecta automáticamente pero puede cambiarse)
     var previewAspectRatio by remember { mutableStateOf(PreviewAspectRatio.PORTRAIT) }
     
     // Auto-detectar aspect ratio cuando cambia la imagen
     LaunchedEffect(selectedBitmap) {
         selectedBitmap?.let { bmp ->
-            // Si la imagen es mÃ¡s ancha que alta, usar landscape; sino portrait
+            // Si la imagen es más ancha que alta, usar landscape; sino portrait
             previewAspectRatio = if (bmp.width > bmp.height) {
                 PreviewAspectRatio.LANDSCAPE
             } else {
@@ -175,7 +175,7 @@ fun PublicationScreen(
     }
     val permissionState = rememberPermissionState(storagePermission)
     
-    // Cargar galerÃ­a al obtener permiso
+    // Cargar galería al obtener permiso
     LaunchedEffect(permissionState.status.isGranted) {
         if (permissionState.status.isGranted) {
             galleryImages = loadGalleryImages(context)
@@ -315,7 +315,7 @@ fun PublicationScreen(
                                             allowOffers = allowOffers,
                                             freeShipping = freeShipping
                                         )
-                                        Log.d("PublicationScreen", "Post creado con ${bitmapsToUpload.size} imÃ¡genes, precio=$priceValue, titulo=$productTitle")
+                                        Log.d("PublicationScreen", "Post creado con ${bitmapsToUpload.size} imágenes, precio=$priceValue, titulo=$productTitle")
                                         
                                         // Save tagged users after post creation
                                         result.getOrNull()?.let { createdPost ->
@@ -371,15 +371,15 @@ private fun GallerySelectionContent(
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp
     
-    // Calcular dimensiones del preview segÃºn aspect ratio
-    // PORTRAIT: 4:5 (mÃ¡s alto que ancho) - Instagram style  
-    // LANDSCAPE: 4:3 (mÃ¡s ancho que alto) - Perfecto para home feed
+    // Calcular dimensiones del preview según aspect ratio
+    // PORTRAIT: 4:5 (más alto que ancho) - Instagram style  
+    // LANDSCAPE: 4:3 (más ancho que alto) - Perfecto para home feed
     val previewWidth = screenWidth - 32.dp // Padding horizontal
     val targetHeight = when (aspectRatio) {
         PreviewAspectRatio.PORTRAIT -> minOf(previewWidth * 1.25f, screenHeight * 0.5f) // 4:5 ratio
         PreviewAspectRatio.LANDSCAPE -> previewWidth * 0.75f // 4:3 ratio (mejor para feed)
     }
-    // AnimaciÃ³n fluida del cambio de altura
+    // Animación fluida del cambio de altura
     val previewHeight by animateDpAsState(
         targetValue = targetHeight,
         animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing),
@@ -420,7 +420,7 @@ private fun GallerySelectionContent(
                 }
                 
                 Text(
-                    text = "Nueva publicaciÃ³n",
+                    text = "Nueva publicación",
                     color = TextPrimary,
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold
@@ -462,7 +462,7 @@ private fun GallerySelectionContent(
                         )
                         Spacer(modifier = Modifier.height(16.dp))
                         Text(
-                            text = "Permiso de galerÃ­a requerido",
+                            text = "Permiso de galería requerido",
                             color = TextPrimary,
                             fontSize = 18.sp,
                             fontWeight = FontWeight.Bold
@@ -508,7 +508,7 @@ private fun GallerySelectionContent(
                                     modifier = Modifier.fillMaxSize()
                                 )
                                 
-                                // BotÃ³n de toggle aspect ratio - esquina inferior izquierda
+                                // Botón de toggle aspect ratio - esquina inferior izquierda
                                 Box(
                                     modifier = Modifier
                                         .align(Alignment.BottomStart)
@@ -526,7 +526,7 @@ private fun GallerySelectionContent(
                                         } else {
                                             Icons.Outlined.CropLandscape
                                         },
-                                        contentDescription = "Cambiar proporciÃ³n",
+                                        contentDescription = "Cambiar proporción",
                                         tint = Color.White,
                                         modifier = Modifier.size(22.dp)
                                     )
@@ -541,7 +541,7 @@ private fun GallerySelectionContent(
                         }
                     }
                     
-                    // Selector de Ã¡lbumes - STICKY debajo del header
+                    // Selector de álbumes - STICKY debajo del header
                     stickyHeader(key = "album_selector") {
                         AlbumSelector(
                             albumName = filterState.selectedAlbum,
@@ -556,7 +556,7 @@ private fun GallerySelectionContent(
                         )
                     }
                     
-                    // Grilla de galerÃ­a optimizada - como items individuales
+                    // Grilla de galería optimizada - como items individuales
                     val chunkedImages = galleryImages.chunked(4)
                     items(
                         count = chunkedImages.size,
@@ -596,7 +596,7 @@ private fun GallerySelectionContent(
                                     modifier = Modifier.weight(1f)
                                 )
                             }
-                            // Rellenar espacios vacÃ­os si la fila no estÃ¡ completa
+                            // Rellenar espacios vacíos si la fila no está completa
                             repeat(4 - chunkedImages[rowIndex].size) {
                                 Spacer(modifier = Modifier.weight(1f))
                             }
@@ -619,10 +619,10 @@ private fun GallerySelectionContent(
                 .navigationBarsPadding()
                 .padding(bottom = 12.dp)
         ) {
-            com.vinzay.app.ui.components.ModeCarousel(
+            com.mercora.app.ui.components.ModeCarousel(
                 currentIndex = currentModeIndex,
                 onModeSelected = onModeSelected,
-                style = com.vinzay.app.ui.components.CarouselStyle.FLOATING_RIGHT
+                style = com.mercora.app.ui.components.CarouselStyle.FLOATING_RIGHT
             )
         }
         
@@ -683,7 +683,7 @@ private fun GalleryThumbnail(
             modifier = Modifier.fillMaxSize()
         )
         
-        // Indicador de selecciÃ³n - cÃ­rculo en esquina superior derecha
+        // Indicador de selección - círculo en esquina superior derecha
         if (isMultiSelectMode) {
             Box(
                 modifier = Modifier
@@ -727,7 +727,7 @@ private fun GalleryThumbnail(
     }
 }
 
-// Selector de Ã¡lbumes/tipos - entre Preview y GalerÃ­a
+// Selector de álbumes/tipos - entre Preview y Galería
 @Composable
 private fun AlbumSelector(
     albumName: String = "Recientes",
@@ -743,7 +743,7 @@ private fun AlbumSelector(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // BotÃ³n de Ã¡lbum
+        // Botón de álbum
         Row(
             modifier = Modifier
                 .clip(RoundedCornerShape(8.dp))
@@ -760,13 +760,13 @@ private fun AlbumSelector(
             Spacer(modifier = Modifier.width(4.dp))
             Icon(
                 imageVector = Icons.Default.KeyboardArrowDown,
-                contentDescription = "Seleccionar Ã¡lbum",
+                contentDescription = "Seleccionar álbum",
                 tint = TextPrimary,
                 modifier = Modifier.size(20.dp)
             )
         }
         
-        // BotÃ³n selecciÃ³n mÃºltiple
+        // Botón selección múltiple
         IconButton(
             onClick = onMultiSelectClick,
             modifier = Modifier
@@ -776,7 +776,7 @@ private fun AlbumSelector(
         ) {
             Icon(
                 imageVector = Icons.Default.ContentCopy,
-                contentDescription = "SelecciÃ³n mÃºltiple",
+                contentDescription = "Selección múltiple",
                 tint = if (isMultiSelectMode) PrimaryPurple else TextMuted,
                 modifier = Modifier.size(20.dp)
             )
@@ -799,14 +799,14 @@ private fun PreviewConfirmContent(
     val density = LocalDensity.current
     
     // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-    // ESTADOS DE HERRAMIENTAS DE EDICIÃ“N
+    // ESTADOS DE HERRAMIENTAS DE EDICIÓN
     // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
     var showFilterCarousel by remember { mutableStateOf(false) }
-    var selectedFilter by remember { mutableStateOf(com.vinzay.app.ui.components.STORY_FILTERS.first()) }
+    var selectedFilter by remember { mutableStateOf(com.mercora.app.ui.components.STORY_FILTERS.first()) }
     var showAdjustMode by remember { mutableStateOf(false) }
-    var adjustState by remember { mutableStateOf(com.vinzay.app.ui.components.ImageAdjustState()) }
+    var adjustState by remember { mutableStateOf(com.mercora.app.ui.components.ImageAdjustState()) }
     var filteredBitmapForAdjust by remember { mutableStateOf<Bitmap?>(null) }
-    var selectedAdjustment by remember { mutableStateOf<com.vinzay.app.ui.components.AdjustmentType?>(null) }
+    var selectedAdjustment by remember { mutableStateOf<com.mercora.app.ui.components.AdjustmentType?>(null) }
     val gpuAdjustState by remember(adjustState) {
         derivedStateOf { adjustState.toGPUState() }
     }
@@ -814,7 +814,7 @@ private fun PreviewConfirmContent(
     // Estado para mostrar la grilla al interactuar
     var isInteractingWithImage by remember { mutableStateOf(false) }
     
-    // Calcular dimensiones del preview segÃºn aspect ratio (como Instagram)
+    // Calcular dimensiones del preview según aspect ratio (como Instagram)
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp
     val previewWidth = screenWidth - 32.dp // Padding horizontal
@@ -824,7 +824,7 @@ private fun PreviewConfirmContent(
     }
     // En modo Ajustar, expandir preview para mostrar imagen completa
     val targetPreviewHeight = if (showAdjustMode) screenHeight * 0.62f else normalPreviewHeight
-    // AnimaciÃ³n fluida del cambio de altura
+    // Animación fluida del cambio de altura
     val maxPreviewHeight by animateDpAsState(
         targetValue = targetPreviewHeight,
         animationSpec = tween(durationMillis = 350, easing = FastOutSlowInEasing),
@@ -832,23 +832,23 @@ private fun PreviewConfirmContent(
     )
     val previewCornerRadius = 12.dp
     
-    // Estado para el offset de posiciÃ³n de la imagen (para herramienta PosiciÃ³n)
+    // Estado para el offset de posición de la imagen (para herramienta Posición)
     // Usamos Animatable para animaciones fluidas de retorno
     val imageOffsetXAnimatable = remember { androidx.compose.animation.core.Animatable(0f) }
     val imageOffsetYAnimatable = remember { androidx.compose.animation.core.Animatable(0f) }
     var imageOffsetX by remember { mutableStateOf(0f) }
     var imageOffsetY by remember { mutableStateOf(0f) }
-    // Escala de la imagen para zoom (inicia en 1.0 = tamaÃ±o original que llena el preview)
+    // Escala de la imagen para zoom (inicia en 1.0 = tamaño original que llena el preview)
     var imageScale by remember { mutableStateOf(1f) }
     
-    // Dimensiones para calcular lÃ­mites de paneo
+    // Dimensiones para calcular límites de paneo
     var containerWidthPx by remember { mutableStateOf(0f) }
     var containerHeightPx by remember { mutableStateOf(0f) }
     var imageWidthPx by remember { mutableStateOf(0f) }
     var imageHeightPx by remember { mutableStateOf(0f) }
     var baseCoverScaleState by remember { mutableStateOf(1f) }
     
-    // FunciÃ³n para calcular y clampar offsets dentro de los lÃ­mites
+    // Función para calcular y clampar offsets dentro de los límites
     fun clampOffsets(newOffsetX: Float, newOffsetY: Float, scale: Float): Pair<Float, Float> {
         if (containerWidthPx <= 0 || containerHeightPx <= 0 || imageWidthPx <= 0 || imageHeightPx <= 0) {
             return Pair(newOffsetX, newOffsetY)
@@ -859,8 +859,8 @@ private fun PreviewConfirmContent(
         val scaledImageW = imageWidthPx * finalScale
         val scaledImageH = imageHeightPx * finalScale
         
-        // Calcular lÃ­mites mÃ¡ximos de paneo
-        // El lÃ­mite es la cantidad que la imagen sobresale del contenedor por cada lado
+        // Calcular límites máximos de paneo
+        // El límite es la cantidad que la imagen sobresale del contenedor por cada lado
         val maxOffsetX = maxOf(0f, (scaledImageW - containerWidthPx) / 2f)
         val maxOffsetY = maxOf(0f, (scaledImageH - containerHeightPx) / 2f)
         
@@ -879,7 +879,7 @@ private fun PreviewConfirmContent(
     LaunchedEffect(selectedBitmap, selectedFilter) {
         selectedBitmap?.let { bmp ->
             kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Default) {
-                val filtered = com.vinzay.app.ui.components.FilterProcessor
+                val filtered = com.mercora.app.ui.components.FilterProcessor
                     .applyFilterForExport(bmp, selectedFilter)
                 kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Main) {
                     displayBitmap = filtered
@@ -888,7 +888,7 @@ private fun PreviewConfirmContent(
         }
     }
     
-    // Herramientas de ediciÃ³n para posts (optimizadas para e-commerce)
+    // Herramientas de edición para posts (optimizadas para e-commerce)
     data class EditTool(val id: String, val icon: ImageVector, val label: String, val isLocked: Boolean = false)
     val editTools = listOf(
         EditTool("filter", Icons.Outlined.AutoAwesome, "Filtros"),
@@ -962,10 +962,10 @@ private fun PreviewConfirmContent(
                         )
                     }
                 } else if (showAdjustMode) {
-                    // Header de modo Ajustar - Cancel / TÃ­tulo / Tick(aplicar)
+                    // Header de modo Ajustar - Cancel / Título / Tick(aplicar)
                     TextButton(
                         onClick = {
-                            adjustState = com.vinzay.app.ui.components.ImageAdjustState()
+                            adjustState = com.mercora.app.ui.components.ImageAdjustState()
                             selectedAdjustment = null
                             showAdjustMode = false
                         }
@@ -978,7 +978,7 @@ private fun PreviewConfirmContent(
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold
                     )
-                    // BotÃ³n tick para aplicar ajustes
+                    // Botón tick para aplicar ajustes
                     var isApplyingAdjust by remember { mutableStateOf(false) }
                     IconButton(
                         onClick = {
@@ -987,11 +987,11 @@ private fun PreviewConfirmContent(
                                 scope.launch {
                                     val adjusted = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Default) {
                                         (filteredBitmapForAdjust ?: selectedBitmap)?.let { bmp ->
-                                            com.vinzay.app.ui.components.ImageAdjustProcessor.applyForExport(bmp, adjustState)
+                                            com.mercora.app.ui.components.ImageAdjustProcessor.applyForExport(bmp, adjustState)
                                         }
                                     }
                                     adjusted?.let { displayBitmap = it }
-                                    adjustState = com.vinzay.app.ui.components.ImageAdjustState()
+                                    adjustState = com.mercora.app.ui.components.ImageAdjustState()
                                     selectedAdjustment = null
                                     isApplyingAdjust = false
                                     showAdjustMode = false
@@ -1073,7 +1073,7 @@ private fun PreviewConfirmContent(
                         contentAlignment = Alignment.Center
                     ) {
                         if (filteredBitmapForAdjust != null) {
-                            com.vinzay.app.gpu.GPUAdjustedImage(
+                            com.mercora.app.gpu.GPUAdjustedImage(
                                 bitmap = filteredBitmapForAdjust,
                                 adjustments = gpuAdjustState,
                                 modifier = Modifier.fillMaxSize()
@@ -1119,7 +1119,7 @@ private fun PreviewConfirmContent(
                             }
                         }
                         
-                        // Indicadores de pÃ¡gina
+                        // Indicadores de página
                         if (!isAnyToolActive) {
                             Row(
                                 horizontalArrangement = Arrangement.Center,
@@ -1151,7 +1151,7 @@ private fun PreviewConfirmContent(
                     }
                 } else {
                     // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-                    // IMAGEN ÃšNICA - Instagram-style: Cover + pan/zoom siempre activo
+                    // IMAGEN ÚNICA - Instagram-style: Cover + pan/zoom siempre activo
                     // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
                     BoxWithConstraints(
                         modifier = Modifier
@@ -1160,7 +1160,7 @@ private fun PreviewConfirmContent(
                             .pointerInput(Unit) {
                                 detectTapGestures(
                                     onDoubleTap = {
-                                        // Doble tap: centrar imagen y resetear zoom con animaciÃ³n
+                                        // Doble tap: centrar imagen y resetear zoom con animación
                                         scope.launch {
                                             imageOffsetXAnimatable.snapTo(imageOffsetX)
                                             imageOffsetXAnimatable.animateTo(
@@ -1277,7 +1277,7 @@ private fun PreviewConfirmContent(
                             )
                         }
                         
-                        // Grilla 3x3 Instagram - aparece al interactuar o en modo posiciÃ³n
+                        // Grilla 3x3 Instagram - aparece al interactuar o en modo posición
                         val gridAlpha by animateFloatAsState(
                             targetValue = if (isInteractingWithImage) 0.6f else 0f,
                             animationSpec = tween(if (isInteractingWithImage) 100 else 300),
@@ -1289,10 +1289,10 @@ private fun PreviewConfirmContent(
                                 val gridColor = Color.White.copy(alpha = gridAlpha)
                                 val thirdW = size.width / 3
                                 val thirdH = size.height / 3
-                                // LÃ­neas verticales
+                                // Líneas verticales
                                 drawLine(gridColor, Offset(thirdW, 0f), Offset(thirdW, size.height), strokeWidth)
                                 drawLine(gridColor, Offset(thirdW * 2, 0f), Offset(thirdW * 2, size.height), strokeWidth)
-                                // LÃ­neas horizontales
+                                // Líneas horizontales
                                 drawLine(gridColor, Offset(0f, thirdH), Offset(size.width, thirdH), strokeWidth)
                                 drawLine(gridColor, Offset(0f, thirdH * 2), Offset(size.width, thirdH * 2), strokeWidth)
                             }
@@ -1315,8 +1315,8 @@ private fun PreviewConfirmContent(
                 selectedAdjustment?.let { selected ->
                     val currentValue = adjustState.getValue(selected)
                     val displayValue = when (selected) {
-                        com.vinzay.app.ui.components.AdjustmentType.EXPOSURE -> String.format("%+.1f EV", currentValue)
-                        com.vinzay.app.ui.components.AdjustmentType.GRAIN -> String.format("%.0f%%", currentValue * 100)
+                        com.mercora.app.ui.components.AdjustmentType.EXPOSURE -> String.format("%+.1f EV", currentValue)
+                        com.mercora.app.ui.components.AdjustmentType.GRAIN -> String.format("%.0f%%", currentValue * 100)
                         else -> String.format("%+.0f", currentValue * 100)
                     }
                     
@@ -1381,7 +1381,7 @@ private fun PreviewConfirmContent(
         }
         
         // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-        // HERRAMIENTAS DE EDICIÃ“N - Condicional: AdjustTools o Carrusel principal
+        // HERRAMIENTAS DE EDICIÓN - Condicional: AdjustTools o Carrusel principal
         // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
         Box(
             modifier = Modifier
@@ -1400,9 +1400,9 @@ private fun PreviewConfirmContent(
                 if (isAdjustMode) {
                     // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
                     // MODO AJUSTAR: Carrusel de herramientas de ajuste
-                    // Reemplaza las herramientas principales con transiciÃ³n fluida
+                    // Reemplaza las herramientas principales con transición fluida
                     // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-                    com.vinzay.app.ui.components.AdjustmentToolsCarousel(
+                    com.mercora.app.ui.components.AdjustmentToolsCarousel(
                         adjustState = adjustState,
                         selectedAdjustment = selectedAdjustment,
                         onAdjustmentSelected = { type -> selectedAdjustment = type },
@@ -1411,7 +1411,7 @@ private fun PreviewConfirmContent(
                     )
                 } else {
                     // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-                    // HERRAMIENTAS PRINCIPALES: Filtros, PosiciÃ³n, Ajustar, etc.
+                    // HERRAMIENTAS PRINCIPALES: Filtros, Posición, Ajustar, etc.
                     // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
                     LazyRow(
                         modifier = Modifier.fillMaxWidth(),
@@ -1435,7 +1435,7 @@ private fun PreviewConfirmContent(
                                         "adjust" -> {
                                             selectedBitmap?.let { bmp ->
                                                 scope.launch(kotlinx.coroutines.Dispatchers.Default) {
-                                                    val filtered = com.vinzay.app.ui.components.FilterProcessor
+                                                    val filtered = com.mercora.app.ui.components.FilterProcessor
                                                         .applyFilterForExport(bmp, selectedFilter)
                                                     kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Main) {
                                                         filteredBitmapForAdjust = filtered
@@ -1479,7 +1479,7 @@ private fun PreviewConfirmContent(
                                         ) {
                                             Icon(
                                                 imageVector = Icons.Filled.Lock,
-                                                contentDescription = "PrÃ³ximamente",
+                                                contentDescription = "Próximamente",
                                                 tint = TextMuted,
                                                 modifier = Modifier.size(10.dp)
                                             )
@@ -1513,7 +1513,7 @@ private fun PreviewConfirmContent(
         ) {
             // Carrusel de filtros debajo de la imagen
             selectedBitmap?.let { bitmap ->
-                com.vinzay.app.ui.components.FilterCarousel(
+                com.mercora.app.ui.components.FilterCarousel(
                     bitmap = bitmap,
                     currentFilter = selectedFilter,
                     onFilterSelected = { filter -> selectedFilter = filter }
@@ -1521,12 +1521,12 @@ private fun PreviewConfirmContent(
             }
         }
         
-        // ImageAdjustOverlay removido - slider ahora estÃ¡ inline debajo del preview
+        // ImageAdjustOverlay removido - slider ahora está inline debajo del preview
     }
 }
 
 // ============================================================================
-// PANTALLA FINAL DE PUBLICACIÃ“N - Estilo Ecommerce Creativo
+// PANTALLA FINAL DE PUBLICACIÓN - Estilo Ecommerce Creativo
 // ============================================================================
 @OptIn(ExperimentalFoundationApi::class, ExperimentalLayoutApi::class)
 @Composable
@@ -1550,7 +1550,7 @@ private fun FinalPublishContent(
     
     // Nuevos campos de producto
     var availability by remember { mutableStateOf("Disponible") }
-    var warranty by remember { mutableStateOf("Sin garantÃ­a") }
+    var warranty by remember { mutableStateOf("Sin garantía") }
     var acceptedPayments by remember { mutableStateOf(setOf("Efectivo", "Transferencia")) }
     var maxInstallments by remember { mutableStateOf(0) }
     var hasReturn by remember { mutableStateOf(false) }
@@ -1568,7 +1568,7 @@ private fun FinalPublishContent(
     // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
     // PALETA DE COLORES ECOMMERCE PROFESIONAL
     // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-    val EcommercePrimary = Color(0xFF48586f)    // Azul grisÃ¡ceo (principal)
+    val EcommercePrimary = Color(0xFF48586f)    // Azul grisáceo (principal)
     val EcommerceAccent = Color(0xFFd6c496)     // Dorado/beige (acentos)
     val EcommerceHighlight = Color(0xFFffffc0)  // Amarillo crema (highlights)
     val EcommerceAlert = Color(0xFFd62e2e)      // Rojo (alertas/ofertas)
@@ -1584,7 +1584,7 @@ private fun FinalPublishContent(
                 .verticalScroll(scrollState)
                 .navigationBarsPadding()
         ) {
-            // Top bar con botÃ³n volver y botÃ³n publicar
+            // Top bar con botón volver y botón publicar
             // Altura FIJA de 56dp igual que step 1 (evita salto visual)
             Row(
                 modifier = Modifier
@@ -1618,7 +1618,7 @@ private fun FinalPublishContent(
                     modifier = Modifier.weight(1f)
                 )
                 
-                // BotÃ³n Publicar en esquina superior derecha
+                // Botón Publicar en esquina superior derecha
                 Button(
                     onClick = { onPublishClick(productTitle, productPrice, productCondition, productCategory, allowOffers, freeShipping, taggedUsers.map { it.userId }) },
                     enabled = !isPublishing && productTitle.isNotBlank(),
@@ -1646,7 +1646,7 @@ private fun FinalPublishContent(
                 }
             }
             
-            // ========== IMAGEN CON DIMENSIÃ“N AJUSTABLE ==========
+            // ========== IMAGEN CON DIMENSIÓN AJUSTABLE ==========
             val imagesToShow = selectedUris.ifEmpty { listOfNotNull(selectedUri) }
             
             if (imagesToShow.isNotEmpty()) {
@@ -1749,7 +1749,7 @@ private fun FinalPublishContent(
             
             Spacer(modifier = Modifier.height(16.dp))
             
-            // ========== DESCRIPCIÃ“N (sin tÃ­tulo, sin borde) ==========
+            // ========== DESCRIPCIÓN (sin título, sin borde) ==========
             TextField(
                 value = caption,
                 onValueChange = onCaptionChange,
@@ -1973,7 +1973,7 @@ private fun FinalPublishContent(
             
             Spacer(modifier = Modifier.height(20.dp))
             
-            // ========== INFORMACIÃ“N DEL PRODUCTO ==========
+            // ========== INFORMACIÓN DEL PRODUCTO ==========
             Row(
                 modifier = Modifier.padding(horizontal = 16.dp),
                 verticalAlignment = Alignment.CenterVertically
@@ -1981,7 +1981,7 @@ private fun FinalPublishContent(
                 Icon(Icons.Default.Inventory, null, tint = EcommerceAccent, modifier = Modifier.size(20.dp))
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    text = "InformaciÃ³n del producto",
+                    text = "Información del producto",
                     color = TextPrimary,
                     fontSize = 15.sp,
                     fontWeight = FontWeight.Bold
@@ -1989,11 +1989,11 @@ private fun FinalPublishContent(
             }
             Spacer(modifier = Modifier.height(12.dp))
             
-            // TÃ­tulo del producto
+            // Título del producto
             OutlinedTextField(
                 value = productTitle,
                 onValueChange = { productTitle = it },
-                placeholder = { Text("TÃ­tulo del producto", color = TextMuted, fontSize = 14.sp) },
+                placeholder = { Text("Título del producto", color = TextMuted, fontSize = 14.sp) },
                 leadingIcon = { Icon(Icons.Default.ShoppingBag, null, tint = EcommerceAccent) },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -2037,11 +2037,11 @@ private fun FinalPublishContent(
             
             Spacer(modifier = Modifier.height(12.dp))
             
-            // CategorÃ­a
+            // Categoría
             OutlinedTextField(
                 value = productCategory,
                 onValueChange = { productCategory = it },
-                placeholder = { Text("CategorÃ­a (ej: Ropa, Tech, Hogar)", color = TextMuted, fontSize = 14.sp) },
+                placeholder = { Text("Categoría (ej: Ropa, Tech, Hogar)", color = TextMuted, fontSize = 14.sp) },
                 leadingIcon = { Icon(Icons.Default.Category, null, tint = EcommerceAccent) },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -2103,9 +2103,9 @@ private fun FinalPublishContent(
                 
                 Spacer(modifier = Modifier.height(16.dp))
                 
-                // CondiciÃ³n - Grid 2x2
+                // Condición - Grid 2x2
                 Text(
-                    text = "CondiciÃ³n",
+                    text = "Condición",
                     color = TextMuted,
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Medium
@@ -2193,9 +2193,9 @@ private fun FinalPublishContent(
                     listOf(
                         "Disponible" to Icons.Outlined.CheckCircle,
                         "Por encargo" to Icons.Outlined.Schedule,
-                        "Ãšltimo" to Icons.Outlined.LocalFireDepartment
+                        "Último" to Icons.Outlined.LocalFireDepartment
                     ).forEach { (option, icon) ->
-                        val isSelected = availability == option || (option == "Ãšltimo" && availability == "Ãšltimo disponible")
+                        val isSelected = availability == option || (option == "Último" && availability == "Último disponible")
                         Column(
                             modifier = Modifier
                                 .weight(1f)
@@ -2207,7 +2207,7 @@ private fun FinalPublishContent(
                                     shape = RoundedCornerShape(12.dp)
                                 )
                                 .clickable { 
-                                    availability = if (option == "Ãšltimo") "Ãšltimo disponible" else option 
+                                    availability = if (option == "Último") "Último disponible" else option 
                                 }
                                 .padding(vertical = 10.dp),
                             horizontalAlignment = Alignment.CenterHorizontally
@@ -2233,7 +2233,7 @@ private fun FinalPublishContent(
             Spacer(modifier = Modifier.height(16.dp))
             
             // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-            // TARJETA: GARANTÃA Y PAGOS
+            // TARJETA: GARANTÍA Y PAGOS
             // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
             Column(
                 modifier = Modifier
@@ -2261,7 +2261,7 @@ private fun FinalPublishContent(
                     }
                     Spacer(modifier = Modifier.width(12.dp))
                     Text(
-                        text = "GarantÃ­a y pagos",
+                        text = "Garantía y pagos",
                         color = TextPrimary,
                         fontSize = 16.sp,
                         fontWeight = FontWeight.SemiBold
@@ -2270,9 +2270,9 @@ private fun FinalPublishContent(
                 
                 Spacer(modifier = Modifier.height(16.dp))
                 
-                // GarantÃ­a - chips horizontales con scroll
+                // Garantía - chips horizontales con scroll
                 Text(
-                    text = "PerÃ­odo de garantÃ­a",
+                    text = "Período de garantía",
                     color = TextMuted,
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Medium
@@ -2284,7 +2284,7 @@ private fun FinalPublishContent(
                         .horizontalScroll(rememberScrollState()),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    listOf("Sin garantÃ­a", "7 dÃ­as", "15 dÃ­as", "30 dÃ­as", "90 dÃ­as", "1 aÃ±o").forEach { option ->
+                    listOf("Sin garantía", "7 días", "15 días", "30 días", "90 días", "1 año").forEach { option ->
                         val isSelected = warranty == option
                         Box(
                             modifier = Modifier
@@ -2312,21 +2312,21 @@ private fun FinalPublishContent(
                 Divider(color = Surface, thickness = 1.dp)
                 Spacer(modifier = Modifier.height(16.dp))
                 
-                // MÃ©todos de pago - iconos con checkboxes visuales
+                // Métodos de pago - iconos con checkboxes visuales
                 Text(
-                    text = "MÃ©todos de pago aceptados",
+                    text = "Métodos de pago aceptados",
                     color = TextMuted,
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Medium
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 
-                // Grid de mÃ©todos de pago
+                // Grid de métodos de pago
                 val paymentMethods = listOf(
                     Triple("Efectivo", Icons.Outlined.Money, "cash"),
                     Triple("Transferencia", Icons.Outlined.AccountBalance, "transfer"),
-                    Triple("DÃ©bito", Icons.Outlined.CreditCard, "debit"),
-                    Triple("CrÃ©dito", Icons.Outlined.CreditScore, "credit"),
+                    Triple("Débito", Icons.Outlined.CreditCard, "debit"),
+                    Triple("Crédito", Icons.Outlined.CreditScore, "credit"),
                     Triple("PayPal", Icons.Outlined.Wallet, "paypal")
                 )
                 
@@ -2336,12 +2336,12 @@ private fun FinalPublishContent(
                 ) {
                     paymentMethods.forEach { (name, icon, _) ->
                         val isSelected = name in acceptedPayments || 
-                            (name == "DÃ©bito" && "Tarjeta dÃ©bito" in acceptedPayments) ||
-                            (name == "CrÃ©dito" && "Tarjeta crÃ©dito" in acceptedPayments)
+                            (name == "Débito" && "Tarjeta débito" in acceptedPayments) ||
+                            (name == "Crédito" && "Tarjeta crédito" in acceptedPayments)
                         
                         val fullName = when(name) {
-                            "DÃ©bito" -> "Tarjeta dÃ©bito"
-                            "CrÃ©dito" -> "Tarjeta crÃ©dito"
+                            "Débito" -> "Tarjeta débito"
+                            "Crédito" -> "Tarjeta crédito"
                             else -> name
                         }
                         
@@ -2383,8 +2383,8 @@ private fun FinalPublishContent(
                     }
                 }
                 
-                // Cuotas sin interÃ©s (solo si acepta tarjeta crÃ©dito)
-                AnimatedVisibility(visible = "Tarjeta crÃ©dito" in acceptedPayments) {
+                // Cuotas sin interés (solo si acepta tarjeta crédito)
+                AnimatedVisibility(visible = "Tarjeta crédito" in acceptedPayments) {
                     Column {
                         Spacer(modifier = Modifier.height(12.dp))
                         Row(
@@ -2393,7 +2393,7 @@ private fun FinalPublishContent(
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
                             Text(
-                                text = "Cuotas sin interÃ©s",
+                                text = "Cuotas sin interés",
                                 color = TextMuted,
                                 fontSize = 12.sp
                             )
@@ -2466,8 +2466,8 @@ private fun FinalPublishContent(
                     icon = Icons.Default.LocalShipping,
                     iconBgColor = Color(0xFF4CAF50).copy(alpha = 0.15f),
                     iconTint = Color(0xFF4CAF50),
-                    title = "EnvÃ­o gratis",
-                    subtitle = "Sin costo adicional de envÃ­o",
+                    title = "Envío gratis",
+                    subtitle = "Sin costo adicional de envío",
                     isEnabled = freeShipping,
                     onToggle = { freeShipping = it }
                 )
@@ -2479,7 +2479,7 @@ private fun FinalPublishContent(
                     iconBgColor = Color(0xFFFF9800).copy(alpha = 0.15f),
                     iconTint = Color(0xFFFF9800),
                     title = "Acepta ofertas",
-                    subtitle = "NegociaciÃ³n de precio",
+                    subtitle = "Negociación de precio",
                     isEnabled = allowOffers,
                     onToggle = { allowOffers = it }
                 )
@@ -2490,8 +2490,8 @@ private fun FinalPublishContent(
                     icon = Icons.Default.Autorenew,
                     iconBgColor = Color(0xFF2196F3).copy(alpha = 0.15f),
                     iconTint = Color(0xFF2196F3),
-                    title = "DevoluciÃ³n gratis",
-                    subtitle = "30 dÃ­as sin costo",
+                    title = "Devolución gratis",
+                    subtitle = "30 días sin costo",
                     isEnabled = hasReturn,
                     onToggle = { hasReturn = it }
                 )
@@ -2502,7 +2502,7 @@ private fun FinalPublishContent(
     }
 }
 
-// Componente de toggle para beneficios con diseÃ±o elegante
+// Componente de toggle para beneficios con diseño elegante
 @Composable
 private fun BenefitToggleRow(
     icon: ImageVector,
@@ -2559,7 +2559,7 @@ private fun BenefitToggleRow(
     }
 }
 
-// Componente de opciÃ³n de engagement
+// Componente de opción de engagement
 @Composable
 private fun EngagementOption(
     icon: ImageVector,
@@ -2614,7 +2614,7 @@ private fun EngagementOption(
     }
 }
 
-// Componente de opciÃ³n de publicaciÃ³n
+// Componente de opción de publicación
 @Composable
 private fun PublishOption(
     icon: ImageVector,
@@ -2663,7 +2663,7 @@ private fun PublishOption(
     }
 }
 
-// Componente de opciÃ³n con toggle
+// Componente de opción con toggle
 @Composable
 private fun ToggleOption(
     icon: ImageVector,
@@ -2756,7 +2756,7 @@ private fun PublishingContent(
     }
 }
 
-// Funciones de utilidad para cargar galerÃ­a
+// Funciones de utilidad para cargar galería
 private suspend fun loadGalleryImages(context: android.content.Context): List<GalleryImage> {
     return withContext(Dispatchers.IO) {
         val images = mutableListOf<GalleryImage>()
@@ -2810,7 +2810,7 @@ private suspend fun loadBitmapFromUri(context: android.content.Context, uri: Uri
     }
 }
 
-// Componente de encabezado de secciÃ³n
+// Componente de encabezado de sección
 @Composable
 private fun SectionHeader(
     icon: ImageVector,

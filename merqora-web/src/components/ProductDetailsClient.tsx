@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import type { Post } from '@/lib/types'
 import StarRating from '@/components/StarRating'
@@ -31,7 +31,7 @@ export default function ProductDetailsClient({ post, user }: { post: Post; user:
     ? new Intl.NumberFormat('es-UY', { style: 'currency', currency: 'UYU' }).format(savings)
     : null
 
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://vinzay.app'
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://mercora.app'
   const catName = post.category ? CATEGORY_NAMES[post.category] || post.category : ''
 
   return (
@@ -64,7 +64,7 @@ export default function ProductDetailsClient({ post, user }: { post: Post; user:
       <div className={styles.actionsRow}>
         <ShareButton postId={post.id} className={styles.actionBtn} />
         <a
-          href={`https://wa.me/?text=${encodeURIComponent(`Mirá este Producto en Vinzay: ${post.title} - ${siteUrl}/p/${post.id}`)}`}
+          href={`https://wa.me/?text=${encodeURIComponent(`Mirá este Producto en Mercora: ${post.title} - ${siteUrl}/p/${post.id}`)}`}
           target="_blank"
           rel="noopener noreferrer"
           className={styles.actionBtn}

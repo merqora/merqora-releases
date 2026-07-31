@@ -30,8 +30,8 @@ import java.text.NumberFormat
 import java.util.Locale
 
 data class SellerBankInfo(
-    val bankName: String = "Banco RepÃºblica (BROU)",
-    val accountHolder: String = "Juan Carlos PÃ©rez",
+    val bankName: String = "Banco República (BROU)",
+    val accountHolder: String = "Juan Carlos Pérez",
     val accountType: String = "Cuenta Corriente",
     val accountNumber: String = "123456789-0",
     val cbu: String = "0010123456789012345678",
@@ -73,7 +73,7 @@ fun BankTransferForm(
                 InfoRowWithCopy("Banco", bankInfo.bankName) { copyToClipboard(bankInfo.bankName, "Banco") }
                 InfoRowWithCopy("Titular", bankInfo.accountHolder) { copyToClipboard(bankInfo.accountHolder, "Titular") }
                 InfoRowWithCopy("Tipo", bankInfo.accountType) { copyToClipboard(bankInfo.accountType, "Tipo") }
-                InfoRowWithCopy("NÂº Cuenta", bankInfo.accountNumber) { copyToClipboard(bankInfo.accountNumber, "Cuenta") }
+                InfoRowWithCopy("Nº Cuenta", bankInfo.accountNumber) { copyToClipboard(bankInfo.accountNumber, "Cuenta") }
                 InfoRowWithCopy("CBU", bankInfo.cbu, isHighlighted = true) { copyToClipboard(bankInfo.cbu, "CBU") }
                 InfoRowWithCopy("${bankInfo.holderDocumentType}/${"RUT"}", bankInfo.holderDocument) { copyToClipboard(bankInfo.holderDocument, "Documento") }
             }
@@ -93,7 +93,7 @@ fun BankTransferForm(
                 }
                 Spacer(Modifier.height(8.dp))
                 Text(
-                    "IncluÃ­ esta referencia en la transferencia para que el vendedor identifique tu pago:",
+                    "Incluí esta referencia en la transferencia para que el vendedor identifique tu pago:",
                     fontSize = 13.sp, color = TextSecondary
                 )
                 Spacer(Modifier.height(12.dp))
@@ -270,12 +270,12 @@ private fun InstructionsCard() {
                 Text("Instrucciones", fontSize = 15.sp, fontWeight = FontWeight.Bold, color = TextPrimary)
             }
             Spacer(Modifier.height(12.dp))
-            InstructionStep(1, "CopiÃ¡ el CBU y la referencia tocando los botones")
-            InstructionStep(2, "IngresÃ¡ a tu banco o app de tu banco")
-            InstructionStep(3, "CreÃ¡ una transferencia usando el CBU copiado")
-            InstructionStep(4, "IncluÃ­ la referencia en el concepto")
-            InstructionStep(5, "TransferÃ­ el monto exacto")
-            InstructionStep(6, "VolvÃ© a la app y tocÃ¡ \"Ya hice la transferencia\"")
+            InstructionStep(1, "Copiá el CBU y la referencia tocando los botones")
+            InstructionStep(2, "Ingresá a tu banco o app de tu banco")
+            InstructionStep(3, "Creá una transferencia usando el CBU copiado")
+            InstructionStep(4, "Incluí la referencia en el concepto")
+            InstructionStep(5, "Transferí el monto exacto")
+            InstructionStep(6, "Volvé a la app y tocá \"Ya hice la transferencia\"")
         }
     }
 }

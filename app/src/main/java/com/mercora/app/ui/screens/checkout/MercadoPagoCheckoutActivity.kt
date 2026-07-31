@@ -36,7 +36,7 @@ class MercadoPagoCheckoutActivity : ComponentActivity() {
         const val RESULT_ORDER_ID = "order_id"
         const val RESULT_ERROR_MESSAGE = "error_message"
 
-        private const val DEEP_LINK_SCHEME = "vinzay"
+        private const val DEEP_LINK_SCHEME = "Mercora"
 
         fun createIntent(
             context: Context,

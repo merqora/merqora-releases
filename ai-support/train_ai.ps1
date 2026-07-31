@@ -3,7 +3,7 @@ $headers = @{ "Content-Type" = "application/json" }
 
 $messages = @(
     # â•â•â• COMPRAS Y PAGOS â•â•â•
-    "Como puedo comprar un producto en Rendly?",
+    "Como puedo comprar un producto en Mercora?",
     "Quiero comprar algo pero no se como",
     "Como agrego algo al carrito?",
     "Donde veo mi carrito de compras?",
@@ -42,7 +42,7 @@ $messages = @(
     "Hacen envios a todo el pais?",
     
     # â•â•â• CUENTA Y PERFIL â•â•â•
-    "Como creo una cuenta en Rendly?",
+    "Como creo una cuenta en Mercora?",
     "Como me registro?",
     "No puedo iniciar sesion",
     "Olvide mi contrasena",
@@ -62,7 +62,7 @@ $messages = @(
     "Como cierro sesion en todos los dispositivos?",
     
     # â•â•â• VENDER PRODUCTOS â•â•â•
-    "Como vendo en Rendly?",
+    "Como vendo en Mercora?",
     "Quiero publicar un producto para vender",
     "Como publico un articulo?",
     "Como subo fotos de mi producto?",
@@ -89,17 +89,17 @@ $messages = @(
     "Me estan enviando spam",
     "Como silencio una conversacion?",
     "Como borro un mensaje?",
-    "Se puede hacer llamadas en Rendly?",
+    "Se puede hacer llamadas en Mercora?",
     "Como llamo a un vendedor?",
     
     # â•â•â• HISTORIAS Y RENDS â•â•â•
-    "Que son las historias en Rendly?",
+    "Que son las historias en Mercora?",
     "Como subo una historia?",
     "Cuanto duran las historias?",
     "Las historias desaparecen?",
     "Que es un Rend?",
     "Como creo un Rend?",
-    "Como edito un video en Rendly?",
+    "Como edito un video en Mercora?",
     "Se puede agregar musica a los Rends?",
     "Como agrego filtros a mi video?",
     "Como recorto un video?",
@@ -108,14 +108,14 @@ $messages = @(
     "Se pueden agregar stickers?",
     
     # â•â•â• SEGURIDAD Y PRIVACIDAD â•â•â•
-    "Mis datos estan seguros en Rendly?",
+    "Mis datos estan seguros en Mercora?",
     "Como cambio la privacidad de mi perfil?",
     "Puedo hacer mi perfil privado?",
     "Quien puede ver mis publicaciones?",
     "Como oculto mi actividad?",
     "No quiero que vean cuando estoy en linea",
     "Como desactivo el estado en linea?",
-    "Que informacion recopila Rendly?",
+    "Que informacion recopila Mercora?",
     "Como protejo mi informacion personal?",
     
     # â•â•â• NOTIFICACIONES â•â•â•
@@ -128,7 +128,7 @@ $messages = @(
     "Las notificaciones de compras no funcionan",
     
     # â•â•â• HANDSHAKE Y COMPRA PRESENCIAL â•â•â•
-    "Que es un handshake en Rendly?",
+    "Que es un handshake en Mercora?",
     "Como funciona la compra presencial?",
     "Como confirmo una compra en persona?",
     "Que es el codigo QR para compras?",
@@ -177,24 +177,24 @@ $messages = @(
     "Tengo la ultima version?",
     
     # â•â•â• LIVES Y STREAMING â•â•â•
-    "Como hago un en vivo en Rendly?",
+    "Como hago un en vivo en Mercora?",
     "Se puede hacer streaming?",
     "Que necesito para hacer un live?",
     "Cuantas personas pueden ver mi live?",
     
     # â•â•â• GENERAL â•â•â•
-    "Que es Rendly?",
-    "Para que sirve Rendly?",
-    "Es gratis usar Rendly?",
-    "Rendly cobra comision?",
-    "Como contacto al soporte de Rendly?",
+    "Que es Mercora?",
+    "Para que sirve Mercora?",
+    "Es gratis usar Mercora?",
+    "Mercora cobra comision?",
+    "Como contacto al soporte de Mercora?",
     "Necesito ayuda urgente",
     "Hola, necesito ayuda",
     "Tienen atencion al cliente?",
     "Cuales son los terminos de uso?",
     "Tienen politica de privacidad?",
-    "En que paises esta disponible Rendly?",
-    "Hay version web de Rendly?",
+    "En que paises esta disponible Mercora?",
+    "Hay version web de Mercora?",
     "Se puede usar en computadora?",
     
     # â•â•â• SEGUNDA RONDA - VARIACIONES NATURALES â•â•â•

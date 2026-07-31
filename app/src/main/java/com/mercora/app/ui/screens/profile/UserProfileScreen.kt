@@ -76,7 +76,7 @@ private data class UserProfileTab(
 )
 
 private val userProfileTabs = listOf(
-    UserProfileTab("posts", Icons.Default.Menu, "CatÃ¡logo"),
+    UserProfileTab("posts", Icons.Default.Menu, "Catálogo"),
     UserProfileTab("videos", Icons.Outlined.PlayArrow, "Rends"),
     UserProfileTab("details", Icons.Outlined.Info, "Detalles")
 )
@@ -123,7 +123,7 @@ fun UserProfileScreen(
     // Estado para modal de seguidores/clientes
     var showFollowersList by remember { mutableStateOf(false) }
 
-    // Stats dinÃ¡micos desde FollowersRepository
+    // Stats dinámicos desde FollowersRepository
     var seguidoresCount by remember { mutableStateOf(0) }
     var clientesCount by remember { mutableStateOf(0) }
     var reputacionCalc by remember { mutableStateOf(70) }
@@ -146,13 +146,13 @@ fun UserProfileScreen(
     LaunchedEffect(userId) {
         FollowersRepository.followChangeTrigger.collect { (_, followedId) ->
             if (followedId == userId) {
-                Log.d("UserProfileScreen", "ðŸ”„ Follow change match: followed=$followedId, refrescando...")
+                Log.d("UserProfileScreen", "🔄 Follow change match: followed=$followedId, refrescando...")
                 reloadKey++
             }
         }
     }
 
-    // Reaccionar a aceptaciÃ³n/rechazo de solicitudes via notificaciones Realtime
+    // Reaccionar a aceptación/rechazo de solicitudes via notificaciones Realtime
     LaunchedEffect(userId) {
         NotificationRepository.profileRefreshTrigger.collect { _ ->
             reloadKey++
@@ -293,7 +293,7 @@ fun UserProfileScreen(
                     .fillMaxSize()
                     .background(HomeBg)
             ) {
-                // Header compacto arriba del banner [â† @username ðŸ””]
+                // Header compacto arriba del banner [â† @username 🔔]
                 item {
                     ProfileCompactHeader(
                         username = userProfile!!.username,
@@ -306,7 +306,7 @@ fun UserProfileScreen(
                 
                 // Header con avatar y stats
                 item {
-                    val otherUserShape = com.vinzay.app.data.model.AvatarShapeType.fromDbValue(userProfile!!.avatarShape).toShape()
+                    val otherUserShape = com.mercora.app.data.model.AvatarShapeType.fromDbValue(userProfile!!.avatarShape).toShape()
                     UserProfileHeader(
                         user = userProfile!!,
                         postCount = userPosts.size,
@@ -319,7 +319,7 @@ fun UserProfileScreen(
                     )
                 }
                 
-                // Botones de acciÃ³n: Seguir + Mensaje
+                // Botones de acción: Seguir + Mensaje
                 item {
                     UserProfileActions(
                         followType = currentFollowType,
@@ -334,12 +334,14 @@ fun UserProfileScreen(
                     )
                 }
                 
-                // Highlights del usuario (sin botÃ³n de agregar)
+                // Highlights del usuario (sin botón de agregar)
                 if (userHighlights.isNotEmpty()) {
                     item {
                         HighlightedStories(
                             stories = userHighlights,
-                            onStoryPress = { /* TODO: Ver highlight */ },
+                            onStoryPress = { highlight ->
+                                Toast.makeText(context, "Highlight: ${highlight.title}", Toast.LENGTH_SHORT).show()
+                            },
                             onAddStory = { },
                             canAddStories = false,
                             modifier = Modifier.padding(top = 8.dp, bottom = 8.dp)
@@ -360,7 +362,7 @@ fun UserProfileScreen(
                     )
                 }
                 
-                // Contenido de tabs - altura dinÃ¡mica basada en contenido
+                // Contenido de tabs - altura dinámica basada en contenido
                 item {
                     val flingBehavior = PagerDefaults.flingBehavior(
                         state = pagerState,
@@ -371,7 +373,7 @@ fun UserProfileScreen(
                         )
                     )
                     
-                    // Calcular altura basada en nÃºmero de posts (3 columnas, ~120dp por fila)
+                    // Calcular altura basada en número de posts (3 columnas, ~120dp por fila)
                     val gridRowHeight = 130.dp
                     val rowCount = ((userPosts.size + 2) / 3).coerceAtLeast(3)
                     val contentHeight = (gridRowHeight * rowCount).coerceAtLeast(400.dp)
@@ -385,7 +387,7 @@ fun UserProfileScreen(
                         flingBehavior = flingBehavior,
                         key = { it }
                     ) { page ->
-                        // Cada pÃ¡gina tiene su propio scroll vertical
+                        // Cada página tiene su propio scroll vertical
                         val tabScrollState = rememberScrollState()
                         
                         Column(
@@ -462,7 +464,7 @@ fun UserProfileScreen(
             isLoading = isClientLoading,
             onDismiss = { showFollowSheet = false },
             onFollow = {
-                // AcciÃ³n rÃ¡pida sin spinner - cerrar sheet inmediatamente
+                // Acción rápida sin spinner - cerrar sheet inmediatamente
                 showFollowSheet = false
                 scope.launch {
                     val isPrivate = profileVisibility == "private"
@@ -485,7 +487,7 @@ fun UserProfileScreen(
                         } else {
                             Toast.makeText(context, "Ahora sigues a @${userProfile?.username}", Toast.LENGTH_SHORT).show()
                         }
-                        // Recargar estado de restricciÃ³n
+                        // Recargar estado de restricción
                         isContentRestricted = when (profileVisibility) {
                             "private" -> currentFollowType == FollowType.NONE || currentFollowType == FollowType.FOLLOWER_PENDING || currentFollowType == FollowType.CLIENT_PENDING
                             "followers" -> currentFollowType == FollowType.NONE
@@ -512,7 +514,7 @@ fun UserProfileScreen(
                         )
                         // 3. Actualizar UI
                         currentFollowType = FollowType.CLIENT_PENDING
-                        // Si era NONE, ahora estoy en la relaciÃ³n (pero como cliente pendiente, no seguidor)
+                        // Si era NONE, ahora estoy en la relación (pero como cliente pendiente, no seguidor)
                         // Los clientes pendientes NO cuentan como seguidores
                         if (wasNone) {
                             // No incrementar seguidores - los clientes pendientes no van a seguidores
@@ -530,7 +532,7 @@ fun UserProfileScreen(
                 }
             },
             onUnfollow = {
-                // AcciÃ³n rÃ¡pida sin spinner
+                // Acción rápida sin spinner
                 showFollowSheet = false
                 scope.launch {
                     val result = FollowersRepository.unfollow(userId)
@@ -540,7 +542,7 @@ fun UserProfileScreen(
                         currentFollowType = FollowType.NONE
                         if (wasFollower) seguidoresCount = maxOf(0, seguidoresCount - 1)
                         if (wasClient) clientesCount = maxOf(0, clientesCount - 1)
-                        // Recargar restricciÃ³n de contenido
+                        // Recargar restricción de contenido
                         isContentRestricted = when (profileVisibility) {
                             "private" -> true
                             "followers" -> true
@@ -644,7 +646,7 @@ fun UserProfileScreen(
                                     }
                                 }
                             isUserMuted = false
-                            Toast.makeText(context, "@${userProfile?.username} ya no estÃ¡ silenciado", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, "@${userProfile?.username} ya no está silenciado", Toast.LENGTH_SHORT).show()
                         }
                     } catch (e: Exception) {
                         Log.e("UserProfileScreen", "Error al dejar de silenciar: ${e.message}")
@@ -726,7 +728,7 @@ private fun UserProfileHeader(
             .fillMaxWidth()
             .background(HomeBg)
     ) {
-        // Banner - sin botÃ³n de volver duplicado (ya estÃ¡ en el header compacto)
+        // Banner - sin botón de volver duplicado (ya está en el header compacto)
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -742,7 +744,7 @@ private fun UserProfileHeader(
                     contentDescription = "Banner",
                     contentScale = ContentScale.Crop,
                     modifier = Modifier.fillMaxSize(),
-                    onSuccess = { android.util.Log.d("UserProfileScreen", "âœ… Banner cargado con Ã©xito") },
+                    onSuccess = { android.util.Log.d("UserProfileScreen", "âœ… Banner cargado con éxito") },
                     onError = {
                         android.util.Log.e("UserProfileScreen", "Error cargando banner de ${user.username}: ${user.bannerUrl}")
                         android.util.Log.e("UserProfileScreen", "Causa: ${it.result.throwable.message}")
@@ -764,7 +766,7 @@ private fun UserProfileHeader(
                 )
             }
             
-            // Gradient overlay (sin botÃ³n de volver - ya estÃ¡ en header)
+            // Gradient overlay (sin botón de volver - ya está en header)
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -796,7 +798,11 @@ private fun UserProfileHeader(
                     modifier = Modifier.size(84.dp),
                     contentAlignment = Alignment.Center
                 ) {
-                    // TODO: Cargar stories del usuario para mostrar halo
+                    val otherStories by StoryRepository.otherUsersStories.collectAsState()
+                    val userHasStories = otherStories.any { it.userId == user.userId }
+                    LaunchedEffect(user.userId) {
+                        StoryRepository.loadOtherUsersStories()
+                    }
                     
                     // Avatar centrado (gap ~4dp al halo)
                     Box(
@@ -804,6 +810,13 @@ private fun UserProfileHeader(
                             .size(76.dp)
                             .clip(avatarShape)
                             .background(HomeBg)
+                            .then(
+                                if (userHasStories) Modifier.border(
+                                    3.dp,
+                                    PrimaryPurple,
+                                    avatarShape
+                                ) else Modifier
+                            )
                     ) {
                         val avatarToLoad = if (!user.avatarUrl.isNullOrBlank()) {
                             user.avatarUrl
@@ -819,7 +832,7 @@ private fun UserProfileHeader(
                             modifier = Modifier
                                 .fillMaxSize()
                                 .clip(avatarShape),
-                            onSuccess = { android.util.Log.d("UserProfileScreen", "âœ… Avatar cargado con Ã©xito") },
+                            onSuccess = { android.util.Log.d("UserProfileScreen", "âœ… Avatar cargado con éxito") },
                             onError = {
                                 android.util.Log.e("UserProfileScreen", "Error cargando avatar de ${user.username}: $avatarToLoad")
                                 android.util.Log.e("UserProfileScreen", "Causa: ${it.result.throwable.message}")
@@ -845,7 +858,7 @@ private fun UserProfileHeader(
             
             Spacer(modifier = Modifier.height(10.dp))
             
-            // Nombre + Badge de verificaciÃ³n (sin badge de reputaciÃ³n - ahora estÃ¡ en el header)
+            // Nombre + Badge de verificación (sin badge de reputación - ahora está en el header)
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -859,7 +872,7 @@ private fun UserProfileHeader(
                 // Badge verificado si aplica
                 if (user.isVerified) {
                     Spacer(modifier = Modifier.width(4.dp))
-                    com.vinzay.app.ui.components.VerifiedBadge(size = 14.dp)
+                    com.mercora.app.ui.components.VerifiedBadge(size = 14.dp)
                 }
             }
             
@@ -903,7 +916,7 @@ private fun UserProfileActions(
             .padding(horizontal = 16.dp),
         horizontalArrangement = Arrangement.spacedBy(10.dp)
     ) {
-        // BotÃ³n Seguir/Estado - ocupa todo el ancho si es privado y no siguiendo
+        // Botón Seguir/Estado - ocupa todo el ancho si es privado y no siguiendo
         Button(
             onClick = onFollow,
             modifier = Modifier.weight(if (isPrivate && followType == FollowType.NONE) 2f else 1f),
@@ -958,7 +971,7 @@ private fun UserProfileActions(
             )
         }
 
-        // BotÃ³n Mensaje - SOLO visible si no es perfil privado
+        // Botón Mensaje - SOLO visible si no es perfil privado
         if (!isPrivate) {
             Button(
                 onClick = onMessage,
@@ -983,7 +996,7 @@ private fun UserProfileActions(
             }
         }
         
-        // BotÃ³n MÃ¡s opciones
+        // Botón Más opciones
         Button(
             onClick = onMore,
             colors = ButtonDefaults.buttonColors(containerColor = Surface),
@@ -992,7 +1005,7 @@ private fun UserProfileActions(
         ) {
             Icon(
                 imageVector = Icons.Default.MoreVert,
-                contentDescription = "MÃ¡s opciones",
+                contentDescription = "Más opciones",
                 tint = TextPrimary,
                 modifier = Modifier.size(20.dp)
             )
@@ -1008,7 +1021,7 @@ private fun UserProfileTabs(
     showTopSeparator: Boolean = true
 ) {
     Column {
-        // LÃ­nea separadora sutil sobre las tabs - solo si hay highlights
+        // Línea separadora sutil sobre las tabs - solo si hay highlights
         if (showTopSeparator) {
             Box(
                 modifier = Modifier
@@ -1065,7 +1078,7 @@ private fun UserProfileTabs(
     }
 }
 
-// FunciÃ³n para formatear nÃºmeros igual que en ProfileScreen
+// Función para formatear números igual que en ProfileScreen
 private fun formatCount(count: Int): String {
     return when {
         count >= 1000000 -> String.format("%.1fM", count / 1000000.0)
@@ -1182,7 +1195,7 @@ private fun UserPostsGrid(
                             }
                         }
                     }
-                    // Rellenar espacios vacÃ­os
+                    // Rellenar espacios vacíos
                     repeat(3 - rowPosts.size) {
                         Spacer(modifier = Modifier.weight(1f))
                     }
@@ -1226,7 +1239,7 @@ private fun UserDetailsSection(user: Usuario) {
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        // Header con tÃ­tulo elegante
+        // Header con título elegante
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
@@ -1250,7 +1263,7 @@ private fun UserDetailsSection(user: Usuario) {
             )
         }
         
-        // Tarjeta de estadÃ­sticas principales
+        // Tarjeta de estadísticas principales
         Surface(
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(20.dp),
@@ -1271,7 +1284,7 @@ private fun UserDetailsSection(user: Usuario) {
                     UserStatColumn(
                         icon = Icons.Outlined.Star,
                         value = "4.8",
-                        label = "ValoraciÃ³n",
+                        label = "Valoración",
                         color = Color(0xFFFF6B35)
                     )
                     UserStatDivider()
@@ -1319,7 +1332,7 @@ private fun UserDetailsSection(user: Usuario) {
                             fontWeight = FontWeight.SemiBold
                         )
                         Text(
-                            text = "Verificado â€¢ Transacciones seguras",
+                            text = "Verificado • Transacciones seguras",
                             color = Color(0xFF2E8B57),
                             fontSize = 13.sp
                         )
@@ -1340,16 +1353,16 @@ private fun UserDetailsSection(user: Usuario) {
             }
         }
         
-        // SecciÃ³n de informaciÃ³n personal
+        // Sección de información personal
         Text(
-            text = "InformaciÃ³n",
+            text = "Información",
             color = TextPrimary,
             fontSize = 16.sp,
             fontWeight = FontWeight.SemiBold,
             modifier = Modifier.padding(top = 8.dp)
         )
         
-        // Grid de informaciÃ³n
+        // Grid de información
         Surface(
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(16.dp),
@@ -1368,7 +1381,7 @@ private fun UserDetailsSection(user: Usuario) {
                         UserInfoRow(
                             icon = Icons.Outlined.LocationOn,
                             iconColor = Color(0xFF2E8B57),
-                            label = "UbicaciÃ³n",
+                            label = "Ubicación",
                             value = ubicacion,
                             showDivider = true
                         )
@@ -1393,9 +1406,9 @@ private fun UserDetailsSection(user: Usuario) {
             }
         }
         
-        // MÃ©todos de pago aceptados
+        // Métodos de pago aceptados
         Text(
-            text = "MÃ©todos de pago",
+            text = "Métodos de pago",
             color = TextPrimary,
             fontSize = 16.sp,
             fontWeight = FontWeight.SemiBold,
@@ -1579,7 +1592,7 @@ private fun ProfileCompactHeader(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        // Back button + Username + ReputaciÃ³n
+        // Back button + Username + Reputación
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.weight(1f)
@@ -1610,7 +1623,7 @@ private fun ProfileCompactHeader(
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
-                // Badge de reputaciÃ³n junto al username
+                // Badge de reputación junto al username
                 Surface(
                     shape = RoundedCornerShape(6.dp),
                     color = when {
@@ -1625,7 +1638,7 @@ private fun ProfileCompactHeader(
                     ) {
                         Icon(
                             imageVector = Icons.Default.Shield,
-                            contentDescription = "ReputaciÃ³n",
+                            contentDescription = "Reputación",
                             tint = when {
                                 reputacion >= 90 -> AccentGreen
                                 reputacion >= 70 -> Color(0xFFFFA726)

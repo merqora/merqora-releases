@@ -56,8 +56,8 @@ fun BlockedUsersScreen(
                     val days = java.time.Duration.between(blocked, now).toDays()
                     when {
                         days == 0L -> "Hoy"
-                        days == 1L -> "Hace 1 dÃ­a"
-                        days < 7 -> "Hace $days dÃ­as"
+                        days == 1L -> "Hace 1 día"
+                        days < 7 -> "Hace $days días"
                         days < 30 -> "Hace ${days / 7} semana${if (days / 7 > 1) "s" else ""}"
                         else -> "Hace ${days / 30} mes${if (days / 30 > 1) "es" else ""}"
                     }
@@ -124,7 +124,7 @@ fun BlockedUsersScreen(
                         )
                     }
                 } else if (blockedUsers.isEmpty()) {
-                    // Estado vacÃ­o
+                    // Estado vacío
                     Box(
                         modifier = Modifier
                             .fillMaxSize()
@@ -161,7 +161,7 @@ fun BlockedUsersScreen(
                             Spacer(modifier = Modifier.height(8.dp))
                             
                             Text(
-                                text = "No has bloqueado a ningÃºn usuario.\nCuando bloquees a alguien, aparecerÃ¡ aquÃ­.",
+                                text = "No has bloqueado a ningún usuario.\nCuando bloquees a alguien, aparecerá aquí.",
                                 fontSize = 14.sp,
                                 color = TextMuted,
                                 lineHeight = 20.sp
@@ -230,7 +230,7 @@ fun BlockedUsersScreen(
         }
     }
     
-    // DiÃ¡logo de confirmaciÃ³n para desbloquear
+    // Diálogo de confirmación para desbloquear
     showUnblockDialog?.let { user ->
         AlertDialog(
             onDismissRequest = { showUnblockDialog = null },
@@ -244,7 +244,7 @@ fun BlockedUsersScreen(
             },
             text = {
                 Text(
-                    text = "Â¿EstÃ¡s seguro de que quieres desbloquear a @${user.username}? PodrÃ¡ volver a ver tu perfil y contactarte.",
+                    text = "¿Estás seguro de que quieres desbloquear a @${user.username}? Podrá volver a ver tu perfil y contactarte.",
                     color = TextSecondary
                 )
             },
@@ -331,7 +331,7 @@ private fun BlockedUserCard(
                     )
                     if (user.reason != null) {
                         Text(
-                            text = " Â· ",
+                            text = " · ",
                             fontSize = 12.sp,
                             color = TextMuted
                         )
@@ -351,7 +351,7 @@ private fun BlockedUserCard(
                 }
             }
             
-            // BotÃ³n desbloquear
+            // Botón desbloquear
             Surface(
                 modifier = Modifier
                     .clip(RoundedCornerShape(8.dp))

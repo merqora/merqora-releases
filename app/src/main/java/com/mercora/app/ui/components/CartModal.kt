@@ -35,7 +35,7 @@ fun CartModal(
     onDismiss: () -> Unit,
     onCheckout: () -> Unit = {},
     onContinueShopping: () -> Unit = {},
-    onOpenCategories: () -> Unit = {}, // Abrir drawer de categorÃ­as
+    onOpenCategories: () -> Unit = {}, // Abrir drawer de categorías
     onOpenExplore: () -> Unit = {}, // Nuevo: abrir modal de explorar productos directamente
     onVisibilityChange: (Boolean) -> Unit = {},
     onNavigateToCheckout: () -> Unit = {} // Navegar a pantalla de checkout con Mercado Pago
@@ -75,7 +75,7 @@ fun CartModal(
                 )
                 
                 if (cartItems.isEmpty()) {
-                    // Estado vacÃ­o
+                    // Estado vacío
                     EmptyCartState(
                         onContinueShopping = {
                             onDismiss()
@@ -119,7 +119,7 @@ fun CartModal(
                         item { Spacer(modifier = Modifier.height(140.dp)) }
                     }
                     
-                    // Footer con totales y botÃ³n de checkout
+                    // Footer con totales y botón de checkout
                     CartFooter(
                         subtotal = subtotal,
                         savings = totalSavings,
@@ -174,7 +174,7 @@ private fun CartHeader(
                 )
                 if (itemCount > 0) {
                     Text(
-                        text = "$itemCount ${if (itemCount == 1) "artÃ­culo" else "artÃ­culos"}",
+                        text = "$itemCount ${if (itemCount == 1) "artículo" else "artículos"}",
                         fontSize = 13.sp,
                         color = TextMuted
                     )
@@ -203,7 +203,7 @@ private fun EmptyCartState(onContinueShopping: () -> Unit) {
             .padding(top = 40.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // Carrito vacÃ­o - mÃ¡s arriba
+        // Carrito vacío - más arriba
         Box(
             modifier = Modifier
                 .size(100.dp)
@@ -222,7 +222,7 @@ private fun EmptyCartState(onContinueShopping: () -> Unit) {
         Spacer(modifier = Modifier.height(20.dp))
         
         Text(
-            text = "Tu carrito estÃ¡ vacÃ­o",
+            text = "Tu carrito está vacío",
             fontSize = 20.sp,
             fontWeight = FontWeight.Bold,
             color = TextPrimary
@@ -264,7 +264,7 @@ private fun EmptyCartState(onContinueShopping: () -> Unit) {
         
         Spacer(modifier = Modifier.height(40.dp))
         
-        // SecciÃ³n de conversiÃ³n atractiva
+        // Sección de conversión atractiva
         Surface(
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(16.dp),
@@ -286,7 +286,7 @@ private fun EmptyCartState(onContinueShopping: () -> Unit) {
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = "Â¡Ofertas del momento!",
+                        text = "¡Ofertas del momento!",
                         fontSize = 17.sp,
                         fontWeight = FontWeight.Bold,
                         color = TextPrimary
@@ -296,7 +296,7 @@ private fun EmptyCartState(onContinueShopping: () -> Unit) {
                 Spacer(modifier = Modifier.height(12.dp))
                 
                 Text(
-                    text = "Descubre productos con hasta 50% OFF y envÃ­o gratis en tu primera compra",
+                    text = "Descubre productos con hasta 50% OFF y envío gratis en tu primera compra",
                     fontSize = 13.sp,
                     color = TextSecondary,
                     textAlign = TextAlign.Center,
@@ -311,7 +311,7 @@ private fun EmptyCartState(onContinueShopping: () -> Unit) {
                 ) {
                     OfferBadge(
                         icon = Icons.Outlined.LocalShipping,
-                        text = "EnvÃ­o gratis",
+                        text = "Envío gratis",
                         color = SavingsColor
                     )
                     OfferBadge(
@@ -369,13 +369,13 @@ private fun EmptyCartState(onContinueShopping: () -> Unit) {
                 
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = "Lo mÃ¡s vendido",
+                        text = "Lo más vendido",
                         fontSize = 15.sp,
                         fontWeight = FontWeight.Bold,
                         color = TextPrimary
                     )
                     Text(
-                        text = "Mira quÃ© estÃ¡n comprando otros",
+                        text = "Mira qué están comprando otros",
                         fontSize = 12.sp,
                         color = TextSecondary
                     )
@@ -397,13 +397,13 @@ private fun EmptyCartState(onContinueShopping: () -> Unit) {
 private fun FeaturedProductsGrid(
     onProductClick: () -> Unit
 ) {
-    var featuredPosts by remember { mutableStateOf<List<com.vinzay.app.data.model.Post>>(emptyList()) }
+    var featuredPosts by remember { mutableStateOf<List<com.mercora.app.data.model.Post>>(emptyList()) }
     var isLoading by remember { mutableStateOf(true) }
     
     LaunchedEffect(Unit) {
         isLoading = true
         try {
-            featuredPosts = com.vinzay.app.data.repository.PostRepository.getPostsByCategory(
+            featuredPosts = com.mercora.app.data.repository.PostRepository.getPostsByCategory(
                 category = null,
                 excludePostId = "",
                 limit = 6
@@ -484,7 +484,7 @@ private fun FeaturedProductsGrid(
 // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 @Composable
 private fun PremiumProductCard(
-    post: com.vinzay.app.data.model.Post,
+    post: com.mercora.app.data.model.Post,
     onClick: () -> Unit
 ) {
     val imageUrl = post.images.firstOrNull() ?: post.producto.imagenUrl.firstOrNull() ?: ""
@@ -538,7 +538,7 @@ private fun PremiumProductCard(
                     }
                 }
                 
-                // Badge envÃ­o gratis
+                // Badge envío gratis
                 if (post.freeShipping) {
                     Surface(
                         modifier = Modifier
@@ -559,7 +559,7 @@ private fun PremiumProductCard(
                                 modifier = Modifier.size(10.dp)
                             )
                             Text(
-                                text = "EnvÃ­o gratis",
+                                text = "Envío gratis",
                                 fontSize = 9.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = Color.White
@@ -573,7 +573,7 @@ private fun PremiumProductCard(
             Column(
                 modifier = Modifier.padding(10.dp)
             ) {
-                // TÃ­tulo
+                // Título
                 Text(
                     text = title,
                     fontSize = 12.sp,
@@ -710,7 +710,7 @@ private fun CartItemCard(
             
             // Info del producto
             Column(modifier = Modifier.weight(1f)) {
-                // TÃ­tulo
+                // Título
                 Text(
                     text = post.title.ifEmpty { "Producto" },
                     fontSize = 14.sp,
@@ -827,7 +827,7 @@ private fun CartItemCard(
                         }
                     }
                     
-                    // BotÃ³n eliminar
+                    // Botón eliminar
                     IconButton(
                         onClick = onRemove,
                         modifier = Modifier.size(36.dp)
@@ -866,7 +866,7 @@ private fun CartFooter(
                 .fillMaxWidth()
                 .padding(16.dp)
         ) {
-            // Barra de progreso para envÃ­o gratis
+            // Barra de progreso para envío gratis
             if (!freeShipping && subtotal > 0) {
                 val progress = (subtotal / shippingThreshold).toFloat().coerceIn(0f, 1f)
                 
@@ -882,7 +882,7 @@ private fun CartFooter(
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = "Â¡Agrega $${String.format("%,.0f", remainingForFreeShipping)} mÃ¡s para envÃ­o GRATIS!",
+                        text = "¡Agrega $${String.format("%,.0f", remainingForFreeShipping)} más para envío GRATIS!",
                         fontSize = 12.sp,
                         color = SavingsColor,
                         fontWeight = FontWeight.Medium
@@ -911,7 +911,7 @@ private fun CartFooter(
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
-                        text = "EstÃ¡s ahorrando",
+                        text = "Estás ahorrando",
                         fontSize = 13.sp,
                         color = SavingsColor,
                         fontWeight = FontWeight.Medium
@@ -946,7 +946,7 @@ private fun CartFooter(
                     )
                 }
                 
-                // BotÃ³n de checkout
+                // Botón de checkout
                 Button(
                     onClick = onCheckout,
                     colors = ButtonDefaults.buttonColors(
@@ -971,7 +971,7 @@ private fun CartFooter(
                 }
             }
             
-            // EnvÃ­o gratis badge
+            // Envío gratis badge
             if (freeShipping) {
                 Spacer(modifier = Modifier.height(8.dp))
                 Row(
@@ -985,7 +985,7 @@ private fun CartFooter(
                     )
                     Spacer(modifier = Modifier.width(6.dp))
                     Text(
-                        text = "Â¡EnvÃ­o GRATIS incluido!",
+                        text = "¡Envío GRATIS incluido!",
                         fontSize = 13.sp,
                         color = SavingsColor,
                         fontWeight = FontWeight.SemiBold

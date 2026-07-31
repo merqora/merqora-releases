@@ -59,7 +59,7 @@
 ### OpciÃ³n A: Local (para testing)
 
 ```powershell
-cd c:\Users\Rodrigo\Documents\Vinzay\ai-support\python
+cd c:\Users\Rodrigo\Documents\Mercora\ai-support\python
 pip install -r requirements.txt
 ```
 
@@ -83,7 +83,7 @@ python -c "import sklearn; import numpy; print('âœ… scikit-learn:', sklearn.
 ### A. Verificar cambios en Git
 
 ```powershell
-cd c:\Users\Rodrigo\Documents\Vinzay
+cd c:\Users\Rodrigo\Documents\Mercora
 git status
 ```
 
@@ -145,7 +145,7 @@ curl https://mercora-releases-production.up.railway.app/ai/training/metrics?hour
 ### A. Build local (opcional - para testing)
 
 ```powershell
-cd c:\Users\Rodrigo\Documents\Vinzay\admin-web
+cd c:\Users\Rodrigo\Documents\Mercora\admin-web
 npm install
 npm run build
 ```
@@ -185,7 +185,7 @@ netlify deploy --prod
 ### OpciÃ³n A: Desde PowerShell Script
 
 ```powershell
-cd c:\Users\Rodrigo\Documents\Vinzay\ai-support
+cd c:\Users\Rodrigo\Documents\Mercora\ai-support
 
 # Ejecutar script completo (mensajes + flush + train)
 .\scripts\train_model.ps1
@@ -242,7 +242,7 @@ Flushed: 70 records
 $headers = @{ "Content-Type" = "application/json" }
 $body = @{
     user_id = "test_user_123"
-    message = "Como compro algo en Vinzay?"
+    message = "Como compro algo en Mercora?"
     session_id = "test_session_1"
 } | ConvertTo-Json
 
@@ -378,8 +378,8 @@ ai-support/python/datasets/
 ### Error: "Supabase not configured"
 **SoluciÃ³n:** Verificar variables de entorno:
 ```powershell
-echo $env:Vinzay_AI_SUPABASE_URL
-echo $env:Vinzay_AI_SUPABASE_KEY
+echo $env:Mercora_AI_SUPABASE_URL
+echo $env:Mercora_AI_SUPABASE_KEY
 ```
 
 ### Error: "Model not trained yet"

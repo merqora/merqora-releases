@@ -125,7 +125,7 @@ object UserPreferencesRepository {
     }
     
     /**
-     * Batch loading de privacy settings para mÃºltiples usuarios en una sola query.
+     * Batch loading de privacy settings para múltiples usuarios en una sola query.
      * Reduce N queries individuales a 1 query batch.
      */
     suspend fun loadPrivacySettingsBatch(userIds: List<String>): Map<String, PrivacySettingsDB?> = withContext(Dispatchers.IO) {
@@ -501,12 +501,12 @@ object UserPreferencesRepository {
         }
     }
 
-    // CachÃ© en memoria de etiquetados por post: evita re-consultar Supabase
+    // Caché en memoria de etiquetados por post: evita re-consultar Supabase
     // cada vez que el feed recicla un PostItem durante scroll
     private val taggedUsersCache = java.util.concurrent.ConcurrentHashMap<String, List<TaggedUserWithInfo>>()
 
     /**
-     * VersiÃ³n cacheada para el feed (una query por post por sesiÃ³n)
+     * Versión cacheada para el feed (una query por post por sesión)
      */
     suspend fun getTaggedUsersWithInfoCached(postId: String): List<TaggedUserWithInfo> {
         taggedUsersCache[postId]?.let { return it }

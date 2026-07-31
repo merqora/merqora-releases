@@ -33,12 +33,17 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonNull
+import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.jsonArray
+import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import kotlinx.serialization.json.put
 import org.webrtc.*
 import io.github.jan.supabase.functions.functions
+import io.ktor.client.call.body
 
 /**
  * â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
@@ -47,9 +52,9 @@ import io.github.jan.supabase.functions.functions
  * 
  * Arquitectura:
  * - WebRTC para audio peer-to-peer (baja latencia)
- * - Supabase Realtime para seÃ±alizaciÃ³n (offer/answer/ICE)
+ * - Supabase Realtime para señalización (offer/answer/ICE)
  * - STUN/TURN servers para NAT traversal
- * - AudioManager para gestiÃ³n de audio del dispositivo
+ * - AudioManager para gestión de audio del dispositivo
  */
 object CallRepository {
     private const val TAG = "CallRepository"
@@ -96,40 +101,39 @@ object CallRepository {
     private var isResetting = false
     private var isEnding = false
     
-    // STUN/TURN servers with Metered TURN relay
+    // STUN/TURN servers (TURN efímeras desde edge function, sin API key en el APK)
     private val iceServers = mutableListOf<PeerConnection.IceServer>()
 
-    private fun refreshIceServers() {
+    private suspend fun refreshIceServers() {
         iceServers.clear()
         iceServers.add(PeerConnection.IceServer.builder("stun:stun.l.google.com:19302").createIceServer())
         iceServers.add(PeerConnection.IceServer.builder("stun:stun.relay.metered.ca:80").createIceServer())
         try {
-            val json = java.net.URL("https://mercora-calls.metered.live/api/v1/turn/credentials?apiKey=***REMOVED***").readText()
-            val arr = org.json.JSONArray(json)
-            for (i in 0 until arr.length()) {
-                val obj = arr.getJSONObject(i)
-                val urls = obj.getString("urls")
+            val bodyJson = buildJsonObject { put("action", "turn-credentials") }
+            val response = SupabaseClient.client.functions.invoke(
+                function = "media-services",
+                body = bodyJson
+            )
+            val result = Json.decodeFromString<JsonObject>(response.body<String>())
+            val arr = result["iceServers"]?.jsonArray ?: return
+            for (i in 0 until arr.size) {
+                val obj = arr[i].jsonObject
+                val urls = obj["urls"]?.jsonPrimitive?.content ?: continue
                 if (urls.startsWith("turn") || urls.startsWith("turns")) {
-                    val username = obj.optString("username", "")
-                    val credential = obj.optString("credential", "")
+                    val username = obj["username"]?.jsonPrimitive?.content ?: ""
+                    val credential = obj["credential"]?.jsonPrimitive?.content ?: ""
                     iceServers.add(PeerConnection.IceServer.builder(urls)
                         .setUsername(username).setPassword(credential).createIceServer())
                 }
             }
             Log.d(TAG, "TURN credentials refreshed: ${iceServers.size} servers")
         } catch (e: Exception) {
-            Log.w(TAG, "Failed to fetch TURN, using fallback", e)
-            iceServers.add(PeerConnection.IceServer.builder("turn:global.relay.metered.ca:80")
-                .setUsername("23f3fdd34f1367daeb9f589b").setPassword("Wgx1x+SVHIDE+r3K").createIceServer())
-            iceServers.add(PeerConnection.IceServer.builder("turn:global.relay.metered.ca:443")
-                .setUsername("23f3fdd34f1367daeb9f589b").setPassword("Wgx1x+SVHIDE+r3K").createIceServer())
-            iceServers.add(PeerConnection.IceServer.builder("turns:global.relay.metered.ca:443?transport=tcp")
-                .setUsername("23f3fdd34f1367daeb9f589b").setPassword("Wgx1x+SVHIDE+r3K").createIceServer())
+            Log.w(TAG, "Failed to fetch TURN, using STUN only", e)
         }
     }
     
     // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-    // INICIALIZACIÃ“N
+    // INICIALIZACIÓN
     // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
     
     private var initialized = false
@@ -140,7 +144,6 @@ object CallRepository {
         
         appContext = context.applicationContext
         audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
-        refreshIceServers()
         vibrator = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             val vm = context.getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as VibratorManager
             vm.defaultVibrator
@@ -152,7 +155,7 @@ object CallRepository {
         // Inicializar WebRTC
         initializeWebRTC(context)
         
-        // Escuchar llamadas entrantes - con retry hasta que auth estÃ© listo
+        // Escuchar llamadas entrantes - con retry hasta que auth esté listo
         subscribeToIncomingCallsWithRetry()
         
         Log.d(TAG, "âœ… CallRepository inicializado")
@@ -164,7 +167,7 @@ object CallRepository {
         }
         if (peerConnectionFactory == null) {
             appContext?.let { 
-                Log.d(TAG, "ðŸ”„ Re-inicializando WebRTC...")
+                Log.d(TAG, "🔄 Re-inicializando WebRTC...")
                 initializeWebRTC(it) 
             }
         }
@@ -184,13 +187,13 @@ object CallRepository {
                 Log.d(TAG, "â³ Auth no listo, reintentando en 10s (intento $attempts/30)")
                 delay(10_000)
             }
-            Log.e(TAG, "âŒ No se pudo suscribir a llamadas entrantes despuÃ©s de 30 intentos")
+            Log.e(TAG, "âŒ No se pudo suscribir a llamadas entrantes después de 30 intentos")
         }
     }
     
     private fun initializeWebRTC(context: Context) {
         try {
-            Log.d(TAG, "WebRTC: iniciando inicializaciÃ³n...")
+            Log.d(TAG, "WebRTC: iniciando inicialización...")
             
             val initOptions = PeerConnectionFactory.InitializationOptions.builder(context)
                 .setEnableInternalTracer(false)
@@ -198,7 +201,7 @@ object CallRepository {
             PeerConnectionFactory.initialize(initOptions)
             Log.d(TAG, "WebRTC: PeerConnectionFactory.initialize() OK")
             
-            // Mismo patrÃ³n que WebRTCManager.kt (live streaming) que ya funciona
+            // Mismo patrón que WebRTCManager.kt (live streaming) que ya funciona
             peerConnectionFactory = PeerConnectionFactory.builder()
                 .setOptions(PeerConnectionFactory.Options())
                 .createPeerConnectionFactory()
@@ -227,9 +230,9 @@ object CallRepository {
             return@withContext false
         }
         
-        Log.d(TAG, "ðŸ“ž Iniciando llamada a $calleeUsername ($calleeId)")
+        Log.d(TAG, "📞 Iniciando llamada a $calleeUsername ($calleeId)")
         
-        // Asegurar que WebRTC estÃ© inicializado
+        // Asegurar que WebRTC esté inicializado
         ensureInitialized()
         
         try {
@@ -300,10 +303,10 @@ object CallRepository {
     suspend fun answerCall(callId: String) = withContext(Dispatchers.IO) {
         val currentUserId = SupabaseClient.auth.currentUserOrNull()?.id ?: return@withContext
         
-        Log.d(TAG, "ðŸ“ž Contestando llamada: $callId")
+        Log.d(TAG, "📞 Contestando llamada: $callId")
         
         try {
-            // Detener ringtone y vibraciÃ³n
+            // Detener ringtone y vibración
             stopRingtone()
             stopVibration()
             
@@ -315,7 +318,7 @@ object CallRepository {
             
             // Verificar que la llamada sigue activa
             if (callDB.status != "ringing") {
-                Log.w(TAG, "Llamada ya no estÃ¡ sonando: ${callDB.status}")
+                Log.w(TAG, "Llamada ya no está sonando: ${callDB.status}")
                 resetState()
                 return@withContext
             }
@@ -368,7 +371,7 @@ object CallRepository {
             )
             _incomingCall.value = null
             
-            // Iniciar timer de duraciÃ³n
+            // Iniciar timer de duración
             startDurationTimer()
             
         } catch (e: Exception) {
@@ -411,7 +414,7 @@ object CallRepository {
         val callId = _callState.value.callId ?: run { isEnding = false; return@withContext }
         val duration = _callState.value.durationSeconds
         
-        Log.d(TAG, "ðŸ“ž Terminando llamada: $callId (razÃ³n: $reason, duraciÃ³n: ${duration}s)")
+        Log.d(TAG, "📞 Terminando llamada: $callId (razón: $reason, duración: ${duration}s)")
         
         // Detener sonidos
         stopRingback()
@@ -448,7 +451,7 @@ object CallRepository {
             endReason = reason
         )
         
-        // Limpiar despuÃ©s de mostrar brevemente el estado
+        // Limpiar después de mostrar brevemente el estado
         scope.launch {
             delay(1500)
             resetState()
@@ -463,7 +466,7 @@ object CallRepository {
         val newMuted = !_callState.value.isMuted
         localAudioTrack?.setEnabled(!newMuted)
         _callState.value = _callState.value.copy(isMuted = newMuted)
-        Log.d(TAG, "ðŸŽ¤ Mute: $newMuted")
+        Log.d(TAG, "🎤 Mute: $newMuted")
     }
     
     fun toggleSpeaker() {
@@ -471,7 +474,7 @@ object CallRepository {
         setSpeakerOutput(newSpeaker)
         adjustVolumeForMode(newSpeaker)
         _callState.value = _callState.value.copy(isSpeakerOn = newSpeaker)
-        Log.d(TAG, "ðŸ”Š Speaker: $newSpeaker")
+        Log.d(TAG, "🔊 Speaker: $newSpeaker")
     }
     
     /**
@@ -490,7 +493,7 @@ object CallRepository {
             (maxVol * 0.8f).toInt().coerceAtLeast(maxVol - 2)
         }
         am.setStreamVolume(AudioManager.STREAM_VOICE_CALL, targetVol, 0)
-        Log.d(TAG, "ðŸ”Š Volume adjusted: $targetVol/$maxVol (speaker=$isSpeaker)")
+        Log.d(TAG, "🔊 Volume adjusted: $targetVol/$maxVol (speaker=$isSpeaker)")
     }
     
     private fun setSpeakerOutput(enabled: Boolean) {
@@ -502,11 +505,11 @@ object CallRepository {
                     .firstOrNull { it.type == android.media.AudioDeviceInfo.TYPE_BUILTIN_SPEAKER }
                 if (speakerDevice != null) {
                     am.setCommunicationDevice(speakerDevice)
-                    Log.d(TAG, "ðŸ”Š setCommunicationDevice â†’ SPEAKER")
+                    Log.d(TAG, "🔊 setCommunicationDevice â†’ SPEAKER")
                 }
             } else {
                 am.clearCommunicationDevice()
-                Log.d(TAG, "ðŸ”Š clearCommunicationDevice â†’ EARPIECE")
+                Log.d(TAG, "🔊 clearCommunicationDevice â†’ EARPIECE")
             }
         } else {
             am.isSpeakerphoneOn = enabled
@@ -517,11 +520,14 @@ object CallRepository {
     // WEBRTC - PeerConnection
     // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
     
-    private fun createPeerConnection(callId: String, currentUserId: String) {
-        Log.d(TAG, "ðŸ”§ createPeerConnection: factory=${peerConnectionFactory != null}")
+    private suspend fun createPeerConnection(callId: String, currentUserId: String) {
+        Log.d(TAG, "🔧 createPeerConnection: factory=${peerConnectionFactory != null}")
+
+        // Refrescar TURN efímeras antes de cada llamada (requiere sesión activa)
+        refreshIceServers()
         
         if (peerConnectionFactory == null) {
-            Log.e(TAG, "âŒ PeerConnectionFactory es NULL, reintentando inicializaciÃ³n...")
+            Log.e(TAG, "âŒ PeerConnectionFactory es NULL, reintentando inicialización...")
             appContext?.let { initializeWebRTC(it) }
         }
         
@@ -534,7 +540,7 @@ object CallRepository {
         peerConnection = peerConnectionFactory?.createPeerConnection(config, object : PeerConnection.Observer {
             override fun onIceCandidate(candidate: IceCandidate?) {
                 candidate?.let {
-                    Log.d(TAG, "ðŸ§Š ICE candidate local: ${it.sdpMid}")
+                    Log.d(TAG, "🧊 ICE candidate local: ${it.sdpMid}")
                     scope.launch {
                         sendIceCandidate(callId, currentUserId, it)
                     }
@@ -542,7 +548,7 @@ object CallRepository {
             }
             
             override fun onIceConnectionChange(state: PeerConnection.IceConnectionState?) {
-                Log.d(TAG, "ðŸ§Š ICE state: $state")
+                Log.d(TAG, "🧊 ICE state: $state")
                 when (state) {
                     PeerConnection.IceConnectionState.CONNECTED -> {
                         Log.d(TAG, "âœ… Llamada conectada (ICE)")
@@ -562,7 +568,7 @@ object CallRepository {
                         }
                     }
                     PeerConnection.IceConnectionState.FAILED -> {
-                        Log.e(TAG, "âŒ ICE fallÃ³")
+                        Log.e(TAG, "âŒ ICE falló")
                         scope.launch { endCall(CallEndReason.NETWORK_ERROR) }
                     }
                     else -> {}
@@ -570,7 +576,7 @@ object CallRepository {
             }
             
             override fun onAddStream(stream: MediaStream?) {
-                Log.d(TAG, "ðŸ“º Stream remoto recibido")
+                Log.d(TAG, "📺 Stream remoto recibido")
             }
             
             override fun onSignalingChange(state: PeerConnection.SignalingState?) {
@@ -695,7 +701,7 @@ object CallRepository {
     
     private suspend fun sendIceCandidate(callId: String, senderId: String, candidate: IceCandidate) {
         try {
-            Log.d(TAG, "ðŸ§Š Enviando ICE candidate: callId=$callId, senderId=$senderId, sdpMid=${candidate.sdpMid}, sdpMLineIndex=${candidate.sdpMLineIndex}")
+            Log.d(TAG, "🧊 Enviando ICE candidate: callId=$callId, senderId=$senderId, sdpMid=${candidate.sdpMid}, sdpMLineIndex=${candidate.sdpMLineIndex}")
             SupabaseClient.database
                 .from("call_ice_candidates")
                 .insert(buildJsonObject {
@@ -722,12 +728,12 @@ object CallRepository {
             peerConnection?.addIceCandidate(candidate)
         } else {
             pendingIceCandidates.add(candidate)
-            Log.d(TAG, "ðŸ§Š ICE candidate pendiente (esperando remote description)")
+            Log.d(TAG, "🧊 ICE candidate pendiente (esperando remote description)")
         }
     }
     
     // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-    // SUPABASE REALTIME - SEÃ‘ALIZACIÃ“N
+    // SUPABASE REALTIME - SEÑALIZACIÓN
     // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
     
     private fun subscribeToIncomingCalls() {
@@ -738,7 +744,7 @@ object CallRepository {
                     Log.e(TAG, "âŒ subscribeToIncomingCalls: currentUserId es NULL, no se puede suscribir")
                     return@launch
                 }
-                Log.d(TAG, "ðŸ“² subscribeToIncomingCalls: userId=$currentUserId")
+                Log.d(TAG, "📲 subscribeToIncomingCalls: userId=$currentUserId")
                 
                 globalCallChannel = SupabaseClient.client.channel("global-calls-$currentUserId")
                 
@@ -759,7 +765,7 @@ object CallRepository {
                         
                         // Verificar si ya estamos en una llamada
                         if (_callState.value.status != CallStatus.IDLE) {
-                            // Rechazar automÃ¡ticamente - ocupado
+                            // Rechazar automáticamente - ocupado
                             SupabaseClient.database
                                 .from("calls")
                                 .update(buildJsonObject {
@@ -797,7 +803,7 @@ object CallRepository {
                         playRingtone()
                         startVibration()
                         
-                        Log.d(TAG, "ðŸ“² Llamada entrante de ${callerInfo?.username}")
+                        Log.d(TAG, "📲 Llamada entrante de ${callerInfo?.username}")
                         
                     } catch (e: Exception) {
                         Log.e(TAG, "Error procesando llamada entrante: ${e.message}")
@@ -832,12 +838,12 @@ object CallRepository {
                             if (it is JsonNull) null else it.jsonPrimitive.content 
                         }
                         
-                        Log.d(TAG, "ðŸ“¡ Call update: status=$status, hasAnswer=${answerSdp != null}")
+                        Log.d(TAG, "📡 Call update: status=$status, hasAnswer=${answerSdp != null}")
                         
                         when (status) {
                             "answered" -> {
                                 if (_callState.value.isOutgoing && answerSdp != null) {
-                                    // Caller recibiÃ³ el answer
+                                    // Caller recibió el answer
                                     stopRingback()
                                     val answer = SessionDescription(SessionDescription.Type.ANSWER, answerSdp)
                                     peerConnection?.setRemoteDescription(object : SdpObserver {
@@ -860,7 +866,7 @@ object CallRepository {
                             "ended", "missed", "rejected", "busy" -> {
                                 // Skip if already ended/cleaning up (prevents double-reset crash on receiver)
                                 if (_callState.value.status == CallStatus.ENDED || _callState.value.status == CallStatus.IDLE) {
-                                    Log.d(TAG, "ðŸ“¡ Ignorando update '$status' - ya estamos en ${_callState.value.status}")
+                                    Log.d(TAG, "📡 Ignorando update '$status' - ya estamos en ${_callState.value.status}")
                                     return@onEach
                                 }
                                 
@@ -916,7 +922,7 @@ object CallRepository {
                             if (it is JsonNull) null else it.jsonPrimitive.content?.toIntOrNull()
                         }
                         
-                        Log.d(TAG, "ðŸ§Š ICE candidate remoto recibido: $sdpMid")
+                        Log.d(TAG, "🧊 ICE candidate remoto recibido: $sdpMid")
                         processRemoteIceCandidate(candidate, sdpMid, sdpMLineIndex)
                         
                     } catch (e: Exception) {
@@ -1042,7 +1048,7 @@ object CallRepository {
         try {
             vibrator?.cancel()
         } catch (e: Exception) {
-            Log.e(TAG, "Error deteniendo vibraciÃ³n: ${e.message}")
+            Log.e(TAG, "Error deteniendo vibración: ${e.message}")
         }
     }
     
@@ -1122,7 +1128,7 @@ object CallRepository {
         isResetting = false
         isEnding = false
         
-        Log.d(TAG, "ðŸ§¹ Estado limpiado")
+        Log.d(TAG, "🧹 Estado limpiado")
     }
     
     // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
@@ -1167,7 +1173,7 @@ object CallRepository {
             val payload = buildJsonObject {
                 put("tokens", kotlinx.serialization.json.JsonArray(tokens.map { kotlinx.serialization.json.JsonPrimitive(it) }))
                 put("title", "Llamada entrante")
-                put("body", "$callerName te estÃ¡ llamando")
+                put("body", "$callerName te está llamando")
                 put("data", buildJsonObject {
                     put("type", "call")
                     put("call_id", callId)
@@ -1196,7 +1202,7 @@ object CallRepository {
         @kotlinx.serialization.SerialName("user_id") val userId: String = ""
     )
     
-    /** Formato de duraciÃ³n mm:ss */
+    /** Formato de duración mm:ss */
     fun formatDuration(seconds: Int): String {
         val min = seconds / 60
         val sec = seconds % 60

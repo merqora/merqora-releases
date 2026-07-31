@@ -1,4 +1,4 @@
-$basePath = "c:\Users\Rodrigo\Documents\Vinzay\app\src\main\java\com\Vinzay\app"
+﻿$basePath = "c:\Users\Rodrigo\Documents\Mercora\app\src\main\java\com\Mercora\app"
 $rc = [char]0xFFFD
 $utf8 = New-Object System.Text.UTF8Encoding($false)
 $files = Get-ChildItem -Path $basePath -Recurse -Filter "*.kt"

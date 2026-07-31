@@ -146,7 +146,7 @@ export default function Verification() {
 
   async function handleReject(request) {
     if (!rejectionReason.trim()) {
-      alert('Por favor, ingresa una razÃ³n para el rechazo')
+      alert('Por favor, ingresa una razón para el rechazo')
       return
     }
 
@@ -231,7 +231,7 @@ export default function Verification() {
         return (
           <span className="px-2 py-1 bg-blue-500/20 text-blue-400 rounded-full text-xs font-medium flex items-center gap-1">
             <Eye className="w-3 h-3" />
-            En revisiÃ³n
+            En revisión
           </span>
         )
       case 'approved':
@@ -273,9 +273,9 @@ export default function Verification() {
             <div className="w-10 h-10 rounded-xl bg-blue-500/20 flex items-center justify-center">
               <BadgeCheck className="w-6 h-6 text-blue-400" />
             </div>
-            VerificaciÃ³n de Cuentas
+            Verificación de Cuentas
           </h1>
-          <p className="text-text-tertiary mt-1">Gestiona las solicitudes de verificaciÃ³n de usuarios</p>
+          <p className="text-text-tertiary mt-1">Gestiona las solicitudes de verificación de usuarios</p>
         </div>
         <button 
           onClick={() => { loadRequests(); loadStats(); }}
@@ -312,7 +312,7 @@ export default function Verification() {
             </div>
             <div>
               <p className="text-2xl font-bold text-text-primary">{stats.under_review}</p>
-              <p className="text-xs text-text-tertiary">En revisiÃ³n</p>
+              <p className="text-xs text-text-tertiary">En revisión</p>
             </div>
           </div>
         </div>
@@ -392,7 +392,7 @@ export default function Verification() {
               <tr className="border-b border-primary/10">
                 <th className="text-left p-4 text-text-tertiary font-medium text-sm">Usuario</th>
                 <th className="text-left p-4 text-text-tertiary font-medium text-sm">Tipo</th>
-                <th className="text-left p-4 text-text-tertiary font-medium text-sm">MÃ©tricas</th>
+                <th className="text-left p-4 text-text-tertiary font-medium text-sm">Métricas</th>
                 <th className="text-left p-4 text-text-tertiary font-medium text-sm">Fecha</th>
                 <th className="text-left p-4 text-text-tertiary font-medium text-sm">Estado</th>
                 <th className="text-right p-4 text-text-tertiary font-medium text-sm">Acciones</th>
@@ -537,7 +537,7 @@ export default function Verification() {
                 </div>
 
                 <div className="bg-mercora-bg rounded-xl p-4">
-                  <p className="text-text-muted text-xs mb-2">RazÃ³n de la solicitud</p>
+                  <p className="text-text-muted text-xs mb-2">Razón de la solicitud</p>
                   <p className="text-text-primary whitespace-pre-wrap">{selectedRequest.reason_for_verification || '-'}</p>
                 </div>
 
@@ -579,7 +579,7 @@ export default function Verification() {
                   <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-4">
                     <p className="text-red-400 text-xs mb-2 flex items-center gap-1">
                       <AlertTriangle className="w-4 h-4" />
-                      RazÃ³n del rechazo
+                      Razón del rechazo
                     </p>
                     <p className="text-text-primary">{selectedRequest.rejection_reason}</p>
                   </div>
@@ -590,7 +590,7 @@ export default function Verification() {
               {selectedRequest.status === 'pending' || selectedRequest.status === 'under_review' ? (
                 <div className="space-y-4 border-t border-primary/10 pt-6">
                   <div>
-                    <label className="block text-text-secondary text-sm mb-2">Notas de revisiÃ³n (opcional)</label>
+                    <label className="block text-text-secondary text-sm mb-2">Notas de revisión (opcional)</label>
                     <textarea
                       value={reviewNotes}
                       onChange={(e) => setReviewNotes(e.target.value)}
@@ -601,11 +601,11 @@ export default function Verification() {
                   </div>
 
                   <div>
-                    <label className="block text-text-secondary text-sm mb-2">RazÃ³n del rechazo (requerido si rechazas)</label>
+                    <label className="block text-text-secondary text-sm mb-2">Razón del rechazo (requerido si rechazas)</label>
                     <textarea
                       value={rejectionReason}
                       onChange={(e) => setRejectionReason(e.target.value)}
-                      placeholder="Explica por quÃ© se rechaza la solicitud..."
+                      placeholder="Explica por qué se rechaza la solicitud..."
                       className="w-full p-3 bg-mercora-bg border border-primary/20 rounded-xl text-text-primary placeholder-text-muted focus:outline-none focus:border-primary resize-none"
                       rows={2}
                     />
@@ -619,7 +619,7 @@ export default function Verification() {
                         className="flex-1 py-3 bg-blue-500/20 text-blue-400 rounded-xl font-medium hover:bg-blue-500/30 transition-colors flex items-center justify-center gap-2"
                       >
                         <Eye className="w-4 h-4" />
-                        Marcar en revisiÃ³n
+                        Marcar en revisión
                       </button>
                     )}
                     <button
@@ -636,7 +636,7 @@ export default function Verification() {
                       className="flex-1 py-3 bg-green-500 text-white rounded-xl font-medium hover:bg-green-600 transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
                     >
                       {actionLoading ? <RefreshCw className="w-4 h-4 animate-spin" /> : <CheckCircle className="w-4 h-4" />}
-                      Aprobar verificaciÃ³n
+                      Aprobar verificación
                     </button>
                   </div>
                 </div>

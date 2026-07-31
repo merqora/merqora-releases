@@ -58,7 +58,7 @@ enum class HighlightCategory(
     SPORTS("Deportes", Icons.Outlined.FitnessCenter, listOf(Color(0xFFFF6B35), Color(0xFFFF6B35))),
     FOOD("Comida", Icons.Outlined.Restaurant, listOf(Color(0xFFEF4444), Color(0xFFF87171))),
     TRAVEL("Viajes", Icons.Outlined.Flight, listOf(Color(0xFFFF6B35), Color(0xFF1565A0))),
-    MUSIC("MÃºsica", Icons.Outlined.MusicNote, listOf(Color(0xFF1565A0), Color(0xFF22D3EE))),
+    MUSIC("Música", Icons.Outlined.MusicNote, listOf(Color(0xFF1565A0), Color(0xFF22D3EE))),
     ART("Arte", Icons.Outlined.Palette, listOf(Color(0xFFD946EF), Color(0xFFE879F9))),
     PETS("Mascotas", Icons.Outlined.Pets, listOf(Color(0xFF84CC16), Color(0xFFA3E635))),
     OFFERS("Ofertas", Icons.Outlined.LocalOffer, listOf(Color(0xFFFF6B6B), Color(0xFFFFE66D))),
@@ -70,14 +70,14 @@ enum class HighlightFrameStyle(
     val displayName: String,
     val isPremium: Boolean = false
 ) {
-    CLASSIC("ClÃ¡sico"),
+    CLASSIC("Clásico"),
     THIN("Delgado"),
     BOLD("Grueso"),
     DOUBLE("Doble"),
     DASHED("Punteado"),
     GLOW("Resplandor", true),
-    NEON("NeÃ³n", true),
-    RAINBOW("ArcoÃ­ris", true),
+    NEON("Neón", true),
+    RAINBOW("Arcoíris", true),
     GOLDEN("Dorado", true),
     DIAMOND("Diamante", true)
 }
@@ -86,8 +86,8 @@ enum class HighlightFrameColor(
     val displayName: String,
     val colors: List<Color>
 ) {
-    CATEGORY("CategorÃ­a", emptyList()), // Usa el gradiente de la categorÃ­a seleccionada
-    PURPLE("PÃºrpura", listOf(Color(0xFF7C3AED), Color(0xFFA855F7))),
+    CATEGORY("Categoría", emptyList()), // Usa el gradiente de la categoría seleccionada
+    PURPLE("Púrpura", listOf(Color(0xFF7C3AED), Color(0xFFA855F7))),
     BLUE("Azul", listOf(Color(0xFF2563EB), Color(0xFF60A5FA))),
     CYAN("Cian", listOf(Color(0xFF0891B2), Color(0xFF22D3EE))),
     GREEN("Verde", listOf(Color(0xFF059669), Color(0xFF34D399))),
@@ -103,7 +103,7 @@ enum class HighlightBackgroundColor(
     val colors: List<Color>
 ) {
     DEFAULT("Por defecto", listOf(Color(0xFF1A1A2E), Color(0xFF2A2A3E))),
-    PURPLE("PÃºrpura", listOf(Color(0xFF4C1D95), Color(0xFF0A3D62))),
+    PURPLE("Púrpura", listOf(Color(0xFF4C1D95), Color(0xFF0A3D62))),
     PINK("Rosa", listOf(Color(0xFF831843), Color(0xFF2E8B57))),
     BLUE("Azul", listOf(Color(0xFF1E3A8A), Color(0xFF1565A0))),
     GREEN("Verde", listOf(Color(0xFF064E3B), Color(0xFF2E8B57))),
@@ -114,13 +114,13 @@ enum class HighlightBackgroundColor(
 
 private val HIGHLIGHT_ICONS = listOf(
     Icons.Outlined.Star to "Estrella",
-    Icons.Outlined.Favorite to "CorazÃ³n",
+    Icons.Outlined.Favorite to "Corazón",
     Icons.Outlined.AutoAwesome to "Magia",
     Icons.Outlined.Diamond to "Diamante",
     Icons.Outlined.EmojiEvents to "Trofeo",
     Icons.Outlined.LocalFireDepartment to "Fuego",
     Icons.Outlined.Bolt to "Rayo",
-    Icons.Outlined.Celebration to "CelebraciÃ³n",
+    Icons.Outlined.Celebration to "Celebración",
     Icons.Outlined.Stars to "Destello",
     Icons.Outlined.Whatshot to "Trending",
     Icons.Outlined.ShoppingBag to "Compras",
@@ -128,7 +128,7 @@ private val HIGHLIGHT_ICONS = listOf(
 )
 
 // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-// MAIN MODAL - Nuevo diseÃ±o con vista previa izquierda + resumen derecha
+// MAIN MODAL - Nuevo diseño con vista previa izquierda + resumen derecha
 // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -151,7 +151,7 @@ fun AddHighlightModal(
     var selectedIcon by remember { mutableStateOf(HIGHLIGHT_ICONS[0]) }
     var coverUri by remember { mutableStateOf<Uri?>(null) }
     
-    // Modal activo para personalizaciÃ³n
+    // Modal activo para personalización
     var activeBottomSheet by remember { mutableStateOf<String?>(null) }
     
     val imagePicker = rememberLauncherForActivityResult(
@@ -236,7 +236,7 @@ fun AddHighlightModal(
                         
                         Spacer(modifier = Modifier.height(28.dp))
                         
-                        // Campo de tÃ­tulo
+                        // Campo de título
                         TitleInputCompact(
                             title = title,
                             onTitleChange = { title = it }
@@ -274,7 +274,7 @@ fun AddHighlightModal(
                                 )
                                 OptionButton(
                                     icon = Icons.Outlined.Category,
-                                    label = "CategorÃ­a",
+                                    label = "Categoría",
                                     value = selectedCategory.displayName,
                                     onClick = { activeBottomSheet = "category" },
                                     modifier = Modifier.weight(1f)
@@ -328,7 +328,7 @@ fun AddHighlightModal(
                     }
                 }
                 
-                // Bottom Sheets para cada opciÃ³n
+                // Bottom Sheets para cada opción
                 AnimatedVisibility(
                     visible = activeBottomSheet != null,
                     enter = slideInVertically(initialOffsetY = { it }) + fadeIn(),
@@ -452,7 +452,7 @@ private fun ModalHeaderV2(
 // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 /**
- * Resuelve el gradiente del marco segÃºn el estilo, color personalizado y categorÃ­a
+ * Resuelve el gradiente del marco según el estilo, color personalizado y categoría
  */
 private fun resolveFrameGradient(
     frameStyle: HighlightFrameStyle,
@@ -537,7 +537,7 @@ private fun HighlightPreviewCompact(
                             radius = radius * 1.15f
                         )
                         drawCircle(brush = glowBrush, radius = radius * 1.1f, center = center)
-                        // Anillo sÃ³lido interior
+                        // Anillo sólido interior
                         drawCircle(
                             brush = Brush.sweepGradient(frameGradient),
                             radius = radius,
@@ -545,7 +545,7 @@ private fun HighlightPreviewCompact(
                         )
                     }
                     HighlightFrameStyle.DOUBLE -> {
-                        // Doble: dos anillos concÃ©ntricos con espacio entre ellos
+                        // Doble: dos anillos concéntricos con espacio entre ellos
                         val outerWidth = with(density) { 3.dp.toPx() }
                         val innerRingWidth = with(density) { 2.dp.toPx() }
                         val gap = with(density) { 2.dp.toPx() }
@@ -566,7 +566,7 @@ private fun HighlightPreviewCompact(
                         )
                     }
                     HighlightFrameStyle.DASHED -> {
-                        // Punteado: patrÃ³n de lÃ­nea discontinua
+                        // Punteado: patrón de línea discontinua
                         val dashWidth = with(density) { 2.5.dp.toPx() }
                         val brush = Brush.linearGradient(frameGradient)
                         drawCircle(
@@ -592,7 +592,7 @@ private fun HighlightPreviewCompact(
                         )
                     }
                     HighlightFrameStyle.NEON -> {
-                        // NeÃ³n: brillo exterior + anillo nÃ­tido
+                        // Neón: brillo exterior + anillo nítido
                         val neonColor = frameGradient.first()
                         drawCircle(
                             brush = Brush.radialGradient(
@@ -610,7 +610,7 @@ private fun HighlightPreviewCompact(
                         )
                     }
                     else -> {
-                        // Classic, Thin, Bold: anillo sÃ³lido con gradiente
+                        // Classic, Thin, Bold: anillo sólido con gradiente
                         drawCircle(
                             brush = Brush.linearGradient(frameGradient),
                             radius = radius,
@@ -620,7 +620,7 @@ private fun HighlightPreviewCompact(
                 }
             }
             
-            // TamaÃ±o interior segÃºn estilo
+            // Tamaño interior según estilo
             val innerSize = when (frameStyle) {
                 HighlightFrameStyle.THIN -> 94.dp
                 HighlightFrameStyle.BOLD -> 82.dp
@@ -928,7 +928,7 @@ private fun CategoryBottomSheet(
     onSelect: (HighlightCategory) -> Unit,
     onDone: () -> Unit
 ) {
-    BottomSheetContainer(title = "CategorÃ­a", onDone = onDone) {
+    BottomSheetContainer(title = "Categoría", onDone = onDone) {
         LazyVerticalGrid(
             columns = GridCells.Fixed(4),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -1127,7 +1127,7 @@ private fun FrameColorBottomSheet(
             items(HighlightFrameColor.entries) { color ->
                 val isSelected = color == selected
                 val displayColors = if (color == HighlightFrameColor.CATEGORY) {
-                    listOf(Color(0xFF0A3D62), Color(0xFF2E8B57)) // Placeholder para "CategorÃ­a"
+                    listOf(Color(0xFF0A3D62), Color(0xFF2E8B57)) // Placeholder para "Categoría"
                 } else {
                     color.colors
                 }

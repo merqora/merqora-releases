@@ -15,7 +15,7 @@ import kotlinx.serialization.Serializable
  */
 
 /**
- * Datos de la tarjeta para tokenizaciÃ³n
+ * Datos de la tarjeta para tokenización
  */
 @Serializable
 data class CardData(
@@ -66,7 +66,7 @@ data class CardholderResponse(
 )
 
 /**
- * MÃ©todo de pago disponible
+ * Método de pago disponible
  */
 @Serializable
 data class PaymentMethodInfo(
@@ -256,7 +256,7 @@ enum class CardType(
 }
 
 /**
- * Mapear CardType al ID de mÃ©todo de pago de Mercado Pago
+ * Mapear CardType al ID de método de pago de Mercado Pago
  */
 fun CardType.toPaymentMethodId(): String {
     return when (this) {
@@ -271,7 +271,7 @@ fun CardType.toPaymentMethodId(): String {
 }
 
 /**
- * Detectar tipo de tarjeta por los primeros dÃ­gitos (BIN)
+ * Detectar tipo de tarjeta por los primeros dígitos (BIN)
  */
 fun detectCardType(cardNumber: String): CardType {
     val cleanNumber = cardNumber.replace(" ", "").replace("-", "")
@@ -316,7 +316,7 @@ fun detectCardType(cardNumber: String): CardType {
 }
 
 /**
- * Formatear nÃºmero de tarjeta con espacios
+ * Formatear número de tarjeta con espacios
  */
 fun formatCardNumber(number: String, cardType: CardType = CardType.UNKNOWN): String {
     val clean = number.replace(" ", "").replace("-", "")
@@ -332,7 +332,7 @@ fun formatCardNumber(number: String, cardType: CardType = CardType.UNKNOWN): Str
             }
         }
         else -> {
-            // Formato estÃ¡ndar: 4-4-4-4
+            // Formato estándar: 4-4-4-4
             buildString {
                 clean.forEachIndexed { index, c ->
                     if (index > 0 && index % 4 == 0) append(" ")
@@ -344,7 +344,7 @@ fun formatCardNumber(number: String, cardType: CardType = CardType.UNKNOWN): Str
 }
 
 /**
- * Validar nÃºmero de tarjeta con algoritmo de Luhn
+ * Validar número de tarjeta con algoritmo de Luhn
  */
 fun isValidCardNumber(number: String): Boolean {
     val clean = number.replace(" ", "").replace("-", "")
@@ -370,7 +370,7 @@ fun isValidCardNumber(number: String): Boolean {
 }
 
 /**
- * Validar fecha de expiraciÃ³n
+ * Validar fecha de expiración
  */
 fun isValidExpirationDate(month: Int, year: Int): Boolean {
     if (month < 1 || month > 12) return false

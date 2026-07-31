@@ -98,7 +98,7 @@ fun TwoFactorSetupScreen(
             ) {
                 SettingsScreenHeader(
                     title = "Configurar 2FA",
-                    subtitle = "AutenticaciÃ³n de dos factores",
+                    subtitle = "Autenticación de dos factores",
                     icon = Icons.Outlined.Security,
                     iconColor = Color(0xFF2E8B57),
                     onBack = {
@@ -121,7 +121,7 @@ fun TwoFactorSetupScreen(
                         }
                     }
                 } else if (isSetupComplete) {
-                    // Pantalla de Ã©xito
+                    // Pantalla de éxito
                     Box(
                         modifier = Modifier
                             .fillMaxSize()
@@ -147,7 +147,7 @@ fun TwoFactorSetupScreen(
                             Spacer(modifier = Modifier.height(24.dp))
                             
                             Text(
-                                text = "Â¡2FA Activado!",
+                                text = "¡2FA Activado!",
                                 fontSize = 24.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = TextPrimary
@@ -156,7 +156,7 @@ fun TwoFactorSetupScreen(
                             Spacer(modifier = Modifier.height(8.dp))
                             
                             Text(
-                                text = "Tu cuenta ahora estÃ¡ protegida con autenticaciÃ³n de dos factores",
+                                text = "Tu cuenta ahora está protegida con autenticación de dos factores",
                                 fontSize = 14.sp,
                                 color = TextSecondary,
                                 textAlign = TextAlign.Center
@@ -298,10 +298,10 @@ fun TwoFactorSetupScreen(
                                         Spacer(modifier = Modifier.height(12.dp))
                                         
                                         InstructionItem("1. Abre tu app autenticadora")
-                                        InstructionItem("2. Toca el botÃ³n + para agregar cuenta")
+                                        InstructionItem("2. Toca el botón + para agregar cuenta")
                                         InstructionItem("3. Selecciona 'Introducir clave manualmente'")
                                         InstructionItem("4. Pega o escribe la clave secreta")
-                                        InstructionItem("5. Guarda y usa el cÃ³digo generado")
+                                        InstructionItem("5. Guarda y usa el código generado")
                                     }
                                 }
                                 
@@ -318,7 +318,7 @@ fun TwoFactorSetupScreen(
                                     )
                                 ) {
                                     Text(
-                                        text = "Ya configurÃ© mi app",
+                                        text = "Ya configuré mi app",
                                         fontSize = 15.sp,
                                         fontWeight = FontWeight.SemiBold
                                     )
@@ -332,9 +332,9 @@ fun TwoFactorSetupScreen(
                             }
                             
                             2 -> {
-                                // Paso 2: Verificar cÃ³digo
+                                // Paso 2: Verificar código
                                 Text(
-                                    text = "Verifica el cÃ³digo",
+                                    text = "Verifica el código",
                                     fontSize = 20.sp,
                                     fontWeight = FontWeight.Bold,
                                     color = TextPrimary
@@ -343,14 +343,14 @@ fun TwoFactorSetupScreen(
                                 Spacer(modifier = Modifier.height(8.dp))
                                 
                                 Text(
-                                    text = "Ingresa el cÃ³digo de 6 dÃ­gitos que muestra tu app autenticadora",
+                                    text = "Ingresa el código de 6 dígitos que muestra tu app autenticadora",
                                     fontSize = 14.sp,
                                     color = TextSecondary
                                 )
                                 
                                 Spacer(modifier = Modifier.height(32.dp))
                                 
-                                // Input de cÃ³digo
+                                // Input de código
                                 OTPInput(
                                     code = verificationCode,
                                     onCodeChange = { 
@@ -398,7 +398,7 @@ fun TwoFactorSetupScreen(
                                                 isSetupComplete = true
                                                 Toast.makeText(context, "2FA activado correctamente", Toast.LENGTH_SHORT).show()
                                             } else {
-                                                errorMessage = "CÃ³digo incorrecto. Verifica e intenta de nuevo."
+                                                errorMessage = "Código incorrecto. Verifica e intenta de nuevo."
                                             }
                                             isLoading = false
                                         }

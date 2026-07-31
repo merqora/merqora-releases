@@ -16,23 +16,29 @@ import {
 } from 'lucide-react'
 import { supabase } from '../supabaseClient'
 
-// URL de Supabase para Edge Functions (FCM v1 API - mÃ¡s seguro)
+// URL de Supabase para Edge Functions (FCM v1 API - más seguro)
 const SUPABASE_URL = 'https://xyrpmmnegzjkbysoocpc.supabase.co'
 const SUPABASE_ANON_KEY = '***REMOVED_ANON_KEY***'
 
-// FunciÃ³n para enviar push notification via Supabase Edge Function (FCM v1 API)
+// Función para enviar push notification via Supabase Edge Function (FCM v1 API)
 async function sendPushNotification(tokens, title, body, data = {}, imageUrl = null) {
   if (!tokens || tokens.length === 0) {
-    console.log('âš ï¸ No hay tokens FCM para enviar')
-    return { success: false, error: 'No hay tokens' }
+    console.log('âš ï¸ No hay tokens FCM para enviar');
+    return { success: false, error: 'No hay tokens' };
   }
 
   try {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
+      return { success: false, error: 'Usuario no autenticado' };
+    }
+    const accessToken = session.access_token;
+
     const response = await fetch(`${SUPABASE_URL}/functions/v1/send-fcm-v1`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+        'Authorization': `Bearer ${accessToken}`,
         'apikey': SUPABASE_ANON_KEY,
       },
       body: JSON.stringify({
@@ -42,25 +48,25 @@ async function sendPushNotification(tokens, title, body, data = {}, imageUrl = n
         data,
         image_url: imageUrl
       }),
-    })
+    });
 
-    const result = await response.json()
-    console.log('ðŸ“¬ FCM v1 Response:', result)
+    const result = await response.json();
+    console.log('📬 FCM v1 Response:', result);
     
-    if (result.success) {
-      return { success: true, result }
+    if (response.ok && result.success) {
+      return { success: true, result };
     } else {
-      return { success: false, error: result.error || 'Error desconocido' }
+      return { success: false, error: result.error || 'Error desconocido' };
     }
   } catch (error) {
-    console.error('âŒ Error enviando push:', error)
-    return { success: false, error: error.message }
+    console.error('âŒ Error enviando push:', error);
+    return { success: false, error: error.message };
   }
 }
 
-// Obtener tokens FCM de un usuario usando funciÃ³n RPC (bypass RLS)
+// Obtener tokens FCM de un usuario usando función RPC (bypass RLS)
 async function getUserFCMTokens(userId) {
-  // Usar funciÃ³n RPC con SECURITY DEFINER para bypass de RLS
+  // Usar función RPC con SECURITY DEFINER para bypass de RLS
   const { data, error } = await supabase
     .rpc('get_user_fcm_tokens', { target_user_id: userId })
 
@@ -115,7 +121,7 @@ function NotificationTest() {
           table: 'notifications'
         },
         (payload) => {
-          console.log('ðŸ”” Nueva notificaciÃ³n creada:', payload.new)
+          console.log('🔔 Nueva notificación creada:', payload.new)
           setSentNotifications(prev => [payload.new, ...prev].slice(0, 10))
         }
       )
@@ -184,7 +190,7 @@ function NotificationTest() {
 
   async function sendLikeNotification(post) {
     if (!post.user_id) {
-      showNotificationToast('Este post no tiene user_id vÃ¡lido', 'error')
+      showNotificationToast('Este post no tiene user_id válido', 'error')
       return
     }
 
@@ -195,7 +201,7 @@ function NotificationTest() {
       const senderId = senderUser?.user_id || currentUser?.id
       const senderAvatar = senderUser?.avatar_url || null
 
-      // Crear notificaciÃ³n de LIKE en la base de datos
+      // Crear notificación de LIKE en la base de datos
       const { error } = await supabase
         .from('notifications')
         .insert({
@@ -211,14 +217,14 @@ function NotificationTest() {
 
       if (error) throw error
 
-      // ðŸ”” ENVIAR PUSH NOTIFICATION VIA FCM
+      // 🔔 ENVIAR PUSH NOTIFICATION VIA FCM
       const tokens = await getUserFCMTokens(post.user_id)
-      console.log(`ðŸ“± Tokens FCM encontrados: ${tokens.length}`)
+      console.log(`📱 Tokens FCM encontrados: ${tokens.length}`)
       
       if (tokens.length > 0) {
         const pushResult = await sendPushNotification(
           tokens,
-          `${senderUsername} le dio like a tu publicaciÃ³n`,
+          `${senderUsername} le dio like a tu publicación`,
           'Toca para ver',
           {
             type: 'like',
@@ -229,12 +235,12 @@ function NotificationTest() {
         )
         
         if (pushResult.success) {
-          showNotificationToast(`âœ… NotificaciÃ³n + Push enviada a ${post.user_id.slice(0, 8)}...`, 'success')
+          showNotificationToast(`âœ… Notificación + Push enviada a ${post.user_id.slice(0, 8)}...`, 'success')
         } else {
-          showNotificationToast(`âœ… NotificaciÃ³n enviada (push fallÃ³: ${pushResult.error})`, 'warning')
+          showNotificationToast(`âœ… Notificación enviada (push falló: ${pushResult.error})`, 'warning')
         }
       } else {
-        showNotificationToast(`âœ… NotificaciÃ³n enviada (sin tokens FCM)`, 'success')
+        showNotificationToast(`âœ… Notificación enviada (sin tokens FCM)`, 'success')
       }
     } catch (error) {
       console.error('Error sending notification:', error)
@@ -268,21 +274,21 @@ function NotificationTest() {
           sender_username: senderUsername,
           sender_avatar: userData?.avatar_url || null,
           type: 'like',
-          message: 'Test de notificaciÃ³n desde Admin Web',
+          message: 'Test de notificación desde Admin Web',
           is_read: false
         })
 
       if (error) throw error
 
-      // ðŸ”” ENVIAR PUSH NOTIFICATION VIA FCM
+      // 🔔 ENVIAR PUSH NOTIFICATION VIA FCM
       const tokens = await getUserFCMTokens(targetUserId.trim())
-      console.log(`ðŸ“± Tokens FCM encontrados: ${tokens.length}`)
+      console.log(`📱 Tokens FCM encontrados: ${tokens.length}`)
       
       if (tokens.length > 0) {
         const pushResult = await sendPushNotification(
           tokens,
           `${senderUsername} le dio like`,
-          'Test de notificaciÃ³n',
+          'Test de notificación',
           {
             type: 'like',
             sender_id: currentUser?.id,
@@ -291,12 +297,12 @@ function NotificationTest() {
         )
         
         if (pushResult.success) {
-          showNotificationToast(`âœ… NotificaciÃ³n + Push enviada a ${targetUserId.slice(0, 8)}...`, 'success')
+          showNotificationToast(`âœ… Notificación + Push enviada a ${targetUserId.slice(0, 8)}...`, 'success')
         } else {
-          showNotificationToast(`âœ… NotificaciÃ³n enviada (push fallÃ³: ${pushResult.error})`, 'warning')
+          showNotificationToast(`âœ… Notificación enviada (push falló: ${pushResult.error})`, 'warning')
         }
       } else {
-        showNotificationToast(`âœ… NotificaciÃ³n enviada (sin tokens FCM)`, 'success')
+        showNotificationToast(`âœ… Notificación enviada (sin tokens FCM)`, 'success')
       }
       
       setTargetUserId('')
@@ -371,12 +377,12 @@ function NotificationTest() {
 
       {/* Info box */}
       <div className="bg-accent-magenta/10 border border-accent-magenta/30 rounded-xl p-4">
-        <h3 className="font-semibold text-accent-magenta mb-2">ðŸ“± CÃ³mo funciona:</h3>
+        <h3 className="font-semibold text-accent-magenta mb-2">📱 Cómo funciona:</h3>
         <ol className="list-decimal list-inside space-y-1 text-text-secondary text-sm">
           <li>Selecciona un usuario <strong>remitente</strong> abajo (quien "da" el like)</li>
-          <li>Abre la app Android y asegÃºrate de estar logueado</li>
-          <li>Da click en el botÃ³n â¤ï¸ de cualquier post</li>
-          <li>La notificaciÃ³n llegarÃ¡ mostrando el username del remitente</li>
+          <li>Abre la app Android y asegúrate de estar logueado</li>
+          <li>Da click en el botón â¤ï¸ de cualquier post</li>
+          <li>La notificación llegará mostrando el username del remitente</li>
         </ol>
       </div>
 
@@ -387,7 +393,7 @@ function NotificationTest() {
           Seleccionar usuario remitente
         </h3>
         <p className="text-text-muted text-sm">
-          Busca y selecciona el usuario que aparecerÃ¡ como quien da el like (en nombre de quiÃ©n envÃ­as).
+          Busca y selecciona el usuario que aparecerá como quien da el like (en nombre de quién envías).
         </p>
 
         <div className="flex gap-2">
@@ -468,7 +474,7 @@ function NotificationTest() {
       <div className="bg-mercora-surface rounded-xl p-4">
         <h3 className="font-semibold text-text-primary mb-3 flex items-center gap-2">
           <Send className="w-5 h-5 text-primary" />
-          Enviar notificaciÃ³n a un usuario especÃ­fico
+          Enviar notificación a un usuario específico
         </h3>
         <div className="flex gap-3">
           <input
@@ -523,9 +529,9 @@ function NotificationTest() {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {[
           { label: 'Posts cargados', value: posts.length, color: 'text-text-primary' },
-          { label: 'Con imÃ¡genes', value: posts.filter(p => p.images?.length > 0).length, color: 'text-blue-400' },
+          { label: 'Con imágenes', value: posts.filter(p => p.images?.length > 0).length, color: 'text-blue-400' },
           { label: 'Notif. enviadas', value: sentNotifications.length, color: 'text-green-400' },
-          { label: 'Estado', value: realtimeStatus === 'connected' ? 'ðŸŸ¢' : 'ðŸŸ¡', color: 'text-text-primary' },
+          { label: 'Estado', value: realtimeStatus === 'connected' ? '🟢' : '🟡', color: 'text-text-primary' },
         ].map(stat => (
           <div key={stat.label} className="bg-mercora-surface p-4 rounded-xl">
             <p className="text-text-muted text-sm">{stat.label}</p>
@@ -538,7 +544,7 @@ function NotificationTest() {
       <div className="space-y-4">
         <h3 className="font-semibold text-text-primary flex items-center gap-2">
           <Image className="w-5 h-5" />
-          Posts disponibles - Click en â¤ï¸ para enviar notificaciÃ³n de like
+          Posts disponibles - Click en â¤ï¸ para enviar notificación de like
         </h3>
         
         {loading ? (
@@ -578,7 +584,7 @@ function NotificationTest() {
                 {/* Content */}
                 <div className="p-4 space-y-3">
                   <h4 className="font-semibold text-text-primary line-clamp-1">
-                    {post.title || 'Sin tÃ­tulo'}
+                    {post.title || 'Sin título'}
                   </h4>
                   
                   <div className="flex items-center gap-2 text-text-muted text-sm">
@@ -604,7 +610,7 @@ function NotificationTest() {
                     ) : (
                       <Heart className="w-4 h-4" />
                     )}
-                    Dar Like (enviar notificaciÃ³n)
+                    Dar Like (enviar notificación)
                   </button>
                 </div>
               </div>

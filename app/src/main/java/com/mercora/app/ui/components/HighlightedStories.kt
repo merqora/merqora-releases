@@ -39,7 +39,7 @@ import coil.compose.AsyncImage
 import com.mercora.app.ui.theme.*
 
 // Usar HighlightCategory de AddHighlightModal.kt
-// (La definiciÃ³n estÃ¡ en AddHighlightModal.kt para evitar duplicaciÃ³n)
+// (La definición está en AddHighlightModal.kt para evitar duplicación)
 
 data class HighlightedStory(
     val id: String,
@@ -72,7 +72,7 @@ fun HighlightedStories(
             .padding(horizontal = 16.dp, vertical = 8.dp),
         horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        // BotÃ³n agregar highlight
+        // Botón agregar highlight
         if (canAddStories) {
             AddHighlightButton(onClick = onAddStory)
         }
@@ -145,7 +145,7 @@ private fun HighlightItem(
         label = "scale"
     )
     
-    // AnimaciÃ³n de rotaciÃ³n para loading
+    // Animación de rotación para loading
     val infiniteTransition = rememberInfiniteTransition(label = "upload_spin")
     val uploadRotation by infiniteTransition.animateFloat(
         initialValue = 0f,
@@ -156,7 +156,7 @@ private fun HighlightItem(
         ),
         label = "upload_rotation"
     )
-    // AnimaciÃ³n de pulso para el borde al subir
+    // Animación de pulso para el borde al subir
     val uploadAlpha by infiniteTransition.animateFloat(
         initialValue = 0.4f,
         targetValue = 1f,
@@ -185,7 +185,7 @@ private fun HighlightItem(
         ) {
             val density = LocalDensity.current
             
-            // Obtener gradiente segÃºn el frame style y color personalizado
+            // Obtener gradiente según el frame style y color personalizado
             val frameGradient = when (story.frameStyle) {
                 HighlightFrameStyle.GOLDEN -> listOf(Color(0xFFFFD700), Color(0xFFDAA520), Color(0xFFFFA500), Color(0xFFFFD700))
                 HighlightFrameStyle.RAINBOW -> listOf(
@@ -285,7 +285,7 @@ private fun HighlightItem(
                 }
             }
             
-            // TamaÃ±o interior segÃºn estilo
+            // Tamaño interior según estilo
             val innerSize = when (story.frameStyle) {
                 HighlightFrameStyle.THIN -> 60.dp
                 HighlightFrameStyle.BOLD -> 54.dp
@@ -322,7 +322,7 @@ private fun HighlightItem(
                         contentScale = ContentScale.Crop
                     )
                 } else {
-                    // Icono de categorÃ­a si no hay thumbnail
+                    // Icono de categoría si no hay thumbnail
                     Box(
                         modifier = Modifier
                             .fillMaxSize()

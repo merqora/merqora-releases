@@ -793,7 +793,7 @@ binzei.com, fenzei.com, fonzei.com, banzoi.com, binzoi.com, venzoi.com, vezei.co
 | vonave.com | Vo-na-ve |
 
 ## Y los originales que ya teníamos (de antes de esta ronda)
-vinzay.com, venova.com, valova.com, berola.com, ferola.com, viliva.com, velivo.com, viniva.com, feliva.com, voliva.com, nerola.com, foravi.com, farovi.com
+mercora.com, vinzay.com, venova.com, valova.com, berola.com, ferola.com, viliva.com, velivo.com, viniva.com, feliva.com, voliva.com, nerola.com, foravi.com, farovi.com
 
 ---
 

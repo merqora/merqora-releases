@@ -29,7 +29,7 @@ import javax.inject.Inject
 
 /**
  * â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
- * ADDRESS VIEWMODEL - GestiÃ³n de direcciones con geocoding y validaciÃ³n
+ * ADDRESS VIEWMODEL - Gestión de direcciones con geocoding y validación
  * â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
  */
 @HiltViewModel
@@ -120,7 +120,7 @@ class AddressViewModel @Inject constructor(
     }
     
     /**
-     * Geocodifica una direcciÃ³n (texto â†’ coordenadas)
+     * Geocodifica una dirección (texto â†’ coordenadas)
      */
     fun geocodeAddress(address: String) {
         viewModelScope.launch {
@@ -146,12 +146,12 @@ class AddressViewModel @Inject constructor(
                     validateCurrentAddress()
                 } else {
                     _uiState.update { it.copy(isGeocoding = false) }
-                    _events.emit(AddressEvent.Error("No se pudo geocodificar la direcciÃ³n"))
+                    _events.emit(AddressEvent.Error("No se pudo geocodificar la dirección"))
                 }
             } catch (e: Exception) {
                 Log.e(TAG, "Error geocoding address", e)
                 _uiState.update { it.copy(isGeocoding = false) }
-                _events.emit(AddressEvent.Error("Error de geocodificaciÃ³n: ${e.message}"))
+                _events.emit(AddressEvent.Error("Error de geocodificación: ${e.message}"))
             }
         }
     }
@@ -172,7 +172,7 @@ class AddressViewModel @Inject constructor(
                             isGeocoding = false,
                             selectedGeocodingResult = result,
                             formattedAddress = result.formattedAddress,
-                            rawInput = result.formattedAddress, // Actualizar tambiÃ©n el campo de bÃºsqueda
+                            rawInput = result.formattedAddress, // Actualizar también el campo de búsqueda
                             latitude = latitude,
                             longitude = longitude,
                             city = result.city ?: "",
@@ -186,19 +186,19 @@ class AddressViewModel @Inject constructor(
                 } else {
                     Log.w(TAG, "Reverse geocode returned null")
                     _uiState.update { it.copy(isGeocoding = false) }
-                    _events.emit(AddressEvent.Error("No se pudo obtener la direcciÃ³n de tu ubicaciÃ³n"))
+                    _events.emit(AddressEvent.Error("No se pudo obtener la dirección de tu ubicación"))
                 }
             } catch (e: Exception) {
                 Log.e(TAG, "Error reverse geocoding", e)
                 _uiState.update { it.copy(isGeocoding = false) }
-                _events.emit(AddressEvent.Error("Error de geocodificaciÃ³n inversa"))
+                _events.emit(AddressEvent.Error("Error de geocodificación inversa"))
             }
         }
     }
     
     /**
-     * Obtiene la ubicaciÃ³n actual del usuario
-     * Este mÃ©todo verifica permisos y solicita si no los tiene
+     * Obtiene la ubicación actual del usuario
+     * Este método verifica permisos y solicita si no los tiene
      */
     fun getCurrentLocation() {
         viewModelScope.launch {
@@ -207,13 +207,13 @@ class AddressViewModel @Inject constructor(
                 return@launch
             }
             
-            // Ya tiene permisos, obtener ubicaciÃ³n directamente
+            // Ya tiene permisos, obtener ubicación directamente
             fetchCurrentLocationInternal()
         }
     }
     
     /**
-     * Obtiene la ubicaciÃ³n despuÃ©s de que los permisos fueron concedidos
+     * Obtiene la ubicación después de que los permisos fueron concedidos
      * NO verifica permisos porque ya sabemos que fueron concedidos por el launcher
      */
     fun getCurrentLocationAfterPermission() {
@@ -223,7 +223,7 @@ class AddressViewModel @Inject constructor(
     }
     
     /**
-     * LÃ³gica interna para obtener ubicaciÃ³n (sin verificar permisos)
+     * Lógica interna para obtener ubicación (sin verificar permisos)
      */
     @Suppress("MissingPermission")
     private suspend fun fetchCurrentLocationInternal() {
@@ -251,26 +251,26 @@ class AddressViewModel @Inject constructor(
                     )
                 }
                 
-                // Reverse geocode automÃ¡tico para obtener la direcciÃ³n
+                // Reverse geocode automático para obtener la dirección
                 reverseGeocode(location.latitude, location.longitude)
             } else {
                 Log.w(TAG, "Location is null")
                 _uiState.update { it.copy(isGettingLocation = false) }
-                _events.emit(AddressEvent.Error("No se pudo obtener la ubicaciÃ³n. AsegÃºrate de tener el GPS activado."))
+                _events.emit(AddressEvent.Error("No se pudo obtener la ubicación. Asegúrate de tener el GPS activado."))
             }
         } catch (e: SecurityException) {
             Log.e(TAG, "Security exception getting location", e)
             _uiState.update { it.copy(isGettingLocation = false) }
-            _events.emit(AddressEvent.Error("Permiso de ubicaciÃ³n denegado"))
+            _events.emit(AddressEvent.Error("Permiso de ubicación denegado"))
         } catch (e: Exception) {
             Log.e(TAG, "Error getting location", e)
             _uiState.update { it.copy(isGettingLocation = false) }
-            _events.emit(AddressEvent.Error("Error al obtener ubicaciÃ³n: ${e.message ?: "Error desconocido"}"))
+            _events.emit(AddressEvent.Error("Error al obtener ubicación: ${e.message ?: "Error desconocido"}"))
         }
     }
     
     /**
-     * Selecciona una predicciÃ³n de autocompletado
+     * Selecciona una predicción de autocompletado
      */
     fun selectPrediction(prediction: AddressPrediction) {
         viewModelScope.launch {
@@ -282,13 +282,13 @@ class AddressViewModel @Inject constructor(
             }
             _predictions.value = emptyList()
             
-            // Geocodificar la direcciÃ³n seleccionada
+            // Geocodificar la dirección seleccionada
             geocodeAddress(prediction.fullText)
         }
     }
     
     /**
-     * Actualiza la ubicaciÃ³n desde el mapa interactivo
+     * Actualiza la ubicación desde el mapa interactivo
      */
     fun updateLocationFromMap(latitude: Double, longitude: Double, address: String) {
         viewModelScope.launch {
@@ -302,13 +302,13 @@ class AddressViewModel @Inject constructor(
                 )
             }
             
-            // Validar la direcciÃ³n con el motor C++
+            // Validar la dirección con el motor C++
             validateCurrentAddress()
         }
     }
     
     /**
-     * Valida la direcciÃ³n actual con el motor C++
+     * Valida la dirección actual con el motor C++
      */
     fun validateCurrentAddress() {
         viewModelScope.launch {
@@ -346,7 +346,7 @@ class AddressViewModel @Inject constructor(
     }
     
     /**
-     * Guarda la direcciÃ³n actual
+     * Guarda la dirección actual
      */
     fun saveAddress(userId: String) {
         viewModelScope.launch {
@@ -354,7 +354,7 @@ class AddressViewModel @Inject constructor(
             
             if (userId.isBlank()) {
                 Log.e(TAG, "userId is empty!")
-                _events.emit(AddressEvent.Error("Error: No se pudo identificar tu usuario. Intenta cerrar sesiÃ³n y volver a entrar."))
+                _events.emit(AddressEvent.Error("Error: No se pudo identificar tu usuario. Intenta cerrar sesión y volver a entrar."))
                 return@launch
             }
             
@@ -363,7 +363,7 @@ class AddressViewModel @Inject constructor(
             // Allow saving with either geocoded address or manual text input
             val addressText = state.formattedAddress.ifBlank { state.rawInput }
             if (addressText.isBlank()) {
-                _events.emit(AddressEvent.Error("Ingresa una direcciÃ³n vÃ¡lida"))
+                _events.emit(AddressEvent.Error("Ingresa una dirección válida"))
                 return@launch
             }
             
@@ -375,7 +375,7 @@ class AddressViewModel @Inject constructor(
             
             val request = AddressCreateRequest(
                 userId = userId,
-                label = state.label.ifBlank { "Mi direcciÃ³n" },
+                label = state.label.ifBlank { "Mi dirección" },
                 addressType = state.addressType,
                 formattedAddress = addressText,
                 streetAddress = state.streetAddress.takeIf { it.isNotBlank() },
@@ -425,7 +425,7 @@ class AddressViewModel @Inject constructor(
                     resetForm()
                 },
                 onFailure = { error ->
-                    val errorMsg = error.message ?: "Error desconocido al guardar la direcciÃ³n"
+                    val errorMsg = error.message ?: "Error desconocido al guardar la dirección"
                     Log.e(TAG, "âŒ Error saving address: $errorMsg", error)
                     _uiState.update { it.copy(isSaving = false) }
                     _events.emit(AddressEvent.Error(errorMsg))
@@ -435,7 +435,7 @@ class AddressViewModel @Inject constructor(
     }
     
     /**
-     * Establece una direcciÃ³n como default
+     * Establece una dirección como default
      */
     fun setDefaultAddress(addressId: String, userId: String) {
         viewModelScope.launch {
@@ -454,7 +454,7 @@ class AddressViewModel @Inject constructor(
     }
     
     /**
-     * Elimina una direcciÃ³n
+     * Elimina una dirección
      */
     fun deleteAddress(addressId: String, onResult: ((Boolean, String?) -> Unit)? = null) {
         viewModelScope.launch {
@@ -570,14 +570,14 @@ class AddressViewModel @Inject constructor(
 
             val addressText = state.formattedAddress.ifBlank { state.rawInput }
             if (addressText.isBlank()) {
-                _events.emit(AddressEvent.Error("Ingresa una direcciÃ³n vÃ¡lida"))
+                _events.emit(AddressEvent.Error("Ingresa una dirección válida"))
                 _uiState.update { it.copy(isSaving = false) }
                 return@launch
             }
 
             val effectiveSource = if (state.latitude == 0.0 || state.longitude == 0.0) AddressSource.MANUAL else state.addressSource
             val updates = mapOf<String, Any>(
-                "label" to state.label.ifBlank { "Mi direcciÃ³n" },
+                "label" to state.label.ifBlank { "Mi dirección" },
                 "address_type" to state.addressType.name.lowercase(),
                 "formatted_address" to addressText,
                 "street_address" to (state.streetAddress.takeIf { it.isNotBlank() } ?: ""),
@@ -618,7 +618,7 @@ class AddressViewModel @Inject constructor(
                 onFailure = { error ->
                     Log.e(TAG, "âŒ Error updating address: ${error.message}")
                     _uiState.update { it.copy(isSaving = false) }
-                    _events.emit(AddressEvent.Error(error.message ?: "Error al actualizar direcciÃ³n"))
+                    _events.emit(AddressEvent.Error(error.message ?: "Error al actualizar dirección"))
                 }
             )
         }

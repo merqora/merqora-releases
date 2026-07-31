@@ -27,17 +27,6 @@ object AddressEngine {
     private const val TAG = "AddressEngine"
     private var isLoaded = false
     
-    init {
-        try {
-            System.loadLibrary("Vinzay-native")
-            isLoaded = true
-            Log.i(TAG, "? Native address engine loaded")
-        } catch (e: UnsatisfiedLinkError) {
-            Log.e(TAG, "? Failed to load native library", e)
-            isLoaded = false
-        }
-    }
-    
     /**
      * Estado de validación de una dirección
      */

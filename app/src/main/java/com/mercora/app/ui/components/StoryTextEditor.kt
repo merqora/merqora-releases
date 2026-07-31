@@ -215,19 +215,19 @@ fun StoryTextEditor(
             val totalToolsHeight = toolbarHeight
             
             // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-            // CÃLCULO DE CENTRO PERFECTO - FIJO
+            // CÁLCULO DE CENTRO PERFECTO - FIJO
             // El texto y slider deben estar centrados entre:
             // - Top: status bar (~40dp)
             // - Bottom: borde superior del teclado
             // Usamos altura FIJA sin contar el carrusel para evitar movimiento
             // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-            // Altura fija para el cÃ¡lculo - NO incluye el carrusel para evitar que suba el texto
+            // Altura fija para el cálculo - NO incluye el carrusel para evitar que suba el texto
             val fixedToolbarHeight = 52.dp
             val availableHeight = (previewHeight - actualKeyboardHeight - fixedToolbarHeight).coerceAtLeast(100.dp)
-            // Centrar un poco mÃ¡s abajo para compensar el status bar
+            // Centrar un poco más abajo para compensar el status bar
             val centerY = (availableHeight / 2).coerceAtLeast(60.dp) + 20.dp
             
-            // Campo de texto centrado - misma alineaciÃ³n que el slider vertical
+            // Campo de texto centrado - misma alineación que el slider vertical
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -282,7 +282,7 @@ fun StoryTextEditor(
                                 TextAlignOption.RIGHT -> Alignment.CenterEnd
                             }
                         ) {
-                            // Mostrar placeholder solo cuando estÃ¡ vacÃ­o
+                            // Mostrar placeholder solo cuando está vacío
                             if (textState.text.isEmpty()) {
                                 Text(
                                     text = "Escribe algo...",
@@ -299,7 +299,7 @@ fun StoryTextEditor(
                 )
             }
             
-            // Slider vertical de tamaÃ±o - lado izquierdo, centrado verticalmente
+            // Slider vertical de tamaño - lado izquierdo, centrado verticalmente
             // entre el header y el borde superior del contenedor de sub-herramientas
             // Mismo enfoque que HistoryScreen: Alignment.CenterStart + offset por teclado/tools
             Box(
@@ -315,8 +315,8 @@ fun StoryTextEditor(
                 )
             }
             
-            // BotÃ³n "Tick" - esquina superior derecha
-            // Mismo estilo que botÃ³n arrow left (fondo negro 0.5 alpha, 40dp)
+            // Botón "Tick" - esquina superior derecha
+            // Mismo estilo que botón arrow left (fondo negro 0.5 alpha, 40dp)
             Box(
                 modifier = Modifier
                     .align(Alignment.TopEnd)
@@ -335,8 +335,8 @@ fun StoryTextEditor(
                 )
             }
             
-            // Contenedor de herramientas - solo visible cuando el teclado estÃ¡ abierto
-            // PEGADO AL TECLADO SIN NINGUNA SEPARACIÃ“N
+            // Contenedor de herramientas - solo visible cuando el teclado está abierto
+            // PEGADO AL TECLADO SIN NINGUNA SEPARACIÓN
             AnimatedVisibility(
                 visible = isKeyboardVisible,
                 enter = fadeIn(tween(150)) + slideInVertically { it },
@@ -346,7 +346,7 @@ fun StoryTextEditor(
                     .align(Alignment.BottomCenter)
                     .imePadding() // Usa imePadding para pegarse perfectamente al teclado
             ) {
-                // Contenedor Ãºnico integrado: herramientas principales O carrusel con botÃ³n volver
+                // Contenedor único integrado: herramientas principales O carrusel con botón volver
                 val showCarousel = selectedTool != null && TEXT_TOOLS.find { it.type == selectedTool }?.hasCarousel == true
                 
                 if (showCarousel) {
@@ -429,7 +429,7 @@ fun StoryTextEditor(
 }
 
 // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-// SLIDER VERTICAL DE TAMAÃ‘O DE FUENTE
+// SLIDER VERTICAL DE TAMAÑO DE FUENTE
 // Mismo estilo que DrawingStrokeSliderVertical para consistencia
 // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
@@ -444,7 +444,7 @@ private fun VerticalFontSizeSlider(
     val maxValue = valueRange.endInclusive
     val normalizedValue = (value - minValue) / (maxValue - minValue)
     
-    // AnimaciÃ³n suave del indicador
+    // Animación suave del indicador
     val animatedSize by animateFloatAsState(
         targetValue = value,
         animationSpec = spring(
@@ -454,14 +454,14 @@ private fun VerticalFontSizeSlider(
         label = "fontSize"
     )
     
-    // DiseÃ±o profesional con indicador arriba y track debajo (sin superposiciÃ³n)
+    // Diseño profesional con indicador arriba y track debajo (sin superposición)
     Column(
         modifier = modifier
             .width(44.dp)
             .height(200.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // Indicador visual del tamaÃ±o actual - pequeÃ±o y elegante
+        // Indicador visual del tamaño actual - pequeño y elegante
         val indicatorSize = (animatedSize * 0.45f).dp.coerceIn(10.dp, 20.dp)
         Box(
             modifier = Modifier
@@ -472,7 +472,7 @@ private fun VerticalFontSizeSlider(
         
         Spacer(modifier = Modifier.height(10.dp))
         
-        // Track vertical personalizado - DEBAJO del indicador, sin superposiciÃ³n
+        // Track vertical personalizado - DEBAJO del indicador, sin superposición
         var currentY by remember { mutableFloatStateOf(0f) }
         var trackHeight by remember { mutableFloatStateOf(1f) }
         
@@ -501,7 +501,7 @@ private fun VerticalFontSizeSlider(
                 },
             contentAlignment = Alignment.Center
         ) {
-            // Track de fondo - mÃ¡s delgado y elegante
+            // Track de fondo - más delgado y elegante
             Box(
                 modifier = Modifier
                     .width(3.dp)
@@ -520,7 +520,7 @@ private fun VerticalFontSizeSlider(
                     .background(Color.White.copy(alpha = 0.9f))
             )
             
-            // Thumb/Handle - posicionado segÃºn el valor, pequeÃ±o y preciso
+            // Thumb/Handle - posicionado según el valor, pequeño y preciso
             val trackFraction = 1f - normalizedValue
             Box(
                 modifier = Modifier
@@ -530,7 +530,7 @@ private fun VerticalFontSizeSlider(
                 Box(
                     modifier = Modifier
                         .padding(top = with(androidx.compose.ui.platform.LocalDensity.current) {
-                            // Posicionar el thumb en la fracciÃ³n correcta del track
+                            // Posicionar el thumb en la fracción correcta del track
                             val totalHeight = trackHeight
                             (totalHeight * trackFraction).toDp() - 7.dp
                         }.coerceAtLeast(0.dp))

@@ -56,13 +56,13 @@ fun ReportProductDialog(
     )
 
     val reasons = listOf(
-        ReportReason("fake", "Producto falso o falsificado", "El producto es una imitaciÃ³n o rÃ©plica no autorizada", Icons.Outlined.Warning),
-        ReportReason("misleading", "DescripciÃ³n EngaÃ±osa", "La DescripciÃ³n no coincide con el producto real", Icons.Outlined.EditNote),
+        ReportReason("fake", "Producto falso o falsificado", "El producto es una imitación o réplica no autorizada", Icons.Outlined.Warning),
+        ReportReason("misleading", "Descripción Engañosa", "La Descripción no coincide con el producto real", Icons.Outlined.EditNote),
         ReportReason("wrong_price", "Precio incorrecto", "El precio mostrado es diferente al cobrado", Icons.Outlined.AttachMoney),
-        ReportReason("wrong_images", "ImÃ¡genes no corresponden", "Las fotos son de otro producto", Icons.Outlined.Image),
+        ReportReason("wrong_images", "Imágenes no corresponden", "Las fotos son de otro producto", Icons.Outlined.Image),
         ReportReason("inappropriate", "Contenido inapropiado", "Contenido ofensivo, ilegal o prohibido", Icons.Outlined.Block),
         ReportReason("scam", "Posible estafa", "Sospecha de actividad fraudulenta", Icons.Outlined.Security),
-        ReportReason("copyright", "ViolaciÃ³n de derechos", "Uso no autorizado de marcas o contenido", Icons.Outlined.Copyright),
+        ReportReason("copyright", "Violación de derechos", "Uso no autorizado de marcas o contenido", Icons.Outlined.Copyright),
         ReportReason("other", "Otro motivo", "Especificar en los detalles", Icons.Outlined.MoreHoriz)
     )
 
@@ -127,7 +127,7 @@ fun ReportProductDialog(
 
                         Column(modifier = Modifier.weight(1f)) {
                             Text(
-                                text = "Denunciar PublicaciÃ³n",
+                                text = "Denunciar Publicación",
                                 fontSize = 18.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = TextPrimary
@@ -197,7 +197,7 @@ fun ReportProductDialog(
                         }
 
                         Text(
-                            text = "Â¿CuÃ¡l es el problema?",
+                            text = "¿Cuál es el problema?",
                             fontSize = 16.sp,
                             fontWeight = FontWeight.Bold,
                             color = TextPrimary
@@ -276,13 +276,13 @@ fun ReportProductDialog(
                         Spacer(modifier = Modifier.height(24.dp))
 
                         Text(
-                            text = "CuÃ©ntanos MÃ¡s detalles",
+                            text = "Cuéntanos Más detalles",
                             fontSize = 16.sp,
                             fontWeight = FontWeight.Bold,
                             color = TextPrimary
                         )
                         Text(
-                            text = "Mientras MÃ¡s InformaciÃ³n nos des, MÃ¡s RÃ¡pido podremos actuar",
+                            text = "Mientras Más Información nos des, Más Rápido podremos actuar",
                             fontSize = 13.sp,
                             color = TextMuted
                         )
@@ -324,7 +324,7 @@ fun ReportProductDialog(
                         Spacer(modifier = Modifier.height(16.dp))
 
                         Text(
-                            text = "Enlace o InformaciÃ³n adicional (opcional)",
+                            text = "Enlace o Información adicional (opcional)",
                             fontSize = 14.sp,
                             fontWeight = FontWeight.Medium,
                             color = TextSecondary
@@ -398,7 +398,7 @@ fun ReportProductDialog(
                                     color = TextPrimary
                                 )
                                 Text(
-                                    text = "No verÃ¡s MÃ¡s publicaciones de este usuario",
+                                    text = "No verás Más publicaciones de este usuario",
                                     fontSize = 12.sp,
                                     color = TextMuted
                                 )
@@ -424,7 +424,7 @@ fun ReportProductDialog(
                                 )
                                 Spacer(modifier = Modifier.width(10.dp))
                                 Text(
-                                    text = "Los reportes falsos o malintencionados pueden resultar en restricciones a tu cuenta. Nuestro equipo revisarÃ¡ este reporte en las PrÃ³ximas 24-48 horas.",
+                                    text = "Los reportes falsos o malintencionados pueden resultar en restricciones a tu cuenta. Nuestro equipo revisará este reporte en las Próximas 24-48 horas.",
                                     fontSize = 12.sp,
                                     color = TextMuted,
                                     lineHeight = 16.sp
@@ -502,7 +502,7 @@ fun ReportProductDialog(
                             Spacer(modifier = Modifier.height(8.dp))
 
                             Text(
-                                text = "Al enviar, aceptas nuestras PolÃ­ticas de uso",
+                                text = "Al enviar, aceptas nuestras Políticas de uso",
                                 fontSize = 12.sp,
                                 color = TextMuted,
                                 modifier = Modifier.fillMaxWidth(),

@@ -135,7 +135,7 @@ export default function ChatView() {
     try {
       console.log('Loading conversation:', conversationId)
       
-      // Cargar conversaciÃ³n
+      // Cargar conversación
       const { data: conv, error: convError } = await supabase
         .from('support_conversations')
         .select('*')
@@ -169,7 +169,7 @@ export default function ChatView() {
       const messageContent = newMessage.trim()
       await sendAgentMessage(conversationId, messageContent, 'agent-1')
       
-      // NO agregar localmente - el mensaje llegarÃ¡ via realtime
+      // NO agregar localmente - el mensaje llegará via realtime
       // Esto evita el problema de mensaje doble
       
       // Guardar respuesta para aprendizaje de IA
@@ -198,25 +198,25 @@ export default function ChatView() {
   }
   
   async function handleResolve() {
-    if (!window.confirm('Â¿Marcar esta conversaciÃ³n como resuelta? Se enviarÃ¡ un mensaje al usuario para calificar la atenciÃ³n.')) {
+    if (!window.confirm('¿Marcar esta conversación como resuelta? Se enviará un mensaje al usuario para calificar la atención.')) {
       return
     }
     
     try {
-      // 1. Enviar mensaje de calificaciÃ³n al usuario
-      const ratingMessage = `Â¡Gracias por contactarnos! ðŸŽ‰
+      // 1. Enviar mensaje de calificación al usuario
+      const ratingMessage = `¡Gracias por contactarnos! 🎉
 
 Tu consulta ha sido marcada como resuelta por nuestro equipo de soporte.
 
-Â¿CÃ³mo calificarÃ­as la atenciÃ³n recibida?
-â­ Responde con un nÃºmero del 1 al 5:
+¿Cómo calificarías la atención recibida?
+â­ Responde con un número del 1 al 5:
 1 = Muy malo
 2 = Malo  
 3 = Regular
 4 = Bueno
 5 = Excelente
 
-Tu opiniÃ³n nos ayuda a mejorar. Â¡Gracias!`
+Tu opinión nos ayuda a mejorar. ¡Gracias!`
 
       await supabase
         .from('support_messages')
@@ -226,7 +226,7 @@ Tu opiniÃ³n nos ayuda a mejorar. Â¡Gracias!`
           content: ratingMessage
         })
       
-      // 2. Actualizar estado de la conversaciÃ³n
+      // 2. Actualizar estado de la conversación
       await supabase
         .from('support_conversations')
         .update({ 
@@ -235,7 +235,7 @@ Tu opiniÃ³n nos ayuda a mejorar. Â¡Gracias!`
         })
         .eq('id', conversationId)
       
-      // 3. Actualizar escalaciÃ³n como resuelta
+      // 3. Actualizar escalación como resuelta
       await supabase
         .from('ai_escalations')
         .update({ 
@@ -244,7 +244,7 @@ Tu opiniÃ³n nos ayuda a mejorar. Â¡Gracias!`
         })
         .eq('conversation_id', conversationId)
       
-      // Agregar mensaje local y mostrar confirmaciÃ³n
+      // Agregar mensaje local y mostrar confirmación
       setMessages(prev => [...prev, {
         id: `system_${Date.now()}`,
         role: 'system',
@@ -252,11 +252,11 @@ Tu opiniÃ³n nos ayuda a mejorar. Â¡Gracias!`
         created_at: new Date().toISOString()
       }])
       
-      alert('âœ… ConversaciÃ³n marcada como resuelta. Se enviÃ³ solicitud de calificaciÃ³n al usuario.')
+      alert('âœ… Conversación marcada como resuelta. Se envió solicitud de calificación al usuario.')
       
     } catch (error) {
       console.error('Error resolving:', error)
-      alert('Error al resolver la conversaciÃ³n')
+      alert('Error al resolver la conversación')
     }
   }
   
@@ -272,7 +272,7 @@ Tu opiniÃ³n nos ayuda a mejorar. Â¡Gracias!`
     return (
       <div className="flex flex-col items-center justify-center h-full gap-4">
         <AlertCircle className="w-16 h-16 text-accent-gold" />
-        <p className="text-text-secondary text-lg">ConversaciÃ³n no encontrada</p>
+        <p className="text-text-secondary text-lg">Conversación no encontrada</p>
         <button 
           onClick={() => navigate('/escalations')}
           className="px-4 py-2 bg-primary text-white rounded-xl hover:bg-primary/80 transition-colors"
@@ -330,7 +330,7 @@ Tu opiniÃ³n nos ayuda a mejorar. Â¡Gracias!`
       <div className="flex-1 overflow-y-auto p-4 bg-mercora-bg border-x border-primary/10 space-y-4">
         {messages.length === 0 ? (
           <div className="text-center py-8 text-text-tertiary">
-            No hay mensajes en esta conversaciÃ³n
+            No hay mensajes en esta conversación
           </div>
         ) : (
           messages.map((message) => (
@@ -381,7 +381,7 @@ Tu opiniÃ³n nos ayuda a mejorar. Â¡Gracias!`
           </button>
         </div>
         <p className="text-text-muted text-xs mt-2 text-center">
-          Los mensajes que envÃ­es aparecerÃ¡n en el chat del usuario en tiempo real
+          Los mensajes que envíes aparecerán en el chat del usuario en tiempo real
         </p>
       </div>
     </div>

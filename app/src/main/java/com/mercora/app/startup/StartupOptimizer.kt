@@ -61,12 +61,10 @@ object StartupOptimizer {
         startupScope.launch {
             // Todas las inicializaciones pesadas en paralelo
             val supabaseJob = async { initSupabaseLazy() }
-            val nativeJob = async { loadNativeLibraryAsync(context) }
             val storyJob = async { initStoryRepository(context) }
             
             // Esperar todas las inicializaciones
             supabaseJob.await()
-            nativeJob.await()
             storyJob.await()
             
             isDeferredComplete.set(true)
@@ -83,22 +81,10 @@ object StartupOptimizer {
     private suspend fun initSupabaseLazy() = withContext(Dispatchers.IO) {
         try {
             // Forzar inicialización del cliente Supabase
-            com.vinzay.app.data.remote.SupabaseClient.client
+            com.mercora.app.data.remote.SupabaseClient.client
             android.util.Log.d("StartupOptimizer", "? Supabase initialized")
         } catch (e: Exception) {
             android.util.Log.e("StartupOptimizer", "Supabase init error: ${e.message}")
-        }
-    }
-    
-    /**
-     * Cargar native library en background (no bloquea UI)
-     */
-    private suspend fun loadNativeLibraryAsync(context: Context) = withContext(Dispatchers.IO) {
-        try {
-            System.loadLibrary("Vinzay-native")
-            android.util.Log.d("StartupOptimizer", "? Native library loaded")
-        } catch (e: UnsatisfiedLinkError) {
-            android.util.Log.e("StartupOptimizer", "Native library error: ${e.message}")
         }
     }
     
@@ -107,7 +93,7 @@ object StartupOptimizer {
      */
     private suspend fun initStoryRepository(context: Context) = withContext(Dispatchers.IO) {
         try {
-            com.vinzay.app.data.repository.StoryRepository.initialize(context)
+            com.mercora.app.data.repository.StoryRepository.initialize(context)
             android.util.Log.d("StartupOptimizer", "? StoryRepository initialized")
         } catch (e: Exception) {
             android.util.Log.e("StartupOptimizer", "StoryRepository error: ${e.message}")
@@ -135,8 +121,8 @@ object StartupOptimizer {
             if (chatInitialized.getAndSet(true)) return
             
             startupScope.launch(Dispatchers.IO) {
-                com.vinzay.app.data.repository.ChatRepository.init(context)
-                com.vinzay.app.data.repository.CallRepository.initialize(context)
+                com.mercora.app.data.repository.ChatRepository.init(context)
+                com.mercora.app.data.repository.CallRepository.initialize(context)
                 android.util.Log.d("StartupOptimizer", "? ChatRepository + CallRepository lazy initialized")
             }
         }
@@ -148,8 +134,8 @@ object StartupOptimizer {
             if (notificationsInitialized.getAndSet(true)) return
             
             withContext(Dispatchers.IO) {
-                com.vinzay.app.data.repository.NotificationRepository.loadNotifications()
-                com.vinzay.app.data.repository.NotificationRepository.subscribeToRealtime()
+                com.mercora.app.data.repository.NotificationRepository.loadNotifications()
+                com.mercora.app.data.repository.NotificationRepository.subscribeToRealtime()
                 android.util.Log.d("StartupOptimizer", "? Notifications lazy initialized")
             }
         }

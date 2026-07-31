@@ -57,8 +57,8 @@ enum class AdjustmentType(
 ) {
     BRIGHTNESS(Icons.Outlined.WbSunny, "Brillo", -1f, 1f, 0f),
     CONTRAST(Icons.Outlined.Contrast, "Contraste", -1f, 1f, 0f),
-    SATURATION(Icons.Outlined.Palette, "SaturaciÃ³n", -1f, 1f, 0f),
-    EXPOSURE(Icons.Outlined.Exposure, "ExposiciÃ³n", -2f, 2f, 0f),
+    SATURATION(Icons.Outlined.Palette, "Saturación", -1f, 1f, 0f),
+    EXPOSURE(Icons.Outlined.Exposure, "Exposición", -2f, 2f, 0f),
     HIGHLIGHTS(Icons.Outlined.LightMode, "Luces", -1f, 1f, 0f),
     SHADOWS(Icons.Outlined.DarkMode, "Sombras", -1f, 1f, 0f),
     TEMPERATURE(Icons.Outlined.Thermostat, "Temperatura", -1f, 1f, 0f),
@@ -126,7 +126,7 @@ data class ImageAdjustState(
  * Preview en tiempo real a 60+ FPS
  * UI nivel Instagram/Lightroom
  * 
- * @param visible Si el overlay estÃ¡ visible
+ * @param visible Si el overlay está visible
  * @param bitmap Bitmap original a ajustar
  * @param adjustState Estado actual de ajustes (para preview en tiempo real)
  * @param selectedAdjustment Ajuste actualmente seleccionado
@@ -177,7 +177,7 @@ fun ImageAdjustOverlay(
     ) {
         currentSelected?.let { selected ->
             // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-            // SLIDER EN PARTE BAJA DEL PREVIEW - DiseÃ±o Instagram
+            // SLIDER EN PARTE BAJA DEL PREVIEW - Diseño Instagram
             // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
             Box(
                 modifier = Modifier.fillMaxSize()
@@ -259,8 +259,8 @@ fun ImageAdjustOverlay(
 
 /**
  * Carrusel de herramientas de ajuste - Reemplaza botones Tu Vitrina/Frecuentes
- * DiseÃ±o horizontal con botones circulares uniformes, estilo Instagram
- * El botÃ³n Tick se mueve a la esquina superior derecha del preview
+ * Diseño horizontal con botones circulares uniformes, estilo Instagram
+ * El botón Tick se mueve a la esquina superior derecha del preview
  */
 @Composable
 fun AdjustmentToolsCarousel(
@@ -318,31 +318,31 @@ private fun AdjustmentToolItem(
         label = "bgAlpha"
     )
     
-    // TamaÃ±o fijo para todos los botones
+    // Tamaño fijo para todos los botones
     val buttonSize = 48.dp
     
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.width(56.dp) // Ancho fijo para todos
     ) {
-        // Container para el botÃ³n + puntito indicador
+        // Container para el botón + puntito indicador
         Box(
             contentAlignment = Alignment.Center,
             modifier = Modifier.size(buttonSize + 8.dp) // Extra espacio para el puntito
         ) {
-            // Puntito blanco indicador ARRIBA y FUERA del botÃ³n
+            // Puntito blanco indicador ARRIBA y FUERA del botón
             if (hasValue) {
                 Box(
                     modifier = Modifier
                         .align(Alignment.TopCenter)
-                        .offset(y = (-2).dp) // Fuera del botÃ³n
+                        .offset(y = (-2).dp) // Fuera del botón
                         .size(6.dp)
                         .clip(CircleShape)
                         .background(Color.White)
                 )
             }
             
-            // BotÃ³n circular
+            // Botón circular
             Box(
                 contentAlignment = Alignment.Center,
                 modifier = Modifier
@@ -382,7 +382,7 @@ private fun AdjustmentToolItem(
 }
 
 // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-// VERSIÃ“N LEGACY - Para compatibilidad con cÃ³digo existente
+// VERSIÓN LEGACY - Para compatibilidad con código existente
 // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 @Composable
 fun ImageAdjustOverlayLegacy(
@@ -409,7 +409,7 @@ fun ImageAdjustOverlayLegacy(
         modifier = modifier
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
-            // TÃ­tulo del ajuste actual
+            // Título del ajuste actual
             Text(
                 text = selectedAdjustment.label,
                 color = Color.White,
@@ -459,7 +459,7 @@ fun ImageAdjustOverlayLegacy(
                 )
             }
             
-            // Selector de ajustes y botÃ³n aplicar
+            // Selector de ajustes y botón aplicar
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -509,7 +509,7 @@ fun ImageAdjustOverlayLegacy(
                     }
                 }
                 
-                // BotÃ³n aplicar sin fondo verde
+                // Botón aplicar sin fondo verde
                 Box(
                     modifier = Modifier
                         .size(44.dp)
@@ -535,15 +535,15 @@ fun ImageAdjustOverlayLegacy(
 }
 
 // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-// PROCESADOR DE AJUSTES - Para exportaciÃ³n final
+// PROCESADOR DE AJUSTES - Para exportación final
 // Fast path: ColorMatrix (GPU-acelerado, <5ms)
 // Full path: Pixel processing (solo si highlights/shadows/grain)
 // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 object ImageAdjustProcessor {
     
     /**
-     * Aplica los ajustes al bitmap para exportaciÃ³n
-     * Fast path con ColorMatrix hardware-acelerado para caso comÃºn
+     * Aplica los ajustes al bitmap para exportación
+     * Fast path con ColorMatrix hardware-acelerado para caso común
      * Solo usa pixel processing para highlights/shadows/grain
      */
     fun applyForExport(bitmap: Bitmap, state: ImageAdjustState): Bitmap {
@@ -558,7 +558,7 @@ object ImageAdjustProcessor {
     /**
      * Aplica ajustes usando ColorMatrix concatenado - Hardware acelerado
      * Soporta: brightness, contrast, saturation, exposure, temperature, tint
-     * ~2-5ms incluso para imÃ¡genes 4K
+     * ~2-5ms incluso para imágenes 4K
      */
     private fun applyWithColorMatrix(source: Bitmap, state: ImageAdjustState): Bitmap {
         val result = source.copy(Bitmap.Config.ARGB_8888, true)
@@ -630,7 +630,7 @@ object ImageAdjustProcessor {
             )))
         }
         
-        // Highlights (aproximaciÃ³n: reducir brillo general + offset para preservar sombras)
+        // Highlights (aproximación: reducir brillo general + offset para preservar sombras)
         if (state.highlights != 0f) {
             val h = state.highlights
             if (h < 0f) {
@@ -655,11 +655,11 @@ object ImageAdjustProcessor {
             }
         }
         
-        // Shadows (aproximaciÃ³n: offset en las zonas oscuras)
+        // Shadows (aproximación: offset en las zonas oscuras)
         if (state.shadows != 0f) {
             val sh = state.shadows
             if (sh > 0f) {
-                // Levantar sombras: aÃ±adir offset
+                // Levantar sombras: añadir offset
                 val t = sh * 30f
                 matrix.postConcat(android.graphics.ColorMatrix(floatArrayOf(
                     1f, 0f, 0f, 0f, t,
@@ -691,7 +691,7 @@ object ImageAdjustProcessor {
             val h = result.height
             val strength = (state.grain * 30f).toInt().coerceAtLeast(1)
             val range = 2 * strength + 1
-            // Aplicar grain a resoluciÃ³n reducida (rÃ¡pido)
+            // Aplicar grain a resolución reducida (rápido)
             val step = 4
             for (y in 0 until h step step) {
                 for (x in 0 until w step step) {

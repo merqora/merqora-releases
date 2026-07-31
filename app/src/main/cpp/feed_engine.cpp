@@ -1,5 +1,5 @@
 /**
- * Rendly Feed Engine v2 - Global-Scale Recommendation System
+ * Mercora Feed Engine v2 - Global-Scale Recommendation System
  *
  * Scoring Formula (multiplicative):
  *   FinalScore = safePow(UserAffinity, affinityPower)
@@ -20,11 +20,11 @@
 #include <chrono>
 #include <climits>
 
-#define FE_TAG "RendlyFeedEngineV2"
+#define FE_TAG "MercoraFeedEngineV2"
 #define FE_LOG(...) __android_log_print(ANDROID_LOG_INFO, FE_TAG, __VA_ARGS__)
 #define FE_ERR(...) __android_log_print(ANDROID_LOG_ERROR, FE_TAG, __VA_ARGS__)
 
-namespace rendly {
+namespace mercora {
 
 // ═══════════════════════════════════════════════════════════════
 // CONSTRUCTOR / RESET
@@ -902,4 +902,4 @@ void FeedEngine::getLastScoreBreakdown(int32_t sourceIndex, float* outFactors, i
     std::memset(outFactors, 0, maxFactors * sizeof(float));
 }
 
-} // namespace rendly
+} // namespace mercora

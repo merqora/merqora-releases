@@ -1,5 +1,5 @@
 -- ═════════════════════════════════════════════════════════════
--- RENDLY - LiveKit Live Streams Migration
+-- MERCORA - LiveKit Live Streams Migration
 -- Agrega columna room_name a live_streams para integración con LiveKit
 -- ═════════════════════════════════════════════════════════════
 

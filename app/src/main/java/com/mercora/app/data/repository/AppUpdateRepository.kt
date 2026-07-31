@@ -79,12 +79,12 @@ object AppUpdateRepository {
         try {
             val destination = File(
                 Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
-                "Vinzay-${version.version_name}.apk"
+                "Mercora-${version.version_name}.apk"
             )
 
             val downloadManager = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
             val request = DownloadManager.Request(Uri.parse(version.file_url))
-                .setTitle("Vinzay ${version.version_name}")
+                .setTitle("Mercora ${version.version_name}")
                 .setDescription("Descargando actualizacion...")
                 .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
                 .setDestinationUri(Uri.fromFile(destination))

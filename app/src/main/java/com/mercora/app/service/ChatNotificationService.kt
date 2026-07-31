@@ -41,11 +41,11 @@ object ChatNotificationService {
         conversationId: String,
         messageId: String
     ) {
-        // Evitar mostrar la misma notificaciÃ³n dos veces
+        // Evitar mostrar la misma notificación dos veces
         if (shownNotifications.contains(messageId)) return
         shownNotifications.add(messageId)
         
-        // Limpiar notificaciones antiguas (mantener solo las Ãºltimas 50)
+        // Limpiar notificaciones antiguas (mantener solo las últimas 50)
         if (shownNotifications.size > 50) {
             shownNotifications.clear()
         }

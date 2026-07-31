@@ -34,7 +34,7 @@ import androidx.compose.ui.unit.dp
 // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 // SISTEMA DE DIBUJO ULTRA-OPTIMIZADO
 // - Sin recomposiciones durante el dibujo
-// - Usa Path nativo para mÃ¡ximo rendimiento
+// - Usa Path nativo para máximo rendimiento
 // - Canvas con drawIntoCanvas para acceso directo a Android Canvas
 // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
@@ -62,11 +62,11 @@ val DRAWING_COLORS = listOf(
     Color(0xFFF472B6), // Rosa claro
     Color(0xFF14B8A6), // Teal
     Color(0xFF84CC16), // Lima
-    Color(0xFF6366F1), // Ãndigo
-    Color(0xFFA855F7), // PÃºrpura
+    Color(0xFF6366F1), // Índigo
+    Color(0xFFA855F7), // Púrpura
     Color(0xFFD946EF), // Fucsia
     Color(0xFF78716C), // Gris
-    Color(0xFF92400E), // MarrÃ³n
+    Color(0xFF92400E), // Marrón
 )
 
 // Herramientas de dibujo
@@ -93,7 +93,7 @@ fun DrawingOverlay(
 ) {
     var currentStroke by remember { mutableStateOf<DrawingStroke?>(null) }
     
-    // Trigger para forzar redibujado sin recomposiciÃ³n
+    // Trigger para forzar redibujado sin recomposición
     var drawTrigger by remember { mutableIntStateOf(0) }
     
     AnimatedVisibility(
@@ -169,7 +169,7 @@ fun DrawingOverlay(
             
             if (showToolbar) {
                 // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-                // BOTÃ“N DESHACER - Esquina superior IZQUIERDA
+                // BOTÓN DESHACER - Esquina superior IZQUIERDA
                 // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
                 if (strokes.isNotEmpty()) {
                     Box(
@@ -215,7 +215,7 @@ fun DrawingOverlay(
                         onClick = { onToolChange(DrawingTool.MARKER) }
                     )
                     
-                    // NeÃ³n
+                    // Neón
                     DrawingToolButtonIndividual(
                         icon = Icons.Outlined.AutoAwesome,
                         selected = selectedTool == DrawingTool.NEON,
@@ -229,7 +229,7 @@ fun DrawingOverlay(
                         onClick = { onToolChange(DrawingTool.ERASER) }
                     )
                     
-                    // BotÃ³n Aplicar (Tick) - Mismo color que los demÃ¡s
+                    // Botón Aplicar (Tick) - Mismo color que los demás
                     Box(
                         modifier = Modifier
                             .size(40.dp)
@@ -251,7 +251,7 @@ fun DrawingOverlay(
     }
 }
 
-// FunciÃ³n para dibujar trazo con su herramienta guardada
+// Función para dibujar trazo con su herramienta guardada
 private fun androidx.compose.ui.graphics.drawscope.DrawScope.drawStrokeWithTool(
     stroke: DrawingStroke
 ) {
@@ -391,7 +391,7 @@ fun DrawingColorCarousel(
 
 // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 // SLIDER DE GROSOR VERTICAL PROFESIONAL - Estilo iOS/Instagram
-// DiseÃ±o minimalista con indicador visual del tamaÃ±o actual
+// Diseño minimalista con indicador visual del tamaño actual
 // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 @Composable
 fun DrawingStrokeSliderVertical(
@@ -404,7 +404,7 @@ fun DrawingStrokeSliderVertical(
     val maxStroke = 30f
     val normalizedValue = (strokeWidth - minStroke) / (maxStroke - minStroke)
     
-    // AnimaciÃ³n suave del indicador
+    // Animación suave del indicador
     val animatedSize by animateFloatAsState(
         targetValue = strokeWidth,
         animationSpec = spring(
@@ -414,7 +414,7 @@ fun DrawingStrokeSliderVertical(
         label = "strokeSize"
     )
     
-    // Sin fondo - diseÃ±o limpio
+    // Sin fondo - diseño limpio
     Column(
         modifier = modifier
             .width(50.dp)
@@ -422,7 +422,7 @@ fun DrawingStrokeSliderVertical(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        // Indicador visual del tamaÃ±o actual (separado arriba del slider)
+        // Indicador visual del tamaño actual (separado arriba del slider)
         Box(
             modifier = Modifier
                 .size(animatedSize.dp.coerceIn(8.dp, 32.dp))
@@ -476,7 +476,7 @@ fun DrawingStrokeSliderVertical(
                     .background(selectedColor)
             )
             
-            // Thumb/Indicador de posiciÃ³n - posicionado segÃºn el valor
+            // Thumb/Indicador de posición - posicionado según el valor
             val thumbOffsetY = ((1f - normalizedValue) * 150).dp - 75.dp
             Box(
                 modifier = Modifier
@@ -491,7 +491,7 @@ fun DrawingStrokeSliderVertical(
 }
 
 // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-// CANVAS DE DIBUJO ESTÃTICO - Para renderizar sobre la imagen
+// CANVAS DE DIBUJO ESTÁTICO - Para renderizar sobre la imagen
 // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 @Composable
 fun DrawingCanvasStatic(

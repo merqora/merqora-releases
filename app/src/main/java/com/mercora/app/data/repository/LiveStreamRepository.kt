@@ -19,7 +19,7 @@ import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
 
 /**
- * Modelo de transmisiÃ³n en vivo
+ * Modelo de transmisión en vivo
  */
 @Serializable
 data class LiveStream(
@@ -56,14 +56,14 @@ object LiveStreamRepository {
     
     /**
      * Cargar todas las transmisiones activas
-     * Como eliminamos los registros al terminar, todos los que existen estÃ¡n activos
+     * Como eliminamos los registros al terminar, todos los que existen están activos
      */
     suspend fun loadActiveStreams() {
         _isLoading.value = true
         _lastError.value = null
         
         try {
-            // Obtener TODOS los registros (los eliminamos al terminar, asÃ­ que todos son activos)
+            // Obtener TODOS los registros (los eliminamos al terminar, así que todos son activos)
             val streams = SupabaseClient.database
                 .from("live_streams")
                 .select()
@@ -85,10 +85,10 @@ object LiveStreamRepository {
     }
     
     /**
-     * Iniciar una nueva transmisiÃ³n
+     * Iniciar una nueva transmisión
      */
     suspend fun startStream(streamId: String, roomName: String, title: String = "En vivo"): Boolean {
-        Log.d(TAG, "Iniciando nueva transmisiÃ³n: $streamId")
+        Log.d(TAG, "Iniciando nueva transmisión: $streamId")
         
         try {
             val currentUser = SupabaseClient.auth.currentUserOrNull()
@@ -118,7 +118,7 @@ object LiveStreamRepository {
                 .from("live_streams")
                 .insert(streamData)
             
-            Log.d(TAG, "âœ“ TransmisiÃ³n registrada en Supabase: $streamId")
+            Log.d(TAG, "âœ“ Transmisión registrada en Supabase: $streamId")
             return true
             
         } catch (e: Exception) {
@@ -128,7 +128,7 @@ object LiveStreamRepository {
     }
     
     /**
-     * Obtener un stream especÃ­fico por ID desde Supabase
+     * Obtener un stream específico por ID desde Supabase
      */
     suspend fun getStreamById(streamId: String): LiveStream? {
         return try {
@@ -156,14 +156,14 @@ object LiveStreamRepository {
     }
     
     /**
-     * Terminar una transmisiÃ³n - ELIMINA el registro de Supabase
+     * Terminar una transmisión - ELIMINA el registro de Supabase
      */
     suspend fun endStream(streamId: String) {
-        Log.d(TAG, "=== TERMINANDO TRANSMISIÃ“N ===")
+        Log.d(TAG, "=== TERMINANDO TRANSMISIÓN ===")
         Log.d(TAG, "Stream ID a eliminar: $streamId")
         
         if (streamId.isBlank()) {
-            Log.e(TAG, "ERROR: streamId estÃ¡ vacÃ­o")
+            Log.e(TAG, "ERROR: streamId está vacío")
             return
         }
         

@@ -85,7 +85,7 @@ fun ProductTopInfo(
             }
         } else {
             Text(
-                text = "Sin opiniones AÃºn",
+                text = "Sin opiniones Aún",
                 fontSize = 12.sp,
                 color = TextMuted
             )
@@ -119,7 +119,7 @@ fun ProductBadgesRow(category: String) {
                     modifier = Modifier.size(14.dp)
                 )
                 Text(
-                    text = "mÃ¡s visto",
+                    text = "más visto",
                     fontSize = 11.sp,
                     fontWeight = FontWeight.SemiBold,
                     color = Color(0xFFFF6B6B)
@@ -233,7 +233,7 @@ fun ProductPriceSection(
 fun ProductDetailsSection(
     condition: String,
     category: String,
-    warranty: String = "Sin GarantÃ­a",
+    warranty: String = "Sin Garantía",
     returnsAccepted: Boolean = false
 ) {
     val displayCategory = categoryDisplayNames[category] ?: category.ifEmpty { "General" }
@@ -246,11 +246,11 @@ fun ProductDetailsSection(
             color = TextPrimary
         )
         Spacer(modifier = Modifier.height(12.dp))
-        DetailRow("CondiciÃ³n", condition)
-        DetailRow("categorÃ­a", displayCategory)
+        DetailRow("Condición", condition)
+        DetailRow("categoría", displayCategory)
         DetailRow("Disponibilidad", "En stock")
-        DetailRow("garantÃ­a", warranty)
-        DetailRow("DevoluciÃ³n", if (returnsAccepted) "Aceptada" else "No aceptada")
+        DetailRow("garantía", warranty)
+        DetailRow("Devolución", if (returnsAccepted) "Aceptada" else "No aceptada")
     }
 }
 

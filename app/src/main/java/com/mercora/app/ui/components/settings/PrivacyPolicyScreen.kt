@@ -58,8 +58,8 @@ fun PrivacyPolicyScreen(
             ) {
                 // Header
                 SettingsScreenHeader(
-                    title = "polÃ­tica de Privacidad",
-                    subtitle = "Ãºltima actualizaciÃ³n: Enero 2026",
+                    title = "política de Privacidad",
+                    subtitle = "última actualización: Enero 2026",
                     icon = Icons.Outlined.Policy,
                     iconColor = Color(0xFF444444),
                     onBack = onDismiss
@@ -92,14 +92,14 @@ fun PrivacyPolicyScreen(
                             Spacer(modifier = Modifier.width(12.dp))
                             Column {
                                 Text(
-                                    text = "polÃ­tica en Etapa Inicial",
+                                    text = "política en Etapa Inicial",
                                     fontSize = 14.sp,
                                     fontWeight = FontWeight.SemiBold,
                                     color = TextPrimary
                                 )
                                 Spacer(modifier = Modifier.height(4.dp))
                                 Text(
-                                    text = "Merqora estÃ¡ en fase de lanzamiento. Esta PolÃ­tica refleja nuestras PrÃ¡cticas actuales y se actualizarÃ¡ a medida que incorporemos nuevas funcionalidades.",
+                                    text = "Mercora está en fase de lanzamiento. Esta Política refleja nuestras Prácticas actuales y se actualizará a medida que incorporemos nuevas funcionalidades.",
                                     fontSize = 13.sp,
                                     color = TextSecondary,
                                     lineHeight = 18.sp
@@ -118,7 +118,7 @@ fun PrivacyPolicyScreen(
                         iconColor = Color(0xFF1565A0)
                     ) {
                         PrivacyParagraph(
-                            text = "Actualmente recopilamos Ãºnicamente la InformaciÃ³n necesaria para que puedas usar Merqora:"
+                            text = "Actualmente recopilamos únicamente la Información necesaria para que puedas usar Mercora:"
                         )
                         
                         DataTypeItem(
@@ -128,25 +128,25 @@ fun PrivacyPolicyScreen(
                         )
                         DataTypeItem(
                             icon = Icons.Outlined.Image,
-                            title = "Contenido que publicÃ¡s",
+                            title = "Contenido que publicás",
                             description = "Fotos, descripciones de productos y mensajes"
                         )
                         DataTypeItem(
                             icon = Icons.Outlined.Devices,
-                            title = "InformaciÃ³n tÃ©cnica BÃ¡sica",
+                            title = "Información técnica Básica",
                             description = "Tipo de dispositivo y sistema operativo (para funcionamiento de la app)"
                         )
                     }
                     
-                    // 2. cÃ³mo USAMOS TUS DATOS
+                    // 2. cómo USAMOS TUS DATOS
                     PrivacySection(
                         number = "2",
-                        title = "cÃ³mo Usamos tus Datos",
+                        title = "cómo Usamos tus Datos",
                         icon = Icons.Outlined.Settings,
                         iconColor = Color(0xFFFF6B35)
                     ) {
                         PrivacyParagraph(
-                            text = "Usamos tu InformaciÃ³n Ãºnicamente para:"
+                            text = "Usamos tu Información únicamente para:"
                         )
                         
                         UsageItem(
@@ -159,7 +159,7 @@ fun PrivacyPolicyScreen(
                         )
                         UsageItem(
                             icon = Icons.Outlined.Chat,
-                            text = "Permitir la comunicaciÃ³n entre usuarios"
+                            text = "Permitir la comunicación entre usuarios"
                         )
                         UsageItem(
                             icon = Icons.Outlined.Notifications,
@@ -179,31 +179,31 @@ fun PrivacyPolicyScreen(
                         iconColor = Color(0xFFEF4444)
                     ) {
                         PrivacyParagraph(
-                            text = "Queremos ser claros sobre lo que NO hacemos con tu InformaciÃ³n:"
+                            text = "Queremos ser claros sobre lo que NO hacemos con tu Información:"
                         )
                         
                         ShareItem(
                             title = "No vendemos tus datos",
-                            description = "Tu InformaciÃ³n personal nunca serÃ¡ vendida a terceros.",
+                            description = "Tu Información personal nunca será vendida a terceros.",
                             color = Color(0xFF2E8B57)
                         )
                         
                         ShareItem(
                             title = "No compartimos sin necesidad",
-                            description = "Solo compartimos datos bÃ¡sicos (como tu nombre de usuario) que son necesarios para que otros vean tus publicaciones.",
+                            description = "Solo compartimos datos básicos (como tu nombre de usuario) que son necesarios para que otros vean tus publicaciones.",
                             color = Color(0xFF1565A0)
                         )
                     }
                     
-                    // 4. INFORMaciÃ³n PÃšBLICA
+                    // 4. INFORMación PÚBLICA
                     PrivacySection(
                         number = "4",
-                        title = "InformaciÃ³n Visible para Otros",
+                        title = "Información Visible para Otros",
                         icon = Icons.Outlined.Visibility,
                         iconColor = Color(0xFFFF6B35)
                     ) {
                         PrivacyParagraph(
-                            text = "Al usar Merqora, cierta InformaciÃ³n es visible para otros usuarios:"
+                            text = "Al usar Mercora, cierta Información es visible para otros usuarios:"
                         )
                         
                         UsageItem(
@@ -216,13 +216,13 @@ fun PrivacyPolicyScreen(
                         )
                         UsageItem(
                             icon = Icons.Outlined.Store,
-                            text = "InformaciÃ³n de tu tienda (si la tenÃ©s)"
+                            text = "Información de tu tienda (si la tenés)"
                         )
                         
                         Spacer(modifier = Modifier.height(8.dp))
                         
                         PrivacyParagraph(
-                            text = "Los mensajes privados solo son visibles entre vos y la persona con quien hablÃ¡s."
+                            text = "Los mensajes privados solo son visibles entre vos y la persona con quien hablás."
                         )
                     }
                     
@@ -240,19 +240,19 @@ fun PrivacyPolicyScreen(
                         RightItem(
                             icon = Icons.Outlined.Visibility,
                             title = "Acceder",
-                            description = "Solicitar Â¿QuÃ© datos tenemos sobre vos"
+                            description = "Solicitar ¿Qué datos tenemos sobre vos"
                         )
                         
                         RightItem(
                             icon = Icons.Outlined.Edit,
                             title = "Corregir",
-                            description = "Modificar InformaciÃ³n incorrecta desde tu perfil"
+                            description = "Modificar Información incorrecta desde tu perfil"
                         )
                         
                         RightItem(
                             icon = Icons.Outlined.Delete,
                             title = "Eliminar",
-                            description = "Solicitar la eliminaciÃ³n de tu cuenta y datos"
+                            description = "Solicitar la eliminación de tu cuenta y datos"
                         )
                         
                         Spacer(modifier = Modifier.height(12.dp))
@@ -274,7 +274,7 @@ fun PrivacyPolicyScreen(
                                 )
                                 Spacer(modifier = Modifier.width(10.dp))
                                 Text(
-                                    text = "Para ejercer estos derechos, escribinos a soporte@Merqora.app",
+                                    text = "Para ejercer estos derechos, escribinos a soporte@Mercora.app",
                                     fontSize = 12.sp,
                                     color = TextSecondary
                                 )
@@ -290,7 +290,7 @@ fun PrivacyPolicyScreen(
                         iconColor = Color(0xFF6366F1)
                     ) {
                         PrivacyParagraph(
-                            text = "Tomamos medidas razonables para proteger tu InformaciÃ³n:"
+                            text = "Tomamos medidas razonables para proteger tu Información:"
                         )
                         
                         UsageItem(
@@ -299,13 +299,13 @@ fun PrivacyPolicyScreen(
                         )
                         UsageItem(
                             icon = Icons.Outlined.Key,
-                            text = "contraseÃ±as almacenadas de forma segura"
+                            text = "contraseñas almacenadas de forma segura"
                         )
                         
                         Spacer(modifier = Modifier.height(8.dp))
                         
                         PrivacyParagraph(
-                            text = "Sin embargo, ningÃºn sistema es 100% seguro. Hacemos nuestro mejor esfuerzo, pero no podemos garantizar seguridad absoluta."
+                            text = "Sin embargo, ningún sistema es 100% seguro. Hacemos nuestro mejor esfuerzo, pero no podemos garantizar seguridad absoluta."
                         )
                     }
                     
@@ -317,25 +317,25 @@ fun PrivacyPolicyScreen(
                         iconColor = Color(0xFF2E8B57)
                     ) {
                         PrivacyParagraph(
-                            text = "Merqora es para usuarios mayores de 18 AÃ±os. No recopilamos intencionalmente InformaciÃ³n de menores."
+                            text = "Mercora es para usuarios mayores de 18 Años. No recopilamos intencionalmente Información de menores."
                         )
                         PrivacyParagraph(
-                            text = "Si sos padre/tutor y creÃ©s que tu hijo menor usÃ³ la app, contactanos para eliminar la InformaciÃ³n."
+                            text = "Si sos padre/tutor y creés que tu hijo menor usó la app, contactanos para eliminar la Información."
                         )
                     }
                     
-                    // 8. CAMBIOS A ESTA polÃ­tica
+                    // 8. CAMBIOS A ESTA política
                     PrivacySection(
                         number = "8",
-                        title = "Cambios a esta polÃ­tica",
+                        title = "Cambios a esta política",
                         icon = Icons.Outlined.Update,
                         iconColor = Color(0xFF444444)
                     ) {
                         PrivacyParagraph(
-                            text = "Esta PolÃ­tica puede actualizarse a medida que Merqora evolucione y se agreguen nuevas funcionalidades."
+                            text = "Esta Política puede actualizarse a medida que Mercora evolucione y se agreguen nuevas funcionalidades."
                         )
                         PrivacyParagraph(
-                            text = "Te notificaremos sobre cambios importantes. El uso continuado de la app despuÃ©s de los cambios implica aceptaciÃ³n."
+                            text = "Te notificaremos sobre cambios importantes. El uso continuado de la app después de los cambios implica aceptación."
                         )
                     }
                     
@@ -347,7 +347,7 @@ fun PrivacyPolicyScreen(
                         iconColor = Color(0xFF444444)
                     ) {
                         PrivacyParagraph(
-                            text = "Esta PolÃ­tica se rige por las leyes de la RepÃºblica Oriental del Uruguay y los principios generales de ProtecciÃ³n de datos vigentes."
+                            text = "Esta Política se rige por las leyes de la República Oriental del Uruguay y los principios generales de Protección de datos vigentes."
                         )
                     }
                     
@@ -359,7 +359,7 @@ fun PrivacyPolicyScreen(
                         iconColor = Color(0xFF2E8B57)
                     ) {
                         PrivacyParagraph(
-                            text = "Si tenÃ©s preguntas sobre esta PolÃ­tica o tus datos:"
+                            text = "Si tenés preguntas sobre esta Política o tus datos:"
                         )
                         
                         Spacer(modifier = Modifier.height(8.dp))
@@ -367,7 +367,7 @@ fun PrivacyPolicyScreen(
                         PrivacyContactCard(
                             icon = Icons.Outlined.Email,
                             label = "Email",
-                            value = "soporte@Merqora.app"
+                            value = "soporte@Mercora.app"
                         )
                     }
                     
@@ -386,14 +386,14 @@ fun PrivacyPolicyScreen(
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
                             Text(
-                                text = "VersiÃ³n 1.0 - Enero 2026",
+                                text = "Versión 1.0 - Enero 2026",
                                 fontSize = 11.sp,
                                 color = TextMuted,
                                 textAlign = TextAlign.Center
                             )
                             Spacer(modifier = Modifier.height(4.dp))
                             Text(
-                                text = "Merqora Â© Uruguay",
+                                text = "Mercora © Uruguay",
                                 fontSize = 10.sp,
                                 color = TextMuted.copy(alpha = 0.7f),
                                 textAlign = TextAlign.Center

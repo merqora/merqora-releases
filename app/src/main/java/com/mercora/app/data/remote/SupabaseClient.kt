@@ -25,7 +25,7 @@ import com.mercora.app.data.repository.ReputationRepository
 /**
  * SupabaseClient - COLD START OPTIMIZED + SESSION PERSISTENCE
  * 
- * Usa lazy initialization para diferir la creaciÃ³n del cliente
+ * Usa lazy initialization para diferir la creación del cliente
  * hasta el primer uso, evitando bloquear Application.onCreate()
  * 
  * Session persiste en EncryptedSharedPreferences para auto-login
@@ -37,7 +37,7 @@ object SupabaseClient {
     private var appContext: Context? = null
     
     /**
-     * Inicializar con contexto de aplicaciÃ³n para SessionStorage
+     * Inicializar con contexto de aplicación para SessionStorage
      * Llamar desde Application.onCreate()
      */
     fun init(context: Context) {
@@ -67,8 +67,8 @@ object SupabaseClient {
             // Aumentar a 60s para evitar "Request timeout has expired"
             requestTimeout = 60.seconds
             
-            // OPTIMIZADO: Timeouts reducidos para cold start mÃ¡s rÃ¡pido
-            // El primer request serÃ¡ mÃ¡s rÃ¡pido, retries manejan fallos
+            // OPTIMIZADO: Timeouts reducidos para cold start más rápido
+            // El primer request será más rápido, retries manejan fallos
             httpEngine = OkHttp.create {
                 config {
                     connectTimeout(10, TimeUnit.SECONDS)  // Reducido de 30s

@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+﻿import type { Metadata } from 'next'
 import Link from 'next/link'
 import { createServerSupabaseClient } from '@/lib/supabase/server'
 import { getPostById, getUserById, getPostsByCategory, getRecentPosts } from '@/lib/posts'
@@ -22,24 +22,24 @@ export async function generateMetadata({
     .single()
 
   if (!post) {
-    return { title: 'Producto no encontrado | Vinzay' }
+    return { title: 'Producto no encontrado | Mercora' }
   }
 
-  const title = post.title || 'Producto en Vinzay'
-  const description = post.description || 'Descubrí este Producto en Vinzay'
+  const title = post.title || 'Producto en Mercora'
+  const description = post.description || 'Descubrí este Producto en Mercora'
   const image = post.images?.[0] || ''
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://vinzay.app'
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://mercora.app'
 
   const ogImage = image || '/og-default.svg'
 
   return {
-    title: `${title} | Vinzay`,
+    title: `${title} | Mercora`,
     description,
     openGraph: {
-      title: `${title} — Vinzay`,
+      title: `${title} — Mercora`,
       description,
       url: `${siteUrl}/p/${id}`,
-      siteName: 'Vinzay',
+      siteName: 'Mercora',
       images: [{ url: ogImage, width: 1200, height: 630 }],
       type: 'website',
       ...(post.price != null && {
@@ -49,7 +49,7 @@ export async function generateMetadata({
     },
     twitter: {
       card: 'summary_large_image',
-      title: `${title} — Vinzay`,
+      title: `${title} — Mercora`,
       description,
       images: [ogImage],
     },

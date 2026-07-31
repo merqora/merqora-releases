@@ -104,7 +104,7 @@ fun SellerBalanceScreen(
                             color = TextPrimary
                         )
                         Text(
-                            "Tu dinero estÃ¡ en Mercado Pago",
+                            "Tu dinero está en Mercado Pago",
                             fontSize = 12.sp,
                             color = TextSecondary
                         )
@@ -176,7 +176,7 @@ private fun BalanceCard(summary: SellerFinancialSummary) {
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                "Tus cobros se acreditan en Mercado Pago automÃ¡ticamente",
+                "Tus cobros se acreditan en Mercado Pago automáticamente",
                 fontSize = 11.sp,
                 color = Color.White.copy(alpha = 0.6f)
             )
@@ -187,7 +187,7 @@ private fun BalanceCard(summary: SellerFinancialSummary) {
 
             Row(modifier = Modifier.fillMaxWidth()) {
                 StatItem(
-                    label = "Ã“rdenes",
+                    label = "Órdenes",
                     value = summary.totalOrders.toString(),
                     modifier = Modifier.weight(1f)
                 )
@@ -230,7 +230,7 @@ private fun BalanceCard(summary: SellerFinancialSummary) {
                             color = Color.White.copy(alpha = 0.9f)
                         )
                         Text(
-                            "RevisÃ¡ tu app de Mercado Pago para ver el saldo disponible",
+                            "Revisá tu app de Mercado Pago para ver el saldo disponible",
                             fontSize = 10.sp,
                             color = Color.White.copy(alpha = 0.5f)
                         )
@@ -268,7 +268,7 @@ private fun InfoBanner() {
             )
             Spacer(modifier = Modifier.width(12.dp))
             Text(
-                "Con Split Payments de Mercado Pago, el dinero de tus ventas va directo a tu cuenta de Mercado Pago. Merqora nunca retiene tu dinero. Los montos mostrados acÃ¡ son informativos.",
+                "Con Split Payments de Mercado Pago, el dinero de tus ventas va directo a tu cuenta de Mercado Pago. Mercora nunca retiene tu dinero. Los montos mostrados acá son informativos.",
                 fontSize = 12.sp,
                 color = TextSecondary,
                 lineHeight = 17.sp
@@ -305,7 +305,7 @@ private fun EmptySales() {
             )
             Spacer(modifier = Modifier.height(12.dp))
             Text(
-                "Sin ventas aÃºn",
+                "Sin ventas aún",
                 fontSize = 16.sp,
                 fontWeight = FontWeight.SemiBold,
                 color = TextSecondary
@@ -379,7 +379,7 @@ private fun SaleItem(
                     color = Color(0xFF1565A0).copy(alpha = 0.08f)
                 ) {
                     Text(
-                        "ComisiÃ³n Merqora: ${formatCurrency(commission)} (10%) - MP ya desembolsÃ³",
+                        "Comisión Mercora: ${formatCurrency(commission)} (10%) - MP ya desembolsó",
                         modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
                         fontSize = 10.sp,
                         color = Color(0xFF1565A0)

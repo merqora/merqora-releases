@@ -5,7 +5,7 @@
 # Proxy downloads through Netlify CDN (hides GitHub origin)
 [[redirects]]
   from = "/download-apk/*"
-  to = "https://github.com/Mercora/vinzay-releases/releases/download/:splat"
+  to = "https://github.com/Mercora/mercora-releases/releases/download/:splat"
   status = 200
   force = true
 

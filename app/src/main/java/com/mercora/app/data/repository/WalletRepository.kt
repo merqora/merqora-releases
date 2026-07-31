@@ -68,9 +68,9 @@ object WalletRepository {
     /**
      * âš ï¸ OBSOLETA: Ya NO se usa para pagos reales.
      * Con Split Payments de Mercado Pago, el dinero va directo a la cuenta
-     * del vendedor. Merqora nunca custodia dinero.
+     * del vendedor. Mercora nunca custodia dinero.
      * 
-     * Esta funciÃ³n se conserva solo como registro histÃ³rico (wallet local)
+     * Esta función se conserva solo como registro histórico (wallet local)
      * pero NO afecta el flujo real de fondos.
      */
     @Deprecated("Usar Split Payments de MP. El dinero va directo al vendedor.")
@@ -157,7 +157,7 @@ object WalletRepository {
                 return@withContext Result.failure(Exception("Saldo insuficiente"))
             }
             if (amount <= 0) {
-                return@withContext Result.failure(Exception("Monto invÃ¡lido"))
+                return@withContext Result.failure(Exception("Monto inválido"))
             }
 
             val newBalance = balance - amount
@@ -185,7 +185,7 @@ object WalletRepository {
                         filter { eq("user_id", userId) }
                     }
 
-                // Registrar transacciÃ³n de dÃ©bito
+                // Registrar transacción de débito
                 SupabaseClient.database
                     .from("wallet_transactions")
                     .insert(buildJsonObject {

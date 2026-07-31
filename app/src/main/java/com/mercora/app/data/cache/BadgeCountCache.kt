@@ -12,7 +12,7 @@ import android.util.Log
 object BadgeCountCache {
     
     private const val TAG = "BadgeCountCache"
-    private const val PREFS_NAME = "vinzay_badge_counts"
+    private const val PREFS_NAME = "Mercora_badge_counts"
     
     private const val KEY_CART_COUNT = "cart_count"
     private const val KEY_NOTIFICATION_COUNT = "notification_unread_count"

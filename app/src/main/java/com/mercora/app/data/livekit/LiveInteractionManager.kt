@@ -68,7 +68,7 @@ class LiveInteractionManager(private val roomName: String) {
                     liveChannel.broadcastFlow<JsonObject>("like").collect { payload ->
                         if (!active) return@collect
                         val userId = payload["userId"]?.toString()?.removeSurrounding("\"") ?: ""
-                        val username = payload["username"]?.toString()?.removeSurrounding("\"") ?: "AnÃ³nimo"
+                        val username = payload["username"]?.toString()?.removeSurrounding("\"") ?: "Anónimo"
                         _reactions.emit(LiveReaction("â¤ï¸", userId, username))
                         _likeCount.value++
                     }
@@ -77,7 +77,7 @@ class LiveInteractionManager(private val roomName: String) {
                     liveChannel.broadcastFlow<JsonObject>("comment").collect { payload ->
                         if (!active) return@collect
                         val userId = payload["userId"]?.toString()?.removeSurrounding("\"") ?: ""
-                        val username = payload["username"]?.toString()?.removeSurrounding("\"") ?: "AnÃ³nimo"
+                        val username = payload["username"]?.toString()?.removeSurrounding("\"") ?: "Anónimo"
                         val text = payload["text"]?.toString()?.removeSurrounding("\"") ?: ""
                         val comment = LiveComment(
                             id = "c_${System.currentTimeMillis()}_${userId.take(4)}",
@@ -91,7 +91,7 @@ class LiveInteractionManager(private val roomName: String) {
                     liveChannel.broadcastFlow<JsonObject>("reaction").collect { payload ->
                         if (!active) return@collect
                         val userId = payload["userId"]?.toString()?.removeSurrounding("\"") ?: ""
-                        val username = payload["username"]?.toString()?.removeSurrounding("\"") ?: "AnÃ³nimo"
+                        val username = payload["username"]?.toString()?.removeSurrounding("\"") ?: "Anónimo"
                         val emoji = payload["emoji"]?.toString()?.removeSurrounding("\"") ?: "â¤ï¸"
                         _reactions.emit(LiveReaction(emoji, userId, username))
                     }
@@ -99,7 +99,7 @@ class LiveInteractionManager(private val roomName: String) {
 
                 Log.d(TAG, "Conectado a canal live-stream-$roomName")
             } catch (e: Exception) {
-                Log.e(TAG, "Error conectando interacciÃ³n: ${e.message}")
+                Log.e(TAG, "Error conectando interacción: ${e.message}")
             }
         }
     }

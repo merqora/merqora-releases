@@ -83,7 +83,7 @@ export default function Dashboard() {
   
   async function loadDashboardData() {
     try {
-      // Cargar estadÃ­sticas
+      // Cargar estadísticas
       const { data: statsData } = await supabase
         .from('ai_stats_daily')
         .select('*')
@@ -205,7 +205,7 @@ export default function Dashboard() {
           ) : (
             <div className="text-center py-8 text-text-tertiary">
               <CheckCircle className="w-12 h-12 mx-auto mb-3 text-accent-green" />
-              <p>Â¡No hay escalaciones pendientes!</p>
+              <p>¡No hay escalaciones pendientes!</p>
             </div>
           )}
         </div>

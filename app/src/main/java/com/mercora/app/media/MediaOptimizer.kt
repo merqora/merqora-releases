@@ -5,17 +5,17 @@ import android.util.Log
 import java.io.ByteArrayOutputStream
 
 /**
- * Rendly Media Optimizer - Smart compression & resize system.
+ * Mercora Media Optimizer - Smart compression & resize system.
  * 
  * Uses C++ native engine (Lanczos3 resize + perceptual quality analysis)
  * with per-media-type optimization profiles:
  * 
- * - AVATAR:    256Ã—256,  WebP, quality 78-90 (higher: old gets deleted)
- * - BANNER:    1080Ã—400, WebP, quality 72-85 (higher: old gets deleted)
+ * - AVATAR:    256×256,  WebP, quality 78-90 (higher: old gets deleted)
+ * - BANNER:    1080×400, WebP, quality 72-85 (higher: old gets deleted)
  * - POST:      1080px,   WebP, quality 65-80 (smart: can't delete old)
- * - STORY:     1080Ã—1920,WebP, quality 60-75 (aggressive: ephemeral 24h)
- * - HIGHLIGHT: 400Ã—400,  WebP, quality 65-78 (cover only)
- * - REND_THUMB:720Ã—1280, WebP, quality 60-75 (video thumbnail)
+ * - STORY:     1080×1920,WebP, quality 60-75 (aggressive: ephemeral 24h)
+ * - HIGHLIGHT: 400×400,  WebP, quality 65-78 (cover only)
+ * - REND_THUMB:720×1280, WebP, quality 60-75 (video thumbnail)
  */
 object MediaOptimizer {
     
@@ -106,7 +106,7 @@ object MediaOptimizer {
         val originalH = bitmap.height
         
         Log.i(TAG, "â•â•â• Optimizing ${mediaType.description} â•â•â•")
-        Log.i(TAG, "  Input: ${originalW}Ã—${originalH} (${bitmap.config})")
+        Log.i(TAG, "  Input: ${originalW}×${originalH} (${bitmap.config})")
         
         // Estimate original uncompressed size (JPEG q85)
         val originalSizeEstimate = estimateJpegSize(bitmap, 85)
@@ -119,10 +119,10 @@ object MediaOptimizer {
         
         // Step 2: Resize using Lanczos3 (C++ engine) if needed
         val resized = if (targetW < originalW || targetH < originalH) {
-            Log.i(TAG, "  Resize: ${originalW}Ã—${originalH} â†’ ${targetW}Ã—${targetH} (Lanczos3)")
+            Log.i(TAG, "  Resize: ${originalW}×${originalH} â†’ ${targetW}×${targetH} (Lanczos3)")
             NativeMediaEngine.resize(bitmap, targetW, targetH)
         } else {
-            Log.i(TAG, "  No resize needed (${originalW}Ã—${originalH} within limits)")
+            Log.i(TAG, "  No resize needed (${originalW}×${originalH} within limits)")
             bitmap
         }
         
@@ -174,7 +174,7 @@ object MediaOptimizer {
             complexityScore = complexity
         )
         
-        Log.i(TAG, "  Output: ${targetW}Ã—${targetH}, $format q$optimalQuality")
+        Log.i(TAG, "  Output: ${targetW}×${targetH}, $format q$optimalQuality")
         Log.i(TAG, "  Size: ${formatBytes(originalSizeEstimate)} â†’ ${formatBytes(bytes.size.toLong())} " +
                 "(saved ${result.savedPercentage}%)")
         Log.i(TAG, "  Time: ${elapsed}ms")

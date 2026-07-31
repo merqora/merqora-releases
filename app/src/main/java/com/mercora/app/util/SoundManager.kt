@@ -28,7 +28,7 @@ object SoundManager {
     }
     
     /**
-     * Reproduce sonido de notificaciÃ³n
+     * Reproduce sonido de notificación
      */
     fun playNotificationSound() {
         playSound(SoundType.NOTIFICATION)

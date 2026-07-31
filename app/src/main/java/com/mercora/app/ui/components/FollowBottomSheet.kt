@@ -49,7 +49,7 @@ fun FollowBottomSheet(
         )
     }
     
-    // Modal con animaciÃ³n simple igual que ConsultModal
+    // Modal con animación simple igual que ConsultModal
     AnimatedVisibility(
         visible = isVisible,
         enter = slideInVertically(
@@ -153,7 +153,7 @@ fun FollowBottomSheet(
                         Spacer(modifier = Modifier.height(8.dp))
                         
                         Text(
-                            text = "Elige cÃ³mo quieres interactuar",
+                            text = "Elige cómo quieres interactuar",
                             color = TextMuted,
                             fontSize = 13.sp,
                             textAlign = TextAlign.Center
@@ -164,7 +164,7 @@ fun FollowBottomSheet(
                         // Options based on current follow status
                         when (currentFollowType) {
                             FollowType.NONE -> {
-                                // Option 1: Follow (sin spinner - acciÃ³n rÃ¡pida)
+                                // Option 1: Follow (sin spinner - acción rápida)
                                 FollowOptionItem(
                                     icon = Icons.Outlined.PersonAdd,
                                     title = "Seguir",
@@ -206,7 +206,7 @@ fun FollowBottomSheet(
                                 FollowOptionItem(
                                     icon = Icons.Outlined.PersonRemove,
                                     title = "Dejar de seguir",
-                                    description = "Ya no recibirÃ¡s actualizaciones de este vendedor",
+                                    description = "Ya no recibirás actualizaciones de este vendedor",
                                     accentColor = Color(0xFFEF4444),
                                     isDestructive = true,
                                     showSpinner = false,
@@ -241,7 +241,7 @@ fun FollowBottomSheet(
                                                 fontWeight = FontWeight.SemiBold
                                             )
                                             Text(
-                                                text = "El vendedor aÃºn no ha aceptado tu solicitud de cliente",
+                                                text = "El vendedor aún no ha aceptado tu solicitud de cliente",
                                                 color = TextSecondary,
                                                 fontSize = 12.sp
                                             )
@@ -290,7 +290,7 @@ fun FollowBottomSheet(
                                                 fontWeight = FontWeight.SemiBold
                                             )
                                             Text(
-                                                text = "El usuario aceptarÃ¡ o rechazarÃ¡ tu solicitud de seguimiento",
+                                                text = "El usuario aceptará o rechazará tu solicitud de seguimiento",
                                                 color = TextSecondary,
                                                 fontSize = 12.sp
                                             )
@@ -360,7 +360,7 @@ fun FollowBottomSheet(
                                 FollowOptionItem(
                                     icon = Icons.Outlined.PersonRemove,
                                     title = "Dejar de ser cliente",
-                                    description = "PerderÃ¡s acceso a ofertas exclusivas",
+                                    description = "Perderás acceso a ofertas exclusivas",
                                     accentColor = Color(0xFFEF4444),
                                     isDestructive = true,
                                     showSpinner = false,

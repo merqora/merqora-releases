@@ -18,7 +18,7 @@ function EscalationCard({ escalation, onResolve }) {
     if (seconds < 60) return 'Hace un momento'
     if (seconds < 3600) return `Hace ${Math.floor(seconds / 60)} min`
     if (seconds < 86400) return `Hace ${Math.floor(seconds / 3600)}h`
-    return `Hace ${Math.floor(seconds / 86400)} dÃ­as`
+    return `Hace ${Math.floor(seconds / 86400)} días`
   }
   
   const statusColors = {
@@ -57,14 +57,14 @@ function EscalationCard({ escalation, onResolve }) {
       <div className="p-4 space-y-3">
         {/* Reason */}
         <div>
-          <p className="text-text-tertiary text-xs mb-1">RazÃ³n de escalaciÃ³n</p>
+          <p className="text-text-tertiary text-xs mb-1">Razón de escalación</p>
           <p className="text-text-primary">{escalation.reason}</p>
         </div>
         
         {/* Last message */}
         {escalation.last_message && (
           <div className="bg-mercora-bg rounded-xl p-3">
-            <p className="text-text-tertiary text-xs mb-1">Ãšltimo mensaje</p>
+            <p className="text-text-tertiary text-xs mb-1">Último mensaje</p>
             <p className="text-text-secondary text-sm line-clamp-2">{escalation.last_message}</p>
           </div>
         )}
@@ -142,7 +142,7 @@ export default function Escalations() {
       
       if (error) throw error
       
-      // Cargar Ãºltimo mensaje de cada conversaciÃ³n
+      // Cargar último mensaje de cada conversación
       const escalationsWithMessages = await Promise.all(
         (data || []).map(async (e) => {
           const { data: messages } = await supabase
@@ -169,7 +169,7 @@ export default function Escalations() {
   
   async function handleResolve(escalationId) {
     try {
-      // 1. Obtener info de la escalaciÃ³n
+      // 1. Obtener info de la escalación
       const { data: escalation } = await supabase
         .from('ai_escalations')
         .select('conversation_id, user_id')
@@ -177,7 +177,7 @@ export default function Escalations() {
         .single()
       
       if (!escalation) {
-        alert('Error: EscalaciÃ³n no encontrada')
+        alert('Error: Escalación no encontrada')
         return
       }
 
@@ -192,28 +192,28 @@ export default function Escalations() {
           content: feedbackMessage
         })
       
-      console.log('âœ… Mensaje de calificaciÃ³n enviado al usuario')
+      console.log('âœ… Mensaje de calificación enviado al usuario')
       
-      // 3. ELIMINAR la escalaciÃ³n inmediatamente de la lista local
+      // 3. ELIMINAR la escalación inmediatamente de la lista local
       setEscalations(prev => prev.filter(e => e.id !== escalationId))
       
-      // 4. ELIMINAR la escalaciÃ³n de la base de datos (NO esperar)
+      // 4. ELIMINAR la escalación de la base de datos (NO esperar)
       const { error: deleteEscError } = await supabase
         .from('ai_escalations')
         .delete()
         .eq('id', escalationId)
       
       if (deleteEscError) {
-        console.error('Error eliminando escalaciÃ³n:', deleteEscError)
+        console.error('Error eliminando escalación:', deleteEscError)
       } else {
-        console.log('ðŸ—‘ï¸ EscalaciÃ³n eliminada de la base de datos')
+        console.log('🗑ï¸ Escalación eliminada de la base de datos')
       }
       
       // NOTA: NO eliminamos support_conversations ni support_messages
       // porque ai_feedback necesita estos datos para el aprendizaje de IA
-      // La conversaciÃ³n se archivarÃ¡ automÃ¡ticamente despuÃ©s de 24h
+      // La conversación se archivará automáticamente después de 24h
       
-      console.log('âœ… Chat resuelto. El feedback se guardarÃ¡ cuando el usuario califique.')
+      console.log('âœ… Chat resuelto. El feedback se guardará cuando el usuario califique.')
       
     } catch (error) {
       console.error('âŒ Error resolving:', error)
@@ -241,7 +241,7 @@ export default function Escalations() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-text-primary">Escalaciones</h1>
-          <p className="text-text-tertiary">Conversaciones que necesitan atenciÃ³n humana</p>
+          <p className="text-text-tertiary">Conversaciones que necesitan atención humana</p>
         </div>
         
         {/* Search */}
@@ -301,7 +301,7 @@ export default function Escalations() {
         <div className="text-center py-16 bg-mercora-surface rounded-2xl border border-primary/10">
           <CheckCircle className="w-16 h-16 mx-auto mb-4 text-accent-green" />
           <h3 className="text-xl font-semibold text-text-primary mb-2">
-            Â¡Todo al dÃ­a!
+            ¡Todo al día!
           </h3>
           <p className="text-text-tertiary">
             No hay escalaciones {filter === 'pending' ? 'pendientes' : ''} en este momento

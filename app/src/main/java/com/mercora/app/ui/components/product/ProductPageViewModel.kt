@@ -111,7 +111,7 @@ class ProductPageViewModel @Inject constructor() : ViewModel() {
             likesCount = post.likesCount,
             reviewsCount = post.reviewsCount,
             isNew = post.createdAt.isNotEmpty(),
-            warranty = post.warranty ?: "Sin GarantÃ­a",
+            warranty = post.warranty ?: "Sin Garantía",
             returnsAccepted = post.returnsAccepted,
             freeShipping = post.freeShipping,
             colors = post.colors
@@ -188,7 +188,7 @@ class ProductPageViewModel @Inject constructor() : ViewModel() {
         val post = currentPost ?: return
         viewModelScope.launch {
             try {
-                com.vinzay.app.data.repository.ChatRepository.sendConsultMessage(
+                com.mercora.app.data.repository.ChatRepository.sendConsultMessage(
                     sellerId = post.userId,
                     sellerUsername = post.username,
                     postId = post.id,
@@ -415,7 +415,7 @@ class ProductPageViewModel @Inject constructor() : ViewModel() {
                 "Naranja" to androidx.compose.ui.graphics.Color(0xFFF97316),
                 "Rosa" to androidx.compose.ui.graphics.Color(0xFF2E8B57),
                 "Morado" to androidx.compose.ui.graphics.Color(0xFFFF6B35),
-                "MarrÃ³n" to androidx.compose.ui.graphics.Color(0xFF92400E),
+                "Marrón" to androidx.compose.ui.graphics.Color(0xFF92400E),
                 "Beige" to androidx.compose.ui.graphics.Color(0xFFD4C4A8)
             )
             return if (!colors.isNullOrEmpty()) {

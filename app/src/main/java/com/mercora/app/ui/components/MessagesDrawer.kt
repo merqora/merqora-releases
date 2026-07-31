@@ -46,13 +46,13 @@ data class ChatConversation(
 )
 
 private val DEMO_CONVERSATIONS = listOf(
-    ChatConversation("1", "MarÃ­a GarcÃ­a", "https://i.pravatar.cc/150?img=1", "Â¡Hola! Me interesa el vestido", "2m", 2, true, true),
-    ChatConversation("2", "Juan PÃ©rez", "https://i.pravatar.cc/150?img=2", "Â¿TodavÃ­a estÃ¡ disponible?", "15m", 1, true),
-    ChatConversation("3", "Ana LÃ³pez", "https://i.pravatar.cc/150?img=3", "Perfecto, te hago la transferencia", "1h", 0, false, true),
+    ChatConversation("1", "María García", "https://i.pravatar.cc/150?img=1", "¡Hola! Me interesa el vestido", "2m", 2, true, true),
+    ChatConversation("2", "Juan Pérez", "https://i.pravatar.cc/150?img=2", "¿Todavía está disponible?", "15m", 1, true),
+    ChatConversation("3", "Ana López", "https://i.pravatar.cc/150?img=3", "Perfecto, te hago la transferencia", "1h", 0, false, true),
     ChatConversation("4", "Carlos Ruiz", "https://i.pravatar.cc/150?img=4", "Gracias por la info!", "3h", 0, true),
-    ChatConversation("5", "Laura MartÃ­n", "https://i.pravatar.cc/150?img=5", "Â¿HacÃ©s envÃ­os al interior?", "5h", 0, false),
-    ChatConversation("6", "Diego SÃ¡nchez", "https://i.pravatar.cc/150?img=6", "Me encantÃ³ el producto ðŸ˜", "1d", 0, false, true),
-    ChatConversation("7", "SofÃ­a Torres", "https://i.pravatar.cc/150?img=7", "Â¿TenÃ©s otros colores?", "2d", 0, false)
+    ChatConversation("5", "Laura Martín", "https://i.pravatar.cc/150?img=5", "¿Hacés envíos al interior?", "5h", 0, false),
+    ChatConversation("6", "Diego Sánchez", "https://i.pravatar.cc/150?img=6", "Me encantó el producto ðŸ˜", "1d", 0, false, true),
+    ChatConversation("7", "Sofía Torres", "https://i.pravatar.cc/150?img=7", "¿Tenés otros colores?", "2d", 0, false)
 )
 
 @Composable
@@ -64,7 +64,7 @@ fun MessagesDrawer(
 ) {
     val conversations = remember { DEMO_CONVERSATIONS }
     
-    // Control interno de visibilidad para animaciÃ³n fluida
+    // Control interno de visibilidad para animación fluida
     var internalVisible by remember { mutableStateOf(false) }
     
     LaunchedEffect(isVisible) {
@@ -87,7 +87,7 @@ fun MessagesDrawer(
         )
     }
     
-    // Drawer desde la derecha - animaciÃ³n rÃ¡pida sin rebote
+    // Drawer desde la derecha - animación rápida sin rebote
     AnimatedVisibility(
         visible = isVisible,
         enter = slideInHorizontally(

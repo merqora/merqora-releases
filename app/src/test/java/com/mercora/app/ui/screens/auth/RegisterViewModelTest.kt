@@ -67,7 +67,7 @@ class RegisterViewModelTest {
     @Test
     fun `validateEmail with invalid format sets error`() {
         viewModel.validateEmail("not@valid")
-        assertEquals("Correo electrÃ³nico no vÃ¡lido", viewModel.uiState.value.emailError)
+        assertEquals("Correo electrónico no válido", viewModel.uiState.value.emailError)
     }
 
     @Test
@@ -85,13 +85,13 @@ class RegisterViewModelTest {
     @Test
     fun `validateUsername with short username sets error`() {
         viewModel.validateUsername("ab")
-        assertEquals("MÃ­nimo 3 caracteres", viewModel.uiState.value.usernameError)
+        assertEquals("Mínimo 3 caracteres", viewModel.uiState.value.usernameError)
     }
 
     @Test
     fun `validateUsername with invalid chars sets error`() {
         viewModel.validateUsername("user name!")
-        assertEquals("Solo letras, nÃºmeros y _", viewModel.uiState.value.usernameError)
+        assertEquals("Solo letras, números y _", viewModel.uiState.value.usernameError)
     }
 
     @Test
@@ -109,7 +109,7 @@ class RegisterViewModelTest {
     @Test
     fun `validatePassword with short password sets error`() {
         viewModel.validatePassword("12345")
-        assertEquals("MÃ­nimo 6 caracteres", viewModel.uiState.value.passwordError)
+        assertEquals("Mínimo 6 caracteres", viewModel.uiState.value.passwordError)
     }
 
     @Test
@@ -128,7 +128,7 @@ class RegisterViewModelTest {
     @Test
     fun `validateConfirmPassword not matching sets error`() {
         viewModel.validateConfirmPassword("pass123", "pass456")
-        assertEquals("Las contraseÃ±as no coinciden", viewModel.uiState.value.confirmPasswordError)
+        assertEquals("Las contraseñas no coinciden", viewModel.uiState.value.confirmPasswordError)
     }
 
     @Test
@@ -146,13 +146,13 @@ class RegisterViewModelTest {
     @Test
     fun `validateDate too young sets error`() {
         viewModel.validateDate("15/06/2022")
-        assertEquals("Debes tener al menos 13 aÃ±os", viewModel.uiState.value.fechaError)
+        assertEquals("Debes tener al menos 13 años", viewModel.uiState.value.fechaError)
     }
 
     @Test
     fun `validateDate invalid format sets error`() {
         viewModel.validateDate("aa/bb/cccc")
-        assertEquals("Fecha invÃ¡lida", viewModel.uiState.value.fechaError)
+        assertEquals("Fecha inválida", viewModel.uiState.value.fechaError)
     }
 
     @Test
@@ -171,7 +171,7 @@ class RegisterViewModelTest {
     fun `password strength is weak for simple password`() {
         viewModel.validatePassword("abc")
         assertTrue(viewModel.uiState.value.passwordStrength < 0.25f)
-        assertEquals("DÃ©bil", viewModel.uiState.value.passwordStrengthLabel)
+        assertEquals("Débil", viewModel.uiState.value.passwordStrengthLabel)
     }
 
     @Test
@@ -184,7 +184,7 @@ class RegisterViewModelTest {
     @Test
     fun `password strength labels are correct for weak password`() {
         viewModel.validatePassword("abc")
-        assertEquals("DÃ©bil", viewModel.uiState.value.passwordStrengthLabel)
+        assertEquals("Débil", viewModel.uiState.value.passwordStrengthLabel)
     }
 
     @Test

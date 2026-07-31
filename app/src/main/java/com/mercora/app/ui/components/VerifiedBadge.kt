@@ -17,11 +17,11 @@ import kotlin.math.cos
 import kotlin.math.sin
 
 /**
- * Badge de verificaciÃ³n profesional estilo Instagram/Twitter.
- * DiseÃ±o: Estrella de 8 puntas con checkmark blanco.
+ * Badge de verificación profesional estilo Instagram/Twitter.
+ * Diseño: Estrella de 8 puntas con checkmark blanco.
  * Color: Azul vibrante (#1D9BF0) - el mismo de Twitter/X
  * 
- * @param size TamaÃ±o del badge (default: 18.dp)
+ * @param size Tamaño del badge (default: 18.dp)
  * @param modifier Modificador opcional
  */
 @Composable
@@ -88,7 +88,7 @@ fun VerifiedBadge(
 }
 
 /**
- * Row helper que muestra username + badge de verificaciÃ³n si aplica
+ * Row helper que muestra username + badge de verificación si aplica
  */
 @Composable
 fun UsernameWithBadge(

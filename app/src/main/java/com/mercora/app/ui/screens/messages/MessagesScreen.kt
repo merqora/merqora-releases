@@ -30,17 +30,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.mercora.app.data.model.Usuario
-import com.mercora.app.data.repository.ChatRepository
 import com.mercora.app.data.repository.Conversation
-import com.mercora.app.data.repository.HandshakeRepository
-import com.mercora.app.data.model.HandshakeEvent
-import com.mercora.app.data.remote.SupabaseClient
 import com.mercora.app.ui.screens.chat.ChatScreen
 import com.mercora.app.ui.theme.*
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.isActive
-import kotlinx.coroutines.launch
+import androidx.hilt.navigation.compose.hiltViewModel
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class)
 @Composable
@@ -48,54 +41,14 @@ fun MessagesScreen(
     onBack: () -> Unit,
     onConversationClick: (Usuario) -> Unit = {},
     onNewMessage: () -> Unit = {},
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    viewModel: MessagesViewModel = hiltViewModel()
 ) {
-    val conversations by ChatRepository.conversations.collectAsState()
-    val isLoading by ChatRepository.isLoading.collectAsState()
-    val scope = rememberCoroutineScope()
-    
-    // Estado para chat activo dentro de MessagesScreen
-    var selectedChatUser by remember { mutableStateOf<Usuario?>(null) }
-    var selectedChatConversationId by remember { mutableStateOf<String?>(null) }
-    
-    // Cargar conversaciones + suscribirse a handshakes al inicio
-    LaunchedEffect(Unit) {
-        ChatRepository.loadConversations()
-        
-        val userId = try {
-            SupabaseClient.auth.currentUserOrNull()?.id
-        } catch (_: Exception) { null }
-        
-        if (userId != null) {
-            launch {
-                try {
-                    HandshakeRepository.subscribeToHandshakes(userId)
-                    android.util.Log.d("MessagesScreen", ">>> Subscribed to handshakes for userId=$userId")
-                } catch (e: Exception) {
-                    android.util.Log.e("MessagesScreen", "Error subscribing: ${e.message}")
-                }
-            }
-        }
-    }
-    
-    // Polling: recargar conversaciones cada 5 segundos para reflejar cambios
-    LaunchedEffect(Unit) {
-        while (isActive) {
-            delay(5000)
-            try {
-                ChatRepository.loadConversations()
-            } catch (_: Exception) {}
-        }
-    }
-    
-    // Escuchar eventos de handshake para recargar conversaciones inmediatamente
-    LaunchedEffect(Unit) {
-        HandshakeRepository.handshakeEvents.collectLatest { event ->
-            android.util.Log.d("MessagesScreen", ">>> Handshake event received: $event")
-            ChatRepository.loadConversations()
-        }
-    }
-    
+    val conversations by viewModel.conversations.collectAsState()
+    val isLoading by viewModel.isLoading.collectAsState()
+    val selectedChatUser by viewModel.selectedChatUser.collectAsState()
+    val selectedChatConversationId by viewModel.selectedChatConversationId.collectAsState()
+
     // Pantalla principal de lista de conversaciones
     Box(modifier = modifier.fillMaxSize().background(HomeBg)) {
         Scaffold(
@@ -210,8 +163,13 @@ fun MessagesScreen(
                             ConversationItem(
                                 conversation = conversation,
                                 onClick = {
-                                    selectedChatUser = conversation.otherUser
-                                    selectedChatConversationId = conversation.id
+                                    viewModel.selectChat(conversation.otherUser, conversation.id)
+                                },
+                                onTogglePin = { convId, newPinned ->
+                                    viewModel.togglePinConversation(convId, newPinned)
+                                },
+                                onDelete = { convId ->
+                                    viewModel.deleteConversation(convId)
                                 }
                             )
                         }
@@ -220,7 +178,7 @@ fun MessagesScreen(
             }
         }
         
-        // ChatScreen overlay cuando se selecciona una conversaciÃ³n
+        // ChatScreen overlay cuando se selecciona una conversación
         AnimatedVisibility(
             visible = selectedChatUser != null,
             enter = slideInHorizontally(
@@ -236,14 +194,8 @@ fun MessagesScreen(
                 ChatScreen(
                     otherUser = user,
                     conversationId = selectedChatConversationId,
-                    onBack = {
-                        selectedChatUser = null
-                        selectedChatConversationId = null
-                    },
-                    onOpenChatList = {
-                        selectedChatUser = null
-                        selectedChatConversationId = null
-                    }
+                    onBack = { viewModel.clearSelection() },
+                    onOpenChatList = { viewModel.clearSelection() }
                 )
             }
         }
@@ -254,7 +206,9 @@ fun MessagesScreen(
 @Composable
 private fun ConversationItem(
     conversation: Conversation,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    onTogglePin: (conversationId: String, newPinned: Boolean) -> Unit,
+    onDelete: (conversationId: String) -> Unit
 ) {
     val hasUnread = conversation.unreadCount > 0
     val user = conversation.otherUser
@@ -262,10 +216,10 @@ private fun ConversationItem(
     val haptic = LocalHapticFeedback.current
     val scope = rememberCoroutineScope()
     
-    // Estado del menÃº contextual
+    // Estado del menú contextual
     var showContextMenu by remember { mutableStateOf(false) }
     
-    // Estado local para actualizaciÃ³n inmediata de la UI
+    // Estado local para actualización inmediata de la UI
     var localIsPinned by remember { mutableStateOf(conversation.isPinned) }
     
     // Sincronizar con datos del servidor cuando cambian
@@ -354,7 +308,7 @@ private fun ConversationItem(
                         modifier = Modifier.weight(1f, fill = false)
                     )
                     
-                    // Badge +N mensajes cuando hay mÃ¡s de 1 no leÃ­do
+                    // Badge +N mensajes cuando hay más de 1 no leído
                     if (hasUnread && conversation.unreadCount > 1) {
                         Spacer(modifier = Modifier.width(6.dp))
                         Text(
@@ -397,7 +351,7 @@ private fun ConversationItem(
             }
         }
         
-        // MenÃº contextual con animaciÃ³n fluida
+        // Menú contextual con animación fluida
         ConversationContextMenu(
             isVisible = showContextMenu,
             isPinned = localIsPinned,
@@ -406,14 +360,10 @@ private fun ConversationItem(
                 val newPinned = !localIsPinned
                 localIsPinned = newPinned
                 showContextMenu = false
-                scope.launch {
-                    ChatRepository.togglePinConversation(conversation.id, newPinned)
-                }
+                onTogglePin(conversation.id, newPinned)
             },
             onDelete = {
-                scope.launch {
-                    ChatRepository.deleteConversation(conversation.id)
-                }
+                onDelete(conversation.id)
                 showContextMenu = false
             }
         )
@@ -513,7 +463,7 @@ private fun ContextMenuItem(
     }
 }
 
-// Formatear preview del Ãºltimo mensaje para la lista de conversaciones
+// Formatear preview del último mensaje para la lista de conversaciones
 private fun formatLastMessagePreview(message: String?): String {
     if (message.isNullOrBlank()) return "Sin mensajes"
     return when {
@@ -523,12 +473,12 @@ private fun formatLastMessagePreview(message: String?): String {
                 val json = org.json.JSONObject(jsonStr)
                 val ownerUsername = json.optString("ownerUsername", "")
                 if (ownerUsername.isNotEmpty()) {
-                    "EnviÃ³ un post de ${ownerUsername.take(15)}${if (ownerUsername.length > 15) "..." else ""}"
+                    "Envió un post de ${ownerUsername.take(15)}${if (ownerUsername.length > 15) "..." else ""}"
                 } else {
-                    "EnviÃ³ un post compartido"
+                    "Envió un post compartido"
                 }
             } catch (_: Exception) {
-                "EnviÃ³ un post compartido"
+                "Envió un post compartido"
             }
         }
         message.startsWith("[CONSULT_POST]") -> {
@@ -538,7 +488,7 @@ private fun formatLastMessagePreview(message: String?): String {
                 val type = json.optString("type", "inquiry")
                 val productTitle = json.optString("productTitle", "")
                 if (type == "offer") {
-                    "ðŸ’° Oferta: ${productTitle.take(20)}${if (productTitle.length > 20) "..." else ""}"
+                    "💰 Oferta: ${productTitle.take(20)}${if (productTitle.length > 20) "..." else ""}"
                 } else {
                     "â“ Consulta: ${productTitle.take(20)}${if (productTitle.length > 20) "..." else ""}"
                 }
@@ -551,45 +501,45 @@ private fun formatLastMessagePreview(message: String?): String {
                 val jsonStr = message.removePrefix("[SHARED_REND]")
                 val json = org.json.JSONObject(jsonStr)
                 val owner = json.optString("ownerUsername", "")
-                if (owner.isNotEmpty()) "ðŸŽ¬ Video de @$owner" else "ðŸŽ¬ Video compartido"
-            } catch (_: Exception) { "ðŸŽ¬ Video compartido" }
+                if (owner.isNotEmpty()) "🎬 Video de @$owner" else "🎬 Video compartido"
+            } catch (_: Exception) { "🎬 Video compartido" }
         }
         message.startsWith("[SHARED_USER]") -> {
             try {
                 val jsonStr = message.removePrefix("[SHARED_USER]")
                 val json = org.json.JSONObject(jsonStr)
                 val username = json.optString("username", "")
-                if (username.isNotEmpty()) "ðŸ‘¤ CompartiÃ³ a @$username" else "ðŸ‘¤ CompartiÃ³ un usuario"
-            } catch (_: Exception) { "ðŸ‘¤ CompartiÃ³ un usuario" }
+                if (username.isNotEmpty()) "👤 Compartió a @$username" else "👤 Compartió un usuario"
+            } catch (_: Exception) { "👤 Compartió un usuario" }
         }
-        message.startsWith("[IMG]") -> "ðŸ“· Imagen"
-        message.startsWith("[VIDEO]") -> "ðŸŽ¬ Video"
-        message.startsWith("[AUDIO]") -> "ðŸŽ¤ Audio"
+        message.startsWith("[IMG]") -> "📷 Imagen"
+        message.startsWith("[VIDEO]") -> "🎬 Video"
+        message.startsWith("[AUDIO]") -> "🎤 Audio"
         message.startsWith("[HANDSHAKE_STATUS]") -> {
             try {
                 val jsonStr = message.removePrefix("[HANDSHAKE_STATUS]")
                 val json = org.json.JSONObject(jsonStr)
                 val type = json.optString("type", "")
                 val price = json.optDouble("agreedPrice", 0.0)
-                val priceStr = if (price > 0) " Â· \$${String.format("%.0f", price)}" else ""
+                val priceStr = if (price > 0) " · \$${String.format("%.0f", price)}" else ""
                 when {
-                    type.contains("COMPLETED") || type.contains("TRANSACTION_COMPLETED") -> "âœ… TransacciÃ³n finalizada$priceStr"
+                    type.contains("COMPLETED") || type.contains("TRANSACTION_COMPLETED") -> "âœ… Transacción finalizada$priceStr"
                     type.contains("CANCELLED") || type.contains("AGREEMENT_CANCELLED") -> "âŒ Acuerdo cancelado"
                     type.contains("REJECTED") -> "âŒ Propuesta rechazada"
                     type.contains("PROPOSED") -> "ðŸ¤ Nueva propuesta$priceStr"
                     type.contains("ACCEPTED") -> "âœ… Acuerdo aceptado$priceStr"
-                    type.contains("CONFIRMED") -> "â³ Esperando confirmaciÃ³n$priceStr"
-                    else -> "ðŸ¤ ActualizaciÃ³n de acuerdo"
+                    type.contains("CONFIRMED") -> "â³ Esperando confirmación$priceStr"
+                    else -> "ðŸ¤ Actualización de acuerdo"
                 }
-            } catch (_: Exception) { "ðŸ¤ ActualizaciÃ³n de transacciÃ³n" }
+            } catch (_: Exception) { "ðŸ¤ Actualización de transacción" }
         }
-        message.startsWith("[HANDSHAKE_INITIATED]") || message.startsWith("[HANDSHAKE]") -> "ðŸ¤ Propuesta de transacciÃ³n"
-        message.startsWith("[LOCATION]") -> "ðŸ“ UbicaciÃ³n"
+        message.startsWith("[HANDSHAKE_INITIATED]") || message.startsWith("[HANDSHAKE]") -> "ðŸ¤ Propuesta de transacción"
+        message.startsWith("[LOCATION]") -> "ðŸ“ Ubicación"
         message.startsWith("[FILE]") -> {
             try {
                 val json = org.json.JSONObject(message.removePrefix("[FILE]"))
-                "ðŸ“Ž ${json.optString("name", "Archivo")}"
-            } catch (_: Exception) { "ðŸ“Ž Archivo" }
+                "📎 ${json.optString("name", "Archivo")}"
+            } catch (_: Exception) { "📎 Archivo" }
         }
         else -> message
     }

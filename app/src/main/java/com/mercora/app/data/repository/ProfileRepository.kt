@@ -44,7 +44,7 @@ object ProfileRepository {
     }
     
     suspend fun loadCurrentProfile(forceRefresh: Boolean = false): ProfileData? = withContext(Dispatchers.IO) {
-        // Retornar cache si es vÃ¡lido y no se fuerza refresh
+        // Retornar cache si es válido y no se fuerza refresh
         if (!forceRefresh && isCacheValid()) {
             Log.d(TAG, "Retornando perfil desde cache")
             return@withContext _currentProfile.value
@@ -65,7 +65,7 @@ object ProfileRepository {
             
             if (usuario == null) {
                 Log.e(TAG, "âš ï¸ Usuario NO encontrado en tabla 'usuarios' para user_id: $userId")
-                Log.e(TAG, "El usuario estÃ¡ autenticado pero no tiene registro en la BD")
+                Log.e(TAG, "El usuario está autenticado pero no tiene registro en la BD")
             } else {
                 Log.d(TAG, "âœ“ Usuario encontrado: ${usuario.username}")
             }
@@ -78,7 +78,7 @@ object ProfileRepository {
                     ?: FollowersRepository.getReputation(it.userId)
                 val publicacionesCount = PostRepository.getUserPostsCount(it.userId)
                 
-                // LOG DE DEPURACIÃ“N CRÃTICO PARA EL MODELO USUARIO (ENTRADA)
+                // LOG DE DEPURACIÓN CRÍTICO PARA EL MODELO USUARIO (ENTRADA)
                 Log.d(TAG, "==== USUARIO DESDE DB ====")
                 Log.d(TAG, "ID: ${it.id}, UserID: ${it.userId}")
                 Log.d(TAG, "Avatar DB: ${it.avatarUrl}")
@@ -105,7 +105,7 @@ object ProfileRepository {
                 )
             }
             
-            // LOG DE DEPURACIÃ“N CRÃTICO PARA EL MODELO PROFILE DATA (SALIDA)
+            // LOG DE DEPURACIÓN CRÍTICO PARA EL MODELO PROFILE DATA (SALIDA)
             if (profileData != null) {
                 Log.d(TAG, "==== PROFILE DATA MAPEADO ====")
                 Log.d(TAG, "User: ${profileData.username}")
@@ -206,7 +206,7 @@ object ProfileRepository {
                     val result = CloudflareService.uploadImage(
                         bitmap = bitmap,
                         folder = "avatars/$userId",
-                        mediaType = com.vinzay.app.media.MediaOptimizer.MediaType.AVATAR
+                        mediaType = com.mercora.app.media.MediaOptimizer.MediaType.AVATAR
                     )
                     if (result.isFailure) {
                         Log.e(TAG, "Error subiendo avatar: ${result.exceptionOrNull()?.message}")
@@ -233,7 +233,7 @@ object ProfileRepository {
                     val result = CloudflareService.uploadImage(
                         bitmap = bitmap,
                         folder = "banners/$userId",
-                        mediaType = com.vinzay.app.media.MediaOptimizer.MediaType.BANNER
+                        mediaType = com.mercora.app.media.MediaOptimizer.MediaType.BANNER
                     )
                     if (result.isFailure) {
                         Log.e(TAG, "Error subiendo banner: ${result.exceptionOrNull()?.message}")
@@ -254,7 +254,7 @@ object ProfileRepository {
                 put("descripcion", data.descripcion)
                 put("ubicacion", data.ubicacion)
                 put("nombre_tienda", data.nombreTienda)
-                put("whatsapp", data.telefono) // TelÃ©fono se guarda en columna whatsapp
+                put("whatsapp", data.telefono) // Teléfono se guarda en columna whatsapp
                 put("genero", data.sexo)
                 put("avatar_shape", data.avatarShape)
                 if (finalAvatarUrl != null) {

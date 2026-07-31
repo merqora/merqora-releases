@@ -48,7 +48,7 @@ fun ConsultModal(
     var bargainPrice by remember { mutableStateOf("") }
     var bargainSuggestion by remember { mutableStateOf<String?>(null) }
     
-    // Calcular lÃ­mites de regateo (mÃ­nimo 70% del precio original - no visible al usuario)
+    // Calcular límites de regateo (mínimo 70% del precio original - no visible al usuario)
     val originalPrice = post?.producto?.precio ?: 0.0
     val minBargainPrice = originalPrice * 0.70
     
@@ -177,12 +177,12 @@ fun ConsultModal(
                     
                     if (!showBargaining) {
                         // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-                        // SECCIÃ“N DE CONSULTA + REGATEO RÃPIDO
+                        // SECCIÓN DE CONSULTA + REGATEO RÁPIDO
                         // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
                         
                         Spacer(modifier = Modifier.height(16.dp))
                         
-                        // BotÃ³n de Regateo destacado
+                        // Botón de Regateo destacado
                         Surface(
                             onClick = { showBargaining = true },
                             modifier = Modifier
@@ -219,7 +219,7 @@ fun ConsultModal(
                                         color = TextPrimary
                                     )
                                     Text(
-                                        text = "PropÃ³n tu precio y negocia con el vendedor",
+                                        text = "Propón tu precio y negocia con el vendedor",
                                         fontSize = 12.sp,
                                         color = TextMuted
                                     )
@@ -304,7 +304,7 @@ fun ConsultModal(
                         
                         Spacer(modifier = Modifier.height(16.dp))
                         
-                        // Sugerencias de regateo rÃ¡pido
+                        // Sugerencias de regateo rápido
                         Text(
                             text = "Ofertas sugeridas",
                             fontSize = 13.sp,
@@ -400,7 +400,7 @@ fun ConsultModal(
                                             val price = newValue.toDoubleOrNull() ?: 0.0
                                             bargainSuggestion = when {
                                                 price < minBargainPrice && price > 0 -> 
-                                                    "Te sugerimos ofrecer $${String.format("%.2f", minBargainPrice)} para mayor probabilidad de aceptaciÃ³n"
+                                                    "Te sugerimos ofrecer $${String.format("%.2f", minBargainPrice)} para mayor probabilidad de aceptación"
                                                 else -> null
                                             }
                                         }
@@ -474,7 +474,7 @@ fun ConsultModal(
                             Box(modifier = Modifier.padding(12.dp)) {
                                 if (offerMessage.isEmpty()) {
                                     Text(
-                                        text = "Ej: Me interesa mucho, Â¿podemos negociar?",
+                                        text = "Ej: Me interesa mucho, ¿podemos negociar?",
                                         color = TextMuted.copy(alpha = 0.6f),
                                         fontSize = 13.sp
                                     )
@@ -491,7 +491,7 @@ fun ConsultModal(
                         
                         Spacer(modifier = Modifier.height(16.dp))
                         
-                        // BotÃ³n enviar oferta
+                        // Botón enviar oferta
                         val validPrice = bargainPrice.toDoubleOrNull() ?: 0.0
                         val canSend = validPrice >= minBargainPrice
                         
@@ -499,9 +499,9 @@ fun ConsultModal(
                             onClick = {
                                 if (canSend) {
                                     val fullMessage = if (offerMessage.isNotBlank()) {
-                                        "ðŸ’° OFERTA: Â¿AceptarÃ­as $$bargainPrice por este producto?\n\nðŸ“ Mensaje: $offerMessage"
+                                        "💰 OFERTA: ¿Aceptarías $$bargainPrice por este producto?\n\nðŸ“ Mensaje: $offerMessage"
                                     } else {
-                                        "ðŸ’° OFERTA: Â¿AceptarÃ­as $$bargainPrice por este producto?"
+                                        "💰 OFERTA: ¿Aceptarías $$bargainPrice por este producto?"
                                     }
                                     onSendConsult(fullMessage)
                                     bargainPrice = ""
@@ -524,7 +524,7 @@ fun ConsultModal(
                             Icon(Icons.Outlined.LocalOffer, null, Modifier.size(18.dp))
                             Spacer(Modifier.width(8.dp))
                             Text(
-                                text = if (canSend) "Enviar oferta de $$bargainPrice" else "Ingresa una oferta vÃ¡lida",
+                                text = if (canSend) "Enviar oferta de $$bargainPrice" else "Ingresa una oferta válida",
                                 fontWeight = FontWeight.SemiBold
                             )
                         }

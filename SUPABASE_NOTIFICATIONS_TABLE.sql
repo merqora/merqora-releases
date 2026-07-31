@@ -1,4 +1,4 @@
--- Tabla de notificaciones para VINZAY
+﻿-- Tabla de notificaciones para MERCORA
 -- Ejecutar en Supabase SQL Editor
 
 CREATE TABLE IF NOT EXISTS notifications (

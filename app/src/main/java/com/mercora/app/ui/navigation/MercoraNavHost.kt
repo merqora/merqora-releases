@@ -30,13 +30,11 @@ import coil.compose.AsyncImage
 import com.mercora.app.data.model.Post
 import com.mercora.app.data.model.Notification
 import com.mercora.app.data.model.NotificationType
-import com.mercora.app.data.model.WelcomeState
 import com.mercora.app.data.repository.PostRepository
 import com.mercora.app.data.repository.ProfileRepository
 import com.mercora.app.ui.components.LocalOpenProductPreview
 import com.mercora.app.ui.components.ProductPage
 import com.mercora.app.ui.components.ProductPreviewConfig
-import com.mercora.app.ui.components.WelcomeOverlay
 import com.mercora.app.ui.screens.auth.LoginScreen
 import com.mercora.app.ui.screens.auth.RegisterScreen
 import com.mercora.app.ui.screens.main.MainScreen
@@ -70,7 +68,8 @@ sealed class Screen(val route: String) {
 @Composable
 fun MercoraNavHost(
     navController: NavHostController,
-    startDestination: String = Screen.Login.route
+    startDestination: String = Screen.Login.route,
+    dismissSplash: () -> Unit = {}
 ) {
     var showProductPreview by remember { mutableStateOf(false) }
     var previewPost by remember { mutableStateOf<Post?>(null) }
@@ -103,7 +102,8 @@ fun MercoraNavHost(
                     navController.navigate(Screen.Home.route) {
                         popUpTo(Screen.Login.route) { inclusive = true }
                     }
-                }
+                },
+                dismissSplash = dismissSplash
             )
         }
         
@@ -126,7 +126,7 @@ fun MercoraNavHost(
         
         composable(
             Screen.Home.route,
-            enterTransition = { fadeIn(animationSpec = tween(0)) },
+            enterTransition = { fadeIn(animationSpec = tween(400)) },
             exitTransition = { fadeOut(animationSpec = tween(0)) }
         ) {
             MainScreen(navController = navController)
@@ -442,8 +442,8 @@ fun MercoraNavHost(
                 navArgument("postId") { type = NavType.StringType }
             ),
             deepLinks = listOf(
-                navDeepLink { uriPattern = "https://vinzay.app/p/{postId}" },
-                navDeepLink { uriPattern = "https://vinzay.netlify.app/p/{postId}" }
+                navDeepLink { uriPattern = "https://mercora.app/p/{postId}" },
+                navDeepLink { uriPattern = "https://mercora.netlify.app/p/{postId}" }
             ),
             enterTransition = {
                 fadeIn(animationSpec = tween(300)) + scaleIn(
@@ -533,17 +533,6 @@ fun MercoraNavHost(
         }
         }
         }
-
-        // Welcome overlay SIEMPRE en composiciÃ³n, invisible hasta activarse
-        // Prevenir jank del primer frame evitando que entre/salga del Ã¡rbol de composiciÃ³n
-        val welcomeData by WelcomeState.welcome.collectAsState()
-        WelcomeOverlay(
-            username = welcomeData.username,
-            isVisible = welcomeData.show,
-            onAnimationEnd = {
-                WelcomeState.consume()
-            }
-        )
 
         // Product preview overlay (centralized, used by all tab screens)
         val context = LocalContext.current

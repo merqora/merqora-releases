@@ -210,7 +210,7 @@ fun ProfileHeaderSkeleton(
         
         Spacer(modifier = Modifier.height(10.dp))
         
-        // Nombre + Badge de reputaciÃ³n
+        // Nombre + Badge de reputación
         Row(verticalAlignment = Alignment.CenterVertically) {
             SkeletonText(width = 140.dp, height = 20.dp)
             Spacer(modifier = Modifier.width(8.dp))
@@ -389,7 +389,7 @@ fun ProfileScreenSkeleton(
     Column(
         modifier = modifier.fillMaxSize()
     ) {
-        // Header compacto (username + botÃ³n publicar)
+        // Header compacto (username + botón publicar)
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -454,7 +454,7 @@ fun ProfileScreenSkeleton(
                 .padding(horizontal = 16.dp),
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            // BotÃ³n agregar
+            // Botón agregar
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 SkeletonBox(
                     modifier = Modifier.size(64.dp),
@@ -539,7 +539,7 @@ fun ProfileGridSkeleton(
 
 /**
  * Skeleton for the Home feed - muestra la estructura del feed mientras carga
- * Dar feedback visual inmediato al usuario en lugar de una pantalla vacÃ­a.
+ * Dar feedback visual inmediato al usuario en lugar de una pantalla vacía.
  */
 @Composable
 fun HomeFeedSkeleton(

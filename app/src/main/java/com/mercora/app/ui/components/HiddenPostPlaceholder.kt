@@ -67,7 +67,7 @@ fun HiddenPostPlaceholder(
             Spacer(modifier = Modifier.height(16.dp))
             
             Text(
-                text = "PublicaciÃ³n oculta",
+                text = "Publicación oculta",
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold,
                 color = TextPrimary
@@ -76,7 +76,7 @@ fun HiddenPostPlaceholder(
             Spacer(modifier = Modifier.height(4.dp))
             
             Text(
-                text = "Ya no verÃ¡s esta publicaciÃ³n",
+                text = "Ya no verás esta publicación",
                 fontSize = 13.sp,
                 color = TextSecondary,
                 textAlign = TextAlign.Center
@@ -91,7 +91,7 @@ fun HiddenPostPlaceholder(
             ) {
                 HiddenPostOption(
                     icon = Icons.Outlined.Flag,
-                    text = "Reportar esta publicaciÃ³n",
+                    text = "Reportar esta publicación",
                     color = Color(0xFFEF4444),
                     onClick = {
                         haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
@@ -122,7 +122,7 @@ fun HiddenPostPlaceholder(
             
             Spacer(modifier = Modifier.height(16.dp))
             
-            // BotÃ³n cancelar para mostrar la publicaciÃ³n de nuevo
+            // Botón cancelar para mostrar la publicación de nuevo
             TextButton(
                 onClick = {
                     haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)

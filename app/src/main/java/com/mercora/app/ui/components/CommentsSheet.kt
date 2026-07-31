@@ -83,7 +83,7 @@ fun CommentsSheet(
     onDeleteComment: (String) -> Unit = {},
     isLoading: Boolean = false,
     currentUserAvatar: String? = null,
-    currentUsername: String = "TÃº",
+    currentUsername: String = "Tú",
     currentUserId: String? = null,
     errorMessage: String? = null,
     onDismissError: () -> Unit = {},
@@ -103,7 +103,7 @@ fun CommentsSheet(
     
     // Estado para respuestas
     var replyingTo by remember { mutableStateOf<Comment?>(null) }
-    // ID del comentario raÃ­z cuando se responde a una respuesta (nested reply)
+    // ID del comentario raíz cuando se responde a una respuesta (nested reply)
     var replyingToRootId by remember { mutableStateOf<String?>(null) }
     
     // Estado para modal de opciones (3 puntitos)
@@ -311,14 +311,14 @@ fun CommentsSheet(
                                         )
                                         Spacer(modifier = Modifier.height(16.dp))
                                         Text(
-                                            text = "Sin opiniones aÃºn",
+                                            text = "Sin opiniones aún",
                                             fontSize = 16.sp,
                                             fontWeight = FontWeight.SemiBold,
                                             color = TextMuted
                                         )
                                         Spacer(modifier = Modifier.height(4.dp))
                                         Text(
-                                            text = "SÃ© el primero en compartir tu experiencia",
+                                            text = "Sé el primero en compartir tu experiencia",
                                             fontSize = 13.sp,
                                             color = TextMuted.copy(alpha = 0.7f)
                                         )
@@ -342,7 +342,7 @@ fun CommentsSheet(
                                     isOwnComment = resolvedCurrentUserId != null && comment.userId == resolvedCurrentUserId
                                 )
                                 
-                                // Mostrar respuestas anidadas con lÃ­nea vertical conectora (estilo Facebook)
+                                // Mostrar respuestas anidadas con línea vertical conectora (estilo Facebook)
                                 if (comment.replies.isNotEmpty()) {
                                     Column(
                                         modifier = Modifier
@@ -439,7 +439,7 @@ fun CommentsSheet(
                         // @ Mention query - computed before rating row to control visibility
                         val mentionQuery = remember(commentText) { extractMentionQuery(commentText) }
                         
-                        // Star Rating Row (ocultar cuando se responde O cuando mention popup estÃ¡ activo)
+                        // Star Rating Row (ocultar cuando se responde O cuando mention popup está activo)
                         androidx.compose.animation.AnimatedVisibility(
                             visible = replyingTo == null && mentionQuery == null
                         ) {
@@ -451,7 +451,7 @@ fun CommentsSheet(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                text = "Tu calificaciÃ³n",
+                                text = "Tu calificación",
                                 fontSize = 13.sp,
                                 fontWeight = FontWeight.Medium,
                                 color = TextMuted
@@ -532,7 +532,7 @@ fun CommentsSheet(
                                 ) {
                                     if (commentText.isEmpty()) {
                                         Text(
-                                            text = if (replyingTo != null) "Escribe tu respuesta..." else "Escribe tu opiniÃ³n...",
+                                            text = if (replyingTo != null) "Escribe tu respuesta..." else "Escribe tu opinión...",
                                             color = TextMuted,
                                             fontSize = 14.sp
                                         )
@@ -651,7 +651,7 @@ fun CommentsSheet(
         }
     }
     
-    // Modal de opciones de opiniÃ³n (3 puntitos)
+    // Modal de opciones de opinión (3 puntitos)
     CommentOptionsSheet(
         isVisible = showOptionsForComment != null,
         isOwnComment = showOptionsForComment != null && resolvedCurrentUserId != null && showOptionsForComment!!.userId == resolvedCurrentUserId,
@@ -825,12 +825,12 @@ private fun OpinionItem(
             ) {
                 Icon(
                     imageVector = if (comment.isLiked) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
-                    contentDescription = "Ãštil",
+                    contentDescription = "Útil",
                     modifier = Modifier.size(16.dp),
                     tint = if (comment.isLiked) AccentPink else TextMuted
                 )
                 Text(
-                    text = if (comment.likes > 0) "Ãštil (${comment.likes})" else "Ãštil",
+                    text = if (comment.likes > 0) "Útil (${comment.likes})" else "Útil",
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Medium,
                     color = if (comment.isLiked) AccentPink else TextMuted
@@ -951,7 +951,7 @@ private fun ReplyItemConnected(
                         VerifiedBadge(size = 12.dp)
                     }
                     Text(
-                        text = "Â·",
+                        text = "·",
                         fontSize = 12.sp,
                         color = TextMuted
                     )
@@ -1026,12 +1026,12 @@ private fun ReplyItemConnected(
                 ) {
                     Icon(
                         imageVector = if (reply.isLiked) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
-                        contentDescription = "Ãštil",
+                        contentDescription = "Útil",
                         modifier = Modifier.size(13.dp),
                         tint = if (reply.isLiked) AccentPink else TextMuted
                     )
                     Text(
-                        text = if (reply.likes > 0) "Ãštil (${reply.likes})" else "Ãštil",
+                        text = if (reply.likes > 0) "Útil (${reply.likes})" else "Útil",
                         fontSize = 11.sp,
                         fontWeight = FontWeight.Medium,
                         color = if (reply.isLiked) AccentPink else TextMuted
@@ -1271,7 +1271,7 @@ private fun CommentOptionsSheet(
                                     modifier = Modifier.size(22.dp)
                                 )
                                 Text(
-                                    text = "Eliminar opiniÃ³n",
+                                    text = "Eliminar opinión",
                                     fontSize = 15.sp,
                                     fontWeight = FontWeight.Medium,
                                     color = Color(0xFFEF5350)
@@ -1301,7 +1301,7 @@ private fun CommentOptionsSheet(
                                     modifier = Modifier.size(22.dp)
                                 )
                                 Text(
-                                    text = "Reportar opiniÃ³n",
+                                    text = "Reportar opinión",
                                     fontSize = 15.sp,
                                     fontWeight = FontWeight.Medium,
                                     color = Color(0xFFEF5350)

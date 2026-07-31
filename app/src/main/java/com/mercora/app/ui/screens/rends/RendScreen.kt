@@ -1,5 +1,8 @@
 ﻿package com.mercora.app.ui.screens.rends
 
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.view.ViewGroup
@@ -86,11 +89,11 @@ import kotlinx.coroutines.launch
  * REND SCREEN - Pantalla de videos cortos con CLIPPING PERFECTO
  * -------------------------------------------------------------------------------
  * 
- * IMPORTANTE: Esta pantalla usa MÃºltiples capas de clipping para evitar que
+ * IMPORTANTE: Esta pantalla usa Múltiples capas de clipping para evitar que
  * el contenido de video se vea desde otras secciones del pager horizontal.
  * 
  * Capas de clipping:
- * 1. Box raÃ­z con clipToBounds + graphicsLayer clip
+ * 1. Box raíz con clipToBounds + graphicsLayer clip
  * 2. Contenedor interno con clip estricto
  * 3. AndroidView del video con clip en LayoutParams
  * 
@@ -144,7 +147,7 @@ fun RendScreen(
     }
     
     // -------------------------------------------------------------------
-    // ESTADOS LEVANTADOS - para que modales y ProductPage estÃ¡n FUERA del pager
+    // ESTADOS LEVANTADOS - para que modales y ProductPage están FUERA del pager
     // -------------------------------------------------------------------
     var showForwardModal by remember { mutableStateOf(false) }
     var showConsultModal by remember { mutableStateOf(false) }
@@ -281,7 +284,7 @@ fun RendScreen(
     var isExternalDragging by remember { mutableStateOf(false) }
     var externalDragProgress by remember { mutableFloatStateOf(0f) }
     
-    // Detectar si cualquier modal estÃ¡ abierto
+    // Detectar si cualquier modal está abierto
     val isAnyModalOpen = showForwardModal || showConsultModal || showCommentsSheet || showCommentChoiceModal
     val isAnyOverlayOpen = isAnyModalOpen
     
@@ -326,7 +329,7 @@ fun RendScreen(
         }
     }
     
-    // Actualizar currentRendForModals cuando cambia la PÃ¡gina
+    // Actualizar currentRendForModals cuando cambia la Página
     LaunchedEffect(pagerState.currentPage, activeRends) {
         if (activeRends.isNotEmpty() && pagerState.currentPage < activeRends.size) {
             currentRendForModals = activeRends[pagerState.currentPage]
@@ -370,7 +373,7 @@ fun RendScreen(
     }
     
     // -------------------------------------------------------------------
-    // CONTENEDOR PRINCIPAL CON CLIPPING mÃ¡ximO
+    // CONTENEDOR PRINCIPAL CON CLIPPING máximO
     // -------------------------------------------------------------------
     Box(
         modifier = Modifier
@@ -389,7 +392,7 @@ fun RendScreen(
                 .fillMaxSize()
                 .clipToBounds()
         ) {
-            // Mostrar skeleton solo si estÃ¡ cargando Y no hay rends AÃºn
+            // Mostrar skeleton solo si está cargando Y no hay rends Aún
             if (activeIsLoading && activeRends.isEmpty()) {
                 RendSkeletonLoader()
             } else if (!activeIsLoading && activeRends.isEmpty()) {
@@ -399,7 +402,7 @@ fun RendScreen(
                     EmptyRendsState(onReload = { scope.launch { RendRepository.loadRends() } })
                 }
             } else {
-                // Detectar si el pager estÃ¡ siendo deslizado (para pausar video)
+                // Detectar si el pager está siendo deslizado (para pausar video)
                 val isBeingSwiped by remember {
                     derivedStateOf {
                         pagerState.currentPageOffsetFraction != 0f
@@ -417,7 +420,7 @@ fun RendScreen(
                         .padding(bottom = navBarHeight)
                         .clipToBounds(),
                     userScrollEnabled = !isAnyOverlayOpen,
-                    beyondViewportPageCount = 0, // NO precargar pÃ¡ginas fuera de vista
+                    beyondViewportPageCount = 0, // NO precargar páginas fuera de vista
                     key = { if (it < activeRends.size) activeRends[it].id else "empty_$it" }
                 ) { page ->
                     if (page < activeRends.size) {
@@ -537,7 +540,7 @@ fun RendScreen(
                         val videoUrl = rend?.videoUrl ?: post.images.firstOrNull() ?: ""
                         val thumbnailUrl = if (videoUrl.contains("ik.imagekit.io")) "${videoUrl}/ik-thumbnail.jpg" else ""
                         val productImg = rend?.productImage ?: post.images.getOrNull(1) ?: ""
-                        // Buscar estado de verificaciÃ³n del dueÃ±o del rend
+                        // Buscar estado de verificación del dueño del rend
                         val ownerVerified = try {
                             val ownerUser = SupabaseClient.database
                                 .from("usuarios")
@@ -642,7 +645,7 @@ fun RendScreen(
                             )
                             
                             if (success) {
-                                // Notificar al dueÃ±o del rend
+                                // Notificar al dueño del rend
                                 NotificationRepository.createCommentNotification(
                                     recipientId = rend.userId,
                                     postId = rend.id,
@@ -712,7 +715,7 @@ fun RendScreen(
                 onShareClick = { rend ->
                     val shareIntent = Intent(Intent.ACTION_SEND).apply {
                         type = "text/plain"
-                        putExtra(Intent.EXTRA_TEXT, "MirÃ¡ este video en Vinzay: https://vinzay.app/rend/${rend.id}")
+                        putExtra(Intent.EXTRA_TEXT, "Mirá este video en Mercora: https://mercora.app/rend/${rend.id}")
                     }
                     context.startActivity(Intent.createChooser(shareIntent, "Compartir"))
                 },
@@ -844,14 +847,14 @@ private fun EmptyRendsState(onReload: () -> Unit) {
             }
             Spacer(modifier = Modifier.height(24.dp))
             Text(
-                "No hay Rends AÃºn",
+                "No hay Rends Aún",
                 color = Color.White,
                 fontSize = 22.sp,
                 fontWeight = FontWeight.Bold
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                "SÃ© el primero en compartir un video corto",
+                "Sé el primero en compartir un video corto",
                 color = Color.White.copy(alpha = 0.6f),
                 fontSize = 15.sp,
                 textAlign = TextAlign.Center
@@ -900,14 +903,14 @@ private fun EmptyFollowingRendsState() {
             }
             Spacer(modifier = Modifier.height(24.dp))
             Text(
-                "Tu feed estÃ¡ vacÃ­o",
+                "Tu feed está vacío",
                 color = Color.White,
                 fontSize = 22.sp,
                 fontWeight = FontWeight.Bold
             )
             Spacer(modifier = Modifier.height(10.dp))
             Text(
-                "Sigue a creadores y vendedores para descubrir sus Ãºltimos rends aquÃ­",
+                "Sigue a creadores y vendedores para descubrir sus últimos rends aquí",
                 color = Color.White.copy(alpha = 0.6f),
                 fontSize = 15.sp,
                 textAlign = TextAlign.Center,
@@ -1044,9 +1047,9 @@ fun RendPageContent(
         }
     }
     
-    // El pager ya tiene padding(bottom=navBarHeight) asÃ­ que el contenido de cada pÃ¡gina
+    // El pager ya tiene padding(bottom=navBarHeight) así que el contenido de cada página
     // termina justo en el borde superior del NavBar. Progress bar pegado al borde inferior.
-    val bottomContentPadding = 20.dp  // Espacio mÃ­nimo sobre progress bar
+    val bottomContentPadding = 20.dp  // Espacio mínimo sobre progress bar
     
     // Dark overlay animado al arrastrar progress bar
     val blurOverlayAlpha by animateFloatAsState(
@@ -1106,7 +1109,7 @@ fun RendPageContent(
                 )
             }
     ) {
-        // Video Player con clip MÃ¡ximo
+        // Video Player con clip Máximo
         AndroidView(
             factory = { ctx ->
                 PlayerView(ctx).apply {
@@ -1449,7 +1452,7 @@ fun RendPageContent(
         
         // ---------------------------------------------------------------
         // PROGRESS BAR estilo TikTok - fino, en la parte inferior del video
-        // Debe estar DESPUÃ‰S de gradients/content para quedar encima (z-order)
+        // Debe estar DESPUÉS de gradients/content para quedar encima (z-order)
         // ---------------------------------------------------------------
         TikTokProgressBar(
             progress = if (isDraggingProgressBar) dragProgress else videoProgress,
@@ -1492,12 +1495,12 @@ fun RendPageContent(
                 },
                 onNotInterested = {
                     showOptionsModal = false
-                    Toast.makeText(context, "No te mostraremos MÃ¡s este tipo de contenido", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "No te mostraremos Más este tipo de contenido", Toast.LENGTH_SHORT).show()
                 },
                 onCopyLink = {
                     showOptionsModal = false
                     val clipboard = context.getSystemService(android.content.Context.CLIPBOARD_SERVICE) as android.content.ClipboardManager
-                    val clip = android.content.ClipData.newPlainText("Rend Link", "https://vinzay.app/rend/${rend.id}")
+                    val clip = android.content.ClipData.newPlainText("Rend Link", "https://mercora.app/rend/${rend.id}")
                     clipboard.setPrimaryClip(clip)
                     Toast.makeText(context, "Enlace copiado", Toast.LENGTH_SHORT).show()
                 },
@@ -1509,7 +1512,7 @@ fun RendPageContent(
                     showOptionsModal = false
                     val shareIntent = Intent(Intent.ACTION_SEND).apply {
                         type = "text/plain"
-                        putExtra(Intent.EXTRA_TEXT, "MirÃ¡ este video en Vinzay: https://vinzay.app/rend/${rend.id}")
+                        putExtra(Intent.EXTRA_TEXT, "Mirá este video en Mercora: https://mercora.app/rend/${rend.id}")
                     }
                     context.startActivity(Intent.createChooser(shareIntent, "Compartir en"))
                 },
@@ -1524,7 +1527,7 @@ fun RendPageContent(
             AlertDialog(
                 onDismissRequest = { showDeleteConfirmDialog = false },
                 title = { Text("Eliminar video") },
-                text = { Text("Â¿EstÃ¡s seguro de que querÃ©s eliminar este video? Esta acciÃ³n no se puede deshacer.") },
+                text = { Text("¿Estás seguro de que querés eliminar este video? Esta acción no se puede deshacer.") },
                 confirmButton = {
                     TextButton(
                         onClick = {
@@ -1614,7 +1617,7 @@ fun formatCount(count: Int): String {
     
     Box(
         modifier = modifier
-            .height(28.dp) // Ãrea tÃ¡ctil amplia (extiende hacia arriba)
+            .height(28.dp) // Área táctil amplia (extiende hacia arriba)
             .onSizeChanged { barWidth = it.width.toFloat() }
             .pointerInput(Unit) {
                 detectHorizontalDragGestures(
@@ -1679,7 +1682,7 @@ fun formatCount(count: Int): String {
 }
 
 // ---------------------------------------------------------------
-// SPEED OVERLAY - Mensaje de velocidad 2x con animaciÃ³n
+// SPEED OVERLAY - Mensaje de velocidad 2x con animación
 // ---------------------------------------------------------------
 @Composable
 fun SpeedOverlay() {
@@ -1919,7 +1922,7 @@ private fun CommentChoiceModal(
                     Spacer(modifier = Modifier.height(20.dp))
                     
                     Text(
-                        text = "Â¿QuÃ© deseas hacer?",
+                        text = "¿Qué deseas hacer?",
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
                         color = TextPrimary
@@ -2043,7 +2046,7 @@ private data class UserDataForComments(
 )
 
 // -------------------------------------------------------------------------------
-// FUNCIÃ“N PARA FORMATEAR TIEMPO DE COMENTARIOS
+// FUNCIÓN PARA FORMATEAR TIEMPO DE COMENTARIOS
 // -------------------------------------------------------------------------------
 private fun formatCommentTimeRend(createdAt: String): String {
     return try {
@@ -2069,7 +2072,7 @@ private fun formatCommentTimeRend(createdAt: String): String {
 }
 
 // -------------------------------------------------------------------------------
-// MODAL DE OPCIONES DEL VIDEO - Estilo profesional con animaciÃ³n fluida
+// MODAL DE OPCIONES DEL VIDEO - Estilo profesional con animación fluida
 // -------------------------------------------------------------------------------
 @Composable
 fun RendOptionsModal(
@@ -2084,10 +2087,19 @@ fun RendOptionsModal(
 ) {
     val currentUserId = SupabaseClient.auth.currentUserOrNull()?.id
     val isOwnVideo = currentUserId == rend.userId
+    val context = LocalContext.current
     
-    // AnimaciÃ³n de entrada/salida
+    // Animación de entrada/salida
     var isVisible by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) { isVisible = true }
+    
+    // Estados para dialogs
+    var showQrDialog by remember { mutableStateOf(false) }
+    var showStatsDialog by remember { mutableStateOf(false) }
+    var showEditDescriptionDialog by remember { mutableStateOf(false) }
+    var editTitle by remember { mutableStateOf(rend.title) }
+    var editDescription by remember { mutableStateOf(rend.description ?: "") }
+    val scope = rememberCoroutineScope()
     
     val backdropAlpha by androidx.compose.animation.core.animateFloatAsState(
         targetValue = if (isVisible) 0.6f else 0f,
@@ -2104,7 +2116,7 @@ fun RendOptionsModal(
         label = "slide"
     )
     
-    // FunciÃ³n para cerrar con animaciÃ³n
+    // Función para cerrar con animación
     val dismissWithAnimation: () -> Unit = {
         isVisible = false
         kotlinx.coroutines.MainScope().launch {
@@ -2113,7 +2125,7 @@ fun RendOptionsModal(
         }
     }
     
-    // Backdrop con animaciÃ³n de fade
+    // Backdrop con animación de fade
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -2124,7 +2136,7 @@ fun RendOptionsModal(
             ) { dismissWithAnimation() }
     )
     
-    // Modal content con animaciÃ³n de slide desde abajo
+    // Modal content con animación de slide desde abajo
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.BottomCenter
@@ -2179,8 +2191,8 @@ fun RendOptionsModal(
                     
                     OptionGridItem(
                         icon = Icons.Outlined.QrCode2,
-                        label = "cÃ³digo\nQR",
-                        onClick = { /* TODO */ }
+                        label = "código\nQR",
+                        onClick = { showQrDialog = true }
                     )
                     
                     OptionGridItem(
@@ -2219,24 +2231,24 @@ fun RendOptionsModal(
                     OptionListItem(
                         icon = Icons.Outlined.Analytics,
                         iconTint = PrimaryPurple,
-                        text = "Ver EstadÃ­sticas",
+                        text = "Ver Estadísticas",
                         subtitle = "Analiza el rendimiento de tu video",
-                        onClick = { /* TODO */ }
+                        onClick = { showStatsDialog = true }
                     )
                     
                     OptionListItem(
                         icon = Icons.Outlined.Edit,
                         iconTint = AccentGold,
-                        text = "Editar DescripciÃ³n",
-                        subtitle = "Modifica el TÃ­tulo o DescripciÃ³n",
-                        onClick = { /* TODO */ }
+                        text = "Editar Descripción",
+                        subtitle = "Modifica el Título o Descripción",
+                        onClick = { showEditDescriptionDialog = true }
                     )
                     
                     OptionListItem(
                         icon = Icons.Outlined.Delete,
                         iconTint = AccentPink,
                         text = "Eliminar video",
-                        subtitle = "Esta AcciÃ³n no se puede deshacer",
+                        subtitle = "Esta Acción no se puede deshacer",
                         onClick = onDelete,
                         isDestructive = true
                     )
@@ -2244,7 +2256,7 @@ fun RendOptionsModal(
                 
                 Spacer(modifier = Modifier.height(8.dp))
                 
-                // botÃ³n cancelar
+                // botón cancelar
                 TextButton(
                     onClick = onDismiss,
                     modifier = Modifier
@@ -2262,6 +2274,104 @@ fun RendOptionsModal(
                 Spacer(modifier = Modifier.height(8.dp))
             }
         }
+    }
+    
+    // --- Dialogs ---
+    
+    // QR Dialog
+    if (showQrDialog) {
+        AlertDialog(
+            onDismissRequest = { showQrDialog = false },
+            title = { Text("Código QR") },
+            text = {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text("Compartí tu Rend con este link:")
+                    Spacer(modifier = Modifier.height(10.dp))
+                    Text(
+                        text = "https://mercora.app/rend/${rend.id}",
+                        fontSize = 13.sp,
+                        color = PrimaryPurple,
+                        fontWeight = FontWeight.Medium
+                    )
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = {
+                    val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                    clipboard.setPrimaryClip(ClipData.newPlainText("Rend URL", "https://mercora.app/rend/${rend.id}"))
+                    Toast.makeText(context, "Link copiado al portapapeles", Toast.LENGTH_SHORT).show()
+                    showQrDialog = false
+                }) { Text("Copiar") }
+            },
+            dismissButton = {
+                TextButton(onClick = { showQrDialog = false }) { Text("Cerrar") }
+            }
+        )
+    }
+    
+    // Stats Dialog
+    if (showStatsDialog) {
+        AlertDialog(
+            onDismissRequest = { showStatsDialog = false },
+            title = { Text("Estadísticas del video") },
+            text = {
+                Column {
+                    StatRow(label = "Visualizaciones", value = rend.viewsCount)
+                    StatRow(label = "Me gusta", value = rend.likesCount)
+                    StatRow(label = "Comentarios", value = rend.reviewsCount)
+                    StatRow(label = "Veces compartido", value = rend.sharesCount)
+                    StatRow(label = "Guardado", value = rend.savesCount)
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = { showStatsDialog = false }) { Text("Cerrar") }
+            }
+        )
+    }
+    
+    // Edit Description Dialog
+    if (showEditDescriptionDialog) {
+        AlertDialog(
+            onDismissRequest = { showEditDescriptionDialog = false },
+            title = { Text("Editar Descripción") },
+            text = {
+                Column {
+                    OutlinedTextField(
+                        value = editTitle,
+                        onValueChange = { editTitle = it },
+                        label = { Text("Título") },
+                        singleLine = true,
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedBorderColor = PrimaryPurple,
+                            unfocusedBorderColor = BorderSubtle
+                        )
+                    )
+                    Spacer(modifier = Modifier.height(12.dp))
+                    OutlinedTextField(
+                        value = editDescription,
+                        onValueChange = { editDescription = it },
+                        label = { Text("Descripción") },
+                        modifier = Modifier.fillMaxWidth().height(120.dp),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedBorderColor = PrimaryPurple,
+                            unfocusedBorderColor = BorderSubtle
+                        )
+                    )
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = {
+                    scope.launch {
+                        RendRepository.updateRendDescription(rend.id, editTitle, editDescription)
+                    }
+                    showEditDescriptionDialog = false
+                }) { Text("Guardar") }
+            },
+            dismissButton = {
+                TextButton(onClick = { showEditDescriptionDialog = false }) { Text("Cancelar") }
+            }
+        )
     }
 }
 
@@ -2360,5 +2470,21 @@ fun OptionListItem(
                 modifier = Modifier.size(18.dp)
             )
         }
+    }
+}
+
+@Composable
+private fun StatRow(label: String, value: Int) {
+    Row(
+        modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Text(text = label, fontSize = 14.sp, color = TextSecondary)
+        Text(
+            text = value.toString(),
+            fontSize = 14.sp,
+            fontWeight = FontWeight.Bold,
+            color = TextPrimary
+        )
     }
 }

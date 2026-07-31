@@ -95,7 +95,7 @@ fun StoriesViewer(
     var showStoryOptionsModal by remember { mutableStateOf(false) }
     var showDeleteConfirm by remember { mutableStateOf(false) }
     
-    // Detectar si el teclado estÃ¡ visible
+    // Detectar si el teclado está visible
     val isImeVisible = WindowInsets.isImeVisible
     
     val currentUser = userStories.getOrNull(currentUserIndex)
@@ -111,12 +111,12 @@ fun StoriesViewer(
     // Progress animation
     val progress = remember { Animatable(0f) }
     
-    // AnimaciÃ³n de like
+    // Animación de like
     var showLikeAnimation by remember { mutableStateOf(false) }
     
     // Progress animation - handles story progression
     LaunchedEffect(currentUserIndex, currentStoryIndex) {
-        // Reset progress immediately when story changes (sin animaciÃ³n)
+        // Reset progress immediately when story changes (sin animación)
         progress.snapTo(0f)
         
         // Small delay to ensure UI is ready
@@ -190,7 +190,7 @@ fun StoriesViewer(
         }
     }
     
-    // Pausar/reanudar automÃ¡ticamente segÃºn estado del teclado
+    // Pausar/reanudar automáticamente según estado del teclado
     LaunchedEffect(isImeVisible) {
         isPaused = isImeVisible
     }
@@ -224,7 +224,7 @@ fun StoriesViewer(
                         }
                     },
                     onTap = { offset ->
-                        // NavegaciÃ³n por tap en los lados
+                        // Navegación por tap en los lados
                         val screenWidth = size.width
                         when {
                             offset.x < screenWidth / 3 -> {
@@ -250,7 +250,7 @@ fun StoriesViewer(
                             }
                         }
                     }
-                    // Double tap DESHABILITADO - reservado para futuros gestos de navegaciÃ³n entre usuarios
+                    // Double tap DESHABILITADO - reservado para futuros gestos de navegación entre usuarios
                 )
             }
     ) {
@@ -426,7 +426,7 @@ fun StoriesViewer(
                         }) {
                             Icon(
                                 imageVector = Icons.Outlined.MoreVert,
-                                contentDescription = "MÃ¡s",
+                                contentDescription = "Más",
                                 tint = Color.White
                             )
                         }
@@ -442,7 +442,7 @@ fun StoriesViewer(
             }
         }
         
-        // Bottom bar - Input o Stats segÃºn sea nuestra story o no
+        // Bottom bar - Input o Stats según sea nuestra story o no
         AnimatedVisibility(
             visible = showControls,
             enter = slideInVertically(initialOffsetY = { it }) + fadeIn(),
@@ -501,7 +501,7 @@ fun StoriesViewer(
                             scope.launch {
                                 val wasLiked = storyId in likedStoryIds
                                 val newLikeState = StoryRepository.toggleStoryLike(storyId)
-                                // Mostrar animaciÃ³n solo si se estÃ¡ dando like (no unlike)
+                                // Mostrar animación solo si se está dando like (no unlike)
                                 if (newLikeState && !wasLiked) {
                                     showLikeAnimation = true
                                 }
@@ -550,7 +550,7 @@ fun StoriesViewer(
             AlertDialog(
                 onDismissRequest = { showDeleteConfirm = false; isPaused = false },
                 title = { Text("Eliminar historia", color = TextPrimary, fontWeight = FontWeight.Bold) },
-                text = { Text("Â¿EstÃ¡s seguro de que quieres eliminar esta historia?", color = TextSecondary) },
+                text = { Text("¿Estás seguro de que quieres eliminar esta historia?", color = TextSecondary) },
                 confirmButton = {
                     TextButton(onClick = {
                         currentStory?.id?.let { onDeleteStory(it) }
@@ -595,7 +595,7 @@ fun StoriesViewer(
             },
             onDismiss = { 
                 showForwardModal = false
-                // NO reanudar automÃ¡ticamente, el teclado lo controla
+                // NO reanudar automáticamente, el teclado lo controla
             },
             onForwardToUser = { _, _, _ -> 
                 showForwardModal = false 
@@ -985,7 +985,7 @@ private fun ViewersListModal(
                         modifier = Modifier.fillMaxWidth().height(200.dp),
                         contentAlignment = Alignment.Center
                     ) {
-                        Text("Sin vistas aÃºn", color = TextMuted, fontSize = 14.sp)
+                        Text("Sin vistas aún", color = TextMuted, fontSize = 14.sp)
                     }
                 } else {
                     LazyColumn(modifier = Modifier.heightIn(max = 400.dp)) {

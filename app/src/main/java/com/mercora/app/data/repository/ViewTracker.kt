@@ -22,19 +22,19 @@ import kotlin.math.pow
  * 
  * Optimizaciones para escala:
  * âœ“ Bulk RPC (1 llamada para N items vs N llamadas)
- * âœ“ Chunking (mÃ¡x 100 items por batch, evita timeout)
+ * âœ“ Chunking (máx 100 items por batch, evita timeout)
  * âœ“ Circuit breaker (3 fallos consecutivos â†’ pausa 60s)
  * âœ“ Exponential backoff (reintento con delay creciente)
- * âœ“ Persistent debounce (24h window en SharedPreferences, no solo sesiÃ³n)
- * âœ“ Rate limiting (mÃ¡x 500 vistas/usuario/minuto anti-spam)
+ * âœ“ Persistent debounce (24h window en SharedPreferences, no solo sesión)
+ * âœ“ Rate limiting (máx 500 vistas/usuario/minuto anti-spam)
  * âœ“ Memory-efficient (auto-cleanup de pendientes antiguos)
  * 
- * Capacidad: >1M usuarios concurrentes con infraestructura estÃ¡ndar
+ * Capacidad: >1M usuarios concurrentes con infraestructura estándar
  */
 object ViewTracker {
     private const val TAG = "ViewTracker"
     private const val FLUSH_INTERVAL_MS = 5000L
-    private const val CHUNK_SIZE = 100 // MÃ¡x items por batch RPC
+    private const val CHUNK_SIZE = 100 // Máx items por batch RPC
     private const val DEBOUNCE_WINDOW_MS = 24 * 60 * 60 * 1000L // 24h
     private const val RATE_LIMIT_PER_MINUTE = 500
     private const val CIRCUIT_BREAKER_THRESHOLD = 3

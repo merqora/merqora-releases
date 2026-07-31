@@ -59,23 +59,23 @@ fun HomeHeader(
             .background(headerBg)
             .statusBarsPadding() // Espacio para el status bar de Android
             .padding(horizontal = 12.dp)
-            .padding(vertical = 10.dp), // Padding simÃ©trico arriba y abajo
+            .padding(vertical = 10.dp), // Padding simétrico arriba y abajo
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        // MenÃº de CategorÃ­as
+        // Menú de Categorías
         IconButton(onClick = onMenuClick) {
             Icon(
                 imageVector = Icons.Outlined.Menu,
-                contentDescription = "MenÃº",
+                contentDescription = "Menú",
                 tint = iconTint,
                 modifier = Modifier.size(26.dp)
             )
         }
         
-        // Logo Merqora con fuente cursiva profesional estilo Instagram
+        // Logo Mercora con fuente cursiva profesional estilo Instagram
         Text(
-            text = "vinzay",
+            text = "Mercora",
             fontSize = 30.sp,
             fontWeight = FontWeight.Normal,
             fontFamily = LogoCursiveFont,
@@ -85,7 +85,7 @@ fun HomeHeader(
         
         // Carrito + Notificaciones + Mensajes
         Row {
-            // botÃ³n de carrito con badge
+            // botón de carrito con badge
             Box {
                 IconButton(onClick = onCartClick) {
                     Icon(
@@ -118,7 +118,7 @@ fun HomeHeader(
                 }
             }
             
-            // botÃ³n de notificaciones con badge
+            // botón de notificaciones con badge
             Box {
                 IconButton(onClick = onNotificationsClick) {
                     Icon(
@@ -151,7 +151,7 @@ fun HomeHeader(
                 }
             }
             
-            // botÃ³n de mensajes con badge
+            // botón de mensajes con badge
             Box {
                 IconButton(onClick = onMessagesClick) {
                     Icon(
@@ -162,7 +162,7 @@ fun HomeHeader(
                     )
                 }
                 
-                // Badge con contador de mensajes no leÃ­dos
+                // Badge con contador de mensajes no leídos
                 if (unreadMessagesCount > 0) {
                     Box(
                         modifier = Modifier

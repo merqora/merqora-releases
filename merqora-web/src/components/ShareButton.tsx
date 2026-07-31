@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState } from 'react'
 
@@ -18,7 +18,7 @@ export default function ShareButton({ postId, className, title, description }: S
     if (typeof navigator !== 'undefined' && navigator.share) {
       try {
         await navigator.share({
-          title: title || 'Mirá esto en Vinzay',
+          title: title || 'Mirá esto en Mercora',
           text: description || '',
           url,
         })
@@ -42,7 +42,7 @@ export default function ShareButton({ postId, className, title, description }: S
         <polyline points="16 6 12 2 8 6" />
         <line x1="12" y1="2" x2="12" y2="15" />
       </svg>
-      {copied ? 'Copiado ✓' : 'Compartir'}
+      {copied ? 'Copiado âœ“' : 'Compartir'}
     </button>
   )
 }

@@ -68,7 +68,7 @@ private data class ShopSection(
     val items: List<ShopItem>
 )
 
-private val SHAPE_SECTION_ITEMS = com.vinzay.app.data.model.AVATAR_SHAPE_PACKS.map { pack ->
+private val SHAPE_SECTION_ITEMS = com.mercora.app.data.model.AVATAR_SHAPE_PACKS.map { pack ->
     val icon = when (pack.icon) {
         "square" -> Icons.Outlined.CropSquare
         "triangle" -> Icons.Outlined.ChangeHistory
@@ -92,14 +92,14 @@ private val SHOP_SECTIONS = listOf(
     ShopSection(
         id = "growth",
         title = "Crecimiento & Visibilidad",
-        subtitle = "Aumenta tu alcance y llega a mÃ¡s compradores",
+        subtitle = "Aumenta tu alcance y llega a más compradores",
         icon = Icons.Outlined.TrendingUp,
         items = listOf(
             ShopItem(
                 id = "boost_post",
-                title = "Impulsar PublicaciÃ³n",
+                title = "Impulsar Publicación",
                 description = "Tu producto destacado en el feed principal durante 24h",
-                impactTag = "5x mÃ¡s vistas",
+                impactTag = "5x más vistas",
                 icon = Icons.Outlined.Rocket,
                 price = 150,
                 gradient = listOf(Color(0xFFFF6B35), Color(0xFF1565A0)),
@@ -107,9 +107,9 @@ private val SHOP_SECTIONS = listOf(
             ),
             ShopItem(
                 id = "smart_exposure",
-                title = "ExposiciÃ³n Inteligente",
+                title = "Exposición Inteligente",
                 description = "Algoritmo optimizado para mostrar tu producto a compradores interesados",
-                impactTag = "Mayor conversiÃ³n",
+                impactTag = "Mayor conversión",
                 icon = Icons.Outlined.AutoAwesome,
                 price = 300,
                 gradient = listOf(Color(0xFF6366F1), Color(0xFF818CF8))
@@ -117,8 +117,8 @@ private val SHOP_SECTIONS = listOf(
             ShopItem(
                 id = "local_reach",
                 title = "Alcance Local",
-                description = "Prioridad en bÃºsquedas de tu zona geogrÃ¡fica",
-                impactTag = "Ventas rÃ¡pidas",
+                description = "Prioridad en búsquedas de tu zona geográfica",
+                impactTag = "Ventas rápidas",
                 icon = Icons.Outlined.LocationOn,
                 price = 100,
                 gradient = listOf(Color(0xFF2E8B57), Color(0xFF34D399))
@@ -144,8 +144,8 @@ private val SHOP_SECTIONS = listOf(
             ShopItem(
                 id = "profile_highlight",
                 title = "Perfil Destacado",
-                description = "Aparece en la secciÃ³n de vendedores recomendados",
-                impactTag = "MÃ¡s seguidores",
+                description = "Aparece en la sección de vendedores recomendados",
+                impactTag = "Más seguidores",
                 icon = Icons.Outlined.Star,
                 price = 250,
                 gradient = listOf(Color(0xFFFF6B35), Color(0xFFFF6B35))
@@ -153,7 +153,7 @@ private val SHOP_SECTIONS = listOf(
             ShopItem(
                 id = "custom_theme",
                 title = "Tema Personalizado",
-                description = "Colores y estilo Ãºnico para tu perfil de vendedor",
+                description = "Colores y estilo único para tu perfil de vendedor",
                 impactTag = "Marca personal",
                 icon = Icons.Outlined.Palette,
                 price = 200,
@@ -163,23 +163,23 @@ private val SHOP_SECTIONS = listOf(
     ),
     ShopSection(
         id = "sales",
-        title = "OptimizaciÃ³n de Ventas",
-        subtitle = "Herramientas para cerrar mÃ¡s ventas",
+        title = "Optimización de Ventas",
+        subtitle = "Herramientas para cerrar más ventas",
         icon = Icons.Outlined.ShoppingCart,
         items = listOf(
             ShopItem(
                 id = "priority_messages",
                 title = "Mensajes Prioritarios",
                 description = "Tus mensajes aparecen primero en la bandeja del comprador",
-                impactTag = "Respuesta rÃ¡pida",
+                impactTag = "Respuesta rápida",
                 icon = Icons.Outlined.Email,
                 price = 120,
                 gradient = listOf(Color(0xFFFF6B35), Color(0xFFC084FC))
             ),
             ShopItem(
                 id = "quick_response",
-                title = "Respuesta RÃ¡pida",
-                description = "Plantillas inteligentes y respuestas automÃ¡ticas",
+                title = "Respuesta Rápida",
+                description = "Plantillas inteligentes y respuestas automáticas",
                 impactTag = "Ahorra tiempo",
                 icon = Icons.Outlined.FlashOn,
                 price = 180,
@@ -187,9 +187,9 @@ private val SHOP_SECTIONS = listOf(
             ),
             ShopItem(
                 id = "conversion_boost",
-                title = "Potenciador de ConversiÃ³n",
+                title = "Potenciador de Conversión",
                 description = "Ofertas flash y descuentos exclusivos para tus visitantes",
-                impactTag = "MÃ¡s ventas",
+                impactTag = "Más ventas",
                 icon = Icons.Outlined.Percent,
                 price = 220,
                 gradient = listOf(Color(0xFF2E8B57), Color(0xFF6EE7B7)),
@@ -207,13 +207,13 @@ private val SHOP_SECTIONS = listOf(
     ShopSection(
         id = "insights",
         title = "Insights & Herramientas Pro",
-        subtitle = "Datos y anÃ¡lisis para decisiones inteligentes",
+        subtitle = "Datos y análisis para decisiones inteligentes",
         icon = Icons.Outlined.Analytics,
         items = listOf(
             ShopItem(
                 id = "advanced_analytics",
-                title = "AnalÃ­ticas Avanzadas",
-                description = "MÃ©tricas detalladas de rendimiento, visitas y conversiones",
+                title = "Analíticas Avanzadas",
+                description = "Métricas detalladas de rendimiento, visitas y conversiones",
                 impactTag = "Datos precisos",
                 icon = Icons.Outlined.BarChart,
                 price = 350,
@@ -222,7 +222,7 @@ private val SHOP_SECTIONS = listOf(
             ShopItem(
                 id = "buyer_insights",
                 title = "Comportamiento de Compradores",
-                description = "Entiende quÃ© buscan y cÃ³mo interactÃºan con tus productos",
+                description = "Entiende qué buscan y cómo interactúan con tus productos",
                 impactTag = "Decisiones inteligentes",
                 icon = Icons.Outlined.Psychology,
                 price = 280,
@@ -285,11 +285,11 @@ fun RendshopScreen(
                             referenceId = purchase.order.orderId
                         )
                         if (ok) {
-                            paymentSuccessMessage = "Â¡${purchase.order.creditsToAdd} crÃ©ditos aÃ±adidos!"
+                            paymentSuccessMessage = "¡${purchase.order.creditsToAdd} créditos añadidos!"
                             CreditsRepository.fetchCredits()
                         }
                     } else if (purchase is PendingPurchase.SingleItem) {
-                        paymentSuccessMessage = "Â¡${purchase.order.itemTitle} adquirido con Ã©xito!"
+                        paymentSuccessMessage = "¡${purchase.order.itemTitle} adquirido con éxito!"
                     }
                     pendingPurchase = null
                     isProcessingPayment = false
@@ -326,7 +326,7 @@ fun RendshopScreen(
                 Log.d("RendshopScreen", "âœ… Pago exitoso via WebView: $paymentId")
                 MercadoPagoRepository.handlePaymentDeepLink(
                     Intent().apply {
-                        data = Uri.parse("vinzay://payment/success?order_id=$orderId&payment_id=$paymentId")
+                        data = Uri.parse("mercora://payment/success?order_id=$orderId&payment_id=$paymentId")
                     }
                 )
             }
@@ -334,7 +334,7 @@ fun RendshopScreen(
                 val orderId = result.data?.getStringExtra("order_id") ?: ""
                 MercadoPagoRepository.handlePaymentDeepLink(
                     Intent().apply {
-                        data = Uri.parse("vinzay://payment/pending?order_id=$orderId")
+                        data = Uri.parse("mercora://payment/pending?order_id=$orderId")
                     }
                 )
             }
@@ -343,7 +343,7 @@ fun RendshopScreen(
                 val error = result.data?.getStringExtra("error_message") ?: "Pago rechazado"
                 MercadoPagoRepository.handlePaymentDeepLink(
                     Intent().apply {
-                        data = Uri.parse("vinzay://payment/failure?order_id=$orderId&reason=$error")
+                        data = Uri.parse("mercora://payment/failure?order_id=$orderId&reason=$error")
                     }
                 )
             }
@@ -352,7 +352,7 @@ fun RendshopScreen(
                 val error = result.data?.getStringExtra("error_message") ?: "Pago cancelado"
                 MercadoPagoRepository.handlePaymentDeepLink(
                     Intent().apply {
-                        data = Uri.parse("vinzay://payment/failure?order_id=$orderId&reason=$error")
+                        data = Uri.parse("mercora://payment/failure?order_id=$orderId&reason=$error")
                     }
                 )
             }
@@ -364,7 +364,7 @@ fun RendshopScreen(
     val launchMpCheckout: (initPoint: String, orderId: String) -> Unit = { initPoint, orderId ->
         try {
             MercadoPagoRepository.openCheckout(context, initPoint, orderId)
-            val intent = Intent(context, Class.forName("com.vinzay.app.ui.screens.checkout.MercadoPagoCheckoutActivity")).apply {
+            val intent = Intent(context, Class.forName("com.mercora.app.ui.screens.checkout.MercadoPagoCheckoutActivity")).apply {
                 putExtra("checkout_url", initPoint)
                 putExtra("order_id", orderId)
             }
@@ -401,7 +401,7 @@ fun RendshopScreen(
     
     // Init shape repo
     LaunchedEffect(userId) {
-        com.vinzay.app.data.repository.AvatarShapeRepository.init(context)
+        com.mercora.app.data.repository.AvatarShapeRepository.init(context)
     }
     
     // Load credits on mount
@@ -497,8 +497,8 @@ fun RendshopScreen(
                     scope.launch {
                         if (item.id.startsWith("shape_pack_")) {
                             // Shape pack - no deduct credits (free for testing)
-                            com.vinzay.app.data.repository.AvatarShapeRepository.addOwnedPack(item.id)
-                            paymentSuccessMessage = "Pack \"${item.title}\" aÃ±adido a tus formas"
+                            com.mercora.app.data.repository.AvatarShapeRepository.addOwnedPack(item.id)
+                            paymentSuccessMessage = "Pack \"${item.title}\" añadido a tus formas"
                         } else {
                             val ok = CreditsRepository.deductCredits(
                                 amount = item.price,
@@ -562,7 +562,7 @@ fun RendshopScreen(
                             createAndLaunchPayment(
                                 order.orderId,
                                 "credit_${pack.id}",
-                                "Paquete ${pack.name} - ${order.creditsToAdd} crÃ©ditos",
+                                "Paquete ${pack.name} - ${order.creditsToAdd} créditos",
                                 pack.priceUyu
                             )
                         }.onFailure { e ->
@@ -624,7 +624,7 @@ fun RendshopScreen(
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         Icon(Icons.Filled.Stars, contentDescription = null, tint = AccentGold)
-                        Text("Â¡CrÃ©ditos aÃ±adidos!", fontWeight = FontWeight.Bold, color = TextPrimary)
+                        Text("¡Créditos añadidos!", fontWeight = FontWeight.Bold, color = TextPrimary)
                     }
                 },
                 text = { Text(paymentSuccessMessage ?: "", color = TextMuted) },
@@ -707,7 +707,7 @@ private fun RendshopHeader(
                     if (!isLoading) {
                         Icon(
                             imageVector = Icons.Default.Add,
-                            contentDescription = "Comprar crÃ©ditos",
+                            contentDescription = "Comprar créditos",
                             tint = AccentGold,
                             modifier = Modifier.size(14.dp)
                         )
@@ -791,7 +791,7 @@ private fun HeroBanner(onProClick: () -> Unit = {}) {
                 Spacer(modifier = Modifier.height(6.dp))
                 
                 Text(
-                    text = "Accede a herramientas exclusivas diseÃ±adas para vendedores ambiciosos",
+                    text = "Accede a herramientas exclusivas diseñadas para vendedores ambiciosos",
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Normal,
                     color = Color.White.copy(alpha = 0.8f),
@@ -868,7 +868,7 @@ private fun QuickActionsRow(
         modifier = Modifier.padding(vertical = 8.dp)
     ) {
         Text(
-            text = "Acciones rÃ¡pidas",
+            text = "Acciones rápidas",
             fontSize = 13.sp,
             fontWeight = FontWeight.Bold,
             color = TextMuted,
@@ -884,7 +884,7 @@ private fun QuickActionsRow(
                 QuickActionCard(
                     icon = Icons.Outlined.Rocket,
                     title = "Impulsar",
-                    subtitle = "Post rÃ¡pido",
+                    subtitle = "Post rápido",
                     gradient = listOf(Color(0xFFFF6B35), Color(0xFF1565A0))
                 )
             }
@@ -892,7 +892,7 @@ private fun QuickActionsRow(
                 QuickActionCard(
                     icon = Icons.Outlined.AddChart,
                     title = "Obtener",
-                    subtitle = "CrÃ©ditos",
+                    subtitle = "Créditos",
                     gradient = listOf(Color(0xFFFF6B35), Color(0xFFFF6B35)),
                     onClick = onBuyCredits
                 )
@@ -901,7 +901,7 @@ private fun QuickActionsRow(
                 QuickActionCard(
                     icon = Icons.Outlined.Analytics,
                     title = "Ver",
-                    subtitle = "EstadÃ­sticas",
+                    subtitle = "Estadísticas",
                     gradient = listOf(Color(0xFF1565A0), Color(0xFF60A5FA))
                 )
             }
@@ -1211,7 +1211,7 @@ private fun RendshopFooter() {
         )
         
         Text(
-            text = "Â¿Necesitas ayuda?",
+            text = "¿Necesitas ayuda?",
             fontSize = 14.sp,
             fontWeight = FontWeight.Bold,
             color = TextPrimary
@@ -1220,7 +1220,7 @@ private fun RendshopFooter() {
         Spacer(modifier = Modifier.height(4.dp))
         
         Text(
-            text = "ContÃ¡ctanos para consultas sobre herramientas Pro",
+            text = "Contáctanos para consultas sobre herramientas Pro",
             fontSize = 12.sp,
             fontWeight = FontWeight.Normal,
             color = TextMuted,
@@ -1257,7 +1257,7 @@ private fun RendshopFooter() {
         Spacer(modifier = Modifier.height(24.dp))
         
         Text(
-            text = "Rendshop Â© 2024 Â· Todos los derechos reservados",
+            text = "Rendshop © 2024 · Todos los derechos reservados",
             fontSize = 11.sp,
             fontWeight = FontWeight.Medium,
             color = TextMuted.copy(alpha = 0.6f)
@@ -1428,7 +1428,7 @@ private fun ItemDetailModal(
                                 color = TextPrimary
                             )
                             Text(
-                                text = "crÃ©ditos",
+                                text = "créditos",
                                 fontSize = 14.sp,
                                 color = TextMuted
                             )
@@ -1503,7 +1503,7 @@ private fun ItemDetailModal(
                 if (!canRedeem) {
                     Spacer(modifier = Modifier.height(12.dp))
                     Text(
-                        text = "Necesitas ${item.price - userCredits} crÃ©ditos mÃ¡s para canjear",
+                        text = "Necesitas ${item.price - userCredits} créditos más para canjear",
                         fontSize = 12.sp,
                         color = TextMuted,
                         textAlign = TextAlign.Center,
@@ -1519,11 +1519,11 @@ private fun ItemDetailModal(
 private fun ProBenefitsModal(onDismiss: () -> Unit) {
     val benefits = listOf(
         Triple(Icons.Filled.Verified, "Insignia Verificado", "Destaca como vendedor confiable"),
-        Triple(Icons.Filled.TrendingUp, "Alcance Premium", "5x mÃ¡s visibilidad en bÃºsquedas"),
-        Triple(Icons.Filled.Analytics, "EstadÃ­sticas Pro", "Analytics detallado de tus ventas"),
-        Triple(Icons.Filled.Support, "Soporte Prioritario", "AtenciÃ³n 24/7 exclusiva"),
+        Triple(Icons.Filled.TrendingUp, "Alcance Premium", "5x más visibilidad en búsquedas"),
+        Triple(Icons.Filled.Analytics, "Estadísticas Pro", "Analytics detallado de tus ventas"),
+        Triple(Icons.Filled.Support, "Soporte Prioritario", "Atención 24/7 exclusiva"),
         Triple(Icons.Filled.Bolt, "Impulsos Gratis", "3 impulsos mensuales incluidos"),
-        Triple(Icons.Filled.Palette, "PersonalizaciÃ³n", "Temas exclusivos para tu tienda")
+        Triple(Icons.Filled.Palette, "Personalización", "Temas exclusivos para tu tienda")
     )
     
     Dialog(
@@ -1694,7 +1694,7 @@ private fun ProBenefitsModal(onDismiss: () -> Unit) {
                 Spacer(modifier = Modifier.height(12.dp))
                 
                 Text(
-                    text = "Cancela cuando quieras Â· Sin compromisos",
+                    text = "Cancela cuando quieras · Sin compromisos",
                     fontSize = 12.sp,
                     color = TextMuted,
                     textAlign = TextAlign.Center,
@@ -1749,8 +1749,8 @@ private fun BuyCreditsModal(
                             Icon(Icons.Filled.Stars, contentDescription = null, tint = AccentGold, modifier = Modifier.size(20.dp))
                         }
                         Column {
-                            Text("Obtener CrÃ©ditos", fontSize = 18.sp, fontWeight = FontWeight.Bold, color = TextPrimary)
-                            Text("Saldo: $currentCredits crÃ©ditos", fontSize = 12.sp, color = TextMuted)
+                            Text("Obtener Créditos", fontSize = 18.sp, fontWeight = FontWeight.Bold, color = TextPrimary)
+                            Text("Saldo: $currentCredits créditos", fontSize = 12.sp, color = TextMuted)
                         }
                     }
                     IconButton(onClick = onDismiss, modifier = Modifier.size(32.dp)) {
@@ -1782,7 +1782,7 @@ private fun BuyCreditsModal(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.spacedBy(10.dp)
                         ) {
-                            // Icon pequeÃ±o
+                            // Icon pequeño
                             val boxMod = if (pack.isPopular) {
                                 Modifier.size(36.dp).clip(RoundedCornerShape(10.dp))
                                     .background(Brush.linearGradient(listOf(AccentGold, Color(0xFFFF6B35))))
@@ -1800,7 +1800,7 @@ private fun BuyCreditsModal(
                             // Info central
                             Column(modifier = Modifier.weight(1f)) {
                                 Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                                    Text("$totalCredits crÃ©ditos", fontSize = 14.sp, fontWeight = FontWeight.Bold, color = TextPrimary)
+                                    Text("$totalCredits créditos", fontSize = 14.sp, fontWeight = FontWeight.Bold, color = TextPrimary)
                                     if (pack.bonusCredits > 0) {
                                         Surface(shape = RoundedCornerShape(4.dp), color = AccentGreen.copy(alpha = 0.15f)) {
                                             Text("+${pack.bonusCredits}", fontSize = 10.sp, fontWeight = FontWeight.Bold, color = AccentGreen, modifier = Modifier.padding(horizontal = 5.dp, vertical = 1.dp))

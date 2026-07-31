@@ -160,7 +160,7 @@ fun StoryViewersModal(
                                     )
                                     Spacer(modifier = Modifier.height(12.dp))
                                     Text(
-                                        text = "AÃºn no hay vistas",
+                                        text = "Aún no hay vistas",
                                         color = TextMuted,
                                         fontSize = 15.sp
                                     )

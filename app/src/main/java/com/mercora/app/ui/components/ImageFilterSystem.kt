@@ -40,13 +40,13 @@ import kotlinx.coroutines.withContext
 import java.util.concurrent.Executors
 
 // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-// DEFINICIÃ“N DE FILTROS - Matrices de color optimizadas para GPU
+// DEFINICIÓN DE FILTROS - Matrices de color optimizadas para GPU
 // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 data class ImageFilter(
     val id: String,
     val name: String,
     val colorMatrix: FloatArray,
-    val previewColor: Color // Color representativo para el cÃ­rculo
+    val previewColor: Color // Color representativo para el círculo
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -194,14 +194,14 @@ val STORY_FILTERS = listOf(
 )
 
 // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-// APLICACIÃ“N DE FILTROS - Optimizado para GPU
+// APLICACIÓN DE FILTROS - Optimizado para GPU
 // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 object FilterProcessor {
     
     // Dispatcher limitado para evitar saturar CPU en procesamiento pesado
     private val singleThreadDispatcher = Executors.newSingleThreadExecutor().asCoroutineDispatcher()
     
-    // CachÃ© de thumbnails: clave = "filterId_bitmapHashCode"
+    // Caché de thumbnails: clave = "filterId_bitmapHashCode"
     private val thumbnailCache = mutableMapOf<String, Bitmap>()
     
     /**
@@ -215,7 +215,7 @@ object FilterProcessor {
     
     /**
      * Crea RenderEffect para Android 12+ (GPU puro)
-     * Preparado para migraciÃ³n futura a shaders
+     * Preparado para migración futura a shaders
      */
     @RequiresApi(Build.VERSION_CODES.S)
     fun createRenderEffect(filter: ImageFilter): RenderEffect? {
@@ -244,7 +244,7 @@ object FilterProcessor {
         }
     
     /**
-     * Crea miniatura filtrada con cachÃ©
+     * Crea miniatura filtrada con caché
      * Solo recalcula si el bitmap o filtro cambiaron
      */
     fun createFilteredThumbnail(source: Bitmap, filter: ImageFilter, size: Int = 80): Bitmap {
@@ -279,7 +279,7 @@ object FilterProcessor {
             output
         }
         
-        // Limitar tamaÃ±o del cachÃ©
+        // Limitar tamaño del caché
         if (thumbnailCache.size > 50) {
             thumbnailCache.clear()
         }
@@ -289,7 +289,7 @@ object FilterProcessor {
     }
     
     /**
-     * Limpia cachÃ© de thumbnails (llamar cuando cambia el bitmap fuente)
+     * Limpia caché de thumbnails (llamar cuando cambia el bitmap fuente)
      */
     fun clearCache() {
         thumbnailCache.clear()
@@ -303,7 +303,7 @@ object FilterProcessor {
 /**
  * Composable que aplica filtro en GPU sin crear Bitmaps
  * Usa drawWithContent con ColorMatrixColorFilter (GPU-accelerated en Android)
- * Preparado para migraciÃ³n futura a OpenGL ES / shaders
+ * Preparado para migración futura a OpenGL ES / shaders
  */
 @Composable
 fun FilteredImage(
@@ -312,7 +312,7 @@ fun FilteredImage(
     modifier: Modifier = Modifier,
     contentScale: ContentScale = ContentScale.Crop
 ) {
-    // ColorFilter cacheado por filtro - no se recrea en cada recomposiciÃ³n
+    // ColorFilter cacheado por filtro - no se recrea en cada recomposición
     val colorFilter = remember(filter.id) {
         FilterProcessor.getColorFilter(filter)
     }
@@ -339,12 +339,12 @@ fun FilteredImage(
                 
                 val srcRect: android.graphics.Rect
                 if (bitmapRatio > viewRatio) {
-                    // Bitmap mÃ¡s ancho - recortar lados
+                    // Bitmap más ancho - recortar lados
                     val scaledWidth = bitmapHeight * viewRatio
                     val left = ((bitmapWidth - scaledWidth) / 2).toInt()
                     srcRect = android.graphics.Rect(left, 0, (left + scaledWidth).toInt(), bitmapHeight.toInt())
                 } else {
-                    // Bitmap mÃ¡s alto - recortar arriba/abajo
+                    // Bitmap más alto - recortar arriba/abajo
                     val scaledHeight = bitmapWidth / viewRatio
                     val top = ((bitmapHeight - scaledHeight) / 2).toInt()
                     srcRect = android.graphics.Rect(0, top, bitmapWidth.toInt(), (top + scaledHeight).toInt())
@@ -389,14 +389,14 @@ fun FilterCarousel(
     val listState = rememberLazyListState(initialFirstVisibleItemIndex = 0)
     val snapBehavior = rememberSnapFlingBehavior(lazyListState = listState)
     
-    val itemSize = 80.dp // Aumentado para que quepan los tÃ­tulos
+    val itemSize = 80.dp // Aumentado para que quepan los títulos
     val itemSpacing = 12.dp
     
-    // Padding simÃ©trico: primer filtro en esquina izquierda, Ãºltimo en esquina derecha
+    // Padding simétrico: primer filtro en esquina izquierda, último en esquina derecha
     val startPadding = 16.dp
-    val endPadding = 16.dp // Mismo padding que la izquierda para que el Ãºltimo quede a la derecha
+    val endPadding = 16.dp // Mismo padding que la izquierda para que el último quede a la derecha
     
-    // Ãndice del filtro seleccionado actualmente (para highlight visual)
+    // Índice del filtro seleccionado actualmente (para highlight visual)
     val selectedIndex = remember(currentFilter) {
         STORY_FILTERS.indexOfFirst { it.id == currentFilter.id }.coerceAtLeast(0)
     }

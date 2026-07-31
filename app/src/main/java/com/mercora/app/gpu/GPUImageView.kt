@@ -10,7 +10,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 
 /**
  * GLSurfaceView customizada para ajustes de imagen GPU
- * Configurada para mÃ¡ximo rendimiento (60+ FPS)
+ * Configurada para máximo rendimiento (60+ FPS)
  */
 class GPUImageSurfaceView @JvmOverloads constructor(
     context: Context,
@@ -23,13 +23,13 @@ class GPUImageSurfaceView @JvmOverloads constructor(
         // OpenGL ES 3.0
         setEGLContextClientVersion(3)
         
-        // ConfiguraciÃ³n de superficie para mÃ¡ximo rendimiento
+        // Configuración de superficie para máximo rendimiento
         setEGLConfigChooser(8, 8, 8, 8, 0, 0)
         
         // Renderer
         setRenderer(renderer)
         
-        // Renderizar solo cuando se solicita (mÃ¡ximo control, mÃ­nimo consumo)
+        // Renderizar solo cuando se solicita (máximo control, mínimo consumo)
         renderMode = RENDERMODE_WHEN_DIRTY
     }
 
@@ -69,7 +69,7 @@ class GPUImageSurfaceView @JvmOverloads constructor(
 
 /**
  * Estado de ajustes de imagen completo
- * Incluye todos los parÃ¡metros nivel Instagram/Lightroom
+ * Incluye todos los parámetros nivel Instagram/Lightroom
  */
 @Stable
 data class ImageAdjustmentState(
@@ -112,7 +112,7 @@ fun GPUAdjustedImage(
         surfaceView?.setBitmap(bitmap)
     }
     
-    // Actualizar ajustes cuando cambien (instantÃ¡neo, sin recomposiciÃ³n)
+    // Actualizar ajustes cuando cambien (instantáneo, sin recomposición)
     LaunchedEffect(adjustments) {
         surfaceView?.updateAdjustments(
             brightness = adjustments.brightness,

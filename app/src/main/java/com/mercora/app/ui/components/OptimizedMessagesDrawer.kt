@@ -91,7 +91,7 @@ data class UserToMessage(
 fun OptimizedMessagesDrawer(
     isVisible: Boolean,
     onDismiss: () -> Unit,
-    onOpenChat: (Usuario, String?) -> Unit = { _, _ -> }, // Pasar usuario y conversaciÃ³n id
+    onOpenChat: (Usuario, String?) -> Unit = { _, _ -> }, // Pasar usuario y conversación id
     modifier: Modifier = Modifier
 ) {
     val scope = rememberCoroutineScope()
@@ -235,7 +235,7 @@ private fun MessagesContent(
     // Estado para modal de opciones al dejar presionado un chat
     var selectedChatForOptions by remember { mutableStateOf<ChatPreview?>(null) }
     
-    // Filtrar chats por bÃºsqueda y etiqueta
+    // Filtrar chats por búsqueda y etiqueta
     val filteredChats = remember(searchQuery, chats, selectedLabelFilter) {
         var result = chats
         if (searchQuery.isNotEmpty()) {
@@ -330,7 +330,7 @@ private fun MessagesContent(
             onDismiss = { selectedChatForOptions = null }
         )
         
-        // Modal de gestiÃ³n de etiquetas
+        // Modal de gestión de etiquetas
         LabelsManagerModal(
             isVisible = showLabelsManager,
             onDismiss = { showLabelsManager = false }
@@ -397,7 +397,7 @@ private fun MessagesHeader(
                 horizontalArrangement = Arrangement.spacedBy(16.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // BotÃ³n de etiquetas
+                // Botón de etiquetas
                 IconButton(
                     onClick = onManageLabels,
                     modifier = Modifier
@@ -413,7 +413,7 @@ private fun MessagesHeader(
                     )
                 }
                 
-                // BotÃ³n de nuevo mensaje
+                // Botón de nuevo mensaje
                 IconButton(
                     onClick = onNewMessage,
                     modifier = Modifier
@@ -433,7 +433,7 @@ private fun MessagesHeader(
     }
 }
 
-// Barra de bÃºsqueda
+// Barra de búsqueda
 @Composable
 private fun SearchBarMessages(
     query: String,
@@ -572,7 +572,7 @@ private fun ChatItemImproved(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    // Username con verificaciÃ³n y pin
+                    // Username con verificación y pin
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier.weight(1f, fill = false)
@@ -620,7 +620,7 @@ private fun ChatItemImproved(
 
                 Spacer(modifier = Modifier.height(3.dp))
 
-                // Ãšltimo mensaje
+                // Último mensaje
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically
@@ -636,7 +636,7 @@ private fun ChatItemImproved(
                     } else {
                         if (chat.lastMessageIsFromMe) {
                             Text(
-                                text = "TÃº: ",
+                                text = "Tú: ",
                                 fontSize = 14.sp,
                                 color = TextMuted,
                                 fontWeight = FontWeight.Normal
@@ -711,7 +711,7 @@ private fun ChatItemImproved(
     }
 }
 
-// Estado vacÃ­o
+// Estado vacío
 @Composable
 private fun EmptyChatsState(
     isSearching: Boolean,
@@ -744,8 +744,8 @@ private fun EmptyChatsState(
         
         Text(
             text = if (isSearching) 
-                "No encontramos conversaciones con ese tÃ©rmino" 
-                else "Inicia una conversaciÃ³n con alguien",
+                "No encontramos conversaciones con ese término" 
+                else "Inicia una conversación con alguien",
             fontSize = 14.sp,
             color = TextMuted,
             modifier = Modifier.padding(horizontal = 24.dp)
@@ -787,7 +787,7 @@ private fun NewMessageModal(
     val focusRequester = remember { FocusRequester() }
     val scope = rememberCoroutineScope()
     
-    // BÃºsqueda real de usuarios desde Supabase
+    // Búsqueda real de usuarios desde Supabase
     var searchResults by remember { mutableStateOf<List<Usuario>>(emptyList()) }
     var isSearching by remember { mutableStateOf(false) }
     
@@ -857,7 +857,7 @@ private fun NewMessageModal(
                     Spacer(modifier = Modifier.size(36.dp))
                 }
                 
-                // Campo de bÃºsqueda "Para:"
+                // Campo de búsqueda "Para:"
                 Surface(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -910,7 +910,7 @@ private fun NewMessageModal(
                 
                 Spacer(modifier = Modifier.height(16.dp))
                 
-                // TÃ­tulo de secciÃ³n
+                // Título de sección
                 Text(
                     text = if (searchQuery.isEmpty()) "Escribe para buscar" else "Resultados",
                     fontSize = 14.sp,
@@ -1272,12 +1272,12 @@ private fun ChatOptionsModal(
                             showLabelPicker = true
                         }
                         
-                        // 3. Marcar como leÃ­do
+                        // 3. Marcar como leído
                         if (chat?.isUnread == true) {
                             ChatOptionItem(
                                 icon = Icons.Outlined.DoneAll,
-                                title = "Marcar como leÃ­do",
-                                subtitle = "Quitar indicador de no leÃ­do",
+                                title = "Marcar como leído",
+                                subtitle = "Quitar indicador de no leído",
                                 iconColor = Color(0xFF3B82F6)
                             ) {
                                 chat?.let { c ->
@@ -1301,7 +1301,7 @@ private fun ChatOptionsModal(
                         
                         Spacer(modifier = Modifier.height(12.dp))
                         
-                        // BotÃ³n cerrar
+                        // Botón cerrar
                         Button(
                             onClick = onDismiss,
                             modifier = Modifier.fillMaxWidth(),
@@ -1329,7 +1329,7 @@ private fun ChatOptionsModal(
         )
     }
     
-    // ConfirmaciÃ³n de eliminaciÃ³n
+    // Confirmación de eliminación
     if (showDeleteConfirm && chat != null) {
         AlertDialog(
             onDismissRequest = { showDeleteConfirm = false },
@@ -1339,7 +1339,7 @@ private fun ChatOptionsModal(
             },
             text = {
                 Text(
-                    "Se eliminarÃ¡ esta conversaciÃ³n con @${chat.username} de tu listado. Los mensajes no se borrarÃ¡n del servidor.",
+                    "Se eliminará esta conversación con @${chat.username} de tu listado. Los mensajes no se borrarán del servidor.",
                     color = TextSecondary
                 )
             },
@@ -1398,7 +1398,7 @@ private fun ChatOptionItem(
     }
 }
 
-// FunciÃ³n auxiliar para obtener preview con icono profesional
+// Función auxiliar para obtener preview con icono profesional
 private fun getMessagePreview(message: String?): MessagePreview? {
     if (message.isNullOrBlank()) return null
     return when {
@@ -1420,7 +1420,7 @@ private fun getMessagePreview(message: String?): MessagePreview? {
         message.startsWith("[LOCATION]") -> MessagePreview(
             icon = Icons.Outlined.LocationOn,
             iconColor = Color(0xFF10B981),
-            text = "UbicaciÃ³n compartida"
+            text = "Ubicación compartida"
         )
         message.startsWith("[SHARED_USER]") -> {
             val username = try {
@@ -1441,13 +1441,13 @@ private fun getMessagePreview(message: String?): MessagePreview? {
             MessagePreview(
                 icon = Icons.Outlined.ShoppingBag,
                 iconColor = Color(0xFFFF6B35),
-                text = title.ifEmpty { "ArtÃ­culo compartido" }
+                text = title.ifEmpty { "Artículo compartido" }
             )
         }
         message.startsWith("[ARTICLE_CARD]") -> MessagePreview(
             icon = Icons.Outlined.ShoppingBag,
             iconColor = Color(0xFFFF6B35),
-            text = "ArtÃ­culo compartido"
+            text = "Artículo compartido"
         )
         message.startsWith("[SHARED_REND]") -> MessagePreview(
             icon = Icons.Outlined.Videocam,
@@ -1485,12 +1485,12 @@ private fun getMessagePreview(message: String?): MessagePreview? {
                 val json = org.json.JSONObject(message.removePrefix("[HANDSHAKE_STATUS]"))
                 Pair(json.optString("type", ""), json.optDouble("agreedPrice", 0.0))
             } catch (_: Exception) { Pair("", 0.0) }
-            val priceStr = if (price > 0) " Â· \$${String.format("%.0f", price)}" else ""
+            val priceStr = if (price > 0) " · \$${String.format("%.0f", price)}" else ""
             when {
                 type.contains("COMPLETED") -> MessagePreview(
                     icon = Icons.Outlined.CheckCircle,
                     iconColor = Color(0xFF10B981),
-                    text = "TransacciÃ³n completada$priceStr"
+                    text = "Transacción completada$priceStr"
                 )
                 type.contains("CANCELLED") || type.contains("AGREEMENT_CANCELLED") -> MessagePreview(
                     icon = Icons.Outlined.Cancel,
@@ -1515,37 +1515,37 @@ private fun getMessagePreview(message: String?): MessagePreview? {
                 type.contains("CONFIRMED") -> MessagePreview(
                     icon = Icons.Outlined.Schedule,
                     iconColor = Color(0xFFFF6B35),
-                    text = "ConfirmaciÃ³n pendiente$priceStr"
+                    text = "Confirmación pendiente$priceStr"
                 )
                 else -> MessagePreview(
                     icon = Icons.Outlined.Handshake,
                     iconColor = Color(0xFFFF6B35),
-                    text = "ActualizaciÃ³n de transacciÃ³n"
+                    text = "Actualización de transacción"
                 )
             }
         }
         message.startsWith("[HANDSHAKE_INITIATED]") || message.startsWith("[HANDSHAKE]") -> MessagePreview(
             icon = Icons.Outlined.Handshake,
             iconColor = Color(0xFFFF6B35),
-            text = "Propuesta de transacciÃ³n"
+            text = "Propuesta de transacción"
         )
-        message.contains("RespondiÃ³ a tu historia") -> MessagePreview(
+        message.contains("Respondió a tu historia") -> MessagePreview(
             icon = Icons.Outlined.CameraAlt,
             iconColor = Color(0xFF8B5CF6),
-            text = "RespondiÃ³ a tu historia"
+            text = "Respondió a tu historia"
         )
         else -> null
     }
 }
 
-// FunciÃ³n auxiliar para formatear preview de Ãºltimo mensaje en chat list
+// Función auxiliar para formatear preview de último mensaje en chat list
 private fun formatLastMessagePreview(message: String?): String {
     if (message.isNullOrBlank()) return "Sin mensajes"
     return when {
         message.startsWith("[AUDIO]") -> "Mensaje de voz"
         message.startsWith("[IMG]") -> "Foto"
         message.startsWith("[VIDEO]") -> "Video"
-        message.startsWith("[LOCATION]") -> "UbicaciÃ³n compartida"
+        message.startsWith("[LOCATION]") -> "Ubicación compartida"
         message.startsWith("[SHARED_USER]") -> {
             try {
                 val json = org.json.JSONObject(message.removePrefix("[SHARED_USER]"))
@@ -1557,10 +1557,10 @@ private fun formatLastMessagePreview(message: String?): String {
             try {
                 val json = org.json.JSONObject(message.removePrefix("[SHARED_POST]"))
                 val title = json.optString("title", "")
-                title.ifEmpty { "ArtÃ­culo compartido" }
-            } catch (_: Exception) { "ArtÃ­culo compartido" }
+                title.ifEmpty { "Artículo compartido" }
+            } catch (_: Exception) { "Artículo compartido" }
         }
-        message.startsWith("[ARTICLE_CARD]") -> "ArtÃ­culo compartido"
+        message.startsWith("[ARTICLE_CARD]") -> "Artículo compartido"
         message.startsWith("[SHARED_REND]") -> "Video compartido"
         message.startsWith("[CONSULT_POST]") -> {
             try {
@@ -1580,25 +1580,25 @@ private fun formatLastMessagePreview(message: String?): String {
                 val json = org.json.JSONObject(message.removePrefix("[HANDSHAKE_STATUS]"))
                 val type = json.optString("type", "")
                 val price = json.optDouble("agreedPrice", 0.0)
-                val priceStr = if (price > 0) " Â· \$${String.format("%.0f", price)}" else ""
+                val priceStr = if (price > 0) " · \$${String.format("%.0f", price)}" else ""
                 when {
-                    type.contains("COMPLETED") -> "TransacciÃ³n completada$priceStr"
+                    type.contains("COMPLETED") -> "Transacción completada$priceStr"
                     type.contains("CANCELLED") || type.contains("AGREEMENT_CANCELLED") -> "Acuerdo cancelado"
                     type.contains("REJECTED") -> "Propuesta rechazada"
                     type.contains("PROPOSED") -> "Propuesta de acuerdo$priceStr"
                     type.contains("ACCEPTED") -> "Acuerdo aceptado$priceStr"
-                    type.contains("CONFIRMED") -> "ConfirmaciÃ³n pendiente$priceStr"
-                    else -> "ActualizaciÃ³n de transacciÃ³n"
+                    type.contains("CONFIRMED") -> "Confirmación pendiente$priceStr"
+                    else -> "Actualización de transacción"
                 }
-            } catch (_: Exception) { "ActualizaciÃ³n de transacciÃ³n" }
+            } catch (_: Exception) { "Actualización de transacción" }
         }
-        message.startsWith("[HANDSHAKE_INITIATED]") || message.startsWith("[HANDSHAKE]") -> "Propuesta de transacciÃ³n"
-        message.contains("RespondiÃ³ a tu historia") -> "RespondiÃ³ a tu historia"
+        message.startsWith("[HANDSHAKE_INITIATED]") || message.startsWith("[HANDSHAKE]") -> "Propuesta de transacción"
+        message.contains("Respondió a tu historia") -> "Respondió a tu historia"
         else -> message
     }
 }
 
-// FunciÃ³n auxiliar para formatear tiempo de mensajes
+// Función auxiliar para formatear tiempo de mensajes
 private fun formatMessageTimeAgo(timestamp: String?): String {
     if (timestamp.isNullOrBlank()) return ""
     return try {
@@ -1733,7 +1733,7 @@ private fun LabelPickerModal(
                                 .fillMaxWidth()
                                 .clip(RoundedCornerShape(10.dp))
                                 .clickable {
-                                    // Decidir acciÃ³n ANTES de cambiar estado
+                                    // Decidir acción ANTES de cambiar estado
                                     val shouldAssign = !isAssigned
                                     // Optimistic update: cambiar estado INMEDIATAMENTE
                                     assignedIds = if (isAssigned) {
@@ -1957,9 +1957,9 @@ private fun LabelsManagerModal(
                     }
                 }
                 
-                // DescripciÃ³n
+                // Descripción
                 Text(
-                    text = "Organiza tus chats con etiquetas personalizadas para gestionar clientes, pedidos y mÃ¡s.",
+                    text = "Organiza tus chats con etiquetas personalizadas para gestionar clientes, pedidos y más.",
                     fontSize = 13.sp,
                     color = TextMuted,
                     modifier = Modifier.padding(horizontal = 20.dp),
@@ -2089,7 +2089,7 @@ private fun LabelsManagerModal(
                                     .horizontalScroll(iconScroll),
                                 horizontalArrangement = Arrangement.spacedBy(6.dp)
                             ) {
-                                // OpciÃ³n "sin icono"
+                                // Opción "sin icono"
                                 Surface(
                                     modifier = Modifier.clickable { formIcon = null },
                                     shape = RoundedCornerShape(8.dp),
@@ -2236,7 +2236,7 @@ private fun LabelsManagerModal(
                                         )
                                     }
                                     
-                                    // BotÃ³n editar
+                                    // Botón editar
                                     IconButton(
                                         onClick = {
                                             editingLabel = label
@@ -2250,7 +2250,7 @@ private fun LabelsManagerModal(
                                         Icon(Icons.Outlined.Edit, "Editar", tint = TextMuted, modifier = Modifier.size(18.dp))
                                     }
                                     
-                                    // BotÃ³n eliminar
+                                    // Botón eliminar
                                     IconButton(
                                         onClick = { deleteConfirmLabel = label },
                                         modifier = Modifier.size(32.dp)
@@ -2266,7 +2266,7 @@ private fun LabelsManagerModal(
         }
     }
     
-    // ConfirmaciÃ³n de eliminaciÃ³n de etiqueta
+    // Confirmación de eliminación de etiqueta
     deleteConfirmLabel?.let { label ->
         AlertDialog(
             onDismissRequest = { deleteConfirmLabel = null },
@@ -2274,7 +2274,7 @@ private fun LabelsManagerModal(
             title = { Text("Eliminar etiqueta", fontWeight = FontWeight.Bold, color = TextPrimary) },
             text = {
                 Text(
-                    "Â¿Eliminar \"${label.name}\"? Se quitarÃ¡ de todos los chats que la tengan asignada.",
+                    "¿Eliminar \"${label.name}\"? Se quitará de todos los chats que la tengan asignada.",
                     color = TextSecondary
                 )
             },

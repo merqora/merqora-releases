@@ -388,7 +388,7 @@ private fun RendCameraView(
             put(MediaStore.MediaColumns.DISPLAY_NAME, "REND_$name")
             put(MediaStore.MediaColumns.MIME_TYPE, "video/mp4")
             if (Build.VERSION.SDK_INT > Build.VERSION_CODES.P) {
-                put(MediaStore.Video.Media.RELATIVE_PATH, "Movies/Vinzay")
+                put(MediaStore.Video.Media.RELATIVE_PATH, "Movies/Mercora")
             }
         }
         
@@ -811,10 +811,10 @@ private fun RendCameraView(
                 
                 // Carrusel de modos (centro) - minimalista estilo Instagram
                 Box(modifier = Modifier.weight(1f)) {
-                    com.vinzay.app.ui.components.ModeCarousel(
+                    com.mercora.app.ui.components.ModeCarousel(
                         currentIndex = currentModeIndex,
                         onModeSelected = onModeSelected,
-                        style = com.vinzay.app.ui.components.CarouselStyle.CENTERED_SINGLE
+                        style = com.mercora.app.ui.components.CarouselStyle.CENTERED_SINGLE
                     )
                 }
                 
@@ -977,7 +977,7 @@ private fun RendDetailsView(
     onProductPriceChange: (String) -> Unit,
     isPublishing: Boolean,
     onBack: () -> Unit,
-    onPublish: (linkedPost: com.vinzay.app.data.model.Post?, meta: RendMeta) -> Unit
+    onPublish: (linkedPost: com.mercora.app.data.model.Post?, meta: RendMeta) -> Unit
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -985,8 +985,8 @@ private fun RendDetailsView(
     
     // Estado para enlazar post
     var showPostLinkModal by remember { mutableStateOf(false) }
-    var linkedPost by remember { mutableStateOf<com.vinzay.app.data.model.Post?>(null) }
-    val userPosts by com.vinzay.app.data.repository.PostRepository.userPosts.collectAsState()
+    var linkedPost by remember { mutableStateOf<com.mercora.app.data.model.Post?>(null) }
+    val userPosts by com.mercora.app.data.repository.PostRepository.userPosts.collectAsState()
     
     // Nuevos estados profesionales
     var hashtags by remember { mutableStateOf(listOf<String>()) }
@@ -1000,8 +1000,8 @@ private fun RendDetailsView(
     var allowConsults by remember { mutableStateOf(true) }
     
     // Trending hashtags y categorías populares
-    var trendingHashtags by remember { mutableStateOf<List<com.vinzay.app.data.repository.TrendingHashtag>>(emptyList()) }
-    var popularCategories by remember { mutableStateOf<List<com.vinzay.app.data.repository.PopularCategory>>(emptyList()) }
+    var trendingHashtags by remember { mutableStateOf<List<com.mercora.app.data.repository.TrendingHashtag>>(emptyList()) }
+    var popularCategories by remember { mutableStateOf<List<com.mercora.app.data.repository.PopularCategory>>(emptyList()) }
     var locationTag by remember { mutableStateOf("") }
     var showLocationInput by remember { mutableStateOf(false) }
     var showAdvancedSettings by remember { mutableStateOf(false) }
@@ -1016,7 +1016,7 @@ private fun RendDetailsView(
     
     // Cargar posts del usuario y tendencias
     LaunchedEffect(Unit) {
-        com.vinzay.app.data.repository.PostRepository.loadUserPosts()
+        com.mercora.app.data.repository.PostRepository.loadUserPosts()
         trendingHashtags = RendRepository.getTrendingHashtags()
         popularCategories = RendRepository.getPopularCategories()
     }
@@ -2166,9 +2166,9 @@ private fun RendSectionHeader(icon: androidx.compose.ui.graphics.vector.ImageVec
 @Composable
 private fun PostLinkModal(
     isVisible: Boolean,
-    posts: List<com.vinzay.app.data.model.Post>,
+    posts: List<com.mercora.app.data.model.Post>,
     onDismiss: () -> Unit,
-    onPostSelected: (com.vinzay.app.data.model.Post) -> Unit
+    onPostSelected: (com.mercora.app.data.model.Post) -> Unit
 ) {
     var searchQuery by remember { mutableStateOf("") }
     val listState = androidx.compose.foundation.lazy.grid.rememberLazyGridState()
@@ -2340,7 +2340,7 @@ private fun PostLinkModal(
                                 ) {
                                     items(filteredPosts.size) { index ->
                                         val post = filteredPosts[index]
-                                        com.vinzay.app.ui.components.UnifiedProductCard(
+                                        com.mercora.app.ui.components.UnifiedProductCard(
                                             data = post.toProductCardData(),
                                             onClick = { onPostSelected(post) },
                                             modifier = Modifier.fillMaxWidth()

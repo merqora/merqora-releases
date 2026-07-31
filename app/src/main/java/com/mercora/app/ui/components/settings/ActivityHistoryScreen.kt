@@ -299,7 +299,7 @@ private fun ActivityLogItem(log: SecurityRepository.ActivityLog) {
                         }
                     }
                     
-                    // UbicaciÃ³n
+                    // Ubicación
                     log.location?.let { location ->
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Icon(
@@ -384,15 +384,15 @@ private fun getActivityIcon(type: String, isSuspicious: Boolean): Triple<ImageVe
 
 private fun getActivityTitle(type: String): String {
     return when (type) {
-        "login" -> "Inicio de sesiÃ³n"
-        "logout" -> "Cierre de sesiÃ³n"
-        "password_change" -> "Cambio de contraseÃ±a"
+        "login" -> "Inicio de sesión"
+        "logout" -> "Cierre de sesión"
+        "password_change" -> "Cambio de contraseña"
         "2fa_enabled" -> "2FA activado"
         "2fa_disabled" -> "2FA desactivado"
         "device_added" -> "Dispositivo agregado"
         "device_removed" -> "Dispositivo eliminado"
-        "session_ended" -> "SesiÃ³n cerrada"
-        "settings_change" -> "ConfiguraciÃ³n modificada"
+        "session_ended" -> "Sesión cerrada"
+        "settings_change" -> "Configuración modificada"
         "suspicious_login" -> "Inicio sospechoso"
         else -> "Actividad"
     }
@@ -400,15 +400,15 @@ private fun getActivityTitle(type: String): String {
 
 private fun getActivityDescription(type: String): String {
     return when (type) {
-        "login" -> "Iniciaste sesiÃ³n en tu cuenta"
-        "logout" -> "Cerraste sesiÃ³n de tu cuenta"
-        "password_change" -> "Tu contraseÃ±a fue actualizada"
-        "2fa_enabled" -> "AutenticaciÃ³n de dos factores activada"
-        "2fa_disabled" -> "AutenticaciÃ³n de dos factores desactivada"
+        "login" -> "Iniciaste sesión en tu cuenta"
+        "logout" -> "Cerraste sesión de tu cuenta"
+        "password_change" -> "Tu contraseña fue actualizada"
+        "2fa_enabled" -> "Autenticación de dos factores activada"
+        "2fa_disabled" -> "Autenticación de dos factores desactivada"
         "device_added" -> "Nuevo dispositivo de confianza"
         "device_removed" -> "Dispositivo eliminado de confianza"
-        "session_ended" -> "SesiÃ³n cerrada remotamente"
-        "settings_change" -> "ConfiguraciÃ³n de seguridad modificada"
+        "session_ended" -> "Sesión cerrada remotamente"
+        "settings_change" -> "Configuración de seguridad modificada"
         else -> "Actividad en tu cuenta"
     }
 }

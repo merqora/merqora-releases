@@ -122,10 +122,10 @@ data class ChatLabel(
 
 // Estados de mensaje para los ticks
 enum class MessageStatus {
-    SENDING,   // Reloj o spinner (aÃºn no confirmado)
+    SENDING,   // Reloj o spinner (aún no confirmado)
     SENT,      // 1 tick gris - enviado al servidor
     DELIVERED, // 2 ticks grises - entregado al dispositivo
-    READ       // 2 ticks azules - leÃ­do por el usuario
+    READ       // 2 ticks azules - leído por el usuario
 }
 
 data class Message(
@@ -184,14 +184,14 @@ object ChatRepository {
     private val _currentMessages = MutableStateFlow<List<Message>>(emptyList())
     val currentMessages: StateFlow<List<Message>> = _currentMessages.asStateFlow()
     
-    // Total de mensajes no leÃ­dos (suma de todos los chats)
+    // Total de mensajes no leídos (suma de todos los chats)
     private val _totalUnreadCount = MutableStateFlow(0)
     val totalUnreadCount: StateFlow<Int> = _totalUnreadCount.asStateFlow()
     
     // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
     // CLEARED_AT - Persistir timestamps de chats vaciados
     // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-    private const val PREFS_NAME = "rendly_chat_prefs"
+    private const val PREFS_NAME = "Mercora_chat_prefs"
     private const val KEY_PREFIX_CLEARED = "cleared_at_"
     
     private fun getClearedAt(conversationId: String): String? {
@@ -214,9 +214,9 @@ object ChatRepository {
     // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
     private val messagesCache = mutableMapOf<String, List<Message>>()
     private val MAX_CACHED_CONVERSATIONS = 20
-    private const val DISK_CACHE_PREFS = "rendly_msg_cache"
+    private const val DISK_CACHE_PREFS = "Mercora_msg_cache"
     private const val DISK_CACHE_KEY_PREFIX = "msg_"
-    private const val DISK_CACHE_MAX_MESSAGES = 30 // Ãšltimos N mensajes por conversaciÃ³n en disco
+    private const val DISK_CACHE_MAX_MESSAGES = 30 // Últimos N mensajes por conversación en disco
     
     fun getCachedMessages(conversationId: String): List<Message>? {
         // Primero memoria, luego disco
@@ -235,7 +235,7 @@ object ChatRepository {
             messagesCache.keys.firstOrNull()?.let { messagesCache.remove(it) }
         }
         messagesCache[conversationId] = messages
-        // Persistir a disco (Ãºltimos N mensajes)
+        // Persistir a disco (últimos N mensajes)
         saveMessagesToDisk(conversationId, messages)
     }
     
@@ -255,7 +255,7 @@ object ChatRepository {
         return prefs.contains("$DISK_CACHE_KEY_PREFIX$conversationId")
     }
     
-    // â”€â”€ SerializaciÃ³n JSON para persistencia en disco â”€â”€
+    // â”€â”€ Serialización JSON para persistencia en disco â”€â”€
     
     private fun saveMessagesToDisk(conversationId: String, messages: List<Message>) {
         try {
@@ -339,7 +339,7 @@ object ChatRepository {
     
     // Control de typing para evitar spam
     private var lastTypingBroadcast = 0L
-    private val TYPING_THROTTLE_MS = 500L // Reducido para respuesta mÃ¡s rÃ¡pida
+    private val TYPING_THROTTLE_MS = 500L // Reducido para respuesta más rápida
     
     // Enviar estado de typing via Broadcast
     fun setTyping(conversationId: String, isTyping: Boolean) {
@@ -363,7 +363,7 @@ object ChatRepository {
         }
     }
     
-    // Simular actualizaciÃ³n de estado online del otro usuario
+    // Simular actualización de estado online del otro usuario
     fun setOtherUserOnline(isOnline: Boolean) {
         _isOtherUserOnline.value = isOnline
     }
@@ -428,7 +428,7 @@ object ChatRepository {
                 .select { filter { isIn("conversation_id", conversationIds) } }
                 .decodeList<ConversationParticipantDB>()
             
-            // Obtener usuarios Ãºnicos (excluyendo al usuario actual)
+            // Obtener usuarios únicos (excluyendo al usuario actual)
             val otherUserIds = allParticipants
                 .filter { it.userId != currentUserId }
                 .map { it.userId }
@@ -470,7 +470,7 @@ object ChatRepository {
                     .toSet()
             } catch (e: Exception) { emptySet() }
             
-            // Cargar etiquetas del usuario si aÃºn no se cargaron
+            // Cargar etiquetas del usuario si aún no se cargaron
             if (_userLabels.value.isEmpty()) {
                 try {
                     val labels = SupabaseClient.database
@@ -490,7 +490,7 @@ object ChatRepository {
                 val otherUser = otherParticipant?.let { usersMap[it.userId] }
                 val myParticipation = participationsMap[conv.id]
                 
-                // Resolver etiquetas de esta conversaciÃ³n
+                // Resolver etiquetas de esta conversación
                 val convLabels = assignmentsByConv[conv.id]
                     ?.mapNotNull { labelsMap[it.labelId] }
                     ?: emptyList()
@@ -511,7 +511,7 @@ object ChatRepository {
                 } else null
             }.sortedWith(compareByDescending<Conversation> { it.isPinned }.thenByDescending { it.lastMessageAt })
             
-            // Actualizar contador total de mensajes no leÃ­dos
+            // Actualizar contador total de mensajes no leídos
             _totalUnreadCount.value = _conversations.value.sumOf { it.unreadCount }
             BadgeCountCache.setMessageCount(_totalUnreadCount.value)
             
@@ -525,14 +525,14 @@ object ChatRepository {
         }
     }
     
-    // Obtener o crear conversaciÃ³n con un usuario
+    // Obtener o crear conversación con un usuario
     suspend fun getOrCreateConversation(otherUserId: String): String? {
         _lastError.value = null
         
-        // OptimizaciÃ³n local: Buscar en las conversaciones cargadas en memoria primero
+        // Optimización local: Buscar en las conversaciones cargadas en memoria primero
         val localId = _conversations.value.find { it.otherUser.userId == otherUserId }?.id
         if (localId != null) {
-            Log.d(TAG, "âœ“ ConversaciÃ³n encontrada localmente en cachÃ© de memoria: $localId")
+            Log.d(TAG, "âœ“ Conversación encontrada localmente en caché de memoria: $localId")
             return localId
         }
         
@@ -543,10 +543,10 @@ object ChatRepository {
                 return null
             }
             
-            Log.d(TAG, "=== BUSCANDO/CREANDO CONVERSACIÃ“N ===")
+            Log.d(TAG, "=== BUSCANDO/CREANDO CONVERSACIÓN ===")
             Log.d(TAG, "CurrentUser: $currentUserId, OtherUser: $otherUserId")
             
-            // Buscar conversaciÃ³n existente
+            // Buscar conversación existente
             val myParticipations = SupabaseClient.database
                 .from("conversation_participants")
                 .select { filter { eq("user_id", currentUserId) } }
@@ -566,15 +566,15 @@ object ChatRepository {
                     .decodeList<ConversationParticipantDB>()
                 
                 if (otherParticipant.isNotEmpty()) {
-                    Log.d(TAG, "ConversaciÃ³n existente encontrada: ${participation.conversationId}")
+                    Log.d(TAG, "Conversación existente encontrada: ${participation.conversationId}")
                     return participation.conversationId
                 }
             }
             
-            // Crear nueva conversaciÃ³n usando el patrÃ³n de StoryRepository
-            Log.d(TAG, "Creando nueva conversaciÃ³n...")
+            // Crear nueva conversación usando el patrón de StoryRepository
+            Log.d(TAG, "Creando nueva conversación...")
             
-            // 1. Insertar conversaciÃ³n y obtener el ID con select()
+            // 1. Insertar conversación y obtener el ID con select()
             val convJson = buildJsonObject {
                 put("last_message", JsonNull)
                 put("last_message_at", JsonNull)
@@ -588,12 +588,12 @@ object ChatRepository {
                 .decodeSingleOrNull<ConversationDB>()
             
             if (conversationResult == null) {
-                _lastError.value = "CREATE CONV: No se pudo crear la conversaciÃ³n"
+                _lastError.value = "CREATE CONV: No se pudo crear la conversación"
                 return null
             }
             
             val conversationId = conversationResult.id
-            Log.d(TAG, "ConversaciÃ³n creada: $conversationId")
+            Log.d(TAG, "Conversación creada: $conversationId")
             
             // 2. Agregar participantes usando buildJsonObject
             val participant1 = buildJsonObject {
@@ -610,7 +610,10 @@ object ChatRepository {
             val insertParticipantsResult = runCatching {
                 SupabaseClient.database
                     .from("conversation_participants")
-                    .insert(listOf(participant1, participant2))
+                    .insert(listOf(participant1))
+                SupabaseClient.database
+                    .from("conversation_participants")
+                    .insert(listOf(participant2))
             }
             
             if (insertParticipantsResult.isFailure) {
@@ -619,7 +622,7 @@ object ChatRepository {
             }
             
             Log.d(TAG, "âœ“ Participantes agregados exitosamente")
-            Log.d(TAG, "=== CONVERSACIÃ“N CREADA: $conversationId ===")
+            Log.d(TAG, "=== CONVERSACIÓN CREADA: $conversationId ===")
             
             return conversationId
             
@@ -633,32 +636,32 @@ object ChatRepository {
     private var hasMoreMessages = true
     private val INITIAL_MESSAGE_LIMIT = 30 // Mensajes iniciales (suficientes para llenar pantalla + scroll)
     private val LOAD_MORE_LIMIT = 12 // Mensajes adicionales al hacer scroll arriba
-    private var oldestLoadedMessageDate: String? = null // Cursor para paginaciÃ³n
+    private var oldestLoadedMessageDate: String? = null // Cursor para paginación
     
-    // Estado para indicar si hay mÃ¡s mensajes por cargar
+    // Estado para indicar si hay más mensajes por cargar
     private val _hasMoreMessages = MutableStateFlow(true)
     val hasMoreMessagesFlow: StateFlow<Boolean> = _hasMoreMessages.asStateFlow()
     
-    // Estado para indicar si estÃ¡ cargando mÃ¡s mensajes
+    // Estado para indicar si está cargando más mensajes
     private val _isLoadingMore = MutableStateFlow(false)
     val isLoadingMore: StateFlow<Boolean> = _isLoadingMore.asStateFlow()
     
-    // Flag que indica si la carga inicial de mensajes ya terminÃ³
+    // Flag que indica si la carga inicial de mensajes ya terminó
     private val _initialLoadDone = MutableStateFlow(false)
     val initialLoadDone: StateFlow<Boolean> = _initialLoadDone.asStateFlow()
     
-    // Flag que indica si la carga de red inicial ya terminÃ³
+    // Flag que indica si la carga de red inicial ya terminó
     private val _serverLoadDone = MutableStateFlow(false)
     val serverLoadDone: StateFlow<Boolean> = _serverLoadDone.asStateFlow()
     
-    // Cargar mensajes INICIALES de una conversaciÃ³n (Ãºltimos N mensajes)
+    // Cargar mensajes INICIALES de una conversación (últimos N mensajes)
     suspend fun loadMessages(conversationId: String) {
         Log.d(TAG, "â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—")
         Log.d(TAG, "â•‘       LOAD MESSAGES INICIADO               â•‘")
         Log.d(TAG, "â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•")
         Log.d(TAG, "ConversationId: $conversationId")
         
-        // Si no hay mensajes cargados (cachÃ©), marcamos que no estÃ¡ listo
+        // Si no hay mensajes cargados (caché), marcamos que no está listo
         if (_currentMessages.value.isEmpty()) {
             _initialLoadDone.value = false
         }
@@ -678,8 +681,8 @@ object ChatRepository {
             
             Log.d(TAG, "CurrentUserId: $currentUserId")
             
-            // Cargar ÃšLTIMOS N mensajes (ORDER BY DESC + LIMIT, luego invertir)
-            Log.d(TAG, "Consultando Ãºltimos $INITIAL_MESSAGE_LIMIT mensajes...")
+            // Cargar ÚLTIMOS N mensajes (ORDER BY DESC + LIMIT, luego invertir)
+            Log.d(TAG, "Consultando últimos $INITIAL_MESSAGE_LIMIT mensajes...")
             
             val clearedAt = getClearedAt(conversationId)
             
@@ -705,13 +708,13 @@ object ChatRepository {
             
             Log.d(TAG, "Mensajes obtenidos de DB: ${messagesDB.size}")
             
-            // Si obtenemos menos del lÃ­mite, no hay mÃ¡s mensajes
+            // Si obtenemos menos del límite, no hay más mensajes
             _hasMoreMessages.value = messagesDB.size >= INITIAL_MESSAGE_LIMIT
             
-            // Invertir para orden cronolÃ³gico (mÃ¡s antiguos primero)
+            // Invertir para orden cronológico (más antiguos primero)
             val sortedMessages = messagesDB.reversed()
             
-            // Guardar fecha del mensaje mÃ¡s antiguo para paginaciÃ³n
+            // Guardar fecha del mensaje más antiguo para paginación
             if (sortedMessages.isNotEmpty()) {
                 oldestLoadedMessageDate = sortedMessages.first().createdAt
             }
@@ -742,7 +745,7 @@ object ChatRepository {
             cacheMessages(conversationId, _currentMessages.value)
             Log.d(TAG, "âœ“ Mensajes cargados y cacheados: ${newMessages.size}, hasMore: ${_hasMoreMessages.value}")
             
-            // Marcar mensajes como leÃ­dos
+            // Marcar mensajes como leídos
             markMessagesAsRead(conversationId)
             
         } catch (e: Exception) {
@@ -754,7 +757,7 @@ object ChatRepository {
         }
     }
     
-    // Cargar mÃ¡s mensajes antiguos (al hacer scroll hacia arriba)
+    // Cargar más mensajes antiguos (al hacer scroll hacia arriba)
     suspend fun loadMoreMessages(): Boolean {
         val convId = currentConversationId ?: return false
         val oldestDate = oldestLoadedMessageDate ?: return false
@@ -762,12 +765,12 @@ object ChatRepository {
         if (_isLoadingMore.value || !_hasMoreMessages.value) return false
         
         _isLoadingMore.value = true
-        Log.d(TAG, "Cargando mÃ¡s mensajes anteriores a: $oldestDate")
+        Log.d(TAG, "Cargando más mensajes anteriores a: $oldestDate")
         
         try {
             val currentUserId = SupabaseClient.auth.currentUserOrNull()?.id ?: return false
             
-            // Cargar mensajes ANTERIORES al mÃ¡s antiguo cargado (respetando cleared_at)
+            // Cargar mensajes ANTERIORES al más antiguo cargado (respetando cleared_at)
             val clearedAt = getClearedAt(convId)
             val olderMessagesDB = SupabaseClient.database
                 .from("messages")
@@ -792,10 +795,10 @@ object ChatRepository {
                 return false
             }
             
-            // Si obtenemos menos del lÃ­mite, no hay mÃ¡s
+            // Si obtenemos menos del límite, no hay más
             _hasMoreMessages.value = olderMessagesDB.size >= LOAD_MORE_LIMIT
             
-            // Invertir para orden cronolÃ³gico
+            // Invertir para orden cronológico
             val sortedOlder = olderMessagesDB.reversed()
             
             // Actualizar cursor
@@ -830,14 +833,14 @@ object ChatRepository {
             
             return true
         } catch (e: Exception) {
-            Log.e(TAG, "Error cargando mÃ¡s mensajes: ${e.message}", e)
+            Log.e(TAG, "Error cargando más mensajes: ${e.message}", e)
             return false
         } finally {
             _isLoadingMore.value = false
         }
     }
     
-    /** Cargar mensajes hasta encontrar un mensaje especÃ­fico por ID (para scroll desde bÃºsqueda) */
+    /** Cargar mensajes hasta encontrar un mensaje específico por ID (para scroll desde búsqueda) */
     suspend fun loadMessagesUntilFound(messageId: String): Int {
         currentConversationId ?: return -1
         
@@ -845,7 +848,7 @@ object ChatRepository {
         val existingIndex = _currentMessages.value.indexOfFirst { it.id == messageId }
         if (existingIndex >= 0) return existingIndex
         
-        // Cargar bloques de mensajes antiguos hasta encontrarlo (mÃ¡ximo 5 intentos)
+        // Cargar bloques de mensajes antiguos hasta encontrarlo (máximo 5 intentos)
         repeat(5) {
             if (!_hasMoreMessages.value) return -1
             val loaded = loadMoreMessages()
@@ -856,7 +859,7 @@ object ChatRepository {
         return -1
     }
     
-    // Ãšltimo error para mostrar en UI
+    // Último error para mostrar en UI
     private val _lastError = MutableStateFlow<String?>(null)
     val lastError: StateFlow<String?> = _lastError.asStateFlow()
     
@@ -906,7 +909,7 @@ object ChatRepository {
         _currentMessages.value = _currentMessages.value + optimisticMessage
         Log.d(TAG, "Mensaje optimista agregado con clientTempId: $clientTempId")
         
-        // 1. Insertar mensaje en Supabase CON client_temp_id para sincronizaciÃ³n
+        // 1. Insertar mensaje en Supabase CON client_temp_id para sincronización
         val messageJson = buildJsonObject {
             put("conversation_id", conversationId)
             put("sender_id", currentUserId)
@@ -935,8 +938,8 @@ object ChatRepository {
         
         Log.d(TAG, "âœ“ Mensaje insertado en Supabase")
         
-        // 2. Actualizar conversaciÃ³n con Ãºltimo mensaje
-        Log.d(TAG, "Actualizando conversaciÃ³n con Ãºltimo mensaje...")
+        // 2. Actualizar conversación con último mensaje
+        Log.d(TAG, "Actualizando conversación con último mensaje...")
         val updateConvJson = buildJsonObject {
             put("last_message", content)
             put("last_message_at", now)
@@ -950,12 +953,12 @@ object ChatRepository {
         }
         
         if (updateConvResult.isFailure) {
-            Log.e(TAG, "Error actualizando conversaciÃ³n: ${updateConvResult.exceptionOrNull()?.message}")
+            Log.e(TAG, "Error actualizando conversación: ${updateConvResult.exceptionOrNull()?.message}")
         } else {
-            Log.d(TAG, "âœ“ ConversaciÃ³n actualizada")
+            Log.d(TAG, "âœ“ Conversación actualizada")
         }
         
-        // 3. Incrementar contador de no leÃ­dos para el otro usuario
+        // 3. Incrementar contador de no leídos para el otro usuario
         try {
             val participants = SupabaseClient.database
                 .from("conversation_participants")
@@ -974,7 +977,7 @@ object ChatRepository {
                         filter { eq("id", otherParticipant.id) }
                     }
                 
-                // Crear notificaciÃ³n para el otro usuario
+                // Crear notificación para el otro usuario
                 val senderUsername = ProfileRepository.currentProfile.value?.username ?: "Usuario"
                 val messagePreview = if (content.length > 50) content.take(50) + "..." else content
                 
@@ -984,7 +987,7 @@ object ChatRepository {
                     messagePreview = messagePreview
                 )
                 
-                // Enviar FCM push para que llegue al otro telÃ©fono (phone-to-phone)
+                // Enviar FCM push para que llegue al otro teléfono (phone-to-phone)
                 NotificationRepository.sendFCMPush(
                     recipientId = otherParticipant.userId,
                     title = senderUsername,
@@ -1013,7 +1016,7 @@ object ChatRepository {
         }
         
         // NO recargar mensajes ni conversaciones - el realtime se encarga de confirmar
-        Log.d(TAG, "=== MENSAJE ENVIADO (esperando confirmaciÃ³n realtime) ===")
+        Log.d(TAG, "=== MENSAJE ENVIADO (esperando confirmación realtime) ===")
         return true
         
         } catch (e: Exception) {
@@ -1151,7 +1154,7 @@ object ChatRepository {
                 return null
             }
             
-            // Actualizar conversaciÃ³n
+            // Actualizar conversación
             val updateConvJson = buildJsonObject {
                 put("last_message", messageContent)
                 put("last_message_at", now)
@@ -1213,13 +1216,13 @@ object ChatRepository {
         }
     }
     
-    // Agregar o quitar reacciÃ³n a un mensaje (atÃ³mico via RPC + optimistic update)
+    // Agregar o quitar reacción a un mensaje (atómico via RPC + optimistic update)
     suspend fun toggleReaction(messageId: String, emoji: String): Boolean {
         try {
             val currentUserId = SupabaseClient.auth.currentUserOrNull()?.id ?: return false
             Log.d(TAG, "Toggle reaction $emoji en mensaje $messageId")
             
-            // 1. Optimistic update: actualizar UI instantÃ¡neamente
+            // 1. Optimistic update: actualizar UI instantáneamente
             val message = _currentMessages.value.find { it.id == messageId } ?: return false
             val optimisticReactions = message.reactions.toMutableMap()
             val usersForEmoji = optimisticReactions[emoji]?.toMutableList() ?: mutableListOf()
@@ -1235,7 +1238,7 @@ object ChatRepository {
                 if (it.id == messageId) it.copy(reactions = optimisticReactions) else it
             }
             
-            // 2. Llamar RPC atÃ³mica: evita race conditions y bypassa RLS
+            // 2. Llamar RPC atómica: evita race conditions y bypassa RLS
             try {
                 SupabaseClient.database.rpc(
                     "toggle_message_reaction",
@@ -1247,7 +1250,7 @@ object ChatRepository {
                 )
                 Log.d(TAG, "âœ“ RPC toggle_message_reaction ejecutada")
             } catch (rpcError: Exception) {
-                // Si la RPC falla (ej: no existe aÃºn), fallback al mÃ©todo directo
+                // Si la RPC falla (ej: no existe aún), fallback al método directo
                 Log.w(TAG, "RPC no disponible, usando fallback directo: ${rpcError.message}")
                 val reactionsJson = if (optimisticReactions.isEmpty()) null else {
                     val jsonObj = org.json.JSONObject()
@@ -1269,9 +1272,9 @@ object ChatRepository {
             
             // 3. El UPDATE (dentro de la RPC o fallback) dispara Realtime,
             //    y el messageUpdateFlow actualiza con el estado autoritativo del servidor.
-            //    El otro usuario lo ve instantÃ¡neamente.
+            //    El otro usuario lo ve instantáneamente.
             
-            Log.d(TAG, "âœ“ ReacciÃ³n $emoji procesada para mensaje $messageId")
+            Log.d(TAG, "âœ“ Reacción $emoji procesada para mensaje $messageId")
             return true
             
         } catch (e: Exception) {
@@ -1315,16 +1318,16 @@ object ChatRepository {
         }
     }
     
-    // Eliminar un mensaje (optimista: elimina localmente primero, Supabase despuÃ©s)
+    // Eliminar un mensaje (optimista: elimina localmente primero, Supabase después)
     suspend fun deleteMessage(messageId: String): Boolean {
         return try {
             val currentUserId = SupabaseClient.auth.currentUserOrNull()?.id ?: return false
             
-            // ELIMINACIÃ“N OPTIMISTA: Quitar del chat inmediatamente
+            // ELIMINACIÓN OPTIMISTA: Quitar del chat inmediatamente
             _currentMessages.value = _currentMessages.value.filter { it.id != messageId }
             Log.d(TAG, "âœ“ Mensaje eliminado del chat localmente")
             
-            // Eliminar de Supabase (ya no bloqueamos la UI porque la lista local ya se actualizÃ³)
+            // Eliminar de Supabase (ya no bloqueamos la UI porque la lista local ya se actualizó)
             try {
                 SupabaseClient.database
                     .from("messages")
@@ -1336,7 +1339,7 @@ object ChatRepository {
                     }
                 Log.d(TAG, "âœ“ Mensaje eliminado de Supabase")
             } catch (e: Exception) {
-                Log.e(TAG, "âœ— Error eliminando de Supabase (pero ya se eliminÃ³ localmente): ${e.message}")
+                Log.e(TAG, "âœ— Error eliminando de Supabase (pero ya se eliminó localmente): ${e.message}")
             }
             
             true
@@ -1346,21 +1349,21 @@ object ChatRepository {
         }
     }
     
-    // Marcar mensajes como leÃ­dos (actualiza status a 'read' para los ticks azules)
+    // Marcar mensajes como leídos (actualiza status a 'read' para los ticks azules)
     suspend fun markMessagesAsRead(conversationId: String) {
         try {
             val currentUserId = SupabaseClient.auth.currentUserOrNull()?.id ?: return
             
-            Log.d(TAG, "Marcando mensajes como leÃ­dos - convId: $conversationId, userId: $currentUserId")
+            Log.d(TAG, "Marcando mensajes como leídos - convId: $conversationId, userId: $currentUserId")
             
-            // Marcar mensajes como leÃ­dos con status = 'read'
+            // Marcar mensajes como leídos con status = 'read'
             val readJson = buildJsonObject { 
                 put("is_read", true)
                 put("status", "read")
                 put("read_at", java.time.Instant.now().toString())
             }
             
-            // Actualizar mensajes que NO son mÃ­os y que NO estÃ¡n leÃ­dos
+            // Actualizar mensajes que NO son míos y que NO están leídos
             SupabaseClient.database
                 .from("messages")
                 .update(readJson) {
@@ -1371,9 +1374,9 @@ object ChatRepository {
                     }
                 }
             
-            Log.d(TAG, "âœ“ Mensajes marcados como leÃ­dos")
+            Log.d(TAG, "âœ“ Mensajes marcados como leídos")
             
-            // Resetear contador de no leÃ­dos
+            // Resetear contador de no leídos
             val resetUnreadJson = buildJsonObject { put("unread_count", 0) }
             SupabaseClient.database
                 .from("conversation_participants")
@@ -1390,7 +1393,7 @@ object ChatRepository {
         }
     }
     
-    // Abrir chat: cargar cache INSTANTÃNEAMENTE, luego actualizar desde servidor
+    // Abrir chat: cargar cache INSTANTÁNEAMENTE, luego actualizar desde servidor
     suspend fun openChat(conversationId: String, otherUserName: String? = null) {
         Log.d(TAG, "=== ABRIENDO CHAT ===")
         Log.d(TAG, "ConversationId: $conversationId, otherUser: $otherUserName")
@@ -1402,7 +1405,7 @@ object ChatRepository {
             currentOtherUserName = otherUserName
         }
         
-        // 1. Limpiar estado anterior si es otra conversaciÃ³n
+        // 1. Limpiar estado anterior si es otra conversación
         val isSameConversation = currentConversationId == conversationId
         if (!isSameConversation) {
             currentConversationId = conversationId
@@ -1412,7 +1415,7 @@ object ChatRepository {
             _currentMessages.value = emptyList()
         }
         
-        // 2. Cargar cache instantÃ¡neamente (memoria o disco)
+        // 2. Cargar cache instantáneamente (memoria o disco)
         val cached = getCachedMessages(conversationId)
         if (cached != null && cached.isNotEmpty()) {
             _currentMessages.value = filterByClearedAt(cached, conversationId)
@@ -1438,7 +1441,7 @@ object ChatRepository {
     
     // Suscribirse a nuevos mensajes en tiempo real
     private fun subscribeToMessages(conversationId: String) {
-        // No recrear si ya estÃ¡ suscrito a esta conversaciÃ³n
+        // No recrear si ya está suscrito a esta conversación
         if (realtimeChannel != null && currentConversationId == conversationId) {
             _realtimeStatus.value = "Ya suscrito"
             return
@@ -1446,7 +1449,7 @@ object ChatRepository {
         
         scope.launch {
             try {
-                // Cancelar suscripciÃ³n anterior si existe
+                // Cancelar suscripción anterior si existe
                 if (realtimeChannel != null) {
                     try {
                         realtimeChannel?.unsubscribe()
@@ -1462,7 +1465,7 @@ object ChatRepository {
                     realtime.connect()
                     kotlinx.coroutines.delay(500)
                 } catch (e: Exception) {
-                    // Si ya estÃ¡ conectado, continuar sin problema
+                    // Si ya está conectado, continuar sin problema
                     if (!e.message.orEmpty().contains("already connected", ignoreCase = true)) {
                         _realtimeStatus.value = "WS err: ${e.message?.take(15)}"
                     }
@@ -1472,7 +1475,7 @@ object ChatRepository {
                 
                 val currentUserId = SupabaseClient.auth.currentUserOrNull()?.id ?: return@launch
                 
-                // 2. Crear canal para esta conversaciÃ³n
+                // 2. Crear canal para esta conversación
                 val channelName = "chat-$conversationId"
                 val channel = SupabaseClient.client.channel(channelName)
                 
@@ -1499,13 +1502,13 @@ object ChatRepository {
                 // Procesar eventos de PRESENCE (online/offline)
                 presenceFlow.onEach { presenceAction ->
                     try {
-                        // Contar usuarios en el canal (excluyÃ©ndome)
+                        // Contar usuarios en el canal (excluyéndome)
                         val joins = presenceAction.joins
                         val leaves = presenceAction.leaves
                         
                         Log.d(TAG, "PRESENCE: joins=${joins.size} leaves=${leaves.size}")
                         
-                        // Si alguien se uniÃ³ que no soy yo
+                        // Si alguien se unió que no soy yo
                         joins.forEach { (key, _) ->
                             if (key != currentUserId) {
                                 _isOtherUserOnline.value = true
@@ -1513,7 +1516,7 @@ object ChatRepository {
                             }
                         }
                         
-                        // Si alguien saliÃ³ que no soy yo
+                        // Si alguien salió que no soy yo
                         leaves.forEach { (key, _) ->
                             if (key != currentUserId) {
                                 _isOtherUserOnline.value = false
@@ -1537,7 +1540,7 @@ object ChatRepository {
                         if (senderUserId != null && senderUserId != currentUserId) {
                             _isOtherUserTyping.value = isTyping
                             _realtimeStatus.value = if (isTyping) "âœï¸ Escribiendo..." else "âœ“ LISTO"
-                            // Auto-reset despuÃ©s de 3 segundos si no llega otro evento
+                            // Auto-reset después de 3 segundos si no llega otro evento
                             if (isTyping) {
                                 scope.launch {
                                     kotlinx.coroutines.delay(3000)
@@ -1599,7 +1602,7 @@ object ChatRepository {
                         val msgCreatedAt = record["created_at"]?.jsonPrimitive?.content ?: ""
                         val clientTempId = record["client_temp_id"]?.let { if (it is JsonNull) null else it.jsonPrimitive.content.takeIf { c -> c != "null" && c.isNotEmpty() } }
                         
-                        // Solo mensajes de ESTA conversaciÃ³n
+                        // Solo mensajes de ESTA conversación
                         if (msgConversationId != conversationId) return@onEach
                         
                         val currentUserId = SupabaseClient.auth.currentUserOrNull()?.id
@@ -1629,7 +1632,7 @@ object ChatRepository {
                         val isAfterClear = clearedAt == null || msgCreatedAt > clearedAt
                         
                         if (optimisticIndex >= 0) {
-                            // Preservar id, content y createdAt para evitar parpadeo de imÃ¡genes
+                            // Preservar id, content y createdAt para evitar parpadeo de imágenes
                             // El content ya tiene la URI local que AsyncImage muestra sin flicker
                             val existingMsg = _currentMessages.value[optimisticIndex]
                             _currentMessages.value = _currentMessages.value.toMutableList().apply {
@@ -1642,11 +1645,11 @@ object ChatRepository {
                             _currentMessages.value = _currentMessages.value + newMessage
                             _realtimeStatus.value = "âœ“ NUEVO: ${msgContent.take(10)}..."
                             
-                            // El otro usuario dejÃ³ de escribir (acaba de enviar)
+                            // El otro usuario dejó de escribir (acaba de enviar)
                             _isOtherUserTyping.value = false
                             
                             if (!isFromMe) {
-                                // Marcar como leÃ­do
+                                // Marcar como leído
                                 scope.launch { markMessagesAsRead(conversationId) }
                             }
                         }
@@ -1667,7 +1670,7 @@ object ChatRepository {
                 _realtimeStatus.value = "Suscribiendo..."
                 channel.subscribe(blockUntilSubscribed = true)
                 
-                // 9. Registrar presencia (respetando configuraciÃ³n de privacidad)
+                // 9. Registrar presencia (respetando configuración de privacidad)
                 try {
                     // Check if user has online status enabled
                     val privacySettings = try {
@@ -1726,7 +1729,7 @@ object ChatRepository {
     const val CLIENT_REQUEST_PENDING = "[[CLIENT_PENDING]]"
     
     /**
-     * Enviar solicitud de cliente - solo via notificaciones (mÃ¡s escalable)
+     * Enviar solicitud de cliente - solo via notificaciones (más escalable)
      */
     suspend fun sendClientRequest(sellerId: String, sellerUsername: String): Result<Unit> {
         return try {
@@ -1737,14 +1740,14 @@ object ChatRepository {
             
             Log.d(TAG, "Enviando solicitud de cliente a: $sellerUsername ($sellerId)")
             
-            // Solo crear notificaciones - mÃ¡s escalable que mensajes de chat
-            // NotificaciÃ³n al vendedor con botones de aceptar/rechazar
+            // Solo crear notificaciones - más escalable que mensajes de chat
+            // Notificación al vendedor con botones de aceptar/rechazar
             NotificationRepository.createClientRequestNotification(
                 sellerId = sellerId,
                 requesterUsername = currentUsername
             )
             
-            // NotificaciÃ³n al solicitante de estado pendiente
+            // Notificación al solicitante de estado pendiente
             NotificationRepository.createClientPendingNotification(
                 requesterId = currentUserId,
                 sellerUsername = sellerUsername
@@ -1771,7 +1774,7 @@ object ChatRepository {
                 return acceptResult
             }
             
-            // Solo crear notificaciÃ³n - no enviar mensaje al chat
+            // Solo crear notificación - no enviar mensaje al chat
             val sellerUsername = ProfileRepository.currentProfile.value?.username ?: "vendedor"
             NotificationRepository.createClientAcceptedNotification(
                 requesterId = requesterId,
@@ -1799,7 +1802,7 @@ object ChatRepository {
                 return rejectResult
             }
             
-            // Solo crear notificaciÃ³n - no enviar mensaje al chat
+            // Solo crear notificación - no enviar mensaje al chat
             val sellerUsername = ProfileRepository.currentProfile.value?.username ?: "vendedor"
             NotificationRepository.createClientRejectedNotification(
                 requesterId = requesterId,
@@ -1897,7 +1900,7 @@ object ChatRepository {
     }
     
     // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-    // SUSCRIPCIÃ“N GLOBAL PARA BADGE DE MENSAJES EN HOME
+    // SUSCRIPCIÓN GLOBAL PARA BADGE DE MENSAJES EN HOME
     // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
     
     private var globalMessagesChannel: io.github.jan.supabase.realtime.RealtimeChannel? = null
@@ -1906,7 +1909,7 @@ object ChatRepository {
     
     /**
      * Suscribirse a nuevos mensajes para actualizar el badge en HomeHeader
-     * Debe llamarse al iniciar la app (despuÃ©s del login)
+     * Debe llamarse al iniciar la app (después del login)
      */
     suspend fun subscribeToGlobalMessages() {
         if (isGlobalSubscribed) return
@@ -1929,9 +1932,9 @@ object ChatRepository {
                 val senderId = record["sender_id"]?.jsonPrimitive?.content
                 val isFromMe = senderId == currentUserId
                 
-                Log.d(TAG, "ðŸ”” Nuevo mensaje INSERT detectado (conv=$msgConvId)")
+                Log.d(TAG, "🔔 Nuevo mensaje INSERT detectado (conv=$msgConvId)")
                 
-                // ActualizaciÃ³n dirigida: solo mover la conversaciÃ³n afectada al tope
+                // Actualización dirigida: solo mover la conversación afectada al tope
                 val currentList = _conversations.value.toMutableList()
                 val idx = currentList.indexOfFirst { it.id == msgConvId }
                 if (idx >= 0) {
@@ -1946,14 +1949,14 @@ object ChatRepository {
                     _totalUnreadCount.value = currentList.sumOf { it.unreadCount }
                     BadgeCountCache.setMessageCount(_totalUnreadCount.value)
                 } else {
-                    // ConversaciÃ³n nueva, hacer reload completo solo esta vez
+                    // Conversación nueva, hacer reload completo solo esta vez
                     loadConversations()
                 }
                 
                 // Reproducir sonido SOLO si el mensaje NO es nuestro
                 if (senderId != null && !isFromMe) {
-                    appContext?.let { com.vinzay.app.util.SoundManager.init(it) }
-                    com.vinzay.app.util.SoundManager.playMessageSound()
+                    appContext?.let { com.mercora.app.util.SoundManager.init(it) }
+                    com.mercora.app.util.SoundManager.playMessageSound()
                 }
             }?.launchIn(scope)
             
@@ -1975,7 +1978,7 @@ object ChatRepository {
                     
                     Log.d(TAG, "\uD83D\uDD14 Participant UPDATE: conv=$convId unread=$newUnread")
                     
-                    // ActualizaciÃ³n dirigida: solo cambiar el unread_count de ESA conversaciÃ³n
+                    // Actualización dirigida: solo cambiar el unread_count de ESA conversación
                     val currentList = _conversations.value.toMutableList()
                     val idx = currentList.indexOfFirst { it.id == convId }
                     if (idx >= 0) {
@@ -2017,7 +2020,7 @@ object ChatRepository {
     // CHAT SETTINGS - Mute, Block, Report, Clear, Export, Search
     // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
     
-    /** Silenciar notificaciones de una conversaciÃ³n */
+    /** Silenciar notificaciones de una conversación */
     suspend fun muteChat(conversationId: String): Boolean = withContext(Dispatchers.IO) {
         try {
             val userId = SupabaseClient.auth.currentUserOrNull()?.id ?: return@withContext false
@@ -2035,7 +2038,7 @@ object ChatRepository {
         }
     }
     
-    /** Reactivar notificaciones de una conversaciÃ³n */
+    /** Reactivar notificaciones de una conversación */
     suspend fun unmuteChat(conversationId: String): Boolean = withContext(Dispatchers.IO) {
         try {
             val userId = SupabaseClient.auth.currentUserOrNull()?.id ?: return@withContext false
@@ -2055,7 +2058,7 @@ object ChatRepository {
         }
     }
     
-    /** Verificar si una conversaciÃ³n estÃ¡ silenciada */
+    /** Verificar si una conversación está silenciada */
     suspend fun isChatMuted(conversationId: String): Boolean = withContext(Dispatchers.IO) {
         try {
             val userId = SupabaseClient.auth.currentUserOrNull()?.id ?: return@withContext false
@@ -2077,7 +2080,7 @@ object ChatRepository {
     /** Vaciar chat - solo local, persiste cleared_at en SharedPreferences */
     suspend fun clearChat(conversationId: String): Boolean = withContext(Dispatchers.IO) {
         try {
-            // Guardar timestamp en UTC para comparaciÃ³n fiable con timestamps de Supabase
+            // Guardar timestamp en UTC para comparación fiable con timestamps de Supabase
             val now = java.time.Instant.now().toString()
             setClearedAt(conversationId, now)
             
@@ -2093,7 +2096,7 @@ object ChatRepository {
         }
     }
     
-    /** Eliminar conversaciÃ³n del listado (ocultar localmente usando cleared_at + remover de lista) */
+    /** Eliminar conversación del listado (ocultar localmente usando cleared_at + remover de lista) */
     suspend fun deleteConversation(conversationId: String): Boolean = withContext(Dispatchers.IO) {
         try {
             val now = java.time.OffsetDateTime.now().toString()
@@ -2102,15 +2105,15 @@ object ChatRepository {
             _conversations.value = _conversations.value.filter { it.id != conversationId }
             _totalUnreadCount.value = _conversations.value.sumOf { it.unreadCount }
             BadgeCountCache.setMessageCount(_totalUnreadCount.value)
-            Log.d(TAG, "âœ… ConversaciÃ³n eliminada del listado: $conversationId")
+            Log.d(TAG, "âœ… Conversación eliminada del listado: $conversationId")
             true
         } catch (e: Exception) {
-            Log.e(TAG, "Error eliminando conversaciÃ³n: ${e.message}")
+            Log.e(TAG, "Error eliminando conversación: ${e.message}")
             false
         }
     }
     
-    /** Silenciar/Activar notificaciones de una conversaciÃ³n */
+    /** Silenciar/Activar notificaciones de una conversación */
     suspend fun toggleMuteConversation(conversationId: String, mute: Boolean): Boolean {
         // Track optimistic change to preserve during polling
         val current = pendingOptimisticChanges[conversationId] ?: OptimisticState()
@@ -2147,7 +2150,7 @@ object ChatRepository {
                 } else {
                     pendingOptimisticChanges[conversationId] = updated.copy(isMuted = null)
                 }
-                Log.d(TAG, "âœ… ConversaciÃ³n ${if (mute) "silenciada" else "activada"}: $conversationId")
+                Log.d(TAG, "âœ… Conversación ${if (mute) "silenciada" else "activada"}: $conversationId")
                 true
             } catch (e: Exception) {
                 // Rollback optimistic change
@@ -2167,7 +2170,7 @@ object ChatRepository {
         }
     }
     
-    /** Fijar/Desfijar una conversaciÃ³n */
+    /** Fijar/Desfijar una conversación */
     suspend fun togglePinConversation(conversationId: String, pin: Boolean): Boolean {
         // Track optimistic change to preserve during polling
         val current = pendingOptimisticChanges[conversationId] ?: OptimisticState()
@@ -2204,7 +2207,7 @@ object ChatRepository {
                 } else {
                     pendingOptimisticChanges[conversationId] = updated.copy(isPinned = null)
                 }
-                Log.d(TAG, "âœ… ConversaciÃ³n ${if (pin) "fijada" else "desfijada"}: $conversationId")
+                Log.d(TAG, "âœ… Conversación ${if (pin) "fijada" else "desfijada"}: $conversationId")
                 true
             } catch (e: Exception) {
                 // Rollback optimistic change
@@ -2224,7 +2227,7 @@ object ChatRepository {
         }
     }
     
-    /** Buscar mensajes en una conversaciÃ³n */
+    /** Buscar mensajes en una conversación */
     suspend fun searchMessages(conversationId: String, query: String): List<Message> = withContext(Dispatchers.IO) {
         try {
             if (query.isBlank()) return@withContext emptyList()
@@ -2307,7 +2310,7 @@ object ChatRepository {
         }
     }
     
-    /** Verificar si un usuario estÃ¡ bloqueado */
+    /** Verificar si un usuario está bloqueado */
     suspend fun isUserBlocked(otherUserId: String): Boolean = withContext(Dispatchers.IO) {
         try {
             val userId = SupabaseClient.auth.currentUserOrNull()?.id ?: return@withContext false
@@ -2399,7 +2402,7 @@ object ChatRepository {
         }
     }
     
-    /** Limpiar contenido de mensaje para exportaciÃ³n legible */
+    /** Limpiar contenido de mensaje para exportación legible */
     private fun cleanMessageContent(content: String): String {
         return when {
             content.startsWith("[SHARED_POST]") -> {
@@ -2410,9 +2413,9 @@ object ChatRepository {
                     val title = json["title"]?.jsonPrimitive?.content ?: "Producto"
                     val price = json["price"]?.jsonPrimitive?.content ?: ""
                     val customMsg = json["customMessage"]?.jsonPrimitive?.content ?: ""
-                    if (customMsg.isNotBlank()) "ArtÃ­culo compartido: $title (\$$price) - \"$customMsg\""
-                    else "ArtÃ­culo compartido: $title (\$$price)"
-                } catch (e: Exception) { "ArtÃ­culo compartido" }
+                    if (customMsg.isNotBlank()) "Artículo compartido: $title (\$$price) - \"$customMsg\""
+                    else "Artículo compartido: $title (\$$price)"
+                } catch (e: Exception) { "Artículo compartido" }
             }
             content.startsWith("[CONSULT_POST]") -> {
                 try {
@@ -2436,18 +2439,18 @@ object ChatRepository {
                         "TRANSACTION_COMPLETED" -> {
                             val desc = json["productDescription"]?.jsonPrimitive?.content ?: ""
                             val price = json["agreedPrice"]?.jsonPrimitive?.content ?: ""
-                            "TransacciÃ³n completada: $desc (\$$price)"
+                            "Transacción completada: $desc (\$$price)"
                         }
                         "AGREEMENT_CANCELLED" -> "Acuerdo cancelado"
-                        else -> "ActualizaciÃ³n de acuerdo: $type"
+                        else -> "Actualización de acuerdo: $type"
                     }
-                } catch (e: Exception) { "ActualizaciÃ³n de acuerdo" }
+                } catch (e: Exception) { "Actualización de acuerdo" }
             }
             content.startsWith("[AUDIO]") -> "Mensaje de voz"
             content.startsWith("[LOCATION]") -> {
                 val coords = content.removePrefix("[LOCATION]").split(",")
-                if (coords.size == 2) "UbicaciÃ³n: ${coords[0]}, ${coords[1]}"
-                else "UbicaciÃ³n compartida"
+                if (coords.size == 2) "Ubicación: ${coords[0]}, ${coords[1]}"
+                else "Ubicación compartida"
             }
             content.startsWith("[FILE]") -> {
                 try {
@@ -2460,7 +2463,7 @@ object ChatRepository {
             }
             content.startsWith("[IMG]") || content.startsWith("[IMAGE]") -> "Imagen"
             content.startsWith("[VIDEO]") -> "Video"
-            content.startsWith("[ARTICLE_CARD]") -> "ArtÃ­culo compartido"
+            content.startsWith("[ARTICLE_CARD]") -> "Artículo compartido"
             content.startsWith("[REPLY]") -> try {
                 val json = kotlinx.serialization.json.Json.parseToJsonElement(
                     content.removePrefix("[REPLY]")
@@ -2554,7 +2557,7 @@ object ChatRepository {
                     textSize = 8f; color = android.graphics.Color.parseColor("#D1D5DB")
                     isAntiAlias = true; textAlign = android.graphics.Paint.Align.CENTER
                 }
-                page.canvas.drawText("Rendly - ExportaciÃ³n de chat - PÃ¡g. ${pageNumber - 1}", pageWidth / 2f, pageHeight - 20f, footerPaint)
+                page.canvas.drawText("Mercora - Exportación de chat - Pág. ${pageNumber - 1}", pageWidth / 2f, pageHeight - 20f, footerPaint)
                 return page.canvas
             }
             
@@ -2564,9 +2567,9 @@ object ChatRepository {
             canvas.drawRect(0f, 0f, pageWidth.toFloat(), 90f, headerBgPaint)
             
             // Title
-            canvas.drawText("ConversaciÃ³n con @$otherUsername", margin, margin + 20f, titlePaint)
+            canvas.drawText("Conversación con @$otherUsername", margin, margin + 20f, titlePaint)
             canvas.drawText("Exportado el $dateStr  |  ${messages.size} mensajes", margin, margin + 38f, subtitlePaint)
-            canvas.drawText("Rendly - Registro oficial de conversaciÃ³n", margin, margin + 52f, subtitlePaint)
+            canvas.drawText("Mercora - Registro oficial de conversación", margin, margin + 52f, subtitlePaint)
             
             currentY = 100f
             
@@ -2577,7 +2580,7 @@ object ChatRepository {
             // Messages
             messages.forEach { msg ->
                 val isFromMe = msg.senderId == currentUserId
-                val sender = if (isFromMe) "TÃº" else "@$otherUsername"
+                val sender = if (isFromMe) "Tú" else "@$otherUsername"
                 val time = msg.createdAt?.take(16)?.replace("T", " ") ?: ""
                 val cleanContent = cleanMessageContent(msg.content)
                 
@@ -2685,7 +2688,7 @@ object ChatRepository {
         }
     }
     
-    /** Verificar si un chat estÃ¡ fijado */
+    /** Verificar si un chat está fijado */
     suspend fun isChatPinned(conversationId: String): Boolean = withContext(Dispatchers.IO) {
         try {
             val userId = SupabaseClient.auth.currentUserOrNull()?.id ?: return@withContext false
@@ -2799,7 +2802,7 @@ object ChatRepository {
     suspend fun deleteLabel(labelId: String): Boolean = withContext(Dispatchers.IO) {
         try {
             val userId = SupabaseClient.auth.currentUserOrNull()?.id ?: return@withContext false
-            // Eliminar asignaciones primero (cascade deberÃ­a hacerlo pero por seguridad)
+            // Eliminar asignaciones primero (cascade debería hacerlo pero por seguridad)
             SupabaseClient.database
                 .from("chat_label_assignments")
                 .delete { filter { eq("label_id", labelId); eq("user_id", userId) } }
@@ -2819,7 +2822,7 @@ object ChatRepository {
         }
     }
     
-    /** Asignar etiqueta a una conversaciÃ³n */
+    /** Asignar etiqueta a una conversación */
     suspend fun assignLabel(conversationId: String, labelId: String): Boolean = withContext(Dispatchers.IO) {
         try {
             val userId = SupabaseClient.auth.currentUserOrNull()?.id ?: return@withContext false
@@ -2847,7 +2850,7 @@ object ChatRepository {
         }
     }
     
-    /** Remover etiqueta de una conversaciÃ³n */
+    /** Remover etiqueta de una conversación */
     suspend fun removeLabel(conversationId: String, labelId: String): Boolean = withContext(Dispatchers.IO) {
         try {
             val userId = SupabaseClient.auth.currentUserOrNull()?.id ?: return@withContext false
@@ -2874,7 +2877,7 @@ object ChatRepository {
         }
     }
     
-    /** Obtener etiquetas asignadas a una conversaciÃ³n */
+    /** Obtener etiquetas asignadas a una conversación */
     suspend fun getLabelsForConversation(conversationId: String): List<ChatLabel> = withContext(Dispatchers.IO) {
         try {
             val userId = SupabaseClient.auth.currentUserOrNull()?.id ?: return@withContext emptyList()
@@ -2903,16 +2906,16 @@ object ChatRepository {
         Log.d(TAG, "Producto: $postTitle ($postId)")
         
         try {
-            // Obtener o crear conversaciÃ³n con el vendedor
+            // Obtener o crear conversación con el vendedor
             val conversationId = getOrCreateConversation(sellerId)
             if (conversationId == null) {
-                Log.e(TAG, "No se pudo crear/obtener conversaciÃ³n con vendedor")
+                Log.e(TAG, "No se pudo crear/obtener conversación con vendedor")
                 return false
             }
             
             // Formatear mensaje de consulta con info del producto
             val formattedMessage = buildString {
-                append("ðŸ“¦ *Consulta sobre producto*\n")
+                append("📦 *Consulta sobre producto*\n")
                 append("â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”\n")
                 append("ðŸ·ï¸ $postTitle\n")
                 append("â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”\n\n")

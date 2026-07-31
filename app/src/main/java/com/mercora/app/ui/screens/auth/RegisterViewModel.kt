@@ -5,7 +5,6 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mercora.app.data.model.Usuario
-import com.mercora.app.data.model.WelcomeState
 import com.mercora.app.data.remote.SessionPersistence
 import com.mercora.app.data.remote.SupabaseClient
 import com.mercora.app.util.FCMHelper
@@ -74,7 +73,7 @@ class RegisterViewModel @Inject constructor(
         }
         val emailRegex = Regex("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")
         if (!emailRegex.matches(trimmed)) {
-            _uiState.update { it.copy(emailError = "Correo electrÃ³nico no vÃ¡lido") }
+            _uiState.update { it.copy(emailError = "Correo electrónico no válido") }
             return
         }
         _uiState.update { it.copy(emailError = null) }
@@ -87,11 +86,11 @@ class RegisterViewModel @Inject constructor(
             return
         }
         if (trimmed.length < 3) {
-            _uiState.update { it.copy(usernameError = "MÃ­nimo 3 caracteres", isUsernameAvailable = null) }
+            _uiState.update { it.copy(usernameError = "Mínimo 3 caracteres", isUsernameAvailable = null) }
             return
         }
         if (!trimmed.matches(Regex("^[a-zA-Z0-9_]+$"))) {
-            _uiState.update { it.copy(usernameError = "Solo letras, nÃºmeros y _", isUsernameAvailable = null) }
+            _uiState.update { it.copy(usernameError = "Solo letras, números y _", isUsernameAvailable = null) }
             return
         }
         _uiState.update { it.copy(usernameError = null) }
@@ -113,7 +112,7 @@ class RegisterViewModel @Inject constructor(
             _uiState.update { it.copy(
                 isCheckingUsername = false,
                 isUsernameAvailable = existing.isEmpty(),
-                usernameError = if (existing.isNotEmpty()) "Este usuario ya estÃ¡ en uso" else null
+                usernameError = if (existing.isNotEmpty()) "Este usuario ya está en uso" else null
             )}
         } catch (e: Exception) {
             Log.e(TAG, "Error checking username", e)
@@ -127,7 +126,7 @@ class RegisterViewModel @Inject constructor(
             return
         }
         if (password.length < 6) {
-            _uiState.update { it.copy(passwordError = "MÃ­nimo 6 caracteres") }
+            _uiState.update { it.copy(passwordError = "Mínimo 6 caracteres") }
         } else {
             _uiState.update { it.copy(passwordError = null) }
         }
@@ -146,7 +145,7 @@ class RegisterViewModel @Inject constructor(
             return
         }
         if (password != confirmPassword) {
-            _uiState.update { it.copy(confirmPasswordError = "Las contraseÃ±as no coinciden") }
+            _uiState.update { it.copy(confirmPasswordError = "Las contraseñas no coinciden") }
         } else {
             _uiState.update { it.copy(confirmPasswordError = null) }
         }
@@ -163,24 +162,24 @@ class RegisterViewModel @Inject constructor(
         }
         val parts = fechaNacimiento.split("/")
         if (parts.size != 3) {
-            _uiState.update { it.copy(fechaError = "Formato invÃ¡lido") }
+            _uiState.update { it.copy(fechaError = "Formato inválido") }
             return
         }
         val day = parts[0].toIntOrNull()
         val month = parts[1].toIntOrNull()
         val year = parts[2].toIntOrNull()
         if (day == null || month == null || year == null || day !in 1..31 || month !in 1..12 || year !in 1900..LocalDate.now().year) {
-            _uiState.update { it.copy(fechaError = "Fecha invÃ¡lida") }
+            _uiState.update { it.copy(fechaError = "Fecha inválida") }
             return
         }
         try {
             val birthDate = LocalDate.of(year, month, day)
             if (Period.between(birthDate, LocalDate.now()).years < 13) {
-                _uiState.update { it.copy(fechaError = "Debes tener al menos 13 aÃ±os") }
+                _uiState.update { it.copy(fechaError = "Debes tener al menos 13 años") }
                 return
             }
         } catch (e: Exception) {
-            _uiState.update { it.copy(fechaError = "Fecha invÃ¡lida") }
+            _uiState.update { it.copy(fechaError = "Fecha inválida") }
             return
         }
         _uiState.update { it.copy(fechaError = null) }
@@ -213,7 +212,7 @@ class RegisterViewModel @Inject constructor(
         score = score.coerceIn(0f, 1f)
         
         val label = when {
-            score < 0.25f -> "DÃ©bil"
+            score < 0.25f -> "Débil"
             score < 0.50f -> "Regular"
             score < 0.75f -> "Buena"
             else -> "Segura"
@@ -241,50 +240,50 @@ class RegisterViewModel @Inject constructor(
             
             // Email
             if (email.isBlank() || !email.contains("@")) {
-                _uiState.update { it.copy(isLoading = false, emailError = "Ingresa un correo vÃ¡lido") }
+                _uiState.update { it.copy(isLoading = false, emailError = "Ingresa un correo válido") }
                 return@launch
             }
             
             // Username
             val trimmedUsername = username.trim().lowercase()
             if (trimmedUsername.length < 3) {
-                _uiState.update { it.copy(isLoading = false, usernameError = "MÃ­nimo 3 caracteres") }
+                _uiState.update { it.copy(isLoading = false, usernameError = "Mínimo 3 caracteres") }
                 return@launch
             }
             if (!trimmedUsername.matches(Regex("^[a-zA-Z0-9_]+$"))) {
-                _uiState.update { it.copy(isLoading = false, usernameError = "Solo letras, nÃºmeros y _") }
+                _uiState.update { it.copy(isLoading = false, usernameError = "Solo letras, números y _") }
                 return@launch
             }
             
             // Password
             if (password.length < 6) {
-                _uiState.update { it.copy(isLoading = false, passwordError = "MÃ­nimo 6 caracteres") }
+                _uiState.update { it.copy(isLoading = false, passwordError = "Mínimo 6 caracteres") }
                 return@launch
             }
             
             // Confirm password
             if (password != confirmPassword) {
-                _uiState.update { it.copy(isLoading = false, confirmPasswordError = "Las contraseÃ±as no coinciden") }
+                _uiState.update { it.copy(isLoading = false, confirmPasswordError = "Las contraseñas no coinciden") }
                 return@launch
             }
             
             // Gender
             if (genero.isEmpty()) {
-                _uiState.update { it.copy(isLoading = false, generoError = "Selecciona tu gÃ©nero") }
+                _uiState.update { it.copy(isLoading = false, generoError = "Selecciona tu género") }
                 return@launch
             }
             
             // Date
             val parts = fechaNacimiento.split("/")
             if (parts.size != 3) {
-                _uiState.update { it.copy(isLoading = false, fechaError = "Fecha invÃ¡lida") }
+                _uiState.update { it.copy(isLoading = false, fechaError = "Fecha inválida") }
                 return@launch
             }
             val day = parts[0].toIntOrNull()
             val month = parts[1].toIntOrNull()
             val year = parts[2].toIntOrNull()
             if (day == null || month == null || year == null) {
-                _uiState.update { it.copy(isLoading = false, fechaError = "Fecha invÃ¡lida") }
+                _uiState.update { it.copy(isLoading = false, fechaError = "Fecha inválida") }
                 return@launch
             }
             
@@ -292,11 +291,11 @@ class RegisterViewModel @Inject constructor(
             try {
                 val birthDate = LocalDate.of(year, month, day)
                 if (Period.between(birthDate, LocalDate.now()).years < 13) {
-                    _uiState.update { it.copy(isLoading = false, fechaError = "Debes tener al menos 13 aÃ±os") }
+                    _uiState.update { it.copy(isLoading = false, fechaError = "Debes tener al menos 13 años") }
                     return@launch
                 }
             } catch (e: Exception) {
-                _uiState.update { it.copy(isLoading = false, fechaError = "Fecha invÃ¡lida") }
+                _uiState.update { it.copy(isLoading = false, fechaError = "Fecha inválida") }
                 return@launch
             }
             
@@ -315,7 +314,7 @@ class RegisterViewModel @Inject constructor(
                 if (userId == null) {
                     _uiState.update { it.copy(
                         isLoading = false,
-                        errorMessage = "Error al crear la cuenta. Intenta iniciar sesiÃ³n."
+                        errorMessage = "Error al crear la cuenta. Intenta iniciar sesión."
                     )}
                     return@launch
                 }
@@ -345,10 +344,7 @@ class RegisterViewModel @Inject constructor(
                 // Save session + refresh FCM token
                 SessionPersistence.saveSession(userId, trimmedUsername)
                 FCMHelper.forceTokenRefresh(application)
-                
-                // Trigger welcome animation for next screen
-                WelcomeState.trigger(trimmedUsername)
-                
+
                 _uiState.update { it.copy(
                     isLoading = false,
                     isSuccess = true
@@ -359,9 +355,9 @@ class RegisterViewModel @Inject constructor(
                 val message = when {
                     e.message?.contains("already registered") == true || 
                     e.message?.contains("User already registered") == true -> 
-                        "Este correo ya estÃ¡ registrado"
+                        "Este correo ya está registrado"
                     e.message?.contains("duplicate key") == true ->
-                        "Este nombre de usuario ya estÃ¡ en uso"
+                        "Este nombre de usuario ya está en uso"
                     else -> "Error: ${e.message?.take(100) ?: "desconocido"}"
                 }
                 _uiState.update { it.copy(isLoading = false, errorMessage = message) }
@@ -369,7 +365,7 @@ class RegisterViewModel @Inject constructor(
                 Log.e(TAG, "Register Exception: ${e.javaClass.simpleName} - ${e.message}", e)
                 val message = when {
                     e.message?.contains("Unable to resolve host") == true || e.message?.contains("Network") == true ->
-                        "Sin conexiÃ³n a internet"
+                        "Sin conexión a internet"
                     e.message?.contains("timeout") == true -> "Tiempo de espera agotado"
                     else -> "Error: ${e.message?.take(80) ?: "desconocido"}"
                 }

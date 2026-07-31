@@ -32,7 +32,7 @@ import javax.inject.Inject
 
 /**
  * Entrada del feed interleaved (posts + slots de rends en posiciones fijas).
- * Pre-computada en el ViewModel para que la composiciÃ³n no recalcule nada.
+ * Pre-computada en el ViewModel para que la composición no recalcule nada.
  * @Immutable: Compose puede skipear recomposiciones cuando la lista no cambia.
  */
 @Immutable
@@ -40,7 +40,7 @@ data class FeedEntry(val type: String, val id: String, val postIndex: Int = -1, 
 
 /**
  * Modelo de UI del feed listo para renderizar: se computa en Dispatchers.Default
- * una sola vez por emisiÃ³n de posts (no en cada recomposiciÃ³n del Home).
+ * una sola vez por emisión de posts (no en cada recomposición del Home).
  * @Immutable: Compose puede skipear recomposiciones cuando el feedUi no cambia.
  */
 @Immutable
@@ -88,7 +88,7 @@ class HomeViewModel @Inject constructor() : ViewModel() {
     val posts: StateFlow<List<Post>> = _visiblePosts.asStateFlow()
 
     // Feed pre-computado (distinctBy + interleaving) fuera del Main thread:
-    // la composiciÃ³n del Home consume esto directamente sin recalcular
+    // la composición del Home consume esto directamente sin recalcular
     val feedUi: StateFlow<HomeFeedUi> = _visiblePosts
         .map { posts -> buildFeedUi(posts) }
         .flowOn(Dispatchers.Default)
@@ -111,7 +111,7 @@ class HomeViewModel @Inject constructor() : ViewModel() {
         val errorMessage: String? = null
     )
     
-    // FunciÃ³n genÃ©rica para actualizar contadores en posts
+    // Función genérica para actualizar contadores en posts
     private suspend fun updatePostCount(postId: String, countField: String, increment: Boolean) {
         withContext(Dispatchers.IO) {
             try {
@@ -146,14 +146,14 @@ class HomeViewModel @Inject constructor() : ViewModel() {
     private val _hasMorePosts = MutableStateFlow(true)
     val hasMorePosts: StateFlow<Boolean> = _hasMorePosts.asStateFlow()
     
-    // PaginaciÃ³n REAL server-side: cada pÃ¡gina trae posts + datos asociados
+    // Paginación REAL server-side: cada página trae posts + datos asociados
     // en batch desde Supabase (antes se descargaba TODO al inicio)
     private val PAGE_SIZE = 10
     
     private val _currentRoute = MutableStateFlow("home")
     val currentRoute: StateFlow<String> = _currentRoute.asStateFlow()
     
-    // Usuario de sesiÃ³n actual
+    // Usuario de sesión actual
     private val _currentUser = MutableStateFlow<Usuario?>(null)
     val currentUser: StateFlow<Usuario?> = _currentUser.asStateFlow()
     
@@ -184,7 +184,7 @@ class HomeViewModel @Inject constructor() : ViewModel() {
         _errorMessage.value = null
     }
 
-    // RÃ©plica exacta del layout que antes computaba HomeScreen en composiciÃ³n:
+    // Réplica exacta del layout que antes computaba HomeScreen en composición:
     // primeros 3 posts + feed interleaved con slots de rends fijos (3, 7, 11...)
     private fun buildFeedUi(posts: List<Post>): HomeFeedUi {
         val uniquePosts = posts.distinctBy { it.id }
@@ -205,7 +205,7 @@ class HomeViewModel @Inject constructor() : ViewModel() {
     }
 
     // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-    // ACCIONES DE MODERACIÃ“N: extraÃ­das de HomeScreen para que los items
+    // ACCIONES DE MODERACIÓN: extraídas de HomeScreen para que los items
     // del feed no capturen scope/context en lambdas inline gigantes
     // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
     fun muteUser(mutedUserId: String, username: String) {
@@ -262,11 +262,11 @@ class HomeViewModel @Inject constructor() : ViewModel() {
     // Cache de usuarios para evitar queries repetidas
     private val usersCache = mutableMapOf<String, Usuario>()
 
-    // Likes/saves del usuario actual: se cargan UNA vez y se reusan por pÃ¡gina
+    // Likes/saves del usuario actual: se cargan UNA vez y se reusan por página
     private var userLikes: Set<String>? = null
     private var userSaves: Set<String>? = null
 
-    // CachÃ© de privacy settings (show_likes) por dueÃ±o de post
+    // Caché de privacy settings (show_likes) por dueño de post
     private val privacyCache = mutableMapOf<String, Boolean>()
 
     init {
@@ -277,7 +277,7 @@ class HomeViewModel @Inject constructor() : ViewModel() {
         viewModelScope.launch {
             PostRepository.posts.collect { repoPosts ->
                 if (repoPosts.isNotEmpty()) {
-                    Log.d("HomeViewModel", "PostRepository actualizÃ³: ${repoPosts.size} posts")
+                    Log.d("HomeViewModel", "PostRepository actualizó: ${repoPosts.size} posts")
                     
                     // Buscar nuevos userIds que no tengamos en cache
                     val newUserIds = repoPosts.map { it.userId }.distinct().filter { it !in usersCache }
@@ -297,7 +297,7 @@ class HomeViewModel @Inject constructor() : ViewModel() {
                         }
                     }
 
-                    // OPTIMIZADO: Mover transformaciÃ³n a Default dispatcher
+                    // OPTIMIZADO: Mover transformación a Default dispatcher
                     // Preserva isLiked/isSaved de la lista actual (el repo no los trae)
                     val currentById = _visiblePosts.value.associateBy { it.id }
                     val postsWithUserData = withContext(Dispatchers.Default) {
@@ -369,12 +369,12 @@ class HomeViewModel @Inject constructor() : ViewModel() {
         viewModelScope.launch {
             _isLoading.value = true
             try {
-                // Primera pÃ¡gina REAL desde el servidor (posts + datos en batch)
+                // Primera página REAL desde el servidor (posts + datos en batch)
                 val firstPage = fetchPostsPage(0)
                 _allPosts.value = firstPage
                 _visiblePosts.value = firstPage
                 _hasMorePosts.value = firstPage.size == PAGE_SIZE
-                Log.d("HomeViewModel", "PÃ¡gina inicial: ${firstPage.size} posts")
+                Log.d("HomeViewModel", "Página inicial: ${firstPage.size} posts")
             } catch (e: Exception) {
                 Log.e("HomeViewModel", "Error loading posts: ${e.message}", e)
                 _errorMessage.value = "Error cargando posts: ${e.message}"
@@ -384,8 +384,8 @@ class HomeViewModel @Inject constructor() : ViewModel() {
         }
     }
 
-    // Likes/saves del usuario actual: una sola query cada uno por sesiÃ³n,
-    // reusadas por todas las pÃ¡ginas siguientes
+    // Likes/saves del usuario actual: una sola query cada uno por sesión,
+    // reusadas por todas las páginas siguientes
     private suspend fun ensureUserInteractionsLoaded() {
         if (userLikes != null && userSaves != null) return
         val currentUserId = SupabaseClient.auth.currentUserOrNull()?.id
@@ -427,9 +427,9 @@ class HomeViewModel @Inject constructor() : ViewModel() {
     }
 
     /**
-     * PAGINACIÃ“N REAL: trae UNA pÃ¡gina de posts del servidor (order + range)
+     * PAGINACIÓN REAL: trae UNA página de posts del servidor (order + range)
      * junto con sus datos asociados en batch: usuarios faltantes (isIn),
-     * reviews de la pÃ¡gina (isIn) y privacy settings cacheados por usuario.
+     * reviews de la página (isIn) y privacy settings cacheados por usuario.
      * Antes se descargaba la tabla completa de posts/usuarios al inicio.
      */
     private suspend fun fetchPostsPage(offset: Int): List<Post> = withContext(Dispatchers.IO) {
@@ -450,7 +450,7 @@ class HomeViewModel @Inject constructor() : ViewModel() {
 
         ensureUserInteractionsLoaded()
 
-        // Usuarios de la pÃ¡gina que no estÃ©n cacheados (batch server-side)
+        // Usuarios de la página que no estén cacheados (batch server-side)
         val userIds = postsDB.map { it.userId }.distinct()
         val missingUserIds = userIds.filter { it !in usersCache }
         if (missingUserIds.isNotEmpty()) {
@@ -465,7 +465,7 @@ class HomeViewModel @Inject constructor() : ViewModel() {
             }
         }
 
-        // Conteo de reviews de los productos de esta pÃ¡gina
+        // Conteo de reviews de los productos de esta página
         val reviewsCountMap = mutableMapOf<String, Int>()
         try {
             val productIds = postsDB.mapNotNull { it.productId }.distinct()
@@ -489,11 +489,11 @@ class HomeViewModel @Inject constructor() : ViewModel() {
             Log.e("HomeViewModel", "Error loading review counts: ${e.message}")
         }
 
-        // Privacy settings (show_likes) de los dueÃ±os de la pÃ¡gina, batch loading
+        // Privacy settings (show_likes) de los dueños de la página, batch loading
         val newUserIds = userIds.filter { it !in privacyCache }
         if (newUserIds.isNotEmpty()) {
             try {
-                val prefsList = com.vinzay.app.data.repository.UserPreferencesRepository
+                val prefsList = com.mercora.app.data.repository.UserPreferencesRepository
                     .loadPrivacySettingsBatch(newUserIds)
                 prefsList.forEach { (uid, settings) ->
                     privacyCache[uid] = settings?.showLikes ?: true
@@ -531,13 +531,13 @@ class HomeViewModel @Inject constructor() : ViewModel() {
         viewModelScope.launch {
             _isLoadingMore.value = true
             try {
-                // Siguiente pÃ¡gina real (offset = posts ya cargados)
+                // Siguiente página real (offset = posts ya cargados)
                 val nextPage = fetchPostsPage(_visiblePosts.value.size)
                 if (nextPage.isEmpty()) {
                     _hasMorePosts.value = false
                 } else {
                     // distinctBy protege contra corrimiento de offset si se
-                    // insertaron posts nuevos entre pÃ¡ginas
+                    // insertaron posts nuevos entre páginas
                     val merged = (_visiblePosts.value + nextPage).distinctBy { it.id }
                     _allPosts.value = merged
                     _visiblePosts.value = merged
@@ -545,7 +545,7 @@ class HomeViewModel @Inject constructor() : ViewModel() {
                 }
                 Log.d("HomeViewModel", "Loaded more: ${_visiblePosts.value.size} posts")
             } catch (e: Exception) {
-                Log.e("HomeViewModel", "Error cargando mÃ¡s posts: ${e.message}")
+                Log.e("HomeViewModel", "Error cargando más posts: ${e.message}")
             }
             _isLoadingMore.value = false
         }
@@ -559,8 +559,8 @@ class HomeViewModel @Inject constructor() : ViewModel() {
         val post = currentList[postIndex]
         val wasLiked = post.isLiked
         
-        // OPTIMIZADO: Actualizar solo el item especÃ­fico usando toMutableList()
-        // Esto es mÃ¡s eficiente que .map{} sobre toda la lista
+        // OPTIMIZADO: Actualizar solo el item específico usando toMutableList()
+        // Esto es más eficiente que .map{} sobre toda la lista
         val updatedPost = post.copy(
             isLiked = !post.isLiked,
             likesCount = if (post.isLiked) post.likesCount - 1 else post.likesCount + 1
@@ -583,7 +583,7 @@ class HomeViewModel @Inject constructor() : ViewModel() {
                     // Actualizar likes_count en posts
                     updatePostCount(postId, "likes_count", increment = true)
                     
-                    // Crear notificaciÃ³n
+                    // Crear notificación
                     NotificationRepository.createLikeNotification(
                         recipientId = post.userId,
                         postId = postId,
@@ -650,7 +650,7 @@ class HomeViewModel @Inject constructor() : ViewModel() {
         val post = currentList[postIndex]
         val wasSaved = post.isSaved
         
-        // OPTIMIZADO: Actualizar solo el item especÃ­fico
+        // OPTIMIZADO: Actualizar solo el item específico
         val updatedPost = post.copy(
             isSaved = !post.isSaved,
             savesCount = if (post.isSaved) post.savesCount - 1 else post.savesCount + 1
@@ -673,7 +673,7 @@ class HomeViewModel @Inject constructor() : ViewModel() {
                     // Actualizar saves_count en posts
                     updatePostCount(postId, "saves_count", increment = true)
                     
-                    // Crear notificaciÃ³n
+                    // Crear notificación
                     NotificationRepository.createSaveNotification(
                         recipientId = post.userId,
                         postId = postId,
@@ -700,7 +700,7 @@ class HomeViewModel @Inject constructor() : ViewModel() {
     }
     
     fun toggleStats(postId: String) {
-        // OPTIMIZADO: Actualizar solo el item especÃ­fico
+        // OPTIMIZADO: Actualizar solo el item específico
         val currentList = _visiblePosts.value
         val postIndex = currentList.indexOfFirst { it.id == postId }
         if (postIndex == -1) return

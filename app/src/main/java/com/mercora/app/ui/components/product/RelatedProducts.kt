@@ -130,7 +130,7 @@ fun YouMightLikeSectionInfinite(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "tambiÃ©n podrÃ¡a gustarte",
+                text = "también podráa gustarte",
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
                 color = TextPrimary
@@ -230,7 +230,7 @@ fun YouMightLikeSectionInfinite(
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
-                            text = "Ver MÃ¡s productos",
+                            text = "Ver Más productos",
                             fontSize = 14.sp,
                             fontWeight = FontWeight.SemiBold,
                             color = PrimaryPurple

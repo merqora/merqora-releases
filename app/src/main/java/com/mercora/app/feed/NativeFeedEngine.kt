@@ -6,7 +6,7 @@ import android.util.Log
  * JNI bridge to the C++ Feed Engine v2.
  *
  * v2 capabilities:
- *   - 6-factor multiplicative scoring (affinity Ã— quality Ã— recency Ã— intent Ã— diversity Ã— exploration)
+ *   - 6-factor multiplicative scoring (affinity × quality × recency × intent × diversity × exploration)
  *   - User profile with 64-dim embeddings + type affinities
  *   - Session tracking: dwell time, scroll speed, video completion, fatigue
  *   - Thompson Sampling bandit for explore/exploit
@@ -22,7 +22,7 @@ object NativeFeedEngine {
 
     init {
         try {
-            System.loadLibrary("vinzay_media_optimizer")
+            System.loadLibrary("mercora_media_optimizer")
             isLoaded = true
             Log.i(TAG, "Native feed engine v2 library loaded")
         } catch (e: UnsatisfiedLinkError) {

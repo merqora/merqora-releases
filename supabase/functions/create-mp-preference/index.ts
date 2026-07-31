@@ -1,4 +1,4 @@
-// Edge Function: create-mp-preference
+﻿// Edge Function: create-mp-preference
 // Crea una preferencia de pago en Mercado Pago (Checkout Pro - fallback).
 // Para MARKETPLACE SPLIT: usa el access_token del vendedor + marketplace_fee.
 // El vendedor se obtiene de order_items, NO del cliente.
@@ -120,19 +120,19 @@ serve(async (req) => {
         picture_url: item.picture_url,
         description: item.description,
       })),
-      payer: { email: payer_email || 'comprador@vinzay.app' },
+      payer: { email: payer_email || 'comprador@mercora.app' },
       external_reference: external_reference || order_id,
       back_urls: {
-        success: `vinzay://payment/success?order_id=${order_id}`,
-        failure: `vinzay://payment/failure?order_id=${order_id}`,
-        pending: `vinzay://payment/pending?order_id=${order_id}`,
+        success: `mercora://payment/success?order_id=${order_id}`,
+        failure: `mercora://payment/failure?order_id=${order_id}`,
+        pending: `mercora://payment/pending?order_id=${order_id}`,
       },
       auto_return: 'approved',
       notification_url: `${Deno.env.get('SUPABASE_URL')}/functions/v1/mp-webhook`,
       metadata: {
         order_id,
         seller_id: sellerId,
-        platform: 'vinzay_android',
+        platform: 'mercora_android',
         integration_type: 'marketplace_checkout_pro',
       },
       payment_methods: { installments: 12 },

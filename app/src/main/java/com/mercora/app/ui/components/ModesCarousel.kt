@@ -32,15 +32,15 @@ import com.mercora.app.ui.theme.TextPrimary
 import kotlinx.coroutines.launch
 
 /**
- * Carrusel de modos de publicaciÃ³n - DiseÃ±o Ruleta Profesional
+ * Carrusel de modos de publicación - Diseño Ruleta Profesional
  * 
  * Comportamientos:
  * - Historia (index 1): Ancho completo, pegado al TabBar del dispositivo
- * - PublicaciÃ³n (index 0): Flotante, pegado a la derecha, 75% del ancho, borderRadius izquierdo
+ * - Publicación (index 0): Flotante, pegado a la derecha, 75% del ancho, borderRadius izquierdo
  * - En Vivo (index 2) y Rend (index 3): Centrado en la parte inferior
  * 
- * CaracterÃ­sticas:
- * - Ruleta horizontal con mÃ¡ximo 3 modos visibles
+ * Características:
+ * - Ruleta horizontal con máximo 3 modos visibles
  * - Modo actual siempre centrado
  * - Animaciones suaves entre estados
  */
@@ -48,7 +48,7 @@ import kotlinx.coroutines.launch
 // Enum para los diferentes layouts del carrusel
 enum class CarouselLayout {
     FULL_WIDTH,      // Historia - ancho completo
-    FLOATING_RIGHT,  // PublicaciÃ³n - flotante a la derecha
+    FLOATING_RIGHT,  // Publicación - flotante a la derecha
     CENTERED         // En Vivo & Rend - centrado
 }
 
@@ -58,19 +58,19 @@ fun ModesCarousel(
     onModeSelected: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val modes = listOf("PUBLICACIÃ“N", "HISTORIA", "EN VIVO", "REND")
+    val modes = listOf("PUBLICACIÓN", "HISTORIA", "EN VIVO", "REND")
     val scope = rememberCoroutineScope()
     val listState = rememberLazyListState()
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
     
-    // Determinar el layout segÃºn el modo actual
+    // Determinar el layout según el modo actual
     val layout = when (currentIndex) {
         1 -> CarouselLayout.FULL_WIDTH      // Historia
-        0 -> CarouselLayout.FLOATING_RIGHT  // PublicaciÃ³n  
+        0 -> CarouselLayout.FLOATING_RIGHT  // Publicación  
         else -> CarouselLayout.CENTERED     // En Vivo, Rend
     }
     
-    // Animaciones de transiciÃ³n
+    // Animaciones de transición
     val animDuration = 300
     
     // Ancho del carrusel
@@ -129,7 +129,7 @@ fun ModesCarousel(
     
     // Auto-scroll para centrar el modo seleccionado
     LaunchedEffect(currentIndex) {
-        // PequeÃ±o delay para que la animaciÃ³n del layout ocurra primero
+        // Pequeño delay para que la animación del layout ocurra primero
         kotlinx.coroutines.delay(50)
         listState.animateScrollToItem(
             index = maxOf(0, currentIndex),
@@ -243,9 +243,9 @@ private fun ModeItemRoulette(
     // Alpha basada en la distancia al centro
     val alpha = (1f - minOf(kotlin.math.abs(centerOffset) * 0.4f, 0.5f))
     
-    // Color segÃºn el modo
+    // Color según el modo
     val activeColor = when (modeIndex) {
-        0 -> PrimaryPurple        // PublicaciÃ³n
+        0 -> PrimaryPurple        // Publicación
         1 -> PrimaryPurple        // Historia
         2 -> AccentPink           // En Vivo
         3 -> AccentPink           // Rend
@@ -287,7 +287,7 @@ private fun ModeItemRoulette(
                 maxLines = 1
             )
             
-            // Indicador de selecciÃ³n animado
+            // Indicador de selección animado
             AnimatedIndicator(
                 isVisible = isSelected,
                 color = activeColor

@@ -1,6 +1,6 @@
--- =====================================================
+﻿-- =====================================================
 -- TABLA: usuarios
--- Almacena los perfiles de usuarios de VINZAY
+-- Almacena los perfiles de usuarios de MERCORA
 -- =====================================================
 
 CREATE TABLE IF NOT EXISTS usuarios (

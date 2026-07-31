@@ -14,7 +14,7 @@ object NativeMediaEngine {
     
     init {
         try {
-            System.loadLibrary("vinzay_media_optimizer")
+            System.loadLibrary("mercora_media_optimizer")
             isLoaded = true
             Log.i(TAG, "C++ media optimizer engine loaded successfully")
         } catch (e: UnsatisfiedLinkError) {

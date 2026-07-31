@@ -28,7 +28,7 @@ data class ProductDataV2(
     val likesCount: Int,
     val reviewsCount: Int,
     val isNew: Boolean,
-    val warranty: String = "Sin GarantÃ­a",
+    val warranty: String = "Sin Garantía",
     val returnsAccepted: Boolean = false,
     val freeShipping: Boolean = false,
     val colors: List<String> = emptyList()

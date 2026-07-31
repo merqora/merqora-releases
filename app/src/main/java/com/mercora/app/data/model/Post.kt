@@ -120,7 +120,7 @@ data class Post(
     val comments: Int get() = reviewsCount
 
     /** Link personalizado para compartir este post */
-    val shareLink: String get() = "https://vinzay.app/p/$id"
+    val shareLink: String get() = "https://mercora.app/p/$id"
 
     val producto: Producto
         get() = Producto(

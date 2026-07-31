@@ -20,14 +20,14 @@ import com.mercora.app.ui.theme.*
 
 /**
  * â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
- * DoubleTapEcommerceAnimation - AnimaciÃ³n Ultra Optimizada Estilo Instagram
+ * DoubleTapEcommerceAnimation - Animación Ultra Optimizada Estilo Instagram
  * â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
  * 
  * Arquitectura:
- * - MÃ³dulo independiente que NO depende de recomposiciones del post
+ * - Módulo independiente que NO depende de recomposiciones del post
  * - Renderizado como overlay usando graphicsLayer (GPU-accelerated)
- * - Pre-cÃ¡lculo de valores para evitar allocations durante animaciÃ³n
- * - Animaciones con SpringSpec fÃ­sico para fluidez natural
+ * - Pre-cálculo de valores para evitar allocations durante animación
+ * - Animaciones con SpringSpec físico para fluidez natural
  * 
  * Performance:
  * - Uso de Animatable para animaciones state-less
@@ -39,11 +39,11 @@ import com.mercora.app.ui.theme.*
  */
 
 // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-// CONFIGURACIÃ“N - FÃ¡cilmente ajustable
+// CONFIGURACIÓN - Fácilmente ajustable
 // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 object DoubleTapAnimationConfig {
-    // DuraciÃ³n total de la animaciÃ³n
+    // Duración total de la animación
     const val TOTAL_DURATION_MS = 900
     
     // Escala del icono
@@ -52,10 +52,10 @@ object DoubleTapAnimationConfig {
     const val PEAK_SCALE = 1.15f
     const val FINAL_SCALE = 1f
     
-    // Spring specs para fÃ­sica natural
+    // Spring specs para física natural
     val SCALE_IN_SPRING = SpringSpec<Float>(
         dampingRatio = 0.55f,  // Rebote moderado
-        stiffness = 800f       // Respuesta rÃ¡pida
+        stiffness = 800f       // Respuesta rápida
     )
     
     val SCALE_OUT_SPRING = SpringSpec<Float>(
@@ -68,7 +68,7 @@ object DoubleTapAnimationConfig {
     const val HOLD_DURATION = 400
     const val FADE_OUT_DURATION = 400
     
-    // Anti-spam: tiempo mÃ­nimo entre animaciones
+    // Anti-spam: tiempo mínimo entre animaciones
     const val MIN_TIME_BETWEEN_TAPS_MS = 350L
 }
 
@@ -93,7 +93,7 @@ val defaultEcommerceIcons = listOf(
 )
 
 // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-// ESTADO DE LA ANIMACIÃ“N - Encapsulado y reutilizable
+// ESTADO DE LA ANIMACIÓN - Encapsulado y reutilizable
 // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 class DoubleTapAnimationState(
@@ -107,7 +107,7 @@ class DoubleTapAnimationState(
     var isVisible by mutableStateOf(false)
         private set
     
-    // PosiciÃ³n del tap
+    // Posición del tap
     var tapOffset by mutableStateOf(Offset.Zero)
         private set
     
@@ -120,8 +120,8 @@ class DoubleTapAnimationState(
     private var lastTapTime = 0L
     
     /**
-     * Dispara la animaciÃ³n en la posiciÃ³n indicada.
-     * Retorna true si se ejecutÃ³, false si fue bloqueado por anti-spam.
+     * Dispara la animación en la posición indicada.
+     * Retorna true si se ejecutó, false si fue bloqueado por anti-spam.
      */
     suspend fun trigger(offset: Offset): Boolean {
         val now = System.currentTimeMillis()
@@ -133,21 +133,21 @@ class DoubleTapAnimationState(
         // Rotar al siguiente icono
         currentIconIndex = (currentIconIndex + 1) % icons.size
         
-        // Guardar posiciÃ³n
+        // Guardar posición
         tapOffset = offset
         
-        // Reset instantÃ¡neo
+        // Reset instantáneo
         scale.snapTo(DoubleTapAnimationConfig.INITIAL_SCALE)
         alpha.snapTo(1f)
         isVisible = true
         
-        // AnimaciÃ³n de entrada (scale up con spring fÃ­sico)
+        // Animación de entrada (scale up con spring físico)
         scale.animateTo(
             targetValue = DoubleTapAnimationConfig.PEAK_SCALE,
             animationSpec = DoubleTapAnimationConfig.SCALE_IN_SPRING
         )
         
-        // PequeÃ±o settle
+        // Pequeño settle
         scale.animateTo(
             targetValue = DoubleTapAnimationConfig.FINAL_SCALE,
             animationSpec = spring(
@@ -159,7 +159,7 @@ class DoubleTapAnimationState(
         // Hold breve
         kotlinx.coroutines.delay(DoubleTapAnimationConfig.HOLD_DURATION.toLong())
         
-        // AnimaciÃ³n de salida (fade + scale out)
+        // Animación de salida (fade + scale out)
         kotlinx.coroutines.coroutineScope {
             launch {
                 alpha.animateTo(
@@ -194,11 +194,11 @@ fun rememberDoubleTapAnimationState(
 }
 
 // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-// COMPOSABLE PRINCIPAL - Overlay de animaciÃ³n
+// COMPOSABLE PRINCIPAL - Overlay de animación
 // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 /**
- * Overlay de animaciÃ³n para doble tap.
+ * Overlay de animación para doble tap.
  * 
  * USO:
  * ```kotlin
@@ -208,7 +208,7 @@ fun rememberDoubleTapAnimationState(
  *     // Tu contenido (imagen del post)
  *     AsyncImage(...)
  *     
- *     // Overlay de animaciÃ³n
+ *     // Overlay de animación
  *     DoubleTapAnimationOverlay(
  *         state = animState,
  *         modifier = Modifier.fillMaxSize()
@@ -253,7 +253,7 @@ fun DoubleTapAnimationOverlay(
                     scaleY = state.scale.value
                     alpha = state.alpha.value
                     
-                    // PequeÃ±a rotaciÃ³n para mÃ¡s dinamismo
+                    // Pequeña rotación para más dinamismo
                     rotationZ = (1f - state.scale.value) * 15f
                 },
             tint = icon.tint
@@ -262,12 +262,12 @@ fun DoubleTapAnimationOverlay(
 }
 
 // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-// VERSIÃ“N SIMPLIFICADA - Para integraciÃ³n rÃ¡pida
+// VERSIÓN SIMPLIFICADA - Para integración rápida
 // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 /**
- * VersiÃ³n todo-en-uno que maneja su propio estado.
- * Ideal para integraciÃ³n rÃ¡pida cuando no necesitas control externo.
+ * Versión todo-en-uno que maneja su propio estado.
+ * Ideal para integración rápida cuando no necesitas control externo.
  */
 @Composable
 fun DoubleTapEcommerceAnimation(
@@ -289,7 +289,7 @@ fun DoubleTapEcommerceAnimation(
     var iconIndex by remember { mutableIntStateOf(0) }
     val currentIcon = icons[iconIndex % icons.size]
     
-    // Disparar animaciÃ³n cuando show cambia a true
+    // Disparar animación cuando show cambia a true
     LaunchedEffect(show, tapOffset) {
         if (show) {
             // Rotar icono
@@ -299,7 +299,7 @@ fun DoubleTapEcommerceAnimation(
             scale.snapTo(0f)
             alpha.snapTo(1f)
             
-            // AnimaciÃ³n entrada
+            // Animación entrada
             launch {
                 scale.animateTo(
                     targetValue = 1.15f,
@@ -349,37 +349,37 @@ fun DoubleTapEcommerceAnimation(
 
 /**
  * â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
- * Â¿POR QUÃ‰ ESTA ARQUITECTURA LOGRA FLUIDEZ TIPO INSTAGRAM?
+ * ¿POR QUÉ ESTA ARQUITECTURA LOGRA FLUIDEZ TIPO INSTAGRAM?
  * â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
  * 
  * 1. ANIMACIONES GPU-FIRST:
  *    - Usamos `graphicsLayer` para scale, alpha y rotation
- *    - Estas propiedades se animan en GPU sin recomposiciÃ³n del Ã¡rbol UI
- *    - No hay layout invalidation durante la animaciÃ³n
+ *    - Estas propiedades se animan en GPU sin recomposición del árbol UI
+ *    - No hay layout invalidation durante la animación
  * 
- * 2. FÃSICA REAL CON SPRING:
- *    - SpringSpec simula fÃ­sica real (masa, rigidez, amortiguamiento)
- *    - El rebote sutil hace que se sienta "fÃ­sico" y "orgÃ¡nico"
+ * 2. FÍSICA REAL CON SPRING:
+ *    - SpringSpec simula física real (masa, rigidez, amortiguamiento)
+ *    - El rebote sutil hace que se sienta "físico" y "orgánico"
  *    - Instagram usa exactamente este tipo de animaciones
  * 
  * 3. ZERO ALLOCATIONS EN HOT PATH:
  *    - Los Animatable se crean UNA vez con remember
- *    - No hay creaciÃ³n de objetos durante la animaciÃ³n
+ *    - No hay creación de objetos durante la animación
  *    - snapTo() y animateTo() no allocan
  * 
  * 4. DESACOPLAMIENTO DEL UI TREE:
  *    - El overlay es independiente del contenido del post
- *    - No importa si el LazyColumn estÃ¡ scrolleando
- *    - La animaciÃ³n corre en su propio "layer"
+ *    - No importa si el LazyColumn está scrolleando
+ *    - La animación corre en su propio "layer"
  * 
  * 5. ANTI-JANK:
- *    - Anti-spam previene mÃºltiples animaciones simultÃ¡neas
- *    - Las coroutines estÃ¡n bien estructuradas para no competir
- *    - El estado es minimal y atÃ³mico
+ *    - Anti-spam previene múltiples animaciones simultáneas
+ *    - Las coroutines están bien estructuradas para no competir
+ *    - El estado es minimal y atómico
  * 
  * 6. 120Hz READY:
  *    - Animatable usa el frame clock del sistema
- *    - Se adapta automÃ¡ticamente a 60/90/120Hz
+ *    - Se adapta automáticamente a 60/90/120Hz
  *    - No hay hardcoded frame times
  * 
  * â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•

@@ -1,5 +1,5 @@
--- ============================================================================
--- SISTEMA DE SEGUIDORES Y CLIENTES - VINZAY
+﻿-- ============================================================================
+-- SISTEMA DE SEGUIDORES Y CLIENTES - MERCORA
 -- ============================================================================
 -- Este script elimina las columnas antiguas de la tabla usuarios y crea
 -- una nueva tabla 'followers' para manejar seguidores y clientes.

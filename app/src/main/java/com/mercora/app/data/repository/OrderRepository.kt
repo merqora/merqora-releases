@@ -241,7 +241,7 @@ object OrderRepository {
             }
             
             // Crear registro de pago pendiente
-            val externalRef = "Vinzay-${orderResult.id.take(8).uppercase()}-${System.currentTimeMillis()}"
+            val externalRef = "Mercora-${orderResult.id.take(8).uppercase()}-${System.currentTimeMillis()}"
             val paymentInsert = PaymentInsert(
                 orderId = orderResult.id,
                 amount = totalAmount,

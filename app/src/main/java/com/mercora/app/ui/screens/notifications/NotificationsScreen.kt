@@ -25,11 +25,10 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.mercora.app.data.model.Notification
 import com.mercora.app.data.model.NotificationType
-import com.mercora.app.data.repository.NotificationRepository
 import com.mercora.app.ui.theme.*
-import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -37,18 +36,12 @@ import java.util.*
 fun NotificationsScreen(
     onBack: () -> Unit,
     onNotificationClick: (Notification) -> Unit = {},
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    viewModel: NotificationsViewModel = hiltViewModel()
 ) {
-    val scope = rememberCoroutineScope()
-    val notifications by NotificationRepository.notifications.collectAsState()
-    val isLoading by NotificationRepository.isLoading.collectAsState()
-    
-    LaunchedEffect(Unit) {
-        NotificationRepository.loadNotifications()
-        NotificationRepository.subscribeToRealtime()
-    }
-    
-    var selectedFilter by remember { mutableStateOf("Todas") }
+    val notifications by viewModel.notifications.collectAsState()
+    val isLoading by viewModel.isLoading.collectAsState()
+    val selectedFilter by viewModel.selectedFilter.collectAsState()
     val filters = listOf("Todas", "Likes", "Comentarios", "Seguidores", "Ventas")
     
     val filteredNotifications = when (selectedFilter) {
@@ -96,9 +89,7 @@ fun NotificationsScreen(
                 color = TextPrimary
             )
             
-            IconButton(onClick = {
-                scope.launch { NotificationRepository.markAllAsRead() }
-            }) {
+            IconButton(onClick = { viewModel.markAllAsRead() }) {
                 Icon(
                     imageVector = Icons.Default.Done,
                     contentDescription = "Marcar todo como leído",
@@ -116,7 +107,7 @@ fun NotificationsScreen(
             filters.forEach { filter ->
                 FilterChip(
                     selected = selectedFilter == filter,
-                    onClick = { selectedFilter = filter },
+                    onClick = { viewModel.selectFilter(filter) },
                     label = { Text(filter, fontSize = 12.sp) },
                     colors = FilterChipDefaults.filterChipColors(
                         selectedContainerColor = PrimaryPurple.copy(alpha = 0.2f),

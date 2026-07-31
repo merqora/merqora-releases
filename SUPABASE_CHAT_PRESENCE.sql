@@ -1,5 +1,5 @@
--- ═══════════════════════════════════════════════════════════════════════════════
--- SISTEMA DE PRESENCIA Y ESTADOS DE MENSAJES - VINZAY CHAT
+﻿-- ═══════════════════════════════════════════════════════════════════════════════
+-- SISTEMA DE PRESENCIA Y ESTADOS DE MENSAJES - MERCORA CHAT
 -- Ejecutar en Supabase SQL Editor
 -- ═══════════════════════════════════════════════════════════════════════════════
 

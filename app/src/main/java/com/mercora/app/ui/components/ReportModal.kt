@@ -48,7 +48,7 @@ private val reportReasons = listOf(
         "inappropriate",
         Icons.Outlined.RemoveCircleOutline,
         "Contenido inapropiado",
-        "Contenido para adultos o explÃ­cito",
+        "Contenido para adultos o explícito",
         Color(0xFFEF4444)
     ),
     ReportReason(
@@ -61,22 +61,22 @@ private val reportReasons = listOf(
     ReportReason(
         "fake",
         Icons.Outlined.Warning,
-        "InformaciÃ³n falsa",
-        "Producto o informaciÃ³n engaÃ±osa",
+        "Información falsa",
+        "Producto o información engañosa",
         Color(0xFF1565A0)
     ),
     ReportReason(
         "scam",
         Icons.Outlined.MoneyOff,
         "Estafa o fraude",
-        "Intento de engaÃ±ar para obtener dinero",
+        "Intento de engañar para obtener dinero",
         Color(0xFFDC2626)
     ),
     ReportReason(
         "hate_speech",
         Icons.Outlined.SentimentVeryDissatisfied,
         "Discurso de odio",
-        "Contenido que promueve odio o discriminaciÃ³n",
+        "Contenido que promueve odio o discriminación",
         Color(0xFF0A3D62)
     ),
     ReportReason(
@@ -186,7 +186,7 @@ fun ReportModal(
                             )
                             Spacer(modifier = Modifier.height(16.dp))
                             Text(
-                                text = "Â¡Gracias por tu reporte!",
+                                text = "¡Gracias por tu reporte!",
                                 fontSize = 20.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = TextPrimary
@@ -236,7 +236,7 @@ fun ReportModal(
                                     Text(
                                         text = if (showDetailsInput) "Detalles adicionales" else "Reportar ${
                                             when(contentType) {
-                                                "post" -> "publicaciÃ³n"
+                                                "post" -> "publicación"
                                                 "rend" -> "rend"
                                                 "user" -> "usuario"
                                                 "comment" -> "comentario"
@@ -271,7 +271,7 @@ fun ReportModal(
                                     .fillMaxSize()
                                     .padding(20.dp)
                             ) {
-                                // RazÃ³n seleccionada
+                                // Razón seleccionada
                                 Surface(
                                     shape = RoundedCornerShape(12.dp),
                                     color = selectedReason!!.color.copy(alpha = 0.1f)
@@ -306,7 +306,7 @@ fun ReportModal(
                                 Spacer(modifier = Modifier.height(20.dp))
                                 
                                 Text(
-                                    text = "Â¿Puedes darnos mÃ¡s detalles? (opcional)",
+                                    text = "¿Puedes darnos más detalles? (opcional)",
                                     fontSize = 14.sp,
                                     fontWeight = FontWeight.Medium,
                                     color = TextPrimary
@@ -388,7 +388,7 @@ fun ReportModal(
                             ) {
                                 item {
                                     Text(
-                                        text = "Â¿Por quÃ© reportas este contenido?",
+                                        text = "¿Por qué reportas este contenido?",
                                         fontSize = 14.sp,
                                         color = TextMuted,
                                         modifier = Modifier.padding(horizontal = 8.dp, vertical = 12.dp)

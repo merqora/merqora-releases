@@ -51,7 +51,7 @@ fun AppearanceSettingsScreen(
         launch { preferences.showAnimationsFlow.collect { showAnimations = it } }
     }
     
-    // Colores dinÃ¡micos
+    // Colores dinámicos
     val bgColor = themedHomeBg()
     val surfaceColor = themedSurface()
     val textColor = themedTextPrimary()
@@ -175,7 +175,7 @@ fun AppearanceSettingsScreen(
                             ) {
                                 ColorOption(
                                     color = PrimaryPurple,
-                                    label = "PÃºrpura",
+                                    label = "Púrpura",
                                     isSelected = selectedAccentColor == AppPreferences.ACCENT_PURPLE,
                                     onClick = { updateAccentColor(AppPreferences.ACCENT_PURPLE) }
                                 )
@@ -209,7 +209,7 @@ fun AppearanceSettingsScreen(
                     
                     Spacer(modifier = Modifier.height(24.dp))
                     
-                    SettingsSectionTitle("Preferencias de visualizaciÃ³n")
+                    SettingsSectionTitle("Preferencias de visualización")
                     
                     Surface(
                         modifier = Modifier.fillMaxWidth(),
@@ -239,7 +239,7 @@ fun AppearanceSettingsScreen(
                                         color = textColor
                                     )
                                     Text(
-                                        text = "Muestra mÃ¡s contenido en pantalla",
+                                        text = "Muestra más contenido en pantalla",
                                         fontSize = 12.sp,
                                         color = mutedColor
                                     )

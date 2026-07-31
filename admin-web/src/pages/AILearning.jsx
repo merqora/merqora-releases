@@ -44,7 +44,7 @@ export default function AILearning() {
           table: 'ai_feedback'
         },
         () => {
-          console.log('ðŸ“š AI feedback actualizado, recargando...')
+          console.log('📚 AI feedback actualizado, recargando...')
           loadLearningData()
           loadStats()
         }
@@ -190,7 +190,7 @@ export default function AILearning() {
         <div className="bg-mercora-surface rounded-2xl border border-primary/10 p-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-text-tertiary text-sm">CalificaciÃ³n</p>
+              <p className="text-text-tertiary text-sm">Calificación</p>
               <p className="text-2xl font-bold text-accent-gold flex items-center gap-1">
                 {stats.averageRating} <Star className="w-5 h-5 fill-current" />
               </p>
@@ -283,7 +283,7 @@ export default function AILearning() {
               No hay feedback con estos filtros
             </h3>
             <p className="text-gray-600">
-              Intenta cambiar los filtros o espera a que los usuarios envÃ­en feedback
+              Intenta cambiar los filtros o espera a que los usuarios envíen feedback
             </p>
           </div>
         ) : (
@@ -304,7 +304,7 @@ export default function AILearning() {
                   </div>
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1">
-                      <span className="font-medium text-gray-900">{item.username || 'Usuario AnÃ³nimo'}</span>
+                      <span className="font-medium text-gray-900">{item.username || 'Usuario Anónimo'}</span>
                       {item.rating && (
                         <span className={`flex items-center gap-1 text-sm font-medium ${getRatingColor(item.rating)}`}>
                           {item.rating} <Star className="w-4 h-4 fill-current" />
@@ -352,7 +352,7 @@ export default function AILearning() {
                 )}
                 {item.resolved_by && (
                   <span className="text-gray-600">
-                    Resuelto por: {item.resolved_by === 'human' ? 'ðŸ‘¤ Humano' : 'ðŸ¤– IA'}
+                    Resuelto por: {item.resolved_by === 'human' ? '👤 Humano' : '🤖 IA'}
                   </span>
                 )}
               </div>
@@ -382,7 +382,7 @@ export default function AILearning() {
                     )}
                   </div>
                   <div>
-                    <h2 className="text-xl font-bold text-gray-900">{selectedItem.username || 'Usuario AnÃ³nimo'}</h2>
+                    <h2 className="text-xl font-bold text-gray-900">{selectedItem.username || 'Usuario Anónimo'}</h2>
                     <p className="text-sm text-gray-500">
                       {new Date(selectedItem.created_at).toLocaleString('es-ES')}
                     </p>
@@ -392,14 +392,14 @@ export default function AILearning() {
                   onClick={() => setSelectedItem(null)}
                   className="text-gray-400 hover:text-gray-600 text-2xl"
                 >
-                  Ã—
+                  ×
                 </button>
               </div>
 
               <div className="space-y-4">
                 {selectedItem.rating && (
                   <div className={`p-4 rounded-lg ${getRatingBg(selectedItem.rating)}`}>
-                    <label className="text-sm font-medium text-gray-700 block mb-1">CalificaciÃ³n</label>
+                    <label className="text-sm font-medium text-gray-700 block mb-1">Calificación</label>
                     <div className="flex items-center gap-1">
                       {[...Array(5)].map((_, i) => (
                         <Star
@@ -442,7 +442,7 @@ export default function AILearning() {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="text-sm font-medium text-gray-700 block mb-1">Estado ConversaciÃ³n</label>
+                    <label className="text-sm font-medium text-gray-700 block mb-1">Estado Conversación</label>
                     <p className="text-gray-900 bg-gray-50 p-2 rounded text-sm">
                       {selectedItem.conversation_status || 'N/A'}
                     </p>
@@ -450,8 +450,8 @@ export default function AILearning() {
                   <div>
                     <label className="text-sm font-medium text-gray-700 block mb-1">Resuelto Por</label>
                     <p className="text-gray-900 bg-gray-50 p-2 rounded text-sm">
-                      {selectedItem.resolved_by === 'human' ? 'ðŸ‘¤ Agente Humano' : 
-                       selectedItem.resolved_by === 'ai' ? 'ðŸ¤– IA' : 'N/A'}
+                      {selectedItem.resolved_by === 'human' ? '👤 Agente Humano' : 
+                       selectedItem.resolved_by === 'ai' ? '🤖 IA' : 'N/A'}
                     </p>
                   </div>
                 </div>
@@ -463,16 +463,16 @@ export default function AILearning() {
                       <span className="font-semibold text-purple-900">Usado para Aprendizaje de IA</span>
                     </div>
                     <p className="text-sm text-purple-700">
-                      Este feedback positivo (â‰¥4 estrellas) se estÃ¡ usando para mejorar las respuestas del asistente.
-                      La IA aprenderÃ¡ de la interacciÃ³n entre el usuario y el agente para manejar consultas similares en el futuro.
+                      Este feedback positivo (â‰¥4 estrellas) se está usando para mejorar las respuestas del asistente.
+                      La IA aprenderá de la interacción entre el usuario y el agente para manejar consultas similares en el futuro.
                     </p>
                   </div>
                 )}
 
                 <div className="text-xs text-gray-500 pt-4 border-t border-gray-200 space-y-1">
                   <div>ID Feedback: {selectedItem.id}</div>
-                  <div>ID ConversaciÃ³n: {selectedItem.conversation_id || 'N/A'}</div>
-                  <div>Mensajes en conversaciÃ³n: {selectedItem.message_count || 0}</div>
+                  <div>ID Conversación: {selectedItem.conversation_id || 'N/A'}</div>
+                  <div>Mensajes en conversación: {selectedItem.message_count || 0}</div>
                 </div>
               </div>
             </div>

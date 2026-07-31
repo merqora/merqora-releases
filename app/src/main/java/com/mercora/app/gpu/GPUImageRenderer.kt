@@ -47,7 +47,7 @@ class GPUImageRenderer : GLSurfaceView.Renderer {
     private var textureHandle = 0
     private var textureId = 0
     
-    // Uniform locations (cacheados para mÃ¡ximo rendimiento)
+    // Uniform locations (cacheados para máximo rendimiento)
     private var uTextureLocation = 0
     private var uBrightnessLocation = 0
     private var uContrastLocation = 0
@@ -65,7 +65,7 @@ class GPUImageRenderer : GLSurfaceView.Renderer {
     private var aPositionLocation = 0
     private var aTexCoordLocation = 0
     
-    // ParÃ¡metros de ajuste actuales (volÃ¡tiles para thread-safety)
+    // Parámetros de ajuste actuales (volátiles para thread-safety)
     @Volatile var brightness = 0f
     @Volatile var contrast = 0f
     @Volatile var saturation = 0f
@@ -86,7 +86,7 @@ class GPUImageRenderer : GLSurfaceView.Renderer {
     private var bitmapWidth = 0
     private var bitmapHeight = 0
     
-    // Callback cuando el frame estÃ¡ listo
+    // Callback cuando el frame está listo
     var onFrameRendered: (() -> Unit)? = null
 
     init {
@@ -125,12 +125,12 @@ class GPUImageRenderer : GLSurfaceView.Renderer {
         val bitmapAspect = bitmapWidth.toFloat() / bitmapHeight.toFloat()
         
         val (left, right, top, bottom) = if (bitmapAspect > surfaceAspect) {
-            // Bitmap es mÃ¡s ancho - recortar lados
+            // Bitmap es más ancho - recortar lados
             val scale = surfaceAspect / bitmapAspect
             val offset = (1f - scale) / 2f
             listOf(offset, 1f - offset, 0f, 1f)
         } else {
-            // Bitmap es mÃ¡s alto - recortar arriba/abajo
+            // Bitmap es más alto - recortar arriba/abajo
             val scale = bitmapAspect / surfaceAspect
             val offset = (1f - scale) / 2f
             listOf(0f, 1f, offset, 1f - offset)
@@ -205,7 +205,7 @@ class GPUImageRenderer : GLSurfaceView.Renderer {
         GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_WRAP_S, GLES30.GL_CLAMP_TO_EDGE)
         GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_WRAP_T, GLES30.GL_CLAMP_TO_EDGE)
         
-        // Limpiar shaders (ya estÃ¡n en el programa)
+        // Limpiar shaders (ya están en el programa)
         GLES30.glDeleteShader(vertexShader)
         GLES30.glDeleteShader(fragmentShader)
     }
@@ -241,7 +241,7 @@ class GPUImageRenderer : GLSurfaceView.Renderer {
         GLES30.glBindTexture(GLES30.GL_TEXTURE_2D, textureId)
         GLES30.glUniform1i(uTextureLocation, 0)
         
-        // Configurar uniforms de ajuste (cambio instantÃ¡neo = 0 dropped frames)
+        // Configurar uniforms de ajuste (cambio instantáneo = 0 dropped frames)
         GLES30.glUniform1f(uBrightnessLocation, brightness)
         GLES30.glUniform1f(uContrastLocation, contrast)
         GLES30.glUniform1f(uSaturationLocation, saturation)
@@ -289,7 +289,7 @@ class GPUImageRenderer : GLSurfaceView.Renderer {
     }
 
     /**
-     * Renderiza el frame actual a un Bitmap para exportaciÃ³n
+     * Renderiza el frame actual a un Bitmap para exportación
      * Usa framebuffer offscreen para captura exacta
      */
     fun renderToBitmap(width: Int, height: Int): Bitmap? {
@@ -316,7 +316,7 @@ class GPUImageRenderer : GLSurfaceView.Renderer {
         GLES30.glViewport(0, 0, width, height)
         onDrawFrame(null)
         
-        // Leer pÃ­xeles
+        // Leer píxeles
         val buffer = ByteBuffer.allocateDirect(width * height * 4)
         buffer.order(ByteOrder.LITTLE_ENDIAN)
         GLES30.glReadPixels(0, 0, width, height, GLES30.GL_RGBA, GLES30.GL_UNSIGNED_BYTE, buffer)

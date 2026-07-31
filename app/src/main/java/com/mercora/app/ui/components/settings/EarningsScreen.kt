@@ -31,8 +31,12 @@ import coil.compose.AsyncImage
 import com.mercora.app.data.model.Order
 import com.mercora.app.data.model.OrderStatus
 import com.mercora.app.data.repository.OrderRepository
+import com.mercora.app.data.repository.WalletRepository
 import com.mercora.app.data.remote.SupabaseClient
 import com.mercora.app.ui.theme.*
+import androidx.compose.ui.platform.LocalContext
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.buildJsonObject
 import kotlinx.coroutines.launch
 
 @Composable
@@ -49,6 +53,7 @@ fun EarningsScreen(
     if (!isVisible && slideOffset == 1f) return
 
     val scope = rememberCoroutineScope()
+    val context = LocalContext.current
     val summary by OrderRepository.cachedSummary.collectAsState()
     val sales by OrderRepository.cachedSales.collectAsState()
     val isRefreshing by OrderRepository.isRefreshing.collectAsState()
@@ -155,7 +160,7 @@ fun EarningsScreen(
                             )
                         }
 
-                        // BotÃ³n de retirar
+                        // Botón de retirar
                         item {
                             WithdrawButton(
                                 availableAmount = completedRevenue,
@@ -163,7 +168,7 @@ fun EarningsScreen(
                             )
                         }
 
-                        // Acciones rÃ¡pidas
+                        // Acciones rápidas
                         item {
                             Text(
                                 text = "ACCIONES",
@@ -179,7 +184,7 @@ fun EarningsScreen(
                             EarningsActionCard(
                                 icon = Icons.Outlined.AccountBalanceWallet,
                                 iconColor = Color(0xFF2E8B57),
-                                title = "Configurar mÃ©todo de cobro",
+                                title = "Configurar método de cobro",
                                 subtitle = if (selectedPayoutMethod == "mercadopago") "Mercado Pago" else "Transferencia bancaria",
                                 onClick = { showPayoutMethods = true }
                             )
@@ -199,7 +204,7 @@ fun EarningsScreen(
                             EarningsActionCard(
                                 icon = Icons.Outlined.Receipt,
                                 iconColor = Color(0xFFFF6B35),
-                                title = "FacturaciÃ³n",
+                                title = "Facturación",
                                 subtitle = "Descarga tus facturas y comprobantes",
                                 onClick = { showBilling = true }
                             )
@@ -220,7 +225,7 @@ fun EarningsScreen(
 
                         if (sales.isEmpty()) {
                             item {
-                                EmptyStateCard(message = "AÃºn no tienes ventas registradas")
+                                EmptyStateCard(message = "Aún no tienes ventas registradas")
                             }
                         } else {
                             items(sales.sortedByDescending { it.createdAt }.take(20), key = { it.id }) { sale ->
@@ -255,7 +260,26 @@ fun EarningsScreen(
                 onDismiss = { showWithdrawDialog = false },
                 onConfirm = { amount ->
                     showWithdrawDialog = false
-                    // TODO: implement withdrawal via MP API
+                    scope.launch {
+                        val userId = SupabaseClient.auth.currentUserOrNull()?.id
+                        if (userId != null) {
+                            val jsonDest = buildJsonObject {
+                                put("method", JsonPrimitive(selectedPayoutMethod))
+                            }
+                            val result = WalletRepository.requestWithdrawal(
+                                userId = userId,
+                                amount = amount,
+                                method = selectedPayoutMethod,
+                                destination = jsonDest
+                            )
+                            result.onSuccess {
+                                android.widget.Toast.makeText(context, "Solicitud de retiro enviada", android.widget.Toast.LENGTH_SHORT).show()
+                                OrderRepository.loadTransactionsWithCache()
+                            }.onFailure { e ->
+                                android.widget.Toast.makeText(context, "Error: ${e.message}", android.widget.Toast.LENGTH_LONG).show()
+                            }
+                        }
+                    }
                 }
             )
         }
@@ -687,7 +711,7 @@ private fun WithdrawDialog(
                     color = TextPrimary
                 )
                 Text(
-                    text = "El dinero se transferirÃ¡ a tu mÃ©todo de cobro configurado",
+                    text = "El dinero se transferirá a tu método de cobro configurado",
                     fontSize = 13.sp,
                     color = TextSecondary,
                     textAlign = TextAlign.Center
@@ -888,7 +912,7 @@ private fun SaleDetailView(
                                 }
                                 Spacer(modifier = Modifier.height(6.dp))
                                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                                    Text("EnvÃ­o", fontSize = 13.sp, color = TextSecondary)
+                                    Text("Envío", fontSize = 13.sp, color = TextSecondary)
                                     Text(if (sale.shippingCost == 0.0) "GRATIS" else "$${String.format("%,.0f", sale.shippingCost)}",
                                         fontSize = 14.sp, fontWeight = FontWeight.Medium, color = if (sale.shippingCost == 0.0) AccentGreen else TextPrimary)
                                 }
@@ -965,13 +989,13 @@ private fun PayoutConfigOverlay(
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(
-                    text = "MÃ©todo de cobro",
+                    text = "Método de cobro",
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
                     color = TextPrimary
                 )
                 Text(
-                    text = "SeleccionÃ¡ cÃ³mo querÃ©s recibir tus pagos",
+                    text = "Seleccioná cómo querés recibir tus pagos",
                     fontSize = 13.sp,
                     color = TextSecondary
                 )
@@ -980,7 +1004,7 @@ private fun PayoutConfigOverlay(
                 PayoutMethodOption(
                     icon = Icons.Outlined.AccountBalance,
                     name = "Mercado Pago",
-                    description = "RecibÃ­ el dinero directo en tu cuenta de Mercado Pago",
+                    description = "Recibí el dinero directo en tu cuenta de Mercado Pago",
                     isSelected = selectedMethod == "mercadopago",
                     onClick = { onSelect("mercadopago") }
                 )
@@ -990,7 +1014,7 @@ private fun PayoutConfigOverlay(
                 PayoutMethodOption(
                     icon = Icons.Outlined.AccountBalance,
                     name = "Transferencia bancaria",
-                    description = "RecibÃ­ el dinero en tu cuenta bancaria (PrÃ³ximamente)",
+                    description = "Recibí el dinero en tu cuenta bancaria (Próximamente)",
                     isSelected = selectedMethod == "bank",
                     onClick = { onSelect("bank") },
                     isDisabled = true

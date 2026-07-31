@@ -194,7 +194,7 @@ fun ChatScreen(
     val scope = rememberCoroutineScope()
     val currentUserId = remember { com.mercora.app.data.remote.SupabaseClient.auth.currentUserOrNull()?.id }
     val currentProfile by ProfileRepository.currentProfile.collectAsState()
-    val currentUsername = currentProfile?.username ?: "TÃº"
+    val currentUsername = currentProfile?.username ?: "Tú"
     val currentUserAvatar = currentProfile?.avatarUrl
     val listState = rememberLazyListState()
     
@@ -211,23 +211,23 @@ fun ChatScreen(
     var selectedMessage by remember { mutableStateOf<Message?>(null) }
     var showMessageOptionsModal by remember { mutableStateOf(false) }
     
-    // Estado para ediciÃ³n de mensaje
+    // Estado para edición de mensaje
     var editingMessage by remember { mutableStateOf<Message?>(null) }
     var isEditMode by remember { mutableStateOf(false) }
     
-    // Estado para reenvÃ­o de posts compartidos
+    // Estado para reenvío de posts compartidos
     var sharedPostToForward by remember { mutableStateOf<SharedPostData?>(null) }
     var showForwardSharedPostModal by remember { mutableStateOf(false) }
     
-    // Estado para reenvÃ­o de mensajes de texto
+    // Estado para reenvío de mensajes de texto
     var textToForward by remember { mutableStateOf<String?>(null) }
     var showForwardTextModal by remember { mutableStateOf(false) }
     
-    // Estado para envÃ­o de media
+    // Estado para envío de media
     var selectedMediaUri by remember { mutableStateOf<Uri?>(null) }
     var isUploadingMedia by remember { mutableStateOf(false) }
     
-    // Estado para modal de handshake (confirmaciÃ³n de compra)
+    // Estado para modal de handshake (confirmación de compra)
     var showHandshakeModal by remember { mutableStateOf(false) }
     var pendingHandshakeId by remember { mutableStateOf<String?>(null) }
     var isWaitingForAcceptance by remember { mutableStateOf(false) }
@@ -235,7 +235,7 @@ fun ChatScreen(
     // Estado para modal de ajustes del chat (3 puntitos)
     var showChatSettingsModal by remember { mutableStateOf(false) }
     
-    // Estado para bÃºsqueda inline en el header
+    // Estado para búsqueda inline en el header
     var isSearchMode by remember { mutableStateOf(false) }
     var searchQuery by remember { mutableStateOf("") }
     var searchResults by remember { mutableStateOf<List<Message>>(emptyList()) }
@@ -254,7 +254,7 @@ fun ChatScreen(
     // Estados para modales de cancelar y completado
     var showCancelConfirmModal by remember { mutableStateOf(false) }
     var completedHandshakeInfo by remember { mutableStateOf<HandshakeTransaction?>(null) }
-    var cancelledHandshakeInfo by remember { mutableStateOf<HandshakeTransaction?>(null) } // Para mantener referencia durante animaciÃ³n de cancelaciÃ³n
+    var cancelledHandshakeInfo by remember { mutableStateOf<HandshakeTransaction?>(null) } // Para mantener referencia durante animación de cancelación
     var animateReputationBadge by remember { mutableStateOf(false) }
     var lastReputationChange by remember { mutableIntStateOf(0) } // +3, +4, -1, -5, etc.
     var showHandshakeBanner by remember { mutableStateOf(false) }
@@ -264,11 +264,11 @@ fun ChatScreen(
     // Handshake creado localmente (para mostrar banner antes de que Realtime sincronice)
     var localCreatedHandshake by remember { mutableStateOf<HandshakeTransaction?>(null) }
     
-    // ReputaciÃ³n en tiempo real desde Supabase
+    // Reputación en tiempo real desde Supabase
     val otherUserReputation by ReputationRepository.otherUserReputation.collectAsState()
     val currentUserReputation by ReputationRepository.currentUserReputation.collectAsState()
     
-    // VerificaciÃ³n en tiempo real del otro usuario
+    // Verificación en tiempo real del otro usuario
     val isOtherUserVerified by VerificationRepository.otherUserVerified.collectAsState()
     
     // Estado de llamadas
@@ -283,12 +283,12 @@ fun ChatScreen(
         CallRepository.initialize(context)
     }
     
-    // Estado para grabaciÃ³n de audio
+    // Estado para grabación de audio
     var isRecording by remember { mutableStateOf(false) }
     var mediaRecorder by remember { mutableStateOf<MediaRecorder?>(null) }
     var audioFile by remember { mutableStateOf<File?>(null) }
     
-    // Estado para envÃ­o de ubicaciÃ³n
+    // Estado para envío de ubicación
     var isGettingLocation by remember { mutableStateOf(false) }
     val fusedLocationClient = remember {
         com.google.android.gms.location.LocationServices.getFusedLocationProviderClient(context)
@@ -385,7 +385,7 @@ fun ChatScreen(
         }
     }
     
-    // FunciÃ³n para obtener y enviar ubicaciÃ³n
+    // Función para obtener y enviar ubicación
     @Suppress("MissingPermission")
     fun fetchAndSendLocation() {
         scope.launch {
@@ -405,21 +405,21 @@ fun ChatScreen(
                             isGettingLocation = false
                         }
                     } else {
-                        android.util.Log.e("ChatScreen", "No se pudo obtener ubicaciÃ³n")
+                        android.util.Log.e("ChatScreen", "No se pudo obtener ubicación")
                         isGettingLocation = false
                     }
                 }.addOnFailureListener { e ->
-                    android.util.Log.e("ChatScreen", "Error obteniendo ubicaciÃ³n: ${e.message}")
+                    android.util.Log.e("ChatScreen", "Error obteniendo ubicación: ${e.message}")
                     isGettingLocation = false
                 }
             } catch (e: Exception) {
-                android.util.Log.e("ChatScreen", "Error obteniendo ubicaciÃ³n: ${e.message}")
+                android.util.Log.e("ChatScreen", "Error obteniendo ubicación: ${e.message}")
                 isGettingLocation = false
             }
         }
     }
     
-    // Launcher para permiso de ubicaciÃ³n
+    // Launcher para permiso de ubicación
     val locationPermissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestMultiplePermissions()
     ) { permissions ->
@@ -435,7 +435,7 @@ fun ChatScreen(
         contract = ActivityResultContracts.RequestPermission()
     ) { isGranted ->
         if (isGranted) {
-            // Iniciar grabaciÃ³n
+            // Iniciar grabación
             try {
                 val file = File(context.cacheDir, "audio_${System.currentTimeMillis()}.m4a")
                 audioFile = file
@@ -456,12 +456,12 @@ fun ChatScreen(
                 mediaRecorder = recorder
                 isRecording = true
             } catch (e: Exception) {
-                android.util.Log.e("ChatScreen", "Error al iniciar grabaciÃ³n: ${e.message}")
+                android.util.Log.e("ChatScreen", "Error al iniciar grabación: ${e.message}")
             }
         }
     }
     
-    // Launcher para seleccionar imagen/video de galerÃ­a
+    // Launcher para seleccionar imagen/video de galería
     val mediaPickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
@@ -489,7 +489,7 @@ fun ChatScreen(
     // Estado para modal de compartir usuario
     var showShareUserModal by remember { mutableStateOf(false) }
     
-    // Estado para modal de compartir artÃ­culo
+    // Estado para modal de compartir artículo
     var showShareArticleModal by remember { mutableStateOf(false) }
     
     // Launcher para seleccionar archivo
@@ -503,7 +503,7 @@ fun ChatScreen(
                     val convId = currentConversationId ?: ChatRepository.getOrCreateConversation(otherUser.userId)
                     if (convId != null) {
                         currentConversationId = convId
-                        // Obtener nombre y tamaÃ±o del archivo
+                        // Obtener nombre y tamaño del archivo
                         val contentResolver = context.contentResolver
                         var fileName = "archivo"
                         var fileSize = 0L
@@ -517,7 +517,7 @@ fun ChatScreen(
                         }
                         val mediaUrl = ChatRepository.uploadAndSendMedia(context, convId, selectedUri)
                         if (mediaUrl != null) {
-                            // Ya se enviÃ³ como media, pero re-enviar como FILE con metadata
+                            // Ya se envió como media, pero re-enviar como FILE con metadata
                             val fileMsg = "[FILE]{\"url\":\"$mediaUrl\",\"name\":\"$fileName\",\"size\":$fileSize}"
                             ChatRepository.sendMessage(convId, fileMsg)
                         }
@@ -531,7 +531,7 @@ fun ChatScreen(
         }
     }
     
-    // Verificar si el otro usuario estÃ¡ bloqueado
+    // Verificar si el otro usuario está bloqueado
     LaunchedEffect(Unit) {
         isOtherUserBlocked = ChatRepository.isUserBlocked(otherUser.userId)
     }
@@ -540,7 +540,7 @@ fun ChatScreen(
     // Usar Unit como key para que SIEMPRE se ejecute al entrar a la pantalla
     LaunchedEffect(Unit) {
         try {
-            // Buscar o crear conversaciÃ³n existente
+            // Buscar o crear conversación existente
             val existingConvId = currentConversationId ?: ChatRepository.getOrCreateConversation(otherUser.userId)
             if (existingConvId != null) {
                 currentConversationId = existingConvId
@@ -551,17 +551,17 @@ fun ChatScreen(
                 // Suscribirse a handshakes en tiempo real
                 HandshakeRepository.subscribeToHandshakes(currentUserId ?: "")
                 
-                // Suscribirse a cambios de reputaciÃ³n en tiempo real
+                // Suscribirse a cambios de reputación en tiempo real
                 ReputationRepository.subscribeToReputation(currentUserId ?: "", otherUser.userId)
                 
-                // Suscribirse a cambios de verificaciÃ³n del otro usuario en tiempo real
+                // Suscribirse a cambios de verificación del otro usuario en tiempo real
                 VerificationRepository.subscribeToVerification(otherUser.userId)
                 
                 // Cargar handshake activo si existe
                 HandshakeRepository.getActiveHandshakeForConversation(existingConvId)
                 
             } else {
-                android.util.Log.e("ChatScreen", "No se pudo obtener conversaciÃ³n: ${ChatRepository.lastError.value}")
+                android.util.Log.e("ChatScreen", "No se pudo obtener conversación: ${ChatRepository.lastError.value}")
             }
         } catch (e: Exception) {
             android.util.Log.e("ChatScreen", "Exception al abrir chat: ${e.message}")
@@ -580,12 +580,12 @@ fun ChatScreen(
     }
     
     // *** UNIFIED REALTIME HANDLER: Actualizar el banner cuando activeHandshake cambia ***
-    // Este es el ÃšNICO LaunchedEffect que maneja todos los estados del handshake
+    // Este es el ÚNICO LaunchedEffect que maneja todos los estados del handshake
     LaunchedEffect(activeHandshake) {
         val handshake = activeHandshake
         android.util.Log.d("ChatScreen", ">>> REALTIME: activeHandshake changed -> status=${handshake?.status} id=${handshake?.id}")
         
-        // Si activeHandshake es null, ocultar banner (excepto si estamos en animaciÃ³n CANCELLED)
+        // Si activeHandshake es null, ocultar banner (excepto si estamos en animación CANCELLED)
         if (handshake == null) {
             if (handshakeBannerState != HandshakeBannerState.CANCELLED) {
                 showHandshakeBanner = false
@@ -594,12 +594,12 @@ fun ChatScreen(
             return@LaunchedEffect
         }
         
-        // Solo procesar si es de esta conversaciÃ³n
+        // Solo procesar si es de esta conversación
         if (handshake.conversationId != currentConversationId) return@LaunchedEffect
         
-        // Si estamos mostrando el banner CANCELLED, NO interferir con su animaciÃ³n
+        // Si estamos mostrando el banner CANCELLED, NO interferir con su animación
         if (handshakeBannerState == HandshakeBannerState.CANCELLED && handshake.status == "CANCELLED") {
-            android.util.Log.d("ChatScreen", ">>> Ignorando update CANCELLED - banner ya en animaciÃ³n")
+            android.util.Log.d("ChatScreen", ">>> Ignorando update CANCELLED - banner ya en animación")
             return@LaunchedEffect
         }
         
@@ -631,7 +631,7 @@ fun ChatScreen(
                 handshakeBannerState = HandshakeBannerState.COMPLETED
                 
                 if (!completedBannerDismissed) {
-                    // Enviar mensaje de transacciÃ³n completada al chat
+                    // Enviar mensaje de transacción completada al chat
                     currentConversationId?.let { convId ->
                         val completedJson = org.json.JSONObject().apply {
                             put("type", "TRANSACTION_COMPLETED")
@@ -641,15 +641,15 @@ fun ChatScreen(
                         ChatRepository.sendMessage(convId, "[HANDSHAKE_STATUS]$completedJson")
                     }
                     
-                    // Incrementar reputaciÃ³n
+                    // Incrementar reputación
                     val change = ReputationRepository.incrementReputation()
                     lastReputationChange = change
-                    android.util.Log.d("ChatScreen", ">>> ReputaciÃ³n incrementada: +$change%")
+                    android.util.Log.d("ChatScreen", ">>> Reputación incrementada: +$change%")
                     
                     delay(100)
                     delay(3500)
                     
-                    // Cerrar banner automÃ¡ticamente
+                    // Cerrar banner automáticamente
                     showHandshakeBanner = false
                     completedBannerDismissed = true
                     lastReputationChange = 0
@@ -658,7 +658,7 @@ fun ChatScreen(
                 }
             }
             "REJECTED", "CANCELLED" -> {
-                // Solo ocultar si NO estamos mostrando el banner CANCELLED con animaciÃ³n
+                // Solo ocultar si NO estamos mostrando el banner CANCELLED con animación
                 if (handshakeBannerState != HandshakeBannerState.CANCELLED) {
                     android.util.Log.d("ChatScreen", ">>> Handshake rechazado/cancelado - ocultando banner")
                     isWaitingForAcceptance = false
@@ -669,7 +669,7 @@ fun ChatScreen(
         }
     }
     
-    // *** POLLING FALLBACK: Verificar estado del handshake periÃ³dicamente ***
+    // *** POLLING FALLBACK: Verificar estado del handshake periódicamente ***
     // Si Realtime falla, esto detecta cambios cada 3 segundos
     LaunchedEffect(currentConversationId, showHandshakeBanner, activeHandshake) {
         val convId = currentConversationId ?: return@LaunchedEffect
@@ -689,13 +689,13 @@ fun ChatScreen(
         }
     }
     
-    // Scroll INSTANTÃNEO al fondo cuando se cargan los mensajes iniciales
+    // Scroll INSTANTÁNEO al fondo cuando se cargan los mensajes iniciales
     // Usar snapshotFlow para evitar parpadeos y re-layouts
     LaunchedEffect(messages.size, initialScrollDone) {
         if (messages.isNotEmpty() && !initialScrollDone) {
-            // Primera carga: scroll instantÃ¡neo al fondo SIN delay
+            // Primera carga: scroll instantáneo al fondo SIN delay
             listState.scrollToItem(messages.size - 1)
-            // Marcar como listo DESPUÃ‰S del scroll
+            // Marcar como listo DESPUÉS del scroll
             initialScrollDone = true
             messagesReady = true
         }
@@ -713,7 +713,7 @@ fun ChatScreen(
         }
     }
     
-    // Detectar scroll hacia arriba para cargar mÃ¡s mensajes
+    // Detectar scroll hacia arriba para cargar más mensajes
     val firstVisibleItemIndex by remember { derivedStateOf { listState.firstVisibleItemIndex } }
     
     // Guardar el conteo previo para detectar cuando se agregan mensajes antiguos
@@ -722,7 +722,7 @@ fun ChatScreen(
     
     // Trigger de carga cuando llegamos arriba
     LaunchedEffect(firstVisibleItemIndex) {
-        // Cargar mÃ¡s cuando estamos en los primeros 2 items y hay mÃ¡s por cargar
+        // Cargar más cuando estamos en los primeros 2 items y hay más por cargar
         // El +1 es por el item del spinner de carga
         if (firstVisibleItemIndex <= 2 && hasMoreMessages && !isLoadingMoreFromRepo && messagesReady && messages.isNotEmpty()) {
             previousMessageCount = messages.size
@@ -731,7 +731,7 @@ fun ChatScreen(
         }
     }
     
-    // Mantener posiciÃ³n del scroll cuando se cargan mensajes antiguos (prepend)
+    // Mantener posición del scroll cuando se cargan mensajes antiguos (prepend)
     LaunchedEffect(messages.size, wasLoadingMore) {
         if (wasLoadingMore && messages.size > previousMessageCount && previousMessageCount > 0) {
             val addedCount = messages.size - previousMessageCount
@@ -760,7 +760,7 @@ fun ChatScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .then(
-                    // Solo aplicar imePadding cuando el modal de handshake NO estÃ¡ abierto
+                    // Solo aplicar imePadding cuando el modal de handshake NO está abierto
                     // para que el footer suba con el teclado solo al escribir mensajes
                     if (!showHandshakeModal) Modifier.imePadding() else Modifier
                 )
@@ -846,13 +846,13 @@ fun ChatScreen(
                 )
             }
             
-            // Banner dinÃ¡mico de handshake - maneja todos los estados: WAITING, ACCEPTED, COMPLETED
-            // Excluir COMPLETED si el usuario ya cerrÃ³ el banner
+            // Banner dinámico de handshake - maneja todos los estados: WAITING, ACCEPTED, COMPLETED
+            // Excluir COMPLETED si el usuario ya cerró el banner
             val shouldShowCompletedBanner = activeHandshake?.status == "COMPLETED" && !completedBannerDismissed
             // Usar activeHandshake si existe, sino usar el handshake creado localmente o el cancelado
             val effectiveHandshake = activeHandshake ?: localCreatedHandshake ?: cancelledHandshakeInfo ?: completedHandshakeInfo
             
-            // AnimaciÃ³n fluida de entrada/salida del banner
+            // Animación fluida de entrada/salida del banner
             androidx.compose.animation.AnimatedVisibility(
                 visible = showHandshakeBanner || (activeHandshake?.conversationId == currentConversationId && 
                     (activeHandshake?.status in listOf("PROPOSED", "ACCEPTED", "IN_PROGRESS") || shouldShowCompletedBanner)),
@@ -876,7 +876,7 @@ fun ChatScreen(
                         }
                     },
                     onCancel = {
-                        // Usar el estado real del handshake para decidir quÃ© hacer
+                        // Usar el estado real del handshake para decidir qué hacer
                         val isInWaitingState = activeHandshake?.status == "PROPOSED" || 
                                                handshakeBannerState == HandshakeBannerState.WAITING
                         
@@ -888,12 +888,12 @@ fun ChatScreen(
                         android.util.Log.d("ChatScreen", ">>> pendingHandshakeId = $pendingHandshakeId")
                         
                         if (isInWaitingState) {
-                            // Cancelar propuesta pendiente - penalizaciÃ³n -2%
+                            // Cancelar propuesta pendiente - penalización -2%
                             val idToCancel = activeHandshake?.id ?: pendingHandshakeId
                             android.util.Log.d("ChatScreen", ">>> WAITING state - idToCancel = $idToCancel")
                             
                             // IMPORTANTE: Guardar referencia al handshake ANTES de cancelar
-                            // para que el banner pueda mostrarlo durante la animaciÃ³n
+                            // para que el banner pueda mostrarlo durante la animación
                             cancelledHandshakeInfo = activeHandshake ?: localCreatedHandshake
                             android.util.Log.d("ChatScreen", ">>> Guardando cancelledHandshakeInfo: ${cancelledHandshakeInfo?.id}")
                             
@@ -917,11 +917,11 @@ fun ChatScreen(
                                         currentConversationId?.let { convId ->
                                             ChatRepository.sendMessage(convId, "[HANDSHAKE_STATUS]{\"type\":\"AGREEMENT_CANCELLED\",\"message\":\"Acuerdo cancelado\"}")
                                         }
-                                        // PenalizaciÃ³n -2% por cancelar en estado WAITING
-                                        android.util.Log.d("ChatScreen", ">>> Aplicando penalizaciÃ³n -2% por cancelar en WAITING")
+                                        // Penalización -2% por cancelar en estado WAITING
+                                        android.util.Log.d("ChatScreen", ">>> Aplicando penalización -2% por cancelar en WAITING")
                                         ReputationRepository.decrementReputation(2)
                                         
-                                        // Esperar a que se vea la animaciÃ³n y luego cerrar banner
+                                        // Esperar a que se vea la animación y luego cerrar banner
                                         delay(2500)
                                         showHandshakeBanner = false
                                         lastReputationChange = 0
@@ -931,21 +931,21 @@ fun ChatScreen(
                                 }
                             }
                         } else {
-                            // Mostrar modal de confirmaciÃ³n para cancelar transacciÃ³n aceptada
+                            // Mostrar modal de confirmación para cancelar transacción aceptada
                             android.util.Log.d("ChatScreen", ">>> ACCEPTED state - showing confirmation modal")
                             showCancelConfirmModal = true
                         }
                     },
                     onDismiss = {
                         // Cerrar banner manualmente (el usuario hizo clic en X)
-                        // La animaciÃ³n de reputaciÃ³n ya se maneja en el LaunchedEffect de COMPLETED
+                        // La animación de reputación ya se maneja en el LaunchedEffect de COMPLETED
                         completedBannerDismissed = true
                         showHandshakeBanner = false
                     }
                 )
             }
         
-        // Contenedor de mensajes - Oculto hasta que estÃ©n listos y posicionados
+        // Contenedor de mensajes - Oculto hasta que estén listos y posicionados
         LazyColumn(
             state = listState,
             modifier = Modifier
@@ -1046,7 +1046,7 @@ fun ChatScreen(
                 }
             }
             
-            // Mostrar burbuja de "Escribiendo..." cuando el otro usuario estÃ¡ escribiendo
+            // Mostrar burbuja de "Escribiendo..." cuando el otro usuario está escribiendo
             if (isOtherUserTyping) {
                 item {
                     TypingIndicatorBubble(
@@ -1105,7 +1105,7 @@ fun ChatScreen(
                 }
             }
         } else {
-        // Indicador de modo ediciÃ³n
+        // Indicador de modo edición
         AnimatedVisibility(
             visible = isEditMode && editingMessage != null,
             enter = fadeIn() + slideInVertically(initialOffsetY = { it }),
@@ -1152,7 +1152,7 @@ fun ChatScreen(
                     ) {
                         Icon(
                             imageVector = Icons.Default.Close,
-                            contentDescription = "Cancelar ediciÃ³n",
+                            contentDescription = "Cancelar edición",
                             tint = TextMuted,
                             modifier = Modifier.size(18.dp)
                         )
@@ -1182,7 +1182,7 @@ fun ChatScreen(
                     val textToSend = messageText
                     messageText = ""
                     
-                    // Modo ediciÃ³n - actualizar mensaje existente
+                    // Modo edición - actualizar mensaje existente
                     if (isEditMode && editingMessage != null) {
                         val msgToEdit = editingMessage!!
                         isEditMode = false
@@ -1210,7 +1210,7 @@ fun ChatScreen(
                             }
                             val convId = currentConversationId ?: ChatRepository.getOrCreateConversation(otherUser.userId)
                             if (convId == null) {
-                                android.util.Log.e("ChatScreen", "No se pudo obtener/crear conversaciÃ³n: ${otherUser.userId}")
+                                android.util.Log.e("ChatScreen", "No se pudo obtener/crear conversación: ${otherUser.userId}")
                                 return@launch
                             }
                             
@@ -1230,7 +1230,7 @@ fun ChatScreen(
             onHandshakeClick = { showHandshakeModal = true },
             onVoiceRecord = {
                 if (isRecording) {
-                    // Detener grabaciÃ³n y enviar
+                    // Detener grabación y enviar
                     try {
                         mediaRecorder?.apply {
                             stop()
@@ -1259,11 +1259,11 @@ fun ChatScreen(
                             }
                         }
                     } catch (e: Exception) {
-                        android.util.Log.e("ChatScreen", "Error al detener grabaciÃ³n: ${e.message}")
+                        android.util.Log.e("ChatScreen", "Error al detener grabación: ${e.message}")
                         isRecording = false
                     }
                 } else {
-                    // Verificar permiso e iniciar grabaciÃ³n
+                    // Verificar permiso e iniciar grabación
                     if (ContextCompat.checkSelfPermission(context, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED) {
                         try {
                             val file = File(context.cacheDir, "audio_${System.currentTimeMillis()}.m4a")
@@ -1285,7 +1285,7 @@ fun ChatScreen(
                             mediaRecorder = recorder
                             isRecording = true
                         } catch (e: Exception) {
-                            android.util.Log.e("ChatScreen", "Error al iniciar grabaciÃ³n: ${e.message}")
+                            android.util.Log.e("ChatScreen", "Error al iniciar grabación: ${e.message}")
                         }
                     } else {
                         audioPermissionLauncher.launch(Manifest.permission.RECORD_AUDIO)
@@ -1315,14 +1315,14 @@ fun ChatScreen(
         } // end else (not blocked)
         } // end Column
         
-        // MenÃº de adjuntos como OVERLAY - encima del footer (no sobre Ã©l)
+        // Menú de adjuntos como OVERLAY - encima del footer (no sobre él)
         AnimatedVisibility(
             visible = showAttachmentMenu,
             enter = fadeIn() + slideInVertically(initialOffsetY = { it }),
             exit = fadeOut() + slideOutVertically(targetOffsetY = { it }),
             modifier = Modifier
                 .align(Alignment.BottomCenter)
-                .padding(bottom = 62.dp) // Cerca del footer con separaciÃ³n de ~5dp
+                .padding(bottom = 62.dp) // Cerca del footer con separación de ~5dp
         ) {
             AttachmentMenu(
                 onDismiss = { showAttachmentMenu = false },
@@ -1336,7 +1336,7 @@ fun ChatScreen(
                 },
                 onSelectLocation = { 
                     showAttachmentMenu = false
-                    // Verificar permisos de ubicaciÃ³n
+                    // Verificar permisos de ubicación
                     val hasFine = ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
                     val hasCoarse = ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
                     if (hasFine || hasCoarse) {
@@ -1379,7 +1379,7 @@ fun ChatScreen(
                 selectedMessage = null
             },
             onEdit = {
-                // Activar modo ediciÃ³n
+                // Activar modo edición
                 selectedMessage?.let { msg ->
                     if (msg.isFromMe) {
                         editingMessage = msg
@@ -1405,7 +1405,7 @@ fun ChatScreen(
             },
             onDelete = {
                 selectedMessage?.let { msg ->
-                    // EliminaciÃ³n optimista: quitar del chat inmediatamente
+                    // Eliminación optimista: quitar del chat inmediatamente
                     scope.launch {
                         ChatRepository.deleteMessage(msg.id)
                     }
@@ -1416,7 +1416,7 @@ fun ChatScreen(
         )
     }
     
-    // Modal para reenviar posts compartidos - siempre montado para animaciÃ³n fluida
+    // Modal para reenviar posts compartidos - siempre montado para animación fluida
     ForwardSharedPostModal(
         isVisible = showForwardSharedPostModal && sharedPostToForward != null,
         postData = sharedPostToForward ?: SharedPostData("", emptyList(), "", 0.0, "", "", ""),
@@ -1594,7 +1594,7 @@ fun ChatScreen(
         }
     )
     
-    // Modal para compartir artÃ­culo en el chat
+    // Modal para compartir artículo en el chat
     ShareArticleModal(
         isVisible = showShareArticleModal,
         currentUserId = currentUserId ?: "",
@@ -1614,7 +1614,7 @@ fun ChatScreen(
                         ChatRepository.sendMessage(convId, "[ARTICLE_CARD]$articleJson")
                     }
                 } catch (e: Exception) {
-                    android.util.Log.e("ChatScreen", "Error compartiendo artÃ­culo: ${e.message}")
+                    android.util.Log.e("ChatScreen", "Error compartiendo artículo: ${e.message}")
                 }
             }
         }
@@ -1715,7 +1715,7 @@ fun ChatScreen(
         )
     }
     
-    // Modal de confirmaciÃ³n al cancelar - guardar el ID antes de que activeHandshake sea null
+    // Modal de confirmación al cancelar - guardar el ID antes de que activeHandshake sea null
     val handshakeToCancel = remember(showCancelConfirmModal) { 
         if (showCancelConfirmModal) activeHandshake else null 
     }
@@ -1725,7 +1725,7 @@ fun ChatScreen(
             productDescription = handshakeToCancel.productDescription,
             onConfirmCancel = {
                 // IMPORTANTE: Guardar referencia al handshake ANTES de cerrar el modal
-                // para que el banner pueda mostrarlo durante la animaciÃ³n
+                // para que el banner pueda mostrarlo durante la animación
                 cancelledHandshakeInfo = handshakeToCancel
                 android.util.Log.d("ChatScreen", ">>> ACCEPTED cancel - Guardando cancelledHandshakeInfo: ${handshakeToCancel.id}")
                 
@@ -1746,14 +1746,14 @@ fun ChatScreen(
                 scope.launch {
                     HandshakeRepository.cancelHandshake(handshakeToCancel.id!!)
                     currentConversationId?.let { convId ->
-                        ChatRepository.sendMessage(convId, "[HANDSHAKE_STATUS]{\"type\":\"TRANSACTION_CANCELLED\",\"message\":\"TransacciÃ³n cancelada\"}")
+                        ChatRepository.sendMessage(convId, "[HANDSHAKE_STATUS]{\"type\":\"TRANSACTION_CANCELLED\",\"message\":\"Transacción cancelada\"}")
                     }
                     
-                    // PenalizaciÃ³n -4% por cancelar despuÃ©s de aceptar
-                    android.util.Log.d("ChatScreen", ">>> Aplicando penalizaciÃ³n -4% por cancelar despuÃ©s de aceptar")
+                    // Penalización -4% por cancelar después de aceptar
+                    android.util.Log.d("ChatScreen", ">>> Aplicando penalización -4% por cancelar después de aceptar")
                     ReputationRepository.decrementReputation(4)
                     
-                    // Esperar a que se vea la animaciÃ³n y luego cerrar banner
+                    // Esperar a que se vea la animación y luego cerrar banner
                     delay(2500)
                     showHandshakeBanner = false
                     lastReputationChange = 0
@@ -1785,7 +1785,7 @@ fun ChatScreen(
             onShareClick = { rend ->
                 val shareIntent = Intent(Intent.ACTION_SEND).apply {
                     type = "text/plain"
-                    putExtra(Intent.EXTRA_TEXT, "MirÃ¡ este video en Mercora: https://mercora.app/rend/${rend.id}")
+                    putExtra(Intent.EXTRA_TEXT, "Mirá este video en Mercora: https://mercora.app/rend/${rend.id}")
                 }
                 context.startActivity(Intent.createChooser(shareIntent, "Compartir"))
             },
@@ -1932,8 +1932,8 @@ private fun ChatHeader(
     user: Usuario,
     isOnline: Boolean,
     isTyping: Boolean,
-    otherUserReputation: Double = 50.0, // ReputaciÃ³n del otro usuario (0-100) - ya no se muestra
-    isVerified: Boolean = false, // Estado de verificaciÃ³n en tiempo real
+    otherUserReputation: Double = 50.0, // Reputación del otro usuario (0-100) - ya no se muestra
+    isVerified: Boolean = false, // Estado de verificación en tiempo real
     onBack: () -> Unit,
     onCall: () -> Unit,
     onMore: () -> Unit,
@@ -1950,7 +1950,7 @@ private fun ChatHeader(
                 .padding(horizontal = 4.dp, vertical = 8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // BotÃ³n volver
+            // Botón volver
             IconButton(onClick = onBack) {
                 Icon(
                     imageVector = Icons.Default.ArrowBack,
@@ -1978,7 +1978,7 @@ private fun ChatHeader(
                     .weight(1f)
                     .clickable { onNavigateToProfile() }
             ) {
-                // Primera lÃ­nea: nombre + verificado (pegados)
+                // Primera línea: nombre + verificado (pegados)
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(3.dp)
@@ -1997,12 +1997,12 @@ private fun ChatHeader(
                         VerifiedBadge(size = 14.dp)
                     }
                 }
-                // Segunda lÃ­nea: estado (en lÃ­nea, escribiendo, etc.)
+                // Segunda línea: estado (en línea, escribiendo, etc.)
                 Text(
                     text = when {
                         isTyping -> "escribiendo..."
-                        isOnline -> "en lÃ­nea"
-                        else -> "Ãºlt. vez recientemente"
+                        isOnline -> "en línea"
+                        else -> "últ. vez recientemente"
                     },
                     color = when {
                         isTyping -> Color(0xFF64B5F6)
@@ -2013,7 +2013,7 @@ private fun ChatHeader(
                 )
             }
             
-            // BotÃ³n de llamada
+            // Botón de llamada
             IconButton(onClick = onCall) {
                 Icon(
                     imageVector = Icons.Default.Call,
@@ -2023,11 +2023,11 @@ private fun ChatHeader(
                 )
             }
             
-            // BotÃ³n mÃ¡s opciones
+            // Botón más opciones
             IconButton(onClick = onMore) {
                 Icon(
                     imageVector = Icons.Default.MoreVert,
-                    contentDescription = "MÃ¡s",
+                    contentDescription = "Más",
                     tint = TextPrimary,
                     modifier = Modifier.size(22.dp)
                 )
@@ -2066,16 +2066,16 @@ private fun ChatSearchHeader(
                 .padding(horizontal = 4.dp, vertical = 8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // BotÃ³n volver (cierra bÃºsqueda)
+            // Botón volver (cierra búsqueda)
             IconButton(onClick = onClose) {
                 Icon(
                     imageVector = Icons.Default.ArrowBack,
-                    contentDescription = "Cerrar bÃºsqueda",
+                    contentDescription = "Cerrar búsqueda",
                     tint = TextPrimary
                 )
             }
             
-            // Campo de bÃºsqueda
+            // Campo de búsqueda
             Surface(
                 modifier = Modifier
                     .weight(1f)
@@ -2127,7 +2127,7 @@ private fun ChatSearchHeader(
                 }
             }
             
-            // Flechas de navegaciÃ³n
+            // Flechas de navegación
             IconButton(
                 onClick = onPrevious,
                 enabled = resultCount > 0 && currentIndex < resultCount - 1
@@ -2176,14 +2176,14 @@ private fun MessageBubble(
     val timeColor = Color.White.copy(alpha = 0.6f)
     val otherTimeColor = Color(0xFF8B98A5)
     
-    // Determinar si yo reaccionÃ© a este mensaje
+    // Determinar si yo reaccioné a este mensaje
     val iReacted = currentUserId != null && message.reactions.any { (_, users) -> 
         currentUserId in users 
     }
-    // PosiciÃ³n de reacciones: derecha si es MI mensaje y YO reaccionÃ©, sino izquierda
+    // Posición de reacciones: derecha si es MI mensaje y YO reaccioné, sino izquierda
     val reactionsOnRight = message.isFromMe && iReacted
     
-    // SeparaciÃ³n animada cuando hay reacciones
+    // Separación animada cuando hay reacciones
     val hasReactions = message.reactions.isNotEmpty()
     val bottomPadding by animateDpAsState(
         targetValue = if (hasReactions) 16.dp else 0.dp,
@@ -2211,7 +2211,7 @@ private fun MessageBubble(
         else -> null
     }
     
-    // Parsear ubicaciÃ³n
+    // Parsear ubicación
     val locationData = if (isLocation) {
         try {
             val coords = message.content.removePrefix("[LOCATION]").split(",")
@@ -2306,7 +2306,7 @@ private fun MessageBubble(
         } else null
     }
     
-    // Parsear postId del artÃ­culo compartido
+    // Parsear postId del artículo compartido
     val articleCardPostId = remember(message.content) {
         if (isArticleCard) {
             try {
@@ -2358,8 +2358,8 @@ private fun MessageBubble(
                     } catch (e: Exception) {
                         val fallbackMsg = when {
                             message.content.contains("AGREEMENT_CANCELLED") -> "Acuerdo cancelado"
-                            message.content.contains("TRANSACTION_CANCELLED") -> "TransacciÃ³n cancelada"
-                            message.content.contains("TRANSACTION_COMPLETED") -> "TransacciÃ³n completada"
+                            message.content.contains("TRANSACTION_CANCELLED") -> "Transacción cancelada"
+                            message.content.contains("TRANSACTION_COMPLETED") -> "Transacción completada"
                             else -> "Estado desconocido"
                         }
                         val fallbackType = when {
@@ -2377,7 +2377,7 @@ private fun MessageBubble(
                 val isCompleted = statusType == "TRANSACTION_COMPLETED"
                 val statusColor = if (isCancellation) Color(0xFFEF5350) else Color(0xFF22C55E)
                 val statusIcon = if (isCancellation) Icons.Default.Close else Icons.Default.Check
-                val title = if (isCompleted) "TransacciÃ³n completada" else statusMessage
+                val title = if (isCompleted) "Transacción completada" else statusMessage
                 
                 val msgTimestamp = message.createdAt
                 val formattedTime = remember(msgTimestamp) {
@@ -2390,7 +2390,7 @@ private fun MessageBubble(
                 }
                 
                 Column(modifier = Modifier.padding(horizontal = 12.dp, vertical = 10.dp)) {
-                    // Primera lÃ­nea: [icono + tÃ­tulo] ... [precio]
+                    // Primera línea: [icono + título] ... [precio]
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween,
@@ -2427,7 +2427,7 @@ private fun MessageBubble(
                             )
                         }
                     }
-                    // Segunda lÃ­nea: [artÃ­culo] ... [hora] - siempre mostrar para ambos banners
+                    // Segunda línea: [artículo] ... [hora] - siempre mostrar para ambos banners
                     Spacer(modifier = Modifier.height(4.dp))
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -2435,7 +2435,7 @@ private fun MessageBubble(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = productDesc.ifEmpty { "ArtÃ­culo" },
+                            text = productDesc.ifEmpty { "Artículo" },
                             color = TextSecondary,
                             fontSize = 11.sp,
                             maxLines = 1,
@@ -2467,13 +2467,13 @@ private fun MessageBubble(
         ) {
             
             // Detectar si es respuesta a historia
-            val isStoryReply = message.content.contains("ðŸ“· RespondiÃ³ a tu historia")
+            val isStoryReply = message.content.contains("📷 Respondió a tu historia")
             val storyReplyParts = if (isStoryReply) {
                 val parts = message.content.split("\n\n")
                 if (parts.size >= 2) parts else null
             } else null
             
-            // Row para contener burbuja + botÃ³n de reenvÃ­o (para posts compartidos)
+            // Row para contener burbuja + botón de reenvío (para posts compartidos)
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -2496,7 +2496,7 @@ private fun MessageBubble(
                             if (isSharedPost && sharedPostData != null) {
                                 onSharedPostClick?.invoke(sharedPostData.postId)
                             }
-                            // Si es tarjeta de artÃ­culo, abrir ProductPage
+                            // Si es tarjeta de artículo, abrir ProductPage
                             if (isArticleCard && !articleCardPostId.isNullOrEmpty()) {
                                 onSharedPostClick?.invoke(articleCardPostId)
                             }
@@ -2543,7 +2543,7 @@ private fun MessageBubble(
                         isStoryReply && storyReplyParts != null -> {
                             // Header de respuesta
                             Text(
-                                text = "ðŸ“· RespondiÃ³ a tu historia",
+                                text = "📷 Respondió a tu historia",
                                 color = if (message.isFromMe) Color.White.copy(alpha = 0.7f) else Color(0xFF1565A0),
                                 fontSize = 11.sp,
                                 fontWeight = FontWeight.Medium
@@ -2597,7 +2597,7 @@ private fun MessageBubble(
                                 sentTime = formatMessageTimeWithAmPm(message.createdAt)
                             )
                         }
-                        // Mensaje de ubicaciÃ³n con mapa
+                        // Mensaje de ubicación con mapa
                         isLocation && locationData != null -> {
                             val (lat, lng) = locationData
                             val mapboxToken = com.mercora.app.BuildConfig.MAPBOX_ACCESS_TOKEN
@@ -2606,7 +2606,7 @@ private fun MessageBubble(
                             val mapUrl = "https://api.mapbox.com/styles/v1/mapbox/streets-v12/static/pin-l+a855f7($lngStr,$latStr)/$lngStr,$latStr,15,0/600x300@2x?access_token=$mapboxToken"
                             
                             Column {
-                                // Mapa estÃ¡tico
+                                // Mapa estático
                                 var mapLoadError by remember { mutableStateOf(false) }
                                 
                                 if (!mapLoadError) {
@@ -2616,7 +2616,7 @@ private fun MessageBubble(
                                         .crossfade(true)
                                         .memoryCacheKey("map_${latStr}_${lngStr}")
                                         .build(),
-                                    contentDescription = "UbicaciÃ³n",
+                                    contentDescription = "Ubicación",
                                     contentScale = ContentScale.Crop,
                                     modifier = Modifier
                                         .fillMaxWidth()
@@ -2677,7 +2677,7 @@ private fun MessageBubble(
                                     )
                                     Spacer(modifier = Modifier.width(4.dp))
                                     Text(
-                                        text = "UbicaciÃ³n compartida",
+                                        text = "Ubicación compartida",
                                         color = if (message.isFromMe) myMessageText else otherMessageText,
                                         fontSize = 13.sp,
                                         fontWeight = FontWeight.Medium
@@ -2721,7 +2721,7 @@ private fun MessageBubble(
                                 }
                             )
                         }
-                        // Tarjeta de artÃ­culo compartido - datos dinÃ¡micos
+                        // Tarjeta de artículo compartido - datos dinámicos
                         isArticleCard && !articleCardPostId.isNullOrEmpty() -> {
                             ArticleCardMessageContent(
                                 postId = articleCardPostId,
@@ -2798,11 +2798,11 @@ private fun MessageBubble(
                                 )
                             }
                         }
-                        // Mensaje de handshake iniciado (legacy - ya no se envÃ­a)
+                        // Mensaje de handshake iniciado (legacy - ya no se envía)
                         isHandshakeInitiated -> {
                             // Mantener por compatibilidad con mensajes antiguos
                             Text(
-                                text = "Propuesta de transacciÃ³n",
+                                text = "Propuesta de transacción",
                                 color = Color(0xFF22C55E),
                                 fontSize = 13.sp,
                                 fontWeight = FontWeight.Medium,
@@ -2812,9 +2812,9 @@ private fun MessageBubble(
                         
                         else -> {
                             // Mensaje de texto normal - texto arriba izquierda
-                            // Si es SharedPost pero fallÃ³ el parsing, mostrar placeholder
+                            // Si es SharedPost pero falló el parsing, mostrar placeholder
                             if (isSharedPost) {
-                                // Placeholder mientras carga o si parsing fallÃ³
+                                // Placeholder mientras carga o si parsing falló
                                 Row(
                                     modifier = Modifier
                                         .fillMaxWidth()
@@ -2859,7 +2859,7 @@ private fun MessageBubble(
                                     )
                                     Spacer(modifier = Modifier.width(8.dp))
                                     Text(
-                                        text = "Cargando artÃ­culo...",
+                                        text = "Cargando artículo...",
                                         color = if (message.isFromMe) myMessageText else otherMessageText,
                                         fontSize = 13.sp
                                     )
@@ -2875,7 +2875,7 @@ private fun MessageBubble(
                         }
                     }
                     
-                    // Hora y ticks - abajo derecha (NO mostrar para posts compartidos, audios, usuarios compartidos ni tarjetas de artÃ­culo)
+                    // Hora y ticks - abajo derecha (NO mostrar para posts compartidos, audios, usuarios compartidos ni tarjetas de artículo)
                     if (!isSharedPost && !isAudio && !isSharedUser && !isArticleCard && !isConsultPost) {
                         Row(
                             modifier = Modifier
@@ -2901,7 +2901,7 @@ private fun MessageBubble(
                 }
             }
             
-            // BotÃ³n de reenvÃ­o FUERA de la burbuja para posts compartidos recibidos
+            // Botón de reenvío FUERA de la burbuja para posts compartidos recibidos
             if (isSharedPost && !message.isFromMe && sharedPostData != null && onForwardSharedPost != null) {
                 Spacer(modifier = Modifier.width(12.dp))
                 Box(
@@ -2922,7 +2922,7 @@ private fun MessageBubble(
                     )
                 }
             }
-            } // Cierra Row de burbuja + botÃ³n
+            } // Cierra Row de burbuja + botón
             
             if (message.isFromMe) {
                 Spacer(modifier = Modifier.width(8.dp))
@@ -3044,7 +3044,7 @@ private fun AudioMessagePlayer(
         }
     }
     
-    // FunciÃ³n para seek
+    // Función para seek
     fun seekTo(newProgress: Float) {
         try {
             val seekPos = (newProgress * durationMs).toInt()
@@ -3097,12 +3097,12 @@ private fun AudioMessagePlayer(
         Column(
             modifier = Modifier.weight(1f)
         ) {
-            // Primera lÃ­nea: [Play] [Waveform] - altura 40dp para alinear con avatar
+            // Primera línea: [Play] [Waveform] - altura 40dp para alinear con avatar
             Row(
                 modifier = Modifier.height(40.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // BotÃ³n Play/Pause
+                // Botón Play/Pause
                 Box(
                     modifier = Modifier
                         .size(32.dp)
@@ -3153,7 +3153,7 @@ private fun AudioMessagePlayer(
                 )
             }
             
-            // Segunda lÃ­nea: [time] debajo del waveform + [hr enviado] esquina inferior derecha
+            // Segunda línea: [time] debajo del waveform + [hr enviado] esquina inferior derecha
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -3195,14 +3195,14 @@ private fun SeekableWaveform(
     var isDragging by remember { mutableStateOf(false) }
     var localProgress by remember { mutableFloatStateOf(progress) }
     
-    // Sincronizar con progreso externo cuando no estÃ¡ arrastrando
+    // Sincronizar con progreso externo cuando no está arrastrando
     LaunchedEffect(progress, isDragging) {
         if (!isDragging) {
             localProgress = progress
         }
     }
     
-    // AnimaciÃ³n suave del progreso
+    // Animación suave del progreso
     val animatedProgress by animateFloatAsState(
         targetValue = localProgress,
         animationSpec = tween(if (isDragging) 0 else 50, easing = LinearEasing),
@@ -3281,7 +3281,7 @@ private fun SeekableWaveform(
             )
         }
         
-        // Indicador de posiciÃ³n actual (cÃ­rculo pequeÃ±o)
+        // Indicador de posición actual (círculo pequeño)
         if (isDragging || animatedProgress > 0.01f) {
             val indicatorX = animatedProgress * canvasWidth
             drawCircle(
@@ -3301,7 +3301,7 @@ private fun MessageStatusIcon(
 ) {
     when (status) {
         MessageStatus.SENDING -> {
-            // Reloj pequeÃ±o mientras se envÃ­a
+            // Reloj pequeño mientras se envía
             Icon(
                 imageVector = Icons.Outlined.Schedule,
                 contentDescription = "Enviando",
@@ -3329,7 +3329,7 @@ private fun MessageStatusIcon(
                 )
                 Icon(
                     imageVector = Icons.Default.Check,
-                    contentDescription = if (status == MessageStatus.READ) "LeÃ­do" else "Entregado",
+                    contentDescription = if (status == MessageStatus.READ) "Leído" else "Entregado",
                     tint = tintColor,
                     modifier = Modifier
                         .size(14.dp)
@@ -3340,7 +3340,7 @@ private fun MessageStatusIcon(
     }
 }
 
-// Burbuja de "Escribiendo..." con animaciÃ³n de puntos
+// Burbuja de "Escribiendo..." con animación de puntos
 @Composable
 private fun TypingIndicatorBubble(userAvatar: String?) {
     Row(
@@ -3374,12 +3374,12 @@ private fun TypingIndicatorBubble(userAvatar: String?) {
     }
 }
 
-// AnimaciÃ³n de 3 puntos que aparecen y desaparecen
+// Animación de 3 puntos que aparecen y desaparecen
 @Composable
 private fun TypingDotsAnimation() {
     val infiniteTransition = rememberInfiniteTransition(label = "typing")
     
-    // AnimaciÃ³n que va de 0 a 3 repetidamente
+    // Animación que va de 0 a 3 repetidamente
     val dotCount by infiniteTransition.animateFloat(
         initialValue = 0f,
         targetValue = 4f,
@@ -3390,7 +3390,7 @@ private fun TypingDotsAnimation() {
         label = "dots"
     )
     
-    // Mostrar puntos segÃºn el valor
+    // Mostrar puntos según el valor
     val dotsToShow = dotCount.toInt().coerceIn(0, 3)
     val dots = ".".repeat(dotsToShow)
     
@@ -3404,7 +3404,7 @@ private fun TypingDotsAnimation() {
 }
 
 /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-   CHAT INPUT V3 - Sistema de grabaciÃ³n profesional MEJORADO
+   CHAT INPUT V3 - Sistema de grabación profesional MEJORADO
    - Hold-to-record: mantener para grabar, soltar para enviar
    - Slide-up-to-lock: deslizar arriba para bloquear (manos libres)
    - Slide-left-to-cancel: deslizar izquierda para cancelar/eliminar
@@ -3429,7 +3429,7 @@ private fun ChatInputV2(
     val context = LocalContext.current
     val haptic = LocalHapticFeedback.current
     
-    // Estados de grabaciÃ³n profesional
+    // Estados de grabación profesional
     var isRecordingAudio by remember { mutableStateOf(false) }
     var isPaused by remember { mutableStateOf(false) }
     var recordingTime by remember { mutableIntStateOf(0) }
@@ -3441,7 +3441,7 @@ private fun ChatInputV2(
     var mediaRecorder by remember { mutableStateOf<MediaRecorder?>(null) }
     var audioFile by remember { mutableStateOf<File?>(null) }
     
-    // Timer de grabaciÃ³n
+    // Timer de grabación
     LaunchedEffect(isRecordingAudio, isPaused) {
         if (isRecordingAudio && !isPaused) {
             while (isRecordingAudio && !isPaused) {
@@ -3597,7 +3597,7 @@ private fun ChatInputV2(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(6.dp)
                 ) {
-                    // BotÃ³n Handshake
+                    // Botón Handshake
                     Surface(
                         modifier = Modifier.size(48.dp),
                         shape = CircleShape,
@@ -3671,7 +3671,7 @@ private fun ChatInputV2(
                             ) {
                                 Icon(
                                     imageVector = Icons.Outlined.CameraAlt,
-                                    contentDescription = "CÃ¡mara",
+                                    contentDescription = "Cámara",
                                     tint = TextMuted,
                                     modifier = Modifier.size(22.dp)
                                 )
@@ -3679,7 +3679,7 @@ private fun ChatInputV2(
                         }
                     }
                     
-                    // BotÃ³n enviar o grabar
+                    // Botón enviar o grabar
                     if (hasText) {
                         IconButton(
                             onClick = onSend,
@@ -3695,7 +3695,7 @@ private fun ChatInputV2(
                             )
                         }
                     } else {
-                        // BotÃ³n micrÃ³fono - toque simple para iniciar grabaciÃ³n
+                        // Botón micrófono - toque simple para iniciar grabación
                         Surface(
                             modifier = Modifier.size(48.dp),
                             shape = CircleShape,
@@ -3724,7 +3724,7 @@ private fun ChatInputV2(
     }
 }
 
-// â•â•â• FOOTER DE GRABACIÃ“N PROFESIONAL â•â•â•
+// â•â•â• FOOTER DE GRABACIÓN PROFESIONAL â•â•â•
 @Composable
 private fun ProfessionalRecordingFooter(
     recordingTime: Int,
@@ -3759,7 +3759,7 @@ private fun ProfessionalRecordingFooter(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            // Tiempo de grabaciÃ³n
+            // Tiempo de grabación
             Text(
                 text = String.format("%d:%02d", recordingTime / 60, recordingTime % 60),
                 color = Color.White,
@@ -3836,7 +3836,7 @@ private fun ProfessionalRecordingFooter(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // BotÃ³n Eliminar
+            // Botón Eliminar
             Surface(
                 modifier = Modifier.size(48.dp),
                 shape = CircleShape,
@@ -3846,14 +3846,14 @@ private fun ProfessionalRecordingFooter(
                 Box(contentAlignment = Alignment.Center) {
                     Icon(
                         imageVector = Icons.Default.Delete,
-                        contentDescription = "Eliminar grabaciÃ³n",
+                        contentDescription = "Eliminar grabación",
                         tint = Color.Red,
                         modifier = Modifier.size(24.dp)
                     )
                 }
             }
             
-            // BotÃ³n Pausa/Reanudar
+            // Botón Pausa/Reanudar
             Surface(
                 modifier = Modifier.size(56.dp),
                 shape = CircleShape,
@@ -3870,7 +3870,7 @@ private fun ProfessionalRecordingFooter(
                 }
             }
             
-            // BotÃ³n Enviar
+            // Botón Enviar
             Surface(
                 modifier = Modifier.size(48.dp),
                 shape = CircleShape,
@@ -3890,7 +3890,7 @@ private fun ProfessionalRecordingFooter(
     }
 }
 
-// Footer de grabaciÃ³n mejorado (legacy - mantener por compatibilidad)
+// Footer de grabación mejorado (legacy - mantener por compatibilidad)
 @Composable
 private fun VoiceRecordingFooter(
     recordingTime: Int,
@@ -3912,7 +3912,7 @@ private fun VoiceRecordingFooter(
         label = "pulse"
     )
     
-    // AnimaciÃ³n de slide para el texto de cancelar
+    // Animación de slide para el texto de cancelar
     val slideOffset by animateFloatAsState(
         targetValue = if (isCancelling) -20f else 0f,
         animationSpec = spring(dampingRatio = 0.7f),
@@ -3946,7 +3946,7 @@ private fun VoiceRecordingFooter(
                 }
             }
             
-            // Centro: indicador de grabaciÃ³n
+            // Centro: indicador de grabación
             Row(
                 modifier = Modifier.weight(1f),
                 verticalAlignment = Alignment.CenterVertically,
@@ -3974,7 +3974,7 @@ private fun VoiceRecordingFooter(
                 )
             }
             
-            // BotÃ³n enviar
+            // Botón enviar
             Surface(
                 modifier = Modifier.size(48.dp),
                 shape = CircleShape,
@@ -4008,7 +4008,7 @@ private fun VoiceRecordingFooter(
                 fontFamily = FontFamily.Monospace
             )
             
-            // Texto de instrucciÃ³n que cambia segÃºn el gesto
+            // Texto de instrucción que cambia según el gesto
             Box(
                 modifier = Modifier
                     .weight(1f)
@@ -4049,14 +4049,14 @@ private fun VoiceRecordingFooter(
                 }
             }
             
-            // Espacio para el botÃ³n flotante
+            // Espacio para el botón flotante
             Spacer(modifier = Modifier.width(48.dp))
         }
     }
 }
 
 /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-   MENÃš DE ADJUNTOS EXPANDIBLE
+   MENÚ DE ADJUNTOS EXPANDIBLE
 â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 
 @Composable
@@ -4090,7 +4090,7 @@ private fun AttachmentMenu(
             )
             AttachmentOption(
                 icon = Icons.Outlined.LocationOn,
-                label = "UbicaciÃ³n",
+                label = "Ubicación",
                 color = Color(0xFFFF5722),
                 onClick = onSelectLocation
             )
@@ -4102,7 +4102,7 @@ private fun AttachmentMenu(
             )
             AttachmentOption(
                 icon = Icons.Outlined.Inventory2,
-                label = "ArtÃ­culo",
+                label = "Artículo",
                 color = Color(0xFF00BFA5),
                 onClick = onSelectArticle
             )
@@ -4162,8 +4162,8 @@ private fun formatMessageTime(timestamp: String): String {
 /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    MODAL DE OPCIONES DE MENSAJE (al mantener pulsado)
    - Fondo oscuro semi-transparente
-   - Emojis arriba del menÃº de opciones
-   - MenÃº de opciones alineado al lado del mensaje
+   - Emojis arriba del menú de opciones
+   - Menú de opciones alineado al lado del mensaje
 â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 
 @Composable
@@ -4176,7 +4176,7 @@ private fun MessageOptionsModal(
     onCopy: () -> Unit,
     onDelete: () -> Unit
 ) {
-    val quickReactions = listOf("â¤ï¸", "ðŸ˜‚", "ðŸ˜®", "ðŸ˜¢", "ðŸ˜¡", "ðŸ‘")
+    val quickReactions = listOf("â¤ï¸", "😂", "😮", "😢", "😡", "ðŸ‘")
     val scope = rememberCoroutineScope()
     var isDeleting by remember { mutableStateOf(false) }
     
@@ -4232,7 +4232,7 @@ private fun MessageOptionsModal(
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Add,
-                                contentDescription = "MÃ¡s",
+                                contentDescription = "Más",
                                 tint = Color.White,
                                 modifier = Modifier.size(18.dp)
                             )
@@ -4243,7 +4243,7 @@ private fun MessageOptionsModal(
             
             Spacer(modifier = Modifier.height(8.dp))
             
-            // MenÃº de opciones
+            // Menú de opciones
             Surface(
                 shape = RoundedCornerShape(12.dp),
                 color = Color(0xFF2A2F38),
@@ -4319,7 +4319,7 @@ private fun MessageOptionItem(
 
 /**
  * Componente visual para posts compartidos en el chat
- * DiseÃ±o: header (username izq + precio der), imagen, mensaje personalizado, hora
+ * Diseño: header (username izq + precio der), imagen, mensaje personalizado, hora
  */
 @Composable
 private fun SharedPostMessageContent(
@@ -4387,7 +4387,7 @@ private fun SharedPostMessageContent(
             }
         }
         
-        // Carrusel de imÃ¡genes - SIN bordes, full width
+        // Carrusel de imágenes - SIN bordes, full width
         if (data.images.isNotEmpty()) {
             Box(
                 modifier = Modifier
@@ -4406,7 +4406,7 @@ private fun SharedPostMessageContent(
                     )
                 }
                 
-                // Indicador de pÃ¡ginas si hay mÃ¡s de 1 imagen
+                // Indicador de páginas si hay más de 1 imagen
                 if (data.images.size > 1) {
                     Row(
                         modifier = Modifier
@@ -4447,7 +4447,7 @@ private fun SharedPostMessageContent(
             )
         }
         
-        // Footer: hora de envÃ­o alineada a la derecha
+        // Footer: hora de envío alineada a la derecha
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -4455,7 +4455,7 @@ private fun SharedPostMessageContent(
             horizontalArrangement = Arrangement.End,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Hora de envÃ­o - alineada a la derecha
+            // Hora de envío - alineada a la derecha
             Text(
                 text = formatMessageTimeWithAmPm(timestamp),
                 color = textColor.copy(alpha = 0.6f),
@@ -4641,7 +4641,7 @@ private fun ForwardSharedPostModal(
                 Spacer(modifier = Modifier.height(16.dp))
                 
                 if (selectedUser == null) {
-                    // Campo de bÃºsqueda
+                    // Campo de búsqueda
                     Surface(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -4795,7 +4795,7 @@ private fun ForwardSharedPostModal(
                         )
                     }
                     
-                    // Input y botÃ³n de envÃ­o
+                    // Input y botón de envío
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -4942,7 +4942,7 @@ private fun CommentChoiceModal(
                     Spacer(modifier = Modifier.height(20.dp))
                     
                     Text(
-                        text = "Â¿QuÃ© deseas hacer?",
+                        text = "¿Qué deseas hacer?",
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
                         color = TextPrimary
@@ -5070,10 +5070,10 @@ private fun HandshakeConfirmationModal(
     var priceText by remember { mutableStateOf("") }
     var isConfirming by remember { mutableStateOf(false) }
     
-    // Reset al cerrar (con delay para permitir animaciÃ³n de salida)
+    // Reset al cerrar (con delay para permitir animación de salida)
     LaunchedEffect(isVisible) {
         if (!isVisible) {
-            kotlinx.coroutines.delay(300) // Esperar que termine la animaciÃ³n de salida
+            kotlinx.coroutines.delay(300) // Esperar que termine la animación de salida
             productDescription = ""
             priceText = ""
             isConfirming = false
@@ -5100,7 +5100,7 @@ private fun HandshakeConfirmationModal(
             )
         }
         
-        // Panel que sube/baja desde abajo (animaciÃ³n independiente)
+        // Panel que sube/baja desde abajo (animación independiente)
         AnimatedVisibility(
             visible = isVisible,
             enter = slideInVertically(
@@ -5156,7 +5156,7 @@ private fun HandshakeConfirmationModal(
                             Spacer(modifier = Modifier.width(12.dp))
                             Column {
                                 Text(
-                                    text = "Confirmar transacciÃ³n",
+                                    text = "Confirmar transacción",
                                     fontSize = 17.sp,
                                     fontWeight = FontWeight.Bold,
                                     color = TextPrimary
@@ -5171,7 +5171,7 @@ private fun HandshakeConfirmationModal(
                         
                         Spacer(modifier = Modifier.height(20.dp))
                         
-                        // Campo: DescripciÃ³n del producto
+                        // Campo: Descripción del producto
                         Surface(
                             modifier = Modifier.fillMaxWidth(),
                             shape = RoundedCornerShape(12.dp),
@@ -5190,7 +5190,7 @@ private fun HandshakeConfirmationModal(
                                 decorationBox = { innerTextField ->
                                     Box {
                                         if (productDescription.isEmpty()) {
-                                            Text("Â¿QuÃ© estÃ¡s comprando/vendiendo?", color = TextMuted, fontSize = 15.sp)
+                                            Text("¿Qué estás comprando/vendiendo?", color = TextMuted, fontSize = 15.sp)
                                         }
                                         innerTextField()
                                     }
@@ -5302,7 +5302,7 @@ private fun HandshakeConfirmationModal(
     }
 
 /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-   MODAL DE REENVÃO DE TEXTO
+   MODAL DE REENVÍO DE TEXTO
 â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 
 @Composable
@@ -5504,7 +5504,7 @@ private fun ForwardTextModal(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .height(100.dp),
-                                placeholder = { Text("AÃ±adir mensaje (opcional)...", color = TextMuted) },
+                                placeholder = { Text("Añadir mensaje (opcional)...", color = TextMuted) },
                                 singleLine = false,
                                 shape = RoundedCornerShape(12.dp),
                                 colors = OutlinedTextFieldDefaults.colors(
@@ -5748,7 +5748,7 @@ private fun ChatSettingsModal(
                     ChatSettingsOption(
                         icon = if (isMuted) Icons.Outlined.NotificationsOff else Icons.Outlined.Notifications,
                         title = if (isMuted) "Activar notificaciones" else "Silenciar notificaciones",
-                        subtitle = if (isMuted) "RecibirÃ¡s notificaciones de este chat" else "No recibirÃ¡s notificaciones de este chat",
+                        subtitle = if (isMuted) "Recibirás notificaciones de este chat" else "No recibirás notificaciones de este chat",
                         iconColor = if (isMuted) AccentYellow else TextSecondary,
                         onClick = {
                             scope.launch {
@@ -5769,12 +5769,12 @@ private fun ChatSettingsModal(
                     Divider(color = Surface, thickness = 1.dp, modifier = Modifier.padding(vertical = 8.dp))
                     
                     // â•â•â• Search â•â•â•
-                    ChatSettingsOption(Icons.Outlined.Search, "Buscar en el chat", "Encuentra mensajes especÃ­ficos", PrimaryPurple) {
+                    ChatSettingsOption(Icons.Outlined.Search, "Buscar en el chat", "Encuentra mensajes específicos", PrimaryPurple) {
                         onSearchInChat()
                     }
                     
                     // â•â•â• Export â•â•â•
-                    ChatSettingsOption(Icons.Outlined.Download, "Exportar chat", "Descargar conversaciÃ³n como PDF", AccentBlue) {
+                    ChatSettingsOption(Icons.Outlined.Download, "Exportar chat", "Descargar conversación como PDF", AccentBlue) {
                         scope.launch {
                             isLoading = true
                             val pdfFile = ChatRepository.exportChatAsPdf(context, conversationId, otherUser.username)
@@ -5810,7 +5810,7 @@ private fun ChatSettingsModal(
                     ChatSettingsOption(
                         icon = if (isBlocked) Icons.Outlined.LockOpen else Icons.Outlined.Block,
                         title = if (isBlocked) "Desbloquear usuario" else "Bloquear usuario",
-                        subtitle = if (isBlocked) "Permitir que te contacte" else "No podrÃ¡ contactarte ni ver tu perfil",
+                        subtitle = if (isBlocked) "Permitir que te contacte" else "No podrá contactarte ni ver tu perfil",
                         iconColor = if (isBlocked) Color(0xFF22C55E) else Color(0xFFEF4444)
                     ) {
                         if (isBlocked) {
@@ -5867,7 +5867,7 @@ private fun ChatSettingsModal(
             },
             text = {
                 Text(
-                    "Se eliminarÃ¡n todos los mensajes y las transacciones completadas o canceladas de esta conversaciÃ³n. Esta acciÃ³n no se puede deshacer.",
+                    "Se eliminarán todos los mensajes y las transacciones completadas o canceladas de esta conversación. Esta acción no se puede deshacer.",
                     color = TextSecondary, lineHeight = 20.sp
                 )
             },
@@ -5906,7 +5906,7 @@ private fun ChatSettingsModal(
             },
             text = {
                 Text(
-                    "No podrÃ¡ ver tu perfil, publicaciones ni contactarte. TÃº tampoco verÃ¡s su contenido. Puedes desbloquearlo en cualquier momento.",
+                    "No podrá ver tu perfil, publicaciones ni contactarte. Tú tampoco verás su contenido. Puedes desbloquearlo en cualquier momento.",
                     color = TextSecondary, lineHeight = 20.sp
                 )
             },
@@ -5944,7 +5944,7 @@ private fun ChatSettingsModal(
         
         val reasons = listOf(
             "spam" to "Spam o publicidad",
-            "harassment" to "Acoso o intimidaciÃ³n",
+            "harassment" to "Acoso o intimidación",
             "inappropriate" to "Contenido inapropiado",
             "scam" to "Estafa o fraude",
             "fake" to "Cuenta falsa",
@@ -5996,7 +5996,7 @@ private fun ChatSettingsModal(
                         OutlinedTextField(
                             value = reportDescription,
                             onValueChange = { reportDescription = it },
-                            label = { Text("DescripciÃ³n adicional (opcional)", fontSize = 12.sp) },
+                            label = { Text("Descripción adicional (opcional)", fontSize = 12.sp) },
                             modifier = Modifier.fillMaxWidth(),
                             maxLines = 3,
                             shape = RoundedCornerShape(10.dp),
@@ -6213,7 +6213,7 @@ private fun ChatSearchScreen(
                             Column(modifier = Modifier.padding(14.dp)) {
                                 Row(verticalAlignment = Alignment.CenterVertically) {
                                     Text(
-                                        text = if (isFromMe) "TÃº" else "@$otherUsername",
+                                        text = if (isFromMe) "Tú" else "@$otherUsername",
                                         fontSize = 12.sp, fontWeight = FontWeight.Bold,
                                         color = if (isFromMe) PrimaryPurple else AccentBlue
                                     )
@@ -6278,7 +6278,7 @@ private fun ChatSettingsOption(
 
 /**
  * Componente visual para consultas y ofertas de productos en el chat
- * DiseÃ±o profesional con imagen del producto, tÃ­tulo, precio y mensaje
+ * Diseño profesional con imagen del producto, título, precio y mensaje
  */
 @Composable
 private fun ConsultPostMessageContent(
@@ -6299,7 +6299,7 @@ private fun ConsultPostMessageContent(
     
     // Extraer mensaje personalizado - limpiar emojis y prefijos
     val personalMessage = data.message
-        .replace(Regex("ðŸ“ Mensaje:|ðŸ’°.*?\\n|Oferta:.*?\\n"), "")
+        .replace(Regex("ðŸ“ Mensaje:|💰.*?\\n|Oferta:.*?\\n"), "")
         .replace(Regex("^[\\s\\n]+|[\\s\\n]+$"), "")
         .trim()
         .ifEmpty { null }
@@ -6353,7 +6353,7 @@ private fun ConsultPostMessageContent(
             Spacer(modifier = Modifier.height(8.dp))
         }
         
-        // TÃ­tulo del producto
+        // Título del producto
         Text(
             text = data.productTitle,
             color = Color.White,
@@ -6779,7 +6779,7 @@ private fun ShareUserModal(
                                     text = if (searchQuery.length >= 2) 
                                         "No encontramos usuarios con \"$searchQuery\".\nIntenta con otro nombre."
                                     else
-                                        "SeguÃ­ a otros usuarios para verlos aquÃ­\no buscÃ¡ por nombre de usuario.",
+                                        "Seguí a otros usuarios para verlos aquí\no buscá por nombre de usuario.",
                                     fontSize = 14.sp,
                                     color = TextMuted,
                                     textAlign = TextAlign.Center,
@@ -7007,7 +7007,7 @@ private fun SharedUserMessageContent(
                 
                 Spacer(modifier = Modifier.width(10.dp))
                 
-                // Stats row - mÃ¡s separaciÃ³n entre iconos
+                // Stats row - más separación entre iconos
                 Row(
                     modifier = Modifier
                         .weight(1f)
@@ -7050,7 +7050,7 @@ private fun SharedUserMessageContent(
                     
                     Spacer(modifier = Modifier.width(8.dp))
                     
-                    // ReputaciÃ³n
+                    // Reputación
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         Icon(
                             imageVector = Icons.Outlined.Star,
@@ -7081,7 +7081,7 @@ private fun SharedUserMessageContent(
                     .offset(y = (-12).dp)
             )
             
-            // BotÃ³n "Ver perfil" - ancho completo
+            // Botón "Ver perfil" - ancho completo
             Surface(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -7104,7 +7104,7 @@ private fun SharedUserMessageContent(
                 )
             }
             
-            // Hora y ticks - DEBAJO del botÃ³n Ver perfil (dentro del Column)
+            // Hora y ticks - DEBAJO del botón Ver perfil (dentro del Column)
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -7139,7 +7139,7 @@ private fun formatSharedUserStat(count: Int): String {
 }
 
 /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-   ARTICLE CARD MESSAGE CONTENT - Datos dinÃ¡micos desde Supabase
+   ARTICLE CARD MESSAGE CONTENT - Datos dinámicos desde Supabase
 â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 
 private data class ArticleCardData(
@@ -7168,7 +7168,7 @@ private fun ArticleCardMessageContent(
     var isLoading by remember { mutableStateOf(true) }
     var isError by remember { mutableStateOf(false) }
     
-    // Fetch dinÃ¡mico del artÃ­culo desde Supabase
+    // Fetch dinámico del artículo desde Supabase
     LaunchedEffect(postId) {
         isLoading = true
         isError = false
@@ -7181,7 +7181,7 @@ private fun ArticleCardMessageContent(
                 .decodeSingleOrNull<com.mercora.app.data.model.PostDB>()
             
             if (postDB != null) {
-                // Obtener datos del dueÃ±o
+                // Obtener datos del dueño
                 var ownerUsername = "usuario"
                 var ownerAvatar = ""
                 try {
@@ -7207,7 +7207,7 @@ private fun ArticleCardMessageContent(
                     ownerAvatar = ownerAvatar
                 )
             } else {
-                // ArtÃ­culo eliminado
+                // Artículo eliminado
                 articleData = ArticleCardData(
                     postId = postId,
                     title = "",
@@ -7247,7 +7247,7 @@ private fun ArticleCardMessageContent(
                         )
                         Spacer(modifier = Modifier.height(10.dp))
                         Text(
-                            text = "Cargando artÃ­culo...",
+                            text = "Cargando artículo...",
                             color = if (isFromMe) Color.White.copy(alpha = 0.7f) else Color(0xFF8B98A5),
                             fontSize = 12.sp
                         )
@@ -7271,7 +7271,7 @@ private fun ArticleCardMessageContent(
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(
-                            text = "Error al cargar artÃ­culo",
+                            text = "Error al cargar artículo",
                             color = Color(0xFFEF5350),
                             fontSize = 13.sp,
                             fontWeight = FontWeight.Medium
@@ -7280,7 +7280,7 @@ private fun ArticleCardMessageContent(
                 }
             }
             articleData?.isDeleted == true -> {
-                // ArtÃ­culo eliminado
+                // Artículo eliminado
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -7306,13 +7306,13 @@ private fun ArticleCardMessageContent(
                         }
                         Spacer(modifier = Modifier.height(10.dp))
                         Text(
-                            text = "ArtÃ­culo no disponible",
+                            text = "Artículo no disponible",
                             color = Color(0xFF78909C),
                             fontSize = 14.sp,
                             fontWeight = FontWeight.SemiBold
                         )
                         Text(
-                            text = "Este artÃ­culo fue eliminado",
+                            text = "Este artículo fue eliminado",
                             color = Color(0xFF546E7A),
                             fontSize = 11.sp
                         )
@@ -7442,15 +7442,15 @@ private fun ArticleCardMessageContent(
                     }
                 }
                 
-                // Info del artÃ­culo
+                // Info del artículo
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 12.dp, vertical = 10.dp)
                 ) {
-                    // TÃ­tulo
+                    // Título
                     Text(
-                        text = data.title.ifEmpty { "Sin tÃ­tulo" },
+                        text = data.title.ifEmpty { "Sin título" },
                         color = if (isFromMe) Color.White else Color(0xFFE7E9EA),
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Bold,
@@ -7461,7 +7461,7 @@ private fun ArticleCardMessageContent(
                     
                     Spacer(modifier = Modifier.height(6.dp))
                     
-                    // Vendedor + Ver artÃ­culo
+                    // Vendedor + Ver artículo
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically,
@@ -7498,7 +7498,7 @@ private fun ArticleCardMessageContent(
                     
                     Spacer(modifier = Modifier.height(8.dp))
                     
-                    // BotÃ³n "Ver artÃ­culo"
+                    // Botón "Ver artículo"
                     Surface(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -7508,7 +7508,7 @@ private fun ArticleCardMessageContent(
                         shape = RoundedCornerShape(8.dp)
                     ) {
                         Text(
-                            text = "Ver artÃ­culo",
+                            text = "Ver artículo",
                             fontSize = 12.sp,
                             fontWeight = FontWeight.SemiBold,
                             color = Color(0xFF00BFA5),
@@ -7547,7 +7547,7 @@ private fun ArticleCardMessageContent(
     }
 }
 /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-   MODAL PARA COMPARTIR ARTÃCULO
+   MODAL PARA COMPARTIR ARTÍCULO
 â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 
 @kotlinx.serialization.Serializable
@@ -7607,16 +7607,16 @@ private fun ShareArticleModal(
             selectedFilter = 0
             filterTabsVisible = true
             
-            // Cargar todos los artÃ­culos
+            // Cargar todos los artículos
             isLoadingAll = true
             try {
                 allPosts = PostRepository.getPostsByCategory(limit = 50)
             } catch (e: Exception) {
-                android.util.Log.e("ShareArticleModal", "Error cargando artÃ­culos: ${e.message}")
+                android.util.Log.e("ShareArticleModal", "Error cargando artículos: ${e.message}")
             }
             isLoadingAll = false
             
-            // Cargar artÃ­culos del otro usuario
+            // Cargar artículos del otro usuario
             isLoadingOther = true
             try {
                 if (otherUserId.isNotEmpty()) {
@@ -7647,11 +7647,11 @@ private fun ShareArticleModal(
                     }
                 }
             } catch (e: Exception) {
-                android.util.Log.e("ShareArticleModal", "Error cargando artÃ­culos del usuario: ${e.message}")
+                android.util.Log.e("ShareArticleModal", "Error cargando artículos del usuario: ${e.message}")
             }
             isLoadingOther = false
             
-            // Cargar artÃ­culos guardados (misma lÃ³gica que ProfileScreen)
+            // Cargar artículos guardados (misma lógica que ProfileScreen)
             isLoadingSaved = true
             try {
                 val saves = com.mercora.app.data.remote.SupabaseClient.database
@@ -7714,7 +7714,7 @@ private fun ShareArticleModal(
         }
     }
     
-    // Filtrar por bÃºsqueda
+    // Filtrar por búsqueda
     val filteredPosts = remember(searchQuery, selectedFilter, allPosts, otherUserPosts, savedPosts) {
         val basePosts = when (selectedFilter) {
             1 -> otherUserPosts
@@ -7803,7 +7803,7 @@ private fun ShareArticleModal(
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         Text(
-                            text = "Compartir artÃ­culo",
+                            text = "Compartir artículo",
                             fontSize = 20.sp,
                             fontWeight = FontWeight.Bold,
                             color = TextPrimary
@@ -7855,7 +7855,7 @@ private fun ShareArticleModal(
                                 decorationBox = { inner ->
                                     if (searchQuery.isEmpty()) {
                                         Text(
-                                            "Buscar artÃ­culo por nombre...",
+                                            "Buscar artículo por nombre...",
                                             color = TextMuted,
                                             fontSize = 15.sp
                                         )
@@ -7975,7 +7975,7 @@ private fun ShareArticleModal(
                                 Spacer(modifier = Modifier.height(20.dp))
                                 
                                 Text(
-                                    text = if (searchQuery.length >= 2) "Sin resultados" else "Sin artÃ­culos",
+                                    text = if (searchQuery.length >= 2) "Sin resultados" else "Sin artículos",
                                     fontSize = 18.sp,
                                     fontWeight = FontWeight.Bold,
                                     color = TextPrimary
@@ -7983,11 +7983,11 @@ private fun ShareArticleModal(
                                 Spacer(modifier = Modifier.height(8.dp))
                                 Text(
                                     text = if (searchQuery.length >= 2)
-                                        "No encontramos artÃ­culos con \"$searchQuery\".\nIntentÃ¡ con otro nombre."
+                                        "No encontramos artículos con \"$searchQuery\".\nIntentá con otro nombre."
                                     else when (selectedFilter) {
-                                        1 -> "@$otherUsername no tiene artÃ­culos publicados."
-                                        2 -> "No tenÃ©s artÃ­culos guardados."
-                                        else -> "No hay artÃ­culos disponibles."
+                                        1 -> "@$otherUsername no tiene artículos publicados."
+                                        2 -> "No tenés artículos guardados."
+                                        else -> "No hay artículos disponibles."
                                     },
                                     fontSize = 14.sp,
                                     color = TextMuted,
@@ -7997,7 +7997,7 @@ private fun ShareArticleModal(
                             }
                         }
                     } else {
-                        // Grid de artÃ­culos - UnifiedProductCard con altura fija uniforme
+                        // Grid de artículos - UnifiedProductCard con altura fija uniforme
                         LazyVerticalGrid(
                             columns = GridCells.Fixed(2),
                             state = gridState,
@@ -8103,7 +8103,7 @@ private fun ShareArticleGridItem(
                 verticalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = post.title.ifEmpty { "Sin tÃ­tulo" },
+                    text = post.title.ifEmpty { "Sin título" },
                     fontSize = 13.sp,
                     fontWeight = FontWeight.SemiBold,
                     color = TextPrimary,
@@ -8153,7 +8153,7 @@ private fun ShareArticleGridItem(
                                 modifier = Modifier.size(11.dp)
                             )
                             Text(
-                                text = "EnvÃ­o gratis",
+                                text = "Envío gratis",
                                 fontSize = 10.sp,
                                 fontWeight = FontWeight.SemiBold,
                                 color = Color(0xFF00A650)

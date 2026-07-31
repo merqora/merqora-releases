@@ -99,7 +99,7 @@ object PostRepository {
 
             // Cargar TODOS los usuarios de una sola vez (batch query)
             val userIds = postsList.map { it.userId }.distinct()
-            Log.d(TAG, "User IDs Ãºnicos: $userIds")
+            Log.d(TAG, "User IDs únicos: $userIds")
 
             val usersMap = mutableMapOf<String, Usuario>()
             
@@ -180,7 +180,7 @@ object PostRepository {
     // ===============================
     
     /**
-     * Obtiene el conteo de posts de un usuario especÃ­fico
+     * Obtiene el conteo de posts de un usuario específico
      */
     suspend fun getUserPostsCount(userId: String): Int = withContext(Dispatchers.IO) {
         try {
@@ -250,7 +250,7 @@ object PostRepository {
     }
 
     // ===============================
-    // CREAR POST (ðŸ”¥ ARREGLADO - Soporte mÃºltiples imÃ¡genes)
+    // CREAR POST (🔥 ARREGLADO - Soporte múltiples imágenes)
     // ===============================
     suspend fun createPost(
         bitmaps: List<Bitmap>,
@@ -265,9 +265,9 @@ object PostRepository {
     ): Result<Post> = withContext(Dispatchers.IO) {
 
         try {
-            Log.d(TAG, "=== INICIANDO CREACIÃ“N DE POST ===")
+            Log.d(TAG, "=== INICIANDO CREACIÓN DE POST ===")
             Log.d(TAG, "Datos: title=$title, price=$price, condition=$condition, category=$category")
-            Log.d(TAG, "ImÃ¡genes a subir: ${bitmaps.size}")
+            Log.d(TAG, "Imágenes a subir: ${bitmaps.size}")
 
             val userId = getCurrentUserId()
             Log.d(TAG, "User ID: $userId")
@@ -279,7 +279,7 @@ object PostRepository {
             kotlinx.coroutines.delay(200)
             _uploadState.value = _uploadState.value.copy(progress = 0.15f)
 
-            // 1ï¸âƒ£ Subir TODAS las imÃ¡genes (15% - 75%)
+            // 1ï¸âƒ£ Subir TODAS las imágenes (15% - 75%)
             val imageUrls = mutableListOf<String>()
             val progressPerImage = 0.60f / bitmaps.size
             
@@ -288,7 +288,7 @@ object PostRepository {
                 val imageUrl = CloudinaryService.uploadImage(
                     bitmap = bitmap,
                     folder = "posts/$userId",
-                    mediaType = com.vinzay.app.media.MediaOptimizer.MediaType.POST,
+                    mediaType = com.mercora.app.media.MediaOptimizer.MediaType.POST,
                     onProgress = { progress ->
                         val baseProgress = 0.15f + (index * progressPerImage)
                         val adjusted = baseProgress + (progress * progressPerImage)
@@ -300,24 +300,24 @@ object PostRepository {
                 Log.d(TAG, "Imagen ${index + 1} subida: $imageUrl")
             }
 
-            Log.d(TAG, "Todas las imÃ¡genes subidas: ${imageUrls.size}")
+            Log.d(TAG, "Todas las imágenes subidas: ${imageUrls.size}")
             
-            // Progreso despuÃ©s de subir imÃ¡genes
+            // Progreso después de subir imágenes
             _uploadState.value = _uploadState.value.copy(progress = 0.80f)
             kotlinx.coroutines.delay(300)
 
-            // Calcular precio anterior simulado (25% mÃ¡s que el actual)
+            // Calcular precio anterior simulado (25% más que el actual)
             val actualPrice = price ?: 0.0
             val previousPrice = if (actualPrice > 0) actualPrice * 1.25 else 0.0
 
-            // 2ï¸âƒ£ JSON para INSERT con TODAS las imÃ¡genes
+            // 2ï¸âƒ£ JSON para INSERT con TODAS las imágenes
             val imagesArray = buildJsonArray { 
                 imageUrls.forEach { url -> add(JsonPrimitive(url)) }
             }
             val coverUrl = imageUrls.firstOrNull() ?: ""
             val postJson = buildJsonObject {
                 put("user_id", userId)
-                put("title", title ?: caption ?: "Producto sin tÃ­tulo")
+                put("title", title ?: caption ?: "Producto sin título")
                 put("description", caption ?: "")
                 put("images", imagesArray)
                 put("status", "active")
@@ -360,7 +360,7 @@ object PostRepository {
             
             Log.d(TAG, "=== POST CREADO EXITOSAMENTE ===")
 
-            // Retornar el primer post recargado (el mÃ¡s reciente)
+            // Retornar el primer post recargado (el más reciente)
             val latestPost = _posts.value.firstOrNull()
             if (latestPost != null) {
                 Result.success(latestPost)
@@ -376,7 +376,7 @@ object PostRepository {
             }
 
         } catch (e: Exception) {
-            Log.e(TAG, "ERROR CRÃTICO AL CREAR POST", e)
+            Log.e(TAG, "ERROR CRÍTICO AL CREAR POST", e)
             _uploadState.value = PostUploadState(
                 isUploading = false,
                 error = e.message
@@ -454,7 +454,7 @@ object PostRepository {
     // ===============================
     suspend fun deletePost(postId: String): Result<Unit> = withContext(Dispatchers.IO) {
         try {
-            // 1. Obtener el post para extraer URLs de imÃ¡genes
+            // 1. Obtener el post para extraer URLs de imágenes
             val postDB = try {
                 SupabaseClient.database
                     .from("posts")
@@ -464,18 +464,18 @@ object PostRepository {
                     .decodeList<PostDB>()
                     .firstOrNull()
             } catch (e: Exception) {
-                Log.w(TAG, "No se pudo obtener post para eliminar imÃ¡genes de Cloudinary", e)
+                Log.w(TAG, "No se pudo obtener post para eliminar imágenes de Cloudinary", e)
                 null
             }
             
-            // 2. Eliminar imÃ¡genes de Cloudinary (best-effort, no bloquea el delete)
+            // 2. Eliminar imágenes de Cloudinary (best-effort, no bloquea el delete)
             postDB?.images?.let { imageUrls ->
                 if (imageUrls.isNotEmpty()) {
-                    Log.d(TAG, "Eliminando ${imageUrls.size} imÃ¡genes de Cloudinary...")
+                    Log.d(TAG, "Eliminando ${imageUrls.size} imágenes de Cloudinary...")
                     try {
                         CloudinaryService.deleteImagesFromUrls(imageUrls)
                     } catch (e: Exception) {
-                        Log.w(TAG, "Error eliminando imÃ¡genes de Cloudinary (continuando con delete)", e)
+                        Log.w(TAG, "Error eliminando imágenes de Cloudinary (continuando con delete)", e)
                     }
                 }
             }
@@ -498,7 +498,7 @@ object PostRepository {
     }
 
     // ===============================
-    // GET POSTS BY CATEGORY - Para explorar productos relacionados con paginaciÃ³n
+    // GET POSTS BY CATEGORY - Para explorar productos relacionados con paginación
     // ===============================
     suspend fun getPostsByCategory(
         category: String? = null,
@@ -523,7 +523,7 @@ object PostRepository {
                     }
                     .decodeList<PostDB>()
             } else {
-                // Sin categorÃ­a, cargar posts aleatorios
+                // Sin categoría, cargar posts aleatorios
                 SupabaseClient.database
                     .from("posts")
                     .select {
@@ -640,7 +640,7 @@ object PostRepository {
                 }
                 .decodeList<PostDB>()
             
-            // Obtener IDs de usuarios Ãºnicos
+            // Obtener IDs de usuarios únicos
             val userIds = postsList.map { it.userId }.distinct()
             
             // Cargar datos de usuarios en batch

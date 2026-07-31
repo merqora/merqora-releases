@@ -39,9 +39,9 @@ enum class BadgeType(
     ),
     FAST_SHIPPER(
         Icons.Default.Send,
-        "EnvÃ­o rÃ¡pido",
+        "Envío rápido",
         listOf(Color(0xFF2E8B57), Color(0xFF059669)),
-        "EnvÃ­a en 24h"
+        "Envía en 24h"
     ),
     TRUSTED(
         Icons.Default.Lock,

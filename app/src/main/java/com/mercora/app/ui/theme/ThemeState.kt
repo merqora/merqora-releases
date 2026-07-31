@@ -11,7 +11,7 @@ import kotlinx.coroutines.runBlocking
 
 /**
  * Estado global del tema de la app
- * Maneja tema oscuro/claro, color de acento, tamaÃ±o de fuente y accesibilidad
+ * Maneja tema oscuro/claro, color de acento, tamaño de fuente y accesibilidad
  */
 class ThemeState(private val preferences: AppPreferences, private val scope: CoroutineScope) {
     
@@ -79,7 +79,7 @@ class ThemeState(private val preferences: AppPreferences, private val scope: Cor
     }
     
     // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-    // COLORES DINÃMICOS
+    // COLORES DINÁMICOS
     // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
     val primaryColor: Color
         get() = when (accentColor) {

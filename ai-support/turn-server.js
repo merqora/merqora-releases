@@ -1,9 +1,9 @@
 ﻿var turn = require('node-turn');
 var server = new turn({
   authMech: 'long-term',
-  realm: 'rendly.local',
+  realm: 'mercora.local',
   credentials: {
-    rendly: '***REMOVED***'
+    mercora: '***REMOVED***'
   },
   listeningPort: 3479,
   listeningIps: ['0.0.0.0'],

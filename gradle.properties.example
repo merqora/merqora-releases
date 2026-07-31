@@ -1,57 +1,59 @@
 # Project-wide Gradle settings
 org.gradle.java.home=PATH_TO_YOUR_JDK_17
-org.gradle.jvmargs=-Xmx4096m -XX:+UseParallelGC
+org.gradle.jvmargs=-Xmx4096m -XX:+UseParallelGC --add-opens=jdk.compiler/com.sun.tools.javac.main=ALL-UNNAMED --add-opens=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED --add-opens=jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED --add-opens=jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED --add-opens=jdk.compiler/com.sun.tools.javac.comp=ALL-UNNAMED --add-opens=jdk.compiler/com.sun.tools.javac.parser=ALL-UNNAMED --add-opens=jdk.compiler/com.sun.tools.javac.jvm=ALL-UNNAMED --add-opens=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED --add-exports=jdk.compiler/com.sun.tools.javac.main=ALL-UNNAMED --add-exports=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED --add-exports=jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED --add-exports=jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED --add-exports=jdk.compiler/com.sun.tools.javac.comp=ALL-UNNAMED --add-exports=jdk.compiler/com.sun.tools.javac.parser=ALL-UNNAMED --add-exports=jdk.compiler/com.sun.tools.javac.jvm=ALL-UNNAMED --add-exports=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED
 org.gradle.parallel=false
 org.gradle.workers.max=2
 org.gradle.caching=true
-org.gradle.daemon=false
-kotlin.daemon.jvmargs=-Xmx4096m -XX:MaxMetaspaceSize=512m
-kotlin.code.style=official
-android.useAndroidX=true
-android.enableJetifier=true
-android.enableR8.fullMode=true
+org.gradle.daemon=true
 
-# Kapt
+# Kotlin daemon
+kotlin.daemon.jvmargs=-Xmx4096m -XX:MaxMetaspaceSize=512m
+
+# Kapt optimizations
 kapt.use.worker.api=true
 kapt.worker.api.mode=isolation
 kapt.workers.jvmargs=-Xmx2048m
 kapt.incremental.apt=false
 kapt.include.compile.classpath=false
 
-# ── MAPBOX ──
-MAPBOX_DOWNLOADS_TOKEN=YOUR_MAPBOX_DOWNLOADS_TOKEN
-MAPBOX_ACCESS_TOKEN=YOUR_MAPBOX_ACCESS_TOKEN
+# Kotlin
+kotlin.code.style=official
 
-# ── GOOGLE MAPS ──
-GOOGLE_MAPS_API_KEY=YOUR_GOOGLE_MAPS_API_KEY
+# AndroidX
+android.useAndroidX=true
+android.enableJetifier=true
 
-# ── SUPABASE ──
-SUPABASE_URL=https://xyrpmmnegzjkbysoocpc.supabase.co
-SUPABASE_ANON_KEY=YOUR_SUPABASE_ANON_KEY
+# Compose
+android.enableR8.fullMode=true
 
-# ── AI SUPPORT ──
-AI_SUPPORT_URL=https://vinzay-ai.up.railway.app
+# ═══════════════════════════════════════════════════════════════
+# PUBLIC CONFIG ONLY — Copia este archivo como gradle.properties
+# y completa los valores. NO pongas secretos aquí:
+#  - Secretos de media (R2, Cloudinary, ImageKit, Metered TURN):
+#    SOLO en Supabase edge functions (media-services)
+#  - Keystore de release: en keystore.properties (gitignored)
+# ═══════════════════════════════════════════════════════════════
 
-# ── R2 / CLOUDINARY / IMAGEKIT URLs ──
-R2_PUBLIC_URL=https://pub-YOUR_BUCKET_ID.r2.dev
-CLOUDINARY_CLOUD_NAME=YOUR_CLOUD_NAME
-IMAGEKIT_URL_ENDPOINT=https://ik.imagekit.io/YOUR_ID
+# Mapbox
+MAPBOX_DOWNLOADS_TOKEN=YOUR_MAPBOX_DOWNLOADS_TOKEN_HERE
+MAPBOX_ACCESS_TOKEN=YOUR_MAPBOX_ACCESS_TOKEN_HERE
 
-# ── R2 CREDENTIALS ──
-CLOUDFLARE_ACCOUNT_ID=YOUR_ACCOUNT_ID
-CLOUDFLARE_ACCESS_KEY_ID=YOUR_ACCESS_KEY
-CLOUDFLARE_SECRET_ACCESS_KEY=YOUR_SECRET_KEY
-CLOUDFLARE_BUCKET_NAME=vinzay-media
-CLOUDFLARE_PUBLIC_DOMAIN=https://pub-YOUR_BUCKET_ID.r2.dev
+# AI Support Backend URL
+AI_SUPPORT_URL=https://vinzay-ai.onrender.com
 
-# ── CLOUDINARY API ──
-CLOUDINARY_API_KEY=YOUR_API_KEY
-CLOUDINARY_API_SECRET=YOUR_API_SECRET
+# MercadoPago
+MP_PUBLIC_KEY=YOUR_MP_PUBLIC_KEY_HERE
+MERCADOPAGO_CLIENT_ID=YOUR_MERCADOPAGO_CLIENT_ID_HERE
 
-# ── IMAGEKIT API ──
-IMAGEKIT_PUBLIC_KEY=YOUR_PUBLIC_KEY
-IMAGEKIT_PRIVATE_KEY=YOUR_PRIVATE_KEY
+# Supabase
+SUPABASE_URL=https://your-project.supabase.co
+SUPABASE_ANON_KEY=YOUR_SUPABASE_ANON_KEY_HERE
 
-# ── MERCADO PAGO ──
-MP_PUBLIC_KEY=YOUR_MP_PUBLIC_KEY
-MERCADOPAGO_CLIENT_ID=YOUR_MP_CLIENT_ID
+# Media pública (sin secretos)
+CLOUDINARY_CLOUD_NAME=YOUR_CLOUDINARY_CLOUD_NAME
+IMAGEKIT_URL_ENDPOINT=https://ik.imagekit.io/YOUR_IMAGEKIT_ID
+IMAGEKIT_PUBLIC_KEY=YOUR_IMAGEKIT_PUBLIC_KEY
+CLOUDFLARE_PUBLIC_DOMAIN=https://your-r2-public-domain.r2.dev
+
+# Giphy (para GIF picker)
+GIPHY_API_KEY=YOUR_GIPHY_API_KEY_HERE

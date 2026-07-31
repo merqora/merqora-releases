@@ -139,13 +139,13 @@ fun ReviewsSection(
                     )
                     Spacer(modifier = Modifier.height(12.dp))
                     Text(
-                        text = "AÃºn no hay opiniones",
+                        text = "Aún no hay opiniones",
                         fontSize = 15.sp,
                         fontWeight = FontWeight.SemiBold,
                         color = TextSecondary
                     )
                     Text(
-                        text = "SÃ© el primero en opinar",
+                        text = "Sé el primero en opinar",
                         fontSize = 13.sp,
                         color = TextMuted
                     )
@@ -167,7 +167,7 @@ fun ReviewsSection(
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
-                            text = "Escribir una opiniÃ³n",
+                            text = "Escribir una opinión",
                             fontSize = 14.sp,
                             fontWeight = FontWeight.SemiBold
                         )

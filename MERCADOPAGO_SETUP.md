@@ -24,7 +24,7 @@ Esta guÃ­a explica cÃ³mo configurar la integraciÃ³n de Mercado Pago para p
 1. Ve a: https://www.mercadopago.com.uy/developers/panel
 2. Inicia sesiÃ³n con tu cuenta de Mercado Pago Uruguay
 3. Click en **"Crear aplicaciÃ³n"**
-4. Nombre: `Rendly Uruguay`
+4. Nombre: `Mercora Uruguay`
 5. Selecciona **"Checkout Pro"** como producto
 6. Acepta tÃ©rminos y crea
 
@@ -72,7 +72,7 @@ MERCADOPAGO_ACCESS_TOKEN=APP_USR-tu-access-token-aqui
 MERCADOPAGO_SANDBOX=true
 
 # Scheme de la app para deep links
-APP_DEEP_LINK_SCHEME=rendly
+APP_DEEP_LINK_SCHEME=mercora
 ```
 
 ### 3.2 Desplegar Edge Functions
@@ -107,7 +107,7 @@ supabase functions deploy mp-webhook --no-verify-jwt
 DespuÃ©s de los cambios en `build.gradle.kts`:
 
 ```powershell
-cd c:\Users\Rodrigo\Documents\Rendly
+cd c:\Users\Rodrigo\Documents\Mercora
 .\gradlew --refresh-dependencies
 ```
 

@@ -95,10 +95,10 @@ fun EditProfileScreen(
     // Estado para modal de tipo de cuenta
     var showAccountTypeModal by remember { mutableStateOf(false) }
     
-    // Estado para modal de informaciÃ³n personal
+    // Estado para modal de información personal
     var showPersonalInfoModal by remember { mutableStateOf(false) }
     
-    // Estado para modal de posiciÃ³n de imagen
+    // Estado para modal de posición de imagen
     var showImagePositionModal by remember { mutableStateOf(false) }
     var imagePositionMode by remember { mutableStateOf("avatar") } // "avatar" o "banner"
     var pendingImageUri by remember { mutableStateOf<Uri?>(null) }
@@ -165,13 +165,13 @@ fun EditProfileScreen(
     
     // Inicializar repositorio de formas de avatar
     LaunchedEffect(Unit) {
-        com.vinzay.app.data.repository.AvatarShapeRepository.init(context)
+        com.mercora.app.data.repository.AvatarShapeRepository.init(context)
     }
     
     // Auto-sync shape al servidor cuando cambia (sin esperar "Guardar")
     LaunchedEffect(profileData.avatarShape) {
         if (profileData.avatarShape != initialData.avatarShape) {
-            com.vinzay.app.data.repository.AvatarShapeRepository.syncSelectedShapeToServer()
+            com.mercora.app.data.repository.AvatarShapeRepository.syncSelectedShapeToServer()
         }
     }
     
@@ -345,11 +345,11 @@ fun EditProfileScreen(
                     .padding(horizontal = 16.dp)
             ) {
                 // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-                // INFORMACIÃ“N BÃSICA
+                // INFORMACIÓN BÁSICA
                 // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
                 SectionHeader(
                     icon = Icons.Outlined.Person,
-                    title = "InformaciÃ³n bÃ¡sica"
+                    title = "Información básica"
                 )
                 
                 Spacer(modifier = Modifier.height(12.dp))
@@ -375,7 +375,7 @@ fun EditProfileScreen(
                 
                 Spacer(modifier = Modifier.height(16.dp))
                 
-                // Selector de GÃ©nero inclusivo
+                // Selector de Género inclusivo
                 GenderSelector(
                     selectedGender = profileData.sexo,
                     onGenderSelected = { profileData = profileData.copy(sexo = it) }
@@ -384,10 +384,10 @@ fun EditProfileScreen(
                 Spacer(modifier = Modifier.height(16.dp))
                 
                 EditFieldPro(
-                    label = "BiografÃ­a",
+                    label = "Biografía",
                     value = profileData.descripcion,
                     onValueChange = { profileData = profileData.copy(descripcion = it) },
-                    placeholder = "CuÃ©ntanos sobre ti o tu negocio...",
+                    placeholder = "Cuéntanos sobre ti o tu negocio...",
                     icon = Icons.Outlined.Edit,
                     multiline = true,
                     maxLines = 4,
@@ -396,11 +396,11 @@ fun EditProfileScreen(
                 
                 Spacer(modifier = Modifier.height(20.dp))
                 
-                // BotÃ³n Configurar informaciÃ³n personal
+                // Botón Configurar información personal
                 ConfigButton(
                     icon = Icons.Outlined.ManageAccounts,
-                    title = "Configurar informaciÃ³n personal",
-                    subtitle = "Fecha de nacimiento, paÃ­s, idioma",
+                    title = "Configurar información personal",
+                    subtitle = "Fecha de nacimiento, país, idioma",
                     onClick = { showPersonalInfoModal = true }
                 )
                 
@@ -464,7 +464,7 @@ fun EditProfileScreen(
                 // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
                 // FORMA DEL AVATAR (solo si tiene formas desbloqueadas)
                 // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-                val ownedShapes = com.vinzay.app.data.repository.AvatarShapeRepository.getAllOwnedShapes()
+                val ownedShapes = com.mercora.app.data.repository.AvatarShapeRepository.getAllOwnedShapes()
                 if (ownedShapes.size > 1) {
                     Spacer(modifier = Modifier.height(28.dp))
                     SectionHeader(
@@ -473,7 +473,7 @@ fun EditProfileScreen(
                     )
                     Spacer(modifier = Modifier.height(12.dp))
                     
-                    val currentShapeType = com.vinzay.app.data.repository.AvatarShapeRepository.getSelectedShape()
+                    val currentShapeType = com.mercora.app.data.repository.AvatarShapeRepository.getSelectedShape()
                     
                     // Grid de formas disponibles (4 columnas)
                     val columns = 4
@@ -496,7 +496,7 @@ fun EditProfileScreen(
                                             shape = RoundedCornerShape(12.dp)
                                         )
                                         .clickable {
-                                            com.vinzay.app.data.repository.AvatarShapeRepository.setSelectedShape(shapeType)
+                                            com.mercora.app.data.repository.AvatarShapeRepository.setSelectedShape(shapeType)
                                             profileData = profileData.copy(avatarShape = shapeType.dbValue)
                                         }
                                         .padding(8.dp),
@@ -515,7 +515,7 @@ fun EditProfileScreen(
                                                 .background(PrimaryPurple.copy(alpha = if (isSelected) 0.7f else 0.35f)),
                                             contentAlignment = Alignment.Center
                                         ) {
-                                            // PequeÃ±o brillo interno para simular avatar
+                                            // Pequeño brillo interno para simular avatar
                                             Box(
                                                 modifier = Modifier
                                                     .fillMaxSize()
@@ -545,7 +545,7 @@ fun EditProfileScreen(
                 
                 Spacer(modifier = Modifier.height(32.dp))
                 
-                // BotÃ³n Guardar
+                // Botón Guardar
                 Button(
                     onClick = {
                         onSave(profileData, selectedAvatarUri, selectedBannerUri)
@@ -597,7 +597,7 @@ fun EditProfileScreen(
             }
         )
         
-        // Modal de informaciÃ³n personal
+        // Modal de información personal
         PersonalInfoModal(
             isVisible = showPersonalInfoModal,
             onDismiss = { showPersonalInfoModal = false },
@@ -609,7 +609,7 @@ fun EditProfileScreen(
             onFechaNacimientoChange = { }
         )
         
-        // Modal de posiciÃ³n de imagen (avatar o banner)
+        // Modal de posición de imagen (avatar o banner)
         ImagePositionModal(
             isVisible = showImagePositionModal,
             bitmap = pendingImageBitmap,
@@ -773,10 +773,10 @@ private fun getAccountTypeInfo(type: String): AccountTypeInfo {
         "brand" -> AccountTypeInfo(
             id = "brand",
             label = "Marca de ropa",
-            description = "Tienda o marca con catÃ¡logo de productos",
+            description = "Tienda o marca con catálogo de productos",
             icon = Icons.Outlined.Storefront,
             color = AccentPink,
-            features = listOf("CatÃ¡logo completo", "MÃºltiples variantes", "EstadÃ­sticas PRO", "Badge verificado")
+            features = listOf("Catálogo completo", "Múltiples variantes", "Estadísticas PRO", "Badge verificado")
         )
         "community" -> AccountTypeInfo(
             id = "community",
@@ -789,23 +789,23 @@ private fun getAccountTypeInfo(type: String): AccountTypeInfo {
         "product_service" -> AccountTypeInfo(
             id = "product_service",
             label = "Producto o Servicio",
-            description = "Ofreces productos o servicios especÃ­ficos",
+            description = "Ofreces productos o servicios específicos",
             icon = Icons.Outlined.Inventory2,
             color = Color(0xFF2E8B57),
             features = listOf("Servicios destacados", "Cotizaciones", "Portfolio", "Badge verificado")
         )
         "restaurant" -> AccountTypeInfo(
             id = "restaurant",
-            label = "Restaurante / GastronomÃ­a",
-            description = "Restaurante, cafÃ© o servicio gastronÃ³mico",
+            label = "Restaurante / Gastronomía",
+            description = "Restaurante, café o servicio gastronómico",
             icon = Icons.Outlined.Restaurant,
             color = Color(0xFFFF6B35),
-            features = listOf("MenÃº digital", "Reservas", "Delivery", "Badge verificado")
+            features = listOf("Menú digital", "Reservas", "Delivery", "Badge verificado")
         )
         "shopping" -> AccountTypeInfo(
             id = "shopping",
             label = "Shopping / Centro comercial",
-            description = "Centro comercial o galerÃ­a de tiendas",
+            description = "Centro comercial o galería de tiendas",
             icon = Icons.Outlined.ShoppingBag,
             color = Color(0xFFFF6B35),
             features = listOf("Directorio de tiendas", "Promociones", "Eventos", "Badge verificado")
@@ -816,7 +816,7 @@ private fun getAccountTypeInfo(type: String): AccountTypeInfo {
             description = "Vendes ocasionalmente sin tienda formal",
             icon = Icons.Outlined.Person,
             color = PrimaryPurple,
-            features = listOf("PublicaciÃ³n rÃ¡pida", "Chat directo", "ReputaciÃ³n", "Badge verificado")
+            features = listOf("Publicación rápida", "Chat directo", "Reputación", "Badge verificado")
         )
     }
 }
@@ -1041,7 +1041,7 @@ private fun AccountTypeSelectionModal(
                         
                         Spacer(modifier = Modifier.height(20.dp))
                         
-                        // Icon y tÃ­tulo
+                        // Icon y título
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Box(
                                 modifier = Modifier
@@ -1114,7 +1114,7 @@ private fun AccountTypeSelectionModal(
                         
                         Spacer(modifier = Modifier.weight(1f))
                         
-                        // BotÃ³n de selecciÃ³n
+                        // Botón de selección
                         Button(
                             onClick = { onTypeSelected(typeId) },
                             modifier = Modifier
@@ -1458,23 +1458,23 @@ private fun ConfigButton(
 }
 
 // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-// MODAL DE INFORMACIÃ“N PERSONAL - Profesional y completo
+// MODAL DE INFORMACIÓN PERSONAL - Profesional y completo
 // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 private val COUNTRIES = listOf(
     "Argentina", "Bolivia", "Brasil", "Chile", "Colombia", "Costa Rica",
-    "Cuba", "Ecuador", "El Salvador", "EspaÃ±a", "Estados Unidos", "Guatemala",
-    "Honduras", "MÃ©xico", "Nicaragua", "PanamÃ¡", "Paraguay", "PerÃº",
-    "Puerto Rico", "RepÃºblica Dominicana", "Uruguay", "Venezuela"
+    "Cuba", "Ecuador", "El Salvador", "España", "Estados Unidos", "Guatemala",
+    "Honduras", "México", "Nicaragua", "Panamá", "Paraguay", "Perú",
+    "Puerto Rico", "República Dominicana", "Uruguay", "Venezuela"
 )
 
 private val LANGUAGES = listOf(
-    "EspaÃ±ol" to "es",
-    "InglÃ©s" to "en",
-    "PortuguÃ©s" to "pt",
-    "FrancÃ©s" to "fr",
+    "Español" to "es",
+    "Inglés" to "en",
+    "Portugués" to "pt",
+    "Francés" to "fr",
     "Italiano" to "it",
-    "AlemÃ¡n" to "de"
+    "Alemán" to "de"
 )
 
 @Composable
@@ -1496,7 +1496,7 @@ private fun PersonalInfoModal(
     var localUbicacion by remember(ubicacion) { mutableStateOf(ubicacion) }
     var localTelefono by remember(telefono) { mutableStateOf(telefono) }
     var selectedCountry by remember { mutableStateOf("Argentina") }
-    var selectedLanguage by remember { mutableStateOf("EspaÃ±ol") }
+    var selectedLanguage by remember { mutableStateOf("Español") }
     var showCountryPicker by remember { mutableStateOf(false) }
     var showLanguagePicker by remember { mutableStateOf(false) }
     var showDatePicker by remember { mutableStateOf(false) }
@@ -1629,7 +1629,7 @@ private fun PersonalInfoModal(
                             
                             Column {
                                 Text(
-                                    text = "InformaciÃ³n personal",
+                                    text = "Información personal",
                                     fontSize = 22.sp,
                                     fontWeight = FontWeight.Bold,
                                     color = TextPrimary
@@ -1705,7 +1705,7 @@ private fun PersonalInfoModal(
                             }
                             
                             Text(
-                                text = "Tu edad no serÃ¡ visible pÃºblicamente",
+                                text = "Tu edad no será visible públicamente",
                                 fontSize = 12.sp,
                                 color = TextMuted,
                                 modifier = Modifier.padding(start = 4.dp, top = 6.dp)
@@ -1715,17 +1715,17 @@ private fun PersonalInfoModal(
                         Spacer(modifier = Modifier.height(8.dp))
                         
                         // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-                        // UBICACIÃ“N
+                        // UBICACIÓN
                         // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
                         PersonalInfoSection(
                             icon = Icons.Outlined.LocationOn,
-                            title = "UbicaciÃ³n",
+                            title = "Ubicación",
                             iconColor = Color(0xFF2E8B57)
                         ) {
                             OutlinedTextField(
                                 value = localUbicacion,
                                 onValueChange = { localUbicacion = it },
-                                placeholder = { Text("Ciudad, PaÃ­s", color = TextMuted) },
+                                placeholder = { Text("Ciudad, País", color = TextMuted) },
                                 modifier = Modifier.fillMaxWidth(),
                                 colors = OutlinedTextFieldDefaults.colors(
                                     focusedBorderColor = Color(0xFF2E8B57),
@@ -1739,7 +1739,7 @@ private fun PersonalInfoModal(
                             
                             Spacer(modifier = Modifier.height(8.dp))
                             
-                            // BotÃ³n "Usar ubicaciÃ³n actual" (mismo que en RendScreen)
+                            // Botón "Usar ubicación actual" (mismo que en RendScreen)
                             Surface(
                                 modifier = Modifier
                                     .fillMaxWidth()
@@ -1766,11 +1766,11 @@ private fun PersonalInfoModal(
                                                         isLoadingLocation = false
                                                     }
                                                 } else {
-                                                    android.widget.Toast.makeText(context, "Permiso de ubicaciÃ³n requerido", android.widget.Toast.LENGTH_SHORT).show()
+                                                    android.widget.Toast.makeText(context, "Permiso de ubicación requerido", android.widget.Toast.LENGTH_SHORT).show()
                                                     isLoadingLocation = false
                                                 }
                                             } catch (e: Exception) {
-                                                android.widget.Toast.makeText(context, "Error obteniendo ubicaciÃ³n", android.widget.Toast.LENGTH_SHORT).show()
+                                                android.widget.Toast.makeText(context, "Error obteniendo ubicación", android.widget.Toast.LENGTH_SHORT).show()
                                                 isLoadingLocation = false
                                             }
                                         }
@@ -1800,7 +1800,7 @@ private fun PersonalInfoModal(
                                     }
                                     Spacer(modifier = Modifier.width(10.dp))
                                     Text(
-                                        "Usar ubicaciÃ³n actual",
+                                        "Usar ubicación actual",
                                         color = Color(0xFF1DA1F2),
                                         fontSize = 14.sp,
                                         fontWeight = FontWeight.Medium
@@ -1809,7 +1809,7 @@ private fun PersonalInfoModal(
                             }
                             
                             Text(
-                                text = "Se mostrarÃ¡ en tu perfil pÃºblico",
+                                text = "Se mostrará en tu perfil público",
                                 fontSize = 12.sp,
                                 color = TextMuted,
                                 modifier = Modifier.padding(start = 4.dp, top = 6.dp)
@@ -1819,11 +1819,11 @@ private fun PersonalInfoModal(
                         Spacer(modifier = Modifier.height(8.dp))
                         
                         // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-                        // TELÃ‰FONO
+                        // TELÉFONO
                         // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
                         PersonalInfoSection(
                             icon = Icons.Outlined.Phone,
-                            title = "TelÃ©fono",
+                            title = "Teléfono",
                             iconColor = Color(0xFFFF6B35)
                         ) {
                             OutlinedTextField(
@@ -1852,11 +1852,11 @@ private fun PersonalInfoModal(
                         Spacer(modifier = Modifier.height(8.dp))
                         
                         // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-                        // PAÃS
+                        // PAÍS
                         // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
                         PersonalInfoSection(
                             icon = Icons.Outlined.Public,
-                            title = "PaÃ­s de residencia",
+                            title = "País de residencia",
                             iconColor = Color(0xFF1565A0)
                         ) {
                             Surface(
@@ -1959,14 +1959,14 @@ private fun PersonalInfoModal(
                                 Spacer(modifier = Modifier.width(12.dp))
                                 Column {
                                     Text(
-                                        text = "Tu informaciÃ³n estÃ¡ protegida",
+                                        text = "Tu información está protegida",
                                         fontSize = 14.sp,
                                         fontWeight = FontWeight.SemiBold,
                                         color = TextPrimary
                                     )
                                     Spacer(modifier = Modifier.height(4.dp))
                                     Text(
-                                        text = "Esta informaciÃ³n es privada y nunca se compartirÃ¡ con terceros sin tu consentimiento explÃ­cito.",
+                                        text = "Esta información es privada y nunca se compartirá con terceros sin tu consentimiento explícito.",
                                         fontSize = 12.sp,
                                         color = TextSecondary,
                                         lineHeight = 16.sp
@@ -1978,7 +1978,7 @@ private fun PersonalInfoModal(
                     
                     Spacer(modifier = Modifier.height(16.dp))
                     
-                    // BotÃ³n guardar
+                    // Botón guardar
                     Button(
                         onClick = { 
                             // Guardar los valores actualizados
@@ -2000,7 +2000,7 @@ private fun PersonalInfoModal(
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
-                            text = "Guardar informaciÃ³n",
+                            text = "Guardar información",
                             fontSize = 15.sp,
                             fontWeight = FontWeight.Bold
                         )
@@ -2010,10 +2010,10 @@ private fun PersonalInfoModal(
         }
     }
     
-    // Picker de paÃ­s
+    // Picker de país
     if (showCountryPicker) {
         PickerModal(
-            title = "Seleccionar paÃ­s",
+            title = "Seleccionar país",
             options = COUNTRIES,
             selectedOption = selectedCountry,
             onOptionSelected = { 
@@ -2165,7 +2165,7 @@ private fun ImagePositionModal(
                 
                 Spacer(modifier = Modifier.weight(1f))
                 
-                // Preview area - diferente forma segÃºn modo
+                // Preview area - diferente forma según modo
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -2275,7 +2275,7 @@ private fun ImagePositionModal(
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = "Arrastra para mover â€¢ Pellizca para zoom",
+                        text = "Arrastra para mover • Pellizca para zoom",
                         color = TextMuted,
                         fontSize = 13.sp,
                         textAlign = TextAlign.Center

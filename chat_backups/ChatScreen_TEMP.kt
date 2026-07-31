@@ -25,7 +25,7 @@ fun ChatScreen(
     // Estado para controlar si ya se hizo el scroll inicial
     var initialScrollDone by remember { mutableStateOf(false) }
     var messagesReady by remember { mutableStateOf(false) }
-    // Guard: evitar parpadeo/salto por reconciliaciÃ³n de mensajes tras carga inicial
+    // Guard: evitar parpadeo/salto por reconciliación de mensajes tras carga inicial
     var settledAfterLoad by remember { mutableStateOf(false) }
     
     // Observar cuando la carga inicial de mensajes del servidor termina
@@ -37,14 +37,14 @@ fun ChatScreen(
     var selectedMessage by remember { mutableStateOf<Message?>(null) }
     var showMessageOptionsModal by remember { mutableStateOf(false) }
     
-    // Estado para ediciÃ³n de mensaje
+    // Estado para edición de mensaje
     var editingMessage by remember { mutableStateOf<Message?>(null) }
     var isEditMode by remember { mutableStateOf(false) }
     
     // Estado para respuesta a mensaje (swipe-to-reply)
     var replyingToMessage by remember { mutableStateOf<Message?>(null) }
     
-    // Estado para reenvÃ­o de posts compartidos
+    // Estado para reenvío de posts compartidos
     var sharedPostToForward by remember { mutableStateOf<SharedPostData?>(null) }
     var showForwardSharedPostModal by remember { mutableStateOf(false) }
     
@@ -52,11 +52,11 @@ fun ChatScreen(
     var rendScreenRendId by remember { mutableStateOf<String?>(null) }
     var showRendScreenOverlay by remember { mutableStateOf(false) }
     
-    // Estado para envÃ­o de media
+    // Estado para envío de media
     var selectedMediaUri by remember { mutableStateOf<Uri?>(null) }
     var isUploadingMedia by remember { mutableStateOf(false) }
     
-    // Estado para modal de handshake (confirmaciÃ³n de compra)
+    // Estado para modal de handshake (confirmación de compra)
     var showHandshakeModal by remember { mutableStateOf(false) }
     var pendingHandshakeId by remember { mutableStateOf<String?>(null) }
     var isWaitingForAcceptance by remember { mutableStateOf(false) }
@@ -68,7 +68,7 @@ fun ChatScreen(
     val wallpaperContext = LocalContext.current
     var chatWallpaper by remember { mutableStateOf(ChatWallpaper.load(wallpaperContext)) }
     
-    // Estado para bÃºsqueda inline en el header
+    // Estado para búsqueda inline en el header
     var isSearchMode by remember { mutableStateOf(false) }
     var searchQuery by remember { mutableStateOf("") }
     var searchResults by remember { mutableStateOf<List<Message>>(emptyList()) }
@@ -87,7 +87,7 @@ fun ChatScreen(
     // Estados para modales de cancelar y completado
     var showCancelConfirmModal by remember { mutableStateOf(false) }
     var completedHandshakeInfo by remember { mutableStateOf<HandshakeTransaction?>(null) }
-    var cancelledHandshakeInfo by remember { mutableStateOf<HandshakeTransaction?>(null) } // Para mantener referencia durante animaciÃ³n de cancelaciÃ³n
+    var cancelledHandshakeInfo by remember { mutableStateOf<HandshakeTransaction?>(null) } // Para mantener referencia durante animación de cancelación
     var animateReputationBadge by remember { mutableStateOf(false) }
     var lastReputationChange by remember { mutableIntStateOf(0) } // +3, +4, -1, -5, etc.
     var showHandshakeBanner by remember { mutableStateOf(false) }
@@ -97,18 +97,18 @@ fun ChatScreen(
     // Handshake creado localmente (para mostrar banner antes de que Realtime sincronice)
     var localCreatedHandshake by remember { mutableStateOf<HandshakeTransaction?>(null) }
     
-    // Tracking: si ya tuvimos un handshake activo (cachÃ© o red) para controlar cleanup
+    // Tracking: si ya tuvimos un handshake activo (caché o red) para controlar cleanup
     var hadActiveHandshake by remember { mutableStateOf(false) }
     
-    // Flag: la carga inicial del handshake desde red ya terminÃ³
+    // Flag: la carga inicial del handshake desde red ya terminó
     // Hasta que esto sea true, el LaunchedEffect(activeHandshake) NO debe interferir
     var isInitialHandshakeLoaded by remember { mutableStateOf(false) }
     
-    // ReputaciÃ³n en tiempo real desde Supabase
+    // Reputación en tiempo real desde Supabase
     val otherUserReputation by ReputationRepository.otherUserReputation.collectAsState()
     val currentUserReputation by ReputationRepository.currentUserReputation.collectAsState()
     
-    // VerificaciÃ³n en tiempo real del otro usuario
+    // Verificación en tiempo real del otro usuario
     val isOtherUserVerified by VerificationRepository.otherUserVerified.collectAsState()
     
     // Estado de llamadas
@@ -123,18 +123,18 @@ fun ChatScreen(
         CallRepository.initialize(context)
     }
     
-    // Estado para grabaciÃ³n de audio
+    // Estado para grabación de audio
     var isRecording by remember { mutableStateOf(false) }
     var mediaRecorder by remember { mutableStateOf<MediaRecorder?>(null) }
     var audioFile by remember { mutableStateOf<File?>(null) }
     
-    // Estado para envÃ­o de ubicaciÃ³n
+    // Estado para envío de ubicación
     var isGettingLocation by remember { mutableStateOf(false) }
     val fusedLocationClient = remember {
         com.google.android.gms.location.LocationServices.getFusedLocationProviderClient(context)
     }
     
-    // FunciÃ³n para obtener y enviar ubicaciÃ³n
+    // Función para obtener y enviar ubicación
     @Suppress("MissingPermission")
     fun fetchAndSendLocation() {
         scope.launch {
@@ -154,21 +154,21 @@ fun ChatScreen(
                             isGettingLocation = false
                         }
                     } else {
-                        android.util.Log.e("ChatScreen", "No se pudo obtener ubicaciÃ³n")
+                        android.util.Log.e("ChatScreen", "No se pudo obtener ubicación")
                         isGettingLocation = false
                     }
                 }.addOnFailureListener { e ->
-                    android.util.Log.e("ChatScreen", "Error obteniendo ubicaciÃ³n: ${e.message}")
+                    android.util.Log.e("ChatScreen", "Error obteniendo ubicación: ${e.message}")
                     isGettingLocation = false
                 }
             } catch (e: Exception) {
-                android.util.Log.e("ChatScreen", "Error obteniendo ubicaciÃ³n: ${e.message}")
+                android.util.Log.e("ChatScreen", "Error obteniendo ubicación: ${e.message}")
                 isGettingLocation = false
             }
         }
     }
     
-    // Launcher para permiso de ubicaciÃ³n
+    // Launcher para permiso de ubicación
     val locationPermissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestMultiplePermissions()
     ) { permissions ->
@@ -184,7 +184,7 @@ fun ChatScreen(
         contract = ActivityResultContracts.RequestPermission()
     ) { isGranted ->
         if (isGranted) {
-            // Iniciar grabaciÃ³n
+            // Iniciar grabación
             try {
                 val file = File(context.cacheDir, "audio_${System.currentTimeMillis()}.m4a")
                 audioFile = file
@@ -205,7 +205,7 @@ fun ChatScreen(
                 mediaRecorder = recorder
                 isRecording = true
             } catch (e: Exception) {
-                android.util.Log.e("ChatScreen", "Error al iniciar grabaciÃ³n: ${e.message}")
+                android.util.Log.e("ChatScreen", "Error al iniciar grabación: ${e.message}")
             }
         }
     }
@@ -219,7 +219,7 @@ fun ChatScreen(
     var fullscreenImageUrl by remember { mutableStateOf<String?>(null) }
     var showFullscreenImage by remember { mutableStateOf(false) }
     
-    // Launcher para seleccionar imagen/video de galerÃ­a â†’ abre preview modal
+    // Launcher para seleccionar imagen/video de galería â†’ abre preview modal
     val mediaPickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
@@ -233,10 +233,10 @@ fun ChatScreen(
     // Estado para modal de compartir usuario
     var showShareUserModal by remember { mutableStateOf(false) }
     
-    // Estado para modal de compartir artÃ­culo
+    // Estado para modal de compartir artículo
     var showShareArticleModal by remember { mutableStateOf(false) }
     
-    // Launcher para seleccionar archivo (OpenDocument para mÃ¡xima compatibilidad)
+    // Launcher para seleccionar archivo (OpenDocument para máxima compatibilidad)
     val filePickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.OpenDocument()
     ) { uri: Uri? ->
@@ -247,7 +247,7 @@ fun ChatScreen(
                     val convId = currentConversationId ?: ChatRepository.getOrCreateConversation(otherUser.userId)
                     if (convId != null) {
                         currentConversationId = convId
-                        // Obtener nombre y tamaÃ±o del archivo
+                        // Obtener nombre y tamaño del archivo
                         val contentResolver = context.contentResolver
                         var fileName = "archivo"
                         var fileSize = 0L
@@ -285,12 +285,12 @@ fun ChatScreen(
         }
     }
     
-    // â•â•â• CLEANUP: Guardar handshake en cachÃ© al salir del chat â•â•â•
+    // â•â•â• CLEANUP: Guardar handshake en caché al salir del chat â•â•â•
     DisposableEffect(Unit) {
         onDispose {
             val convId = currentConversationId
             if (convId != null) {
-                // Guardar handshake activo en cachÃ© para restaurarlo al volver
+                // Guardar handshake activo en caché para restaurarlo al volver
                 scope.launch {
                     HandshakeRepository.suspendForConversation(convId)
                 }
@@ -298,7 +298,7 @@ fun ChatScreen(
         }
     }
     
-    // Verificar si el otro usuario estÃ¡ bloqueado
+    // Verificar si el otro usuario está bloqueado
     LaunchedEffect(Unit) {
         isOtherUserBlocked = ChatRepository.isUserBlocked(otherUser.userId)
     }
@@ -307,18 +307,18 @@ fun ChatScreen(
     // Usar Unit como key para que SIEMPRE se ejecute al entrar a la pantalla
     LaunchedEffect(Unit) {
         try {
-            // Buscar o crear conversaciÃ³n existente
+            // Buscar o crear conversación existente
             val existingConvId = currentConversationId ?: ChatRepository.getOrCreateConversation(otherUser.userId)
             if (existingConvId != null) {
                 currentConversationId = existingConvId
                 
-                // â•â•â• RESTAURAR HANDSHAKE DESDE CACHÃ‰ INSTANTÃNEAMENTE â•â•â•
+                // â•â•â• RESTAURAR HANDSHAKE DESDE CACHÉ INSTANTÁNEAMENTE â•â•â•
                 // Antes de cualquier carga de red, restaurar el handshake cacheado
                 // para que el banner aparezca sin delay al volver al chat
                 val cachedHs = HandshakeRepository.getCachedHandshake(existingConvId)
                 if (cachedHs != null) {
                     android.util.Log.d("ChatScreen", ">>> CACHE HIT: Restaurando handshake id=${cachedHs.id} status=${cachedHs.status}")
-                    // Mostrar banner instantÃ¡neamente desde cachÃ©
+                    // Mostrar banner instantáneamente desde caché
                     when (cachedHs.status) {
                         "PROPOSED" -> {
                             if (cachedHs.initiatorId == currentUserId) {
@@ -335,7 +335,7 @@ fun ChatScreen(
                             handshakeBannerState = HandshakeBannerState.WAITING
                         }
                     }
-                    // Marcar que tuvimos handshake desde cachÃ© para que el cleanup funcione
+                    // Marcar que tuvimos handshake desde caché para que el cleanup funcione
                     hadActiveHandshake = true
                 }
                 
@@ -353,7 +353,7 @@ fun ChatScreen(
                     }
                 }
                 
-                // Suscribirse a cambios de reputaciÃ³n y verificaciÃ³n (non-blocking)
+                // Suscribirse a cambios de reputación y verificación (non-blocking)
                 launch { ReputationRepository.subscribeToReputation(currentUserId ?: "", otherUser.userId) }
                 launch { VerificationRepository.subscribeToVerification(otherUser.userId) }
                 
@@ -391,16 +391,16 @@ fun ChatScreen(
                     }
                     
                     // â•â•â• RECONCILIAR MENSAJES DE HANDSHAKE â•â•â•
-                    // Buscar el handshake mÃ¡s reciente (incluyendo COMPLETED/CANCELLED)
-                    // y verificar que sus mensajes de estado estÃ©n en el chat.
-                    // PequeÃ±o delay para asegurar que loadMessages() haya propagado al StateFlow
+                    // Buscar el handshake más reciente (incluyendo COMPLETED/CANCELLED)
+                    // y verificar que sus mensajes de estado estén en el chat.
+                    // Pequeño delay para asegurar que loadMessages() haya propagado al StateFlow
                     kotlinx.coroutines.delay(200)
                     val msgCount = ChatRepository.currentMessages.value.size
                     android.util.Log.d("ChatScreen", ">>> Before reconcile: $msgCount messages loaded")
                     HandshakeRepository.reconcileHandshakeMessages(existingConvId)
                     android.util.Log.d("ChatScreen", ">>> Handshake messages reconciled for conv=$existingConvId")
                     
-                    // Si el handshake mÃ¡s reciente estÃ¡ COMPLETED y no hay handshake activo,
+                    // Si el handshake más reciente está COMPLETED y no hay handshake activo,
                     // verificar si necesitamos mostrar el banner brevemente
                     if (freshHs == null) {
                         val latestHs = HandshakeRepository.getLatestHandshakeForConversation(existingConvId)
@@ -428,7 +428,7 @@ fun ChatScreen(
                 isInitialHandshakeLoaded = true
                 
             } else {
-                android.util.Log.e("ChatScreen", "No se pudo obtener conversaciÃ³n: ${ChatRepository.lastError.value}")
+                android.util.Log.e("ChatScreen", "No se pudo obtener conversación: ${ChatRepository.lastError.value}")
             }
         } catch (e: Exception) {
             android.util.Log.e("ChatScreen", "Exception al abrir chat: ${e.message}")
@@ -450,7 +450,7 @@ fun ChatScreen(
     }
     
     // *** UNIFIED REALTIME HANDLER: Actualizar el banner cuando activeHandshake cambia ***
-    // Este es el ÃšNICO LaunchedEffect que maneja cambios DESPUÃ‰S de la carga inicial
+    // Este es el ÚNICO LaunchedEffect que maneja cambios DESPUÉS de la carga inicial
     LaunchedEffect(activeHandshake, isInitialHandshakeLoaded) {
         // NO procesar nada hasta que la carga inicial desde red haya terminado
         // Esto elimina la race condition donde activeHandshake=null llega antes que la red
@@ -468,12 +468,12 @@ fun ChatScreen(
         }
         hadActiveHandshake = true
         
-        // Solo procesar si es de esta conversaciÃ³n
+        // Solo procesar si es de esta conversación
         if (handshake.conversationId != currentConversationId) return@LaunchedEffect
         
-        // Si estamos mostrando el banner CANCELLED, NO interferir con su animaciÃ³n
+        // Si estamos mostrando el banner CANCELLED, NO interferir con su animación
         if (handshakeBannerState == HandshakeBannerState.CANCELLED && handshake.status == "CANCELLED") {
-            android.util.Log.d("ChatScreen", ">>> Ignorando update CANCELLED - banner ya en animaciÃ³n")
+            android.util.Log.d("ChatScreen", ">>> Ignorando update CANCELLED - banner ya en animación")
             return@LaunchedEffect
         }
         
@@ -505,17 +505,17 @@ fun ChatScreen(
                 handshakeBannerState = HandshakeBannerState.COMPLETED
                 
                 if (!completedBannerDismissed) {
-                    // Mensaje de chat ya se envÃ­a automÃ¡ticamente desde HandshakeRepository
+                    // Mensaje de chat ya se envía automáticamente desde HandshakeRepository
                     
-                    // Incrementar reputaciÃ³n
+                    // Incrementar reputación
                     val change = ReputationRepository.incrementReputation()
                     lastReputationChange = change
-                    android.util.Log.d("ChatScreen", ">>> ReputaciÃ³n incrementada: +$change%")
+                    android.util.Log.d("ChatScreen", ">>> Reputación incrementada: +$change%")
                     
                     delay(100)
                     delay(3500)
                     
-                    // Cerrar banner automÃ¡ticamente
+                    // Cerrar banner automáticamente
                     showHandshakeBanner = false
                     completedBannerDismissed = true
                     lastReputationChange = 0
@@ -524,7 +524,7 @@ fun ChatScreen(
                 }
             }
             "REJECTED", "CANCELLED" -> {
-                // Solo ocultar si NO estamos mostrando el banner CANCELLED con animaciÃ³n
+                // Solo ocultar si NO estamos mostrando el banner CANCELLED con animación
                 if (handshakeBannerState != HandshakeBannerState.CANCELLED) {
                     android.util.Log.d("ChatScreen", ">>> Handshake rechazado/cancelado - ocultando banner")
                     isWaitingForAcceptance = false
@@ -535,7 +535,7 @@ fun ChatScreen(
         }
     }
     
-    // *** POLLING FALLBACK: Verificar estado del handshake periÃ³dicamente ***
+    // *** POLLING FALLBACK: Verificar estado del handshake periódicamente ***
     // Si Realtime falla, esto detecta cambios cada 3 segundos
     LaunchedEffect(currentConversationId, showHandshakeBanner, activeHandshake) {
         val convId = currentConversationId ?: return@LaunchedEffect
@@ -555,19 +555,19 @@ fun ChatScreen(
         }
     }
     
-    // Scroll INSTANTÃNEO al fondo cuando la carga inicial del servidor termina
+    // Scroll INSTANTÁNEO al fondo cuando la carga inicial del servidor termina
     // Esperar a initialLoadDone para evitar doble-scroll (cache + server)
     LaunchedEffect(initialLoadDone) {
         if (initialLoadDone && messages.isNotEmpty() && !initialScrollDone) {
-            // Carga del servidor terminÃ³: scroll instantÃ¡neo al fondo SIN animaciÃ³n
+            // Carga del servidor terminó: scroll instantáneo al fondo SIN animación
             listState.scrollToItem(messages.size - 1)
-            // Marcar como listo DESPUÃ‰S del scroll para hacer visible la lista
+            // Marcar como listo DESPUÉS del scroll para hacer visible la lista
             initialScrollDone = true
             messagesReady = true
         }
     }
     
-    // Safety net: si initialLoadDone llegÃ³ antes de que messages se propagara,
+    // Safety net: si initialLoadDone llegó antes de que messages se propagara,
     // esperar a que messages tenga contenido
     LaunchedEffect(messages.size) {
         if (initialLoadDone && messages.isNotEmpty() && !initialScrollDone) {
@@ -578,7 +578,7 @@ fun ChatScreen(
     }
     
     // Guard: tras el scroll inicial, esperar a que se estabilicen las reconciliaciones
-    // para evitar parpadeo/salto visible causado por mensajes aÃ±adidos post-carga
+    // para evitar parpadeo/salto visible causado por mensajes añadidos post-carga
     LaunchedEffect(messagesReady) {
         if (messagesReady) {
             delay(4000)
@@ -586,14 +586,14 @@ fun ChatScreen(
         }
     }
     
-    // Scroll animado para mensajes nuevos en tiempo real (SOLO despuÃ©s del scroll inicial)
+    // Scroll animado para mensajes nuevos en tiempo real (SOLO después del scroll inicial)
     var lastMessageCount by remember { mutableIntStateOf(0) }
     LaunchedEffect(messages.size, initialScrollDone) {
         if (initialScrollDone && messagesReady && messages.isNotEmpty()) {
             // Solo reaccionar a mensajes NUEVOS (agregados al final), no a prepends
             if (messages.size > lastMessageCount && lastMessageCount > 0) {
-                // Durante el perÃ­odo de estabilizaciÃ³n, IGNORAR cambios de mensajes
-                // (reconciliaciÃ³n, handshakes, etc.) para evitar parpadeo/salto visible
+                // Durante el período de estabilización, IGNORAR cambios de mensajes
+                // (reconciliación, handshakes, etc.) para evitar parpadeo/salto visible
                 if (settledAfterLoad) {
                     val lastVisibleIndex = listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0
                     val isNearBottom = lastVisibleIndex >= lastMessageCount - 3
@@ -607,17 +607,17 @@ fun ChatScreen(
         }
     }
     
-    // Detectar scroll hacia arriba para cargar mÃ¡s mensajes
+    // Detectar scroll hacia arriba para cargar más mensajes
     val firstVisibleItemIndex by remember { derivedStateOf { listState.firstVisibleItemIndex } }
     
     // Guardar el conteo previo para detectar cuando se agregan mensajes antiguos
     var previousMessageCount by remember { mutableStateOf(0) }
     var wasLoadingMore by remember { mutableStateOf(false) }
     
-    // Trigger de carga cuando llegamos arriba - SOLO despuÃ©s del scroll inicial
+    // Trigger de carga cuando llegamos arriba - SOLO después del scroll inicial
     LaunchedEffect(firstVisibleItemIndex) {
         if (!initialScrollDone || !messagesReady) return@LaunchedEffect
-        // Cargar mÃ¡s cuando estamos en los primeros 2 items y hay mÃ¡s por cargar
+        // Cargar más cuando estamos en los primeros 2 items y hay más por cargar
         if (firstVisibleItemIndex <= 2 && hasMoreMessages && !isLoadingMoreFromRepo && messages.isNotEmpty()) {
             previousMessageCount = messages.size
             wasLoadingMore = true
@@ -625,7 +625,7 @@ fun ChatScreen(
         }
     }
     
-    // Mantener posiciÃ³n del scroll cuando se cargan mensajes antiguos (prepend)
+    // Mantener posición del scroll cuando se cargan mensajes antiguos (prepend)
     LaunchedEffect(messages.size, wasLoadingMore) {
         if (wasLoadingMore && messages.size > previousMessageCount && previousMessageCount > 0) {
             val addedCount = messages.size - previousMessageCount
@@ -664,7 +664,7 @@ fun ChatScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .then(
-                    // Solo aplicar imePadding cuando el modal de handshake NO estÃ¡ abierto
+                    // Solo aplicar imePadding cuando el modal de handshake NO está abierto
                     // para que el footer suba con el teclado solo al escribir mensajes
                     if (!showHandshakeModal) Modifier.imePadding() else Modifier
                 )
@@ -750,13 +750,13 @@ fun ChatScreen(
                 )
             }
             
-            // Banner dinÃ¡mico de handshake - maneja todos los estados: WAITING, ACCEPTED, COMPLETED
-            // Excluir COMPLETED si el usuario ya cerrÃ³ el banner
+            // Banner dinámico de handshake - maneja todos los estados: WAITING, ACCEPTED, COMPLETED
+            // Excluir COMPLETED si el usuario ya cerró el banner
             val shouldShowCompletedBanner = activeHandshake?.status == "COMPLETED" && !completedBannerDismissed
             // Usar activeHandshake si existe, sino usar el handshake creado localmente o el cancelado
             val effectiveHandshake = activeHandshake ?: localCreatedHandshake ?: cancelledHandshakeInfo ?: completedHandshakeInfo
             
-            // AnimaciÃ³n fluida de entrada/salida del banner
+            // Animación fluida de entrada/salida del banner
             androidx.compose.animation.AnimatedVisibility(
                 visible = showHandshakeBanner || (activeHandshake?.conversationId == currentConversationId && 
                     (activeHandshake?.status in listOf("PROPOSED", "ACCEPTED", "IN_PROGRESS") || shouldShowCompletedBanner)),
@@ -780,7 +780,7 @@ fun ChatScreen(
                         }
                     },
                     onCancel = {
-                        // Usar el estado real del handshake para decidir quÃ© hacer
+                        // Usar el estado real del handshake para decidir qué hacer
                         val isInWaitingState = activeHandshake?.status == "PROPOSED" || 
                                                handshakeBannerState == HandshakeBannerState.WAITING
                         
@@ -792,12 +792,12 @@ fun ChatScreen(
                         android.util.Log.d("ChatScreen", ">>> pendingHandshakeId = $pendingHandshakeId")
                         
                         if (isInWaitingState) {
-                            // Cancelar propuesta pendiente - penalizaciÃ³n -2%
+                            // Cancelar propuesta pendiente - penalización -2%
                             val idToCancel = activeHandshake?.id ?: pendingHandshakeId
                             android.util.Log.d("ChatScreen", ">>> WAITING state - idToCancel = $idToCancel")
                             
                             // IMPORTANTE: Guardar referencia al handshake ANTES de cancelar
-                            // para que el banner pueda mostrarlo durante la animaciÃ³n
+                            // para que el banner pueda mostrarlo durante la animación
                             cancelledHandshakeInfo = activeHandshake ?: localCreatedHandshake
                             android.util.Log.d("ChatScreen", ">>> Guardando cancelledHandshakeInfo: ${cancelledHandshakeInfo?.id}")
                             
@@ -818,12 +818,12 @@ fun ChatScreen(
                                     val success = HandshakeRepository.cancelHandshake(id)
                                     android.util.Log.d("ChatScreen", ">>> cancelHandshake result = $success")
                                     if (success) {
-                                        // Mensaje de chat se envÃ­a automÃ¡ticamente desde HandshakeRepository
-                                        // PenalizaciÃ³n -2% por cancelar en estado WAITING
-                                        android.util.Log.d("ChatScreen", ">>> Aplicando penalizaciÃ³n -2% por cancelar en WAITING")
+                                        // Mensaje de chat se envía automáticamente desde HandshakeRepository
+                                        // Penalización -2% por cancelar en estado WAITING
+                                        android.util.Log.d("ChatScreen", ">>> Aplicando penalización -2% por cancelar en WAITING")
                                         ReputationRepository.decrementReputation(2)
                                         
-                                        // Esperar a que se vea la animaciÃ³n y luego cerrar banner
+                                        // Esperar a que se vea la animación y luego cerrar banner
                                         delay(2500)
                                         showHandshakeBanner = false
                                         lastReputationChange = 0
@@ -833,21 +833,21 @@ fun ChatScreen(
                                 }
                             }
                         } else {
-                            // Mostrar modal de confirmaciÃ³n para cancelar transacciÃ³n aceptada
+                            // Mostrar modal de confirmación para cancelar transacción aceptada
                             android.util.Log.d("ChatScreen", ">>> ACCEPTED state - showing confirmation modal")
                             showCancelConfirmModal = true
                         }
                     },
                     onDismiss = {
                         // Cerrar banner manualmente (el usuario hizo clic en X)
-                        // La animaciÃ³n de reputaciÃ³n ya se maneja en el LaunchedEffect de COMPLETED
+                        // La animación de reputación ya se maneja en el LaunchedEffect de COMPLETED
                         completedBannerDismissed = true
                         showHandshakeBanner = false
                     }
                 )
             }
         
-        // Contenedor de mensajes - Oculto hasta que estÃ©n listos y posicionados
+        // Contenedor de mensajes - Oculto hasta que estén listos y posicionados
         LazyColumn(
             state = listState,
             modifier = Modifier
@@ -1036,7 +1036,7 @@ fun ChatScreen(
                 } // close outer Box (swipe container)
             }
             
-            // Mostrar burbuja de "Escribiendo..." cuando el otro usuario estÃ¡ escribiendo
+            // Mostrar burbuja de "Escribiendo..." cuando el otro usuario está escribiendo
             if (isOtherUserTyping) {
                 item {
                     TypingIndicatorBubble(
@@ -1095,7 +1095,7 @@ fun ChatScreen(
                 }
             }
         } else {
-        // Indicador de modo ediciÃ³n
+        // Indicador de modo edición
         AnimatedVisibility(
             visible = isEditMode && editingMessage != null,
             enter = fadeIn() + slideInVertically(initialOffsetY = { it }),
@@ -1142,7 +1142,7 @@ fun ChatScreen(
                     ) {
                         Icon(
                             imageVector = Icons.Default.Close,
-                            contentDescription = "Cancelar ediciÃ³n",
+                            contentDescription = "Cancelar edición",
                             tint = TextMuted,
                             modifier = Modifier.size(18.dp)
                         )
@@ -1176,21 +1176,21 @@ fun ChatScreen(
                     Spacer(modifier = Modifier.width(10.dp))
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
-                            text = if (replyingToMessage?.isFromMe == true) "TÃº" else (otherUser.username ?: ""),
+                            text = if (replyingToMessage?.isFromMe == true) "Tú" else (otherUser.username ?: ""),
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Bold,
                             color = Color(0xFF00BFA5)
                         )
                         val replyPreview = when {
-                            replyingToMessage?.content?.startsWith("[IMG]") == true -> "ðŸ“· Foto"
-                            replyingToMessage?.content?.startsWith("[VIDEO]") == true -> "ðŸŽ¬ Video"
-                            replyingToMessage?.content?.startsWith("[AUDIO]") == true -> "ðŸŽµ Audio"
-                            replyingToMessage?.content?.startsWith("[LOCATION]") == true -> "ðŸ“ UbicaciÃ³n"
-                            replyingToMessage?.content?.startsWith("[FILE]") == true -> "ðŸ“Ž Archivo"
-                            replyingToMessage?.content?.startsWith("[SHARED_POST]") == true -> "ðŸ“¦ PublicaciÃ³n"
-                            replyingToMessage?.content?.startsWith("[SHARED_USER]") == true -> "ðŸ‘¤ Perfil"
-                            replyingToMessage?.content?.startsWith("[SHARED_REND]") == true -> "ðŸŽ¬ Rend"
-                            replyingToMessage?.content?.startsWith("[ARTICLE_CARD]") == true -> "ðŸ“¦ ArtÃ­culo"
+                            replyingToMessage?.content?.startsWith("[IMG]") == true -> "📷 Foto"
+                            replyingToMessage?.content?.startsWith("[VIDEO]") == true -> "🎬 Video"
+                            replyingToMessage?.content?.startsWith("[AUDIO]") == true -> "🎵 Audio"
+                            replyingToMessage?.content?.startsWith("[LOCATION]") == true -> "ðŸ“ Ubicación"
+                            replyingToMessage?.content?.startsWith("[FILE]") == true -> "📎 Archivo"
+                            replyingToMessage?.content?.startsWith("[SHARED_POST]") == true -> "📦 Publicación"
+                            replyingToMessage?.content?.startsWith("[SHARED_USER]") == true -> "👤 Perfil"
+                            replyingToMessage?.content?.startsWith("[SHARED_REND]") == true -> "🎬 Rend"
+                            replyingToMessage?.content?.startsWith("[ARTICLE_CARD]") == true -> "📦 Artículo"
                             replyingToMessage?.content?.startsWith("[REPLY]") == true -> {
                                 try {
                                     val j = org.json.JSONObject(replyingToMessage!!.content.removePrefix("[REPLY]"))
@@ -1243,7 +1243,7 @@ fun ChatScreen(
                     val textToSend = messageText
                     messageText = ""
                     
-                    // Modo ediciÃ³n - actualizar mensaje existente
+                    // Modo edición - actualizar mensaje existente
                     if (isEditMode && editingMessage != null) {
                         val msgToEdit = editingMessage!!
                         scope.launch {
@@ -1252,7 +1252,7 @@ fun ChatScreen(
                             editingMessage = null
                         }
                     } else {
-                        // EnvÃ­o normal o respuesta
+                        // Envío normal o respuesta
                         scope.launch {
                             val convId = currentConversationId ?: ChatRepository.getOrCreateConversation(otherUser.userId)
                             if (convId != null) {
@@ -1271,7 +1271,7 @@ fun ChatScreen(
             },
             onAttach = { showAttachmentMenu = !showAttachmentMenu },
             onEmoji = { showEmojiPicker = !showEmojiPicker },
-            onMicStart = { /* AnimaciÃ³n mic ya incluida */ },
+            onMicStart = { /* Animación mic ya incluida */ },
             onMicEnd = { file ->
                 scope.launch {
                     val convId = currentConversationId ?: ChatRepository.getOrCreateConversation(otherUser.userId)
@@ -1293,7 +1293,7 @@ fun ChatScreen(
             onDismiss = { showAttachmentMenu = false },
             onCamera = {
                 showAttachmentMenu = false
-                // TODO: Abrir cÃ¡mara personalizada
+                // TODO: Abrir cámara personalizada
             },
             onGallery = {
                 showAttachmentMenu = false
@@ -1513,7 +1513,7 @@ private fun MessageBubble(
                 tonalElevation = 2.dp
             ) {
                 Column(modifier = Modifier.padding(if (isImage || isVideo || isLocation) 0.dp else 8.dp)) {
-                    // Contenido del mensaje segÃºn tipo
+                    // Contenido del mensaje según tipo
                     when {
                         isReply && replyData != null -> {
                             Column(modifier = Modifier.padding(6.dp)) {
@@ -1528,7 +1528,7 @@ private fun MessageBubble(
                                         Spacer(modifier = Modifier.width(8.dp))
                                         Column {
                                             Text(
-                                                text = if (replyData!!.isFromMe) "TÃº" else senderUsername,
+                                                text = if (replyData!!.isFromMe) "Tú" else senderUsername,
                                                 fontSize = 12.sp,
                                                 fontWeight = FontWeight.Bold,
                                                 color = PrimaryPurple
@@ -1564,7 +1564,7 @@ private fun MessageBubble(
                                 sentTime = formatMessageTimeWithAmPm(message.createdAt)
                             )
                         }
-                        // Mensaje de ubicaciÃ³n con mapa - tap abre Google Maps
+                        // Mensaje de ubicación con mapa - tap abre Google Maps
                         isLocation && locationData != null -> {
                             val (lat, lng) = locationData
                             val locationContext = LocalContext.current
@@ -1589,7 +1589,7 @@ private fun MessageBubble(
                                         }
                                     }
                             ) {
-                                // Mini mapa con WebView + Leaflet (Capa base mÃ¡s fiable y correcciÃ³n de carga)
+                                // Mini mapa con WebView + Leaflet (Capa base más fiable y corrección de carga)
                                 val mapHtml = remember(latStr, lngStr) {
                                     """
                                     <!DOCTYPE html>
@@ -1629,7 +1629,7 @@ private fun MessageBubble(
                                             });
                                             L.marker([$latStr, $lngStr], {icon: icon}).addTo(m);
                                             
-                                            // Forzar redraw despuÃ©s de que el WebView se asiente
+                                            // Forzar redraw después de que el WebView se asiente
                                             window.onload = function() {
                                                 setTimeout(function(){ m.invalidateSize(); }, 500);
                                             };
@@ -1688,7 +1688,7 @@ private fun MessageBubble(
                                 )
                                 Spacer(modifier = Modifier.width(4.dp))
                                 Text(
-                                    text = "UbicaciÃ³n compartida",
+                                    text = "Ubicación compartida",
                                     color = if (message.isFromMe) Color.White else TextPrimary,
                                     fontSize = 13.sp,
                                     fontWeight = FontWeight.Medium

@@ -51,9 +51,9 @@ fun RatingDialog(
                         modifier = Modifier.padding(bottom = 16.dp)
                     )
                     
-                    // TÃ­tulo
+                    // Título
                     Text(
-                        text = "Â¡Consulta Resuelta!",
+                        text = "¡Consulta Resuelta!",
                         fontSize = 22.sp,
                         fontWeight = FontWeight.Bold,
                         color = TextPrimary,
@@ -62,9 +62,9 @@ fun RatingDialog(
                     
                     Spacer(modifier = Modifier.height(8.dp))
                     
-                    // SubtÃ­tulo
+                    // Subtítulo
                     Text(
-                        text = "Â¿CÃ³mo calificarÃ­as la ayuda recibida?",
+                        text = "¿Cómo calificarías la ayuda recibida?",
                         fontSize = 15.sp,
                         color = TextSecondary,
                         textAlign = TextAlign.Center,
@@ -98,7 +98,7 @@ fun RatingDialog(
                     
                     Spacer(modifier = Modifier.height(12.dp))
                     
-                    // Texto de calificaciÃ³n seleccionada
+                    // Texto de calificación seleccionada
                     AnimatedVisibility(
                         visible = selectedRating > 0,
                         enter = fadeIn() + slideInVertically(),

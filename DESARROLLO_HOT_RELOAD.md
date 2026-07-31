@@ -17,7 +17,7 @@ Ver cambios de UI **sin compilar** ni correr la app.
 @Preview(showBackground = true)
 @Composable
 fun LoginScreenPreview() {
-    RendlyTheme {
+    MercoraTheme {
         LoginScreen(
             onNavigateToRegister = {},
             onNavigateToHome = {}
@@ -142,7 +142,7 @@ Feature nueva de Android Studio para editar Compose en vivo.
 @Preview(name = "Dark Mode", uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun PostItemPreview() {
-    RendlyTheme {
+    MercoraTheme {
         PostItem(
             post = samplePost,
             onLikeClick = {},

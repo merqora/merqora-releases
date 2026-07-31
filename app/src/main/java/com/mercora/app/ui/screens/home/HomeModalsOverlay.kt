@@ -14,11 +14,11 @@ import com.mercora.app.ui.screens.profile.UserProfileScreen
 import com.mercora.app.ui.screens.search.SearchResultsScreen
 
 /**
- * ModalsOverlay - Todos los modales y sheets del Home, extraÃ­dos de HomeContent.
+ * ModalsOverlay - Todos los modales y sheets del Home, extraídos de HomeContent.
  * 
  * Al estar en un composable separado:
  * - Recompone solo cuando sus props cambian, no cuando scrollea el feed
- * - Reduce el Ã¡rbol de composiciÃ³n de HomeContent ~40%
+ * - Reduce el árbol de composición de HomeContent ~40%
  * - Mejora skippability del LazyColumn principal
  */
 @Composable

@@ -11,17 +11,20 @@ import android.media.RingtoneManager
 import android.os.Build
 import android.util.Log
 import androidx.core.app.NotificationCompat
-import androidx.lifecycle.ProcessLifecycleOwner
-import androidx.lifecycle.Lifecycle
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.mercora.app.MainActivity
 import com.mercora.app.R
 import com.mercora.app.data.remote.SupabaseClient
+import com.mercora.app.util.NotificationBannerEvent
+import com.mercora.app.util.NotificationBannerManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.put
 import java.net.URL
 
 /**
@@ -61,15 +64,15 @@ class MercoraFirebaseMessagingService : FirebaseMessagingService() {
         private const val NOTIFICATION_ID_SOCIAL = 2000
         private const val NOTIFICATION_ID_TRANSACTION = 3000
         private const val NOTIFICATION_ID_PROMOTION = 4000
-        
-        // Detectar si la app está en primer plano
-        fun isAppInForeground(): Boolean {
-            return try {
-                ProcessLifecycleOwner.get().lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)
-            } catch (e: Exception) {
-                false
-            }
+
+        @Volatile
+        private var isForeground = false
+
+        fun setAppInForeground(foreground: Boolean) {
+            isForeground = foreground
         }
+
+        fun isAppInForeground(): Boolean = isForeground
     }
     
     // Reproducir sonido personalizado manualmente (solo en primer plano)
@@ -107,7 +110,10 @@ class MercoraFirebaseMessagingService : FirebaseMessagingService() {
         // Guardar token en Supabase
         serviceScope.launch {
             try {
-                val userId = SupabaseClient.auth.currentUserOrNull()?.id
+                // Asegurar que SupabaseClient se inicialice en el hilo principal
+                val userId = withContext(Dispatchers.Main) {
+                    SupabaseClient.auth.currentUserOrNull()?.id
+                }
                 if (userId != null) {
                     saveFcmToken(userId, token)
                 } else {
@@ -150,6 +156,21 @@ class MercoraFirebaseMessagingService : FirebaseMessagingService() {
         
         Log.d(TAG, "?? Tipo: $notificationType, title=$title, body=${body.take(30)}, sender=$senderName")
         
+        // Si la app está en foreground, emitir evento para el banner in-app
+        if (isAppInForeground()) {
+            NotificationBannerManager.emit(
+                NotificationBannerEvent(
+                    title = title,
+                    body = body,
+                    type = notificationType,
+                    targetId = targetId,
+                    userId = senderId
+                )
+            )
+            playCustomSound(isMessage = notificationType == "message")
+            return
+        }
+        
         // Mostrar notificación según tipo
         when (notificationType) {
             "message" -> {
@@ -164,50 +185,21 @@ class MercoraFirebaseMessagingService : FirebaseMessagingService() {
                     )
                 }
             }
-            "like" -> showSocialNotification(
-                title = "Nuevo like ??",
-                body = "$senderName le dio like a tu publicación",
-                postId = targetId
-            )
-            "save" -> showSocialNotification(
-                title = "Guardaron tu publicación ??",
-                body = "$senderName guardó tu publicación",
-                postId = targetId
-            )
-            "comment" -> showSocialNotification(
-                title = "Nueva opinión ??",
-                body = "$senderName: $body",
-                postId = targetId
-            )
-            "follow" -> showSocialNotification(
-                title = "Nuevo seguidor",
-                body = "$senderName empezó a seguirte",
+            "like", "save", "comment", "follow", "mention", "client_request", "client_accepted" -> showSocialNotification(
+                title = title,
+                body = body,
+                postId = targetId,
                 userId = senderId
             )
             "sale" -> showTransactionNotification(
-                title = "Nueva venta",
+                title = title,
                 body = body,
                 transactionId = targetId
             )
             "handshake" -> showTransactionNotification(
-                title = "Handshake",
+                title = title,
                 body = body,
                 transactionId = targetId
-            )
-            "mention" -> showSocialNotification(
-                title = "Te mencionaron",
-                body = "$senderName te mencionó: $body",
-                postId = targetId
-            )
-            "client_request" -> showSocialNotification(
-                title = "Nueva solicitud de cliente",
-                body = body,
-                userId = senderId
-            )
-            "client_accepted" -> showSocialNotification(
-                title = "Solicitud aceptada ?",
-                body = body,
-                userId = senderId
             )
             "call" -> showCallNotification(
                 callerName = data["caller_name"] ?: senderName ?: "Usuario",
@@ -265,17 +257,35 @@ class MercoraFirebaseMessagingService : FirebaseMessagingService() {
             notificationBuilder.setSound(defaultSound)
         }
         
-        // Cargar avatar si está disponible
+        showNotification(NOTIFICATION_ID_MESSAGE + (chatId?.hashCode() ?: 0), notificationBuilder)
+        
+        // Cargar avatar async y actualizar notificación
         senderAvatar?.let { url ->
-            try {
-                val bitmap = BitmapFactory.decodeStream(URL(url).openStream())
-                notificationBuilder.setLargeIcon(bitmap)
-            } catch (e: Exception) {
-                Log.e(TAG, "Error cargando avatar: ${e.message}")
+            serviceScope.launch {
+                try {
+                    val bitmap = withContext(Dispatchers.IO) {
+                        BitmapFactory.decodeStream(URL(url).openStream())
+                    }
+                    if (bitmap != null) {
+                        val updatedBuilder = NotificationCompat.Builder(this@MercoraFirebaseMessagingService, CHANNEL_MESSAGES)
+                            .setSmallIcon(R.drawable.ic_launcher)
+                            .setContentTitle(title)
+                            .setContentText(body)
+                            .setAutoCancel(true)
+                            .setPriority(NotificationCompat.PRIORITY_HIGH)
+                            .setCategory(NotificationCompat.CATEGORY_MESSAGE)
+                            .setVibrate(longArrayOf(0, 250, 250, 250))
+                            .setContentIntent(pendingIntent)
+                            .setLargeIcon(bitmap)
+                        if (!isAppInForeground()) {
+                            val defaultSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
+                            updatedBuilder.setSound(defaultSound)
+                        }
+                        showNotification(NOTIFICATION_ID_MESSAGE + (chatId?.hashCode() ?: 0), updatedBuilder)
+                    }
+                } catch (_: Exception) { }
             }
         }
-        
-        showNotification(NOTIFICATION_ID_MESSAGE + (chatId?.hashCode() ?: 0), notificationBuilder)
         playCustomSound(isMessage = true)
     }
     
@@ -304,7 +314,6 @@ class MercoraFirebaseMessagingService : FirebaseMessagingService() {
         )
         
         val isForeground = isAppInForeground()
-        val defaultSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
         
         val notificationBuilder = NotificationCompat.Builder(this, CHANNEL_SOCIAL)
             .setSmallIcon(R.drawable.ic_launcher)
@@ -316,12 +325,13 @@ class MercoraFirebaseMessagingService : FirebaseMessagingService() {
             .setContentIntent(pendingIntent)
         
         if (!isForeground) {
+            val defaultSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
             notificationBuilder.setSound(defaultSound)
             notificationBuilder.setVibrate(longArrayOf(0, 200, 100, 200))
+            val notificationId = NOTIFICATION_ID_SOCIAL + (postId?.hashCode() ?: userId?.hashCode() ?: 0)
+            showNotification(notificationId, notificationBuilder)
         }
         
-        val notificationId = NOTIFICATION_ID_SOCIAL + (postId?.hashCode() ?: userId?.hashCode() ?: 0)
-        showNotification(notificationId, notificationBuilder)
         playCustomSound(isMessage = false)
     }
     
@@ -384,21 +394,34 @@ class MercoraFirebaseMessagingService : FirebaseMessagingService() {
             .setCategory(NotificationCompat.CATEGORY_PROMO)
             .setContentIntent(pendingIntent)
         
-        // Cargar imagen grande si está disponible
+        showNotification(NOTIFICATION_ID_PROMOTION + System.currentTimeMillis().toInt(), notificationBuilder)
+        
+        // Cargar imagen grande async
         imageUrl?.let { url ->
-            try {
-                val bitmap = BitmapFactory.decodeStream(URL(url).openStream())
-                notificationBuilder.setStyle(
-                    NotificationCompat.BigPictureStyle()
-                        .bigPicture(bitmap)
-                        .bigLargeIcon(null as android.graphics.Bitmap?)
-                )
-            } catch (e: Exception) {
-                Log.e(TAG, "Error cargando imagen: ${e.message}")
+            serviceScope.launch {
+                try {
+                    val bitmap = withContext(Dispatchers.IO) {
+                        BitmapFactory.decodeStream(URL(url).openStream())
+                    }
+                    if (bitmap != null) {
+                        val bigPictureBuilder = NotificationCompat.Builder(this@MercoraFirebaseMessagingService, CHANNEL_PROMOTIONS)
+                            .setSmallIcon(R.drawable.ic_launcher)
+                            .setContentTitle(title)
+                            .setContentText(body)
+                            .setAutoCancel(true)
+                            .setPriority(NotificationCompat.PRIORITY_LOW)
+                            .setCategory(NotificationCompat.CATEGORY_PROMO)
+                            .setContentIntent(pendingIntent)
+                            .setStyle(
+                                NotificationCompat.BigPictureStyle()
+                                    .bigPicture(bitmap)
+                                    .bigLargeIcon(null as android.graphics.Bitmap?)
+                            )
+                        showNotification(NOTIFICATION_ID_PROMOTION + System.currentTimeMillis().toInt(), bigPictureBuilder)
+                    }
+                } catch (_: Exception) { }
             }
         }
-        
-        showNotification(NOTIFICATION_ID_PROMOTION + System.currentTimeMillis().toInt(), notificationBuilder)
     }
     
     private fun showCallNotification(
@@ -437,21 +460,39 @@ class MercoraFirebaseMessagingService : FirebaseMessagingService() {
             .setFullScreenIntent(pendingIntent, true)
             .setContentIntent(pendingIntent)
         
+        val notificationId = 5000 + (callId?.hashCode() ?: 0)
+        showNotification(notificationId, notificationBuilder)
+        
         callerAvatar?.let { url ->
             if (url.isNotEmpty()) {
-                try {
-                    val fullUrl = if (url.startsWith("http")) url 
-                        else "https://xyrpmmnegzjkbysoocpc.supabase.co/storage/v1/object/public/avatars_new/$url"
-                    val bitmap = BitmapFactory.decodeStream(URL(fullUrl).openStream())
-                    notificationBuilder.setLargeIcon(bitmap)
-                } catch (e: Exception) {
-                    Log.e(TAG, "Error cargando avatar caller: ${e.message}")
+                serviceScope.launch {
+                    try {
+                        val fullUrl = if (url.startsWith("http")) url
+                            else "https://xyrpmmnegzjkbysoocpc.supabase.co/storage/v1/object/public/avatars_new/$url"
+                        val bitmap = withContext(Dispatchers.IO) {
+                            BitmapFactory.decodeStream(URL(fullUrl).openStream())
+                        }
+                        if (bitmap != null) {
+                            val updatedBuilder = NotificationCompat.Builder(this@MercoraFirebaseMessagingService, CHANNEL_CALLS)
+                                .setSmallIcon(R.drawable.ic_launcher)
+                                .setContentTitle("$callerName te está llamando")
+                                .setContentText(callTypeText)
+                                .setAutoCancel(true)
+                                .setPriority(NotificationCompat.PRIORITY_MAX)
+                                .setCategory(NotificationCompat.CATEGORY_CALL)
+                                .setSound(ringtoneUri)
+                                .setVibrate(longArrayOf(0, 1000, 500, 1000, 500))
+                                .setOngoing(true)
+                                .setTimeoutAfter(60_000)
+                                .setFullScreenIntent(pendingIntent, true)
+                                .setContentIntent(pendingIntent)
+                                .setLargeIcon(bitmap)
+                            showNotification(notificationId, updatedBuilder)
+                        }
+                    } catch (_: Exception) { }
                 }
             }
         }
-        
-        val notificationId = 5000 + (callId?.hashCode() ?: 0)
-        showNotification(notificationId, notificationBuilder)
     }
     
     private fun showGeneralNotification(
@@ -582,15 +623,15 @@ class MercoraFirebaseMessagingService : FirebaseMessagingService() {
         try {
             SupabaseClient.database
                 .from("fcm_tokens")
-                .upsert(mapOf(
-                    "user_id" to userId,
-                    "token" to token,
-                    "device_info" to "${Build.MANUFACTURER} ${Build.MODEL}",
-                    "platform" to "android",
-                    "app_version" to "1.0.0",
-                    "is_active" to true,
-                    "updated_at" to java.time.Instant.now().toString()
-                ))
+                .upsert(buildJsonObject {
+                    put("user_id", userId)
+                    put("token", token)
+                    put("device_info", "${Build.MANUFACTURER} ${Build.MODEL}")
+                    put("platform", "android")
+                    put("app_version", "1.0.0")
+                    put("is_active", true)
+                    put("updated_at", java.time.Instant.now().toString())
+                })
             Log.d(TAG, "? FCM Token guardado en Supabase")
         } catch (e: Exception) {
             Log.e(TAG, "Error guardando token en Supabase: ${e.message}")

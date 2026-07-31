@@ -261,13 +261,13 @@ object ExploreRepository {
             cat.contains("planta") -> "plantas"
             cat.contains("iluminacion") || cat.contains("lampara") -> "iluminacion"
             
-            // ElectrÃ³nica
+            // Electrónica
             cat.contains("smartphone") || cat.contains("celular") || cat.contains("telefono") -> "smartphones"
             cat.contains("laptop") || cat.contains("computador") || cat.contains("notebook") -> "laptops"
             cat.contains("audio") || cat.contains("auricular") || cat.contains("parlante") -> "audio"
             cat.contains("gaming") || cat.contains("consola") || cat.contains("videojuego") -> "gaming"
             
-            // Ropa genÃ©rica
+            // Ropa genérica
             cat.contains("ropa") -> "vestidos"
             
             // Default

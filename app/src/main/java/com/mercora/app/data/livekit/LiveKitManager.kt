@@ -6,6 +6,7 @@ import com.mercora.app.data.remote.SupabaseClient
 import io.github.jan.supabase.functions.functions
 import io.ktor.client.call.body
 import io.livekit.android.LiveKit
+import io.livekit.android.RoomOptions
 import io.livekit.android.events.RoomEvent
 import io.livekit.android.events.collect
 import io.livekit.android.room.Room
@@ -13,9 +14,13 @@ import io.livekit.android.room.RoomListener
 import io.livekit.android.room.participant.ConnectionQuality
 import io.livekit.android.room.participant.Participant
 import io.livekit.android.room.participant.RemoteParticipant
+import io.livekit.android.room.participant.VideoTrackPublishDefaults
 import io.livekit.android.room.track.LocalVideoTrack
+import io.livekit.android.room.track.LocalVideoTrackOptions
 import io.livekit.android.room.track.Track
 import io.livekit.android.room.track.TrackPublication
+import io.livekit.android.room.track.VideoCaptureParameter
+import io.livekit.android.room.track.VideoEncoding
 import io.livekit.android.room.track.VideoTrack
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -69,8 +74,8 @@ class LiveKitManager(private val context: Context) {
         return try {
             val session = SupabaseClient.auth.currentSessionOrNull()
             if (session == null) {
-                Log.e(TAG, "No hay sesiÃ³n activa")
-                return TokenResult.Error("No hay sesiÃ³n activa")
+                Log.e(TAG, "No hay sesión activa")
+                return TokenResult.Error("No hay sesión activa")
             }
 
             val bodyJson = buildJsonObject {
@@ -89,8 +94,8 @@ class LiveKitManager(private val context: Context) {
             val identity = result["identity"]?.toString()?.removeSurrounding("\"") ?: ""
 
             if (token.isBlank()) {
-                Log.e(TAG, "Token vacÃ­o en respuesta: $result")
-                return TokenResult.Error("Token invÃ¡lido del servidor")
+                Log.e(TAG, "Token vacío en respuesta: $result")
+                return TokenResult.Error("Token inválido del servidor")
             }
 
             Log.d(TAG, "Token obtenido para room=$roomName role=$role identity=$identity")
@@ -143,7 +148,22 @@ class LiveKitManager(private val context: Context) {
     private fun connectToRoom(url: String, token: String) {
         scope.launch {
             try {
-                val newRoom = LiveKit.create(context)
+                val roomOptions = RoomOptions(
+                    adaptiveStream = true,
+                    dynacast = true,
+                    videoTrackCaptureDefaults = LocalVideoTrackOptions(
+                        isScreencast = false,
+                        deviceId = null,
+                        position = null,
+                        captureParams = VideoCaptureParameter(720, 1280, 24)
+                    ),
+                    videoTrackPublishDefaults = VideoTrackPublishDefaults(
+                        videoEncoding = VideoEncoding(1_500_000, 24),
+                        simulcast = false,
+                        videoCodec = "H264"
+                    )
+                )
+                val newRoom = LiveKit.create(context, roomOptions)
                 room = newRoom
 
                 launch {
@@ -159,7 +179,7 @@ class LiveKitManager(private val context: Context) {
                                 _viewerCount.value = newRoom.remoteParticipants.size
                             }
                             event is io.livekit.android.events.RoomEvent.ParticipantDisconnected -> {
-                                Log.d(TAG, "Participante saliÃ³: ${event.participant.identity}")
+                                Log.d(TAG, "Participante salió: ${event.participant.identity}")
                                 _viewerCount.value = newRoom.remoteParticipants.size
                             }
                             event is io.livekit.android.events.RoomEvent.TrackSubscribed -> {
@@ -174,7 +194,7 @@ class LiveKitManager(private val context: Context) {
                                 }
                             }
                             event is io.livekit.android.events.RoomEvent.FailedToConnect -> {
-                                val msg = event.error.message ?: "Error de conexiÃ³n"
+                                val msg = event.error.message ?: "Error de conexión"
                                 Log.e(TAG, "Error conectando: $msg")
                                 _state.value = LiveKitState.Error(msg)
                             }
@@ -207,9 +227,9 @@ class LiveKitManager(private val context: Context) {
         scope.launch {
             try {
                 room?.localParticipant?.setCameraEnabled(true)
-                Log.d(TAG, "CÃ¡mara habilitada")
+                Log.d(TAG, "Cámara habilitada con H264")
             } catch (e: Exception) {
-                Log.e(TAG, "Error habilitando cÃ¡mara: ${e.message}")
+                Log.e(TAG, "Error habilitando cámara: ${e.message}", e)
             }
         }
     }
@@ -218,9 +238,9 @@ class LiveKitManager(private val context: Context) {
         scope.launch {
             try {
                 room?.localParticipant?.setMicrophoneEnabled(true)
-                Log.d(TAG, "MicrÃ³fono habilitado")
+                Log.d(TAG, "Micrófono habilitado")
             } catch (e: Exception) {
-                Log.e(TAG, "Error habilitando micrÃ³fono: ${e.message}")
+                Log.e(TAG, "Error habilitando micrófono: ${e.message}")
             }
         }
     }
@@ -228,14 +248,14 @@ class LiveKitManager(private val context: Context) {
     fun disableCamera() {
         scope.launch {
             try { room?.localParticipant?.setCameraEnabled(false) }
-            catch (e: Exception) { Log.e(TAG, "Error deshabilitando cÃ¡mara: ${e.message}") }
+            catch (e: Exception) { Log.e(TAG, "Error deshabilitando cámara: ${e.message}") }
         }
     }
 
     fun disableMicrophone() {
         scope.launch {
             try { room?.localParticipant?.setMicrophoneEnabled(false) }
-            catch (e: Exception) { Log.e(TAG, "Error deshabilitando micrÃ³fono: ${e.message}") }
+            catch (e: Exception) { Log.e(TAG, "Error deshabilitando micrófono: ${e.message}") }
         }
     }
 
@@ -243,7 +263,7 @@ class LiveKitManager(private val context: Context) {
         val track = room?.localParticipant?.getTrackPublication(Track.Source.CAMERA)?.track
         if (track is LocalVideoTrack) {
             track.switchCamera()
-            Log.d(TAG, "CÃ¡mara cambiada")
+            Log.d(TAG, "Cámara cambiada")
         }
     }
 

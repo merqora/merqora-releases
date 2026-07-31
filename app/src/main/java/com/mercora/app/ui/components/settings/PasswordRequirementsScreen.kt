@@ -101,7 +101,7 @@ fun PasswordRequirementsScreen(
                     .navigationBarsPadding()
             ) {
                 SettingsScreenHeader(
-                    title = "Requisitos de contraseÃ±a",
+                    title = "Requisitos de contraseña",
                     subtitle = "Configura la complejidad requerida",
                     icon = Icons.Outlined.Password,
                     iconColor = Color(0xFF1565A0),
@@ -140,7 +140,7 @@ fun PasswordRequirementsScreen(
                             ) {
                                 Column(modifier = Modifier.weight(1f)) {
                                     Text(
-                                        text = "Requerir contraseÃ±a segura",
+                                        text = "Requerir contraseña segura",
                                         fontSize = 15.sp,
                                         fontWeight = FontWeight.SemiBold,
                                         color = TextPrimary
@@ -166,10 +166,10 @@ fun PasswordRequirementsScreen(
                         
                         Spacer(modifier = Modifier.height(24.dp))
                         
-                        // Opciones de complejidad (solo si estÃ¡ activado)
+                        // Opciones de complejidad (solo si está activado)
                         if (requireStrongPassword) {
                             Text(
-                                text = "LONGITUD MÃNIMA",
+                                text = "LONGITUD MÍNIMA",
                                 fontSize = 11.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = TextMuted,
@@ -189,7 +189,7 @@ fun PasswordRequirementsScreen(
                                         verticalAlignment = Alignment.CenterVertically
                                     ) {
                                         Text(
-                                            text = "Caracteres mÃ­nimos",
+                                            text = "Caracteres mínimos",
                                             fontSize = 15.sp,
                                             color = TextPrimary
                                         )
@@ -243,7 +243,7 @@ fun PasswordRequirementsScreen(
                             ) {
                                 Column {
                                     RequirementToggle(
-                                        title = "Al menos una mayÃºscula",
+                                        title = "Al menos una mayúscula",
                                         subtitle = "A-Z",
                                         isEnabled = requireUppercase,
                                         onToggle = { requireUppercase = it },
@@ -253,7 +253,7 @@ fun PasswordRequirementsScreen(
                                     Divider(color = BorderSubtle, modifier = Modifier.padding(horizontal = 16.dp))
                                     
                                     RequirementToggle(
-                                        title = "Al menos un nÃºmero",
+                                        title = "Al menos un número",
                                         subtitle = "0-9",
                                         isEnabled = requireNumber,
                                         onToggle = { requireNumber = it },
@@ -263,7 +263,7 @@ fun PasswordRequirementsScreen(
                                     Divider(color = BorderSubtle, modifier = Modifier.padding(horizontal = 16.dp))
                                     
                                     RequirementToggle(
-                                        title = "Al menos un carÃ¡cter especial",
+                                        title = "Al menos un carácter especial",
                                         subtitle = "!@#\$%^&*()",
                                         isEnabled = requireSpecialChar,
                                         onToggle = { requireSpecialChar = it },
@@ -291,7 +291,7 @@ fun PasswordRequirementsScreen(
                                     )
                                     Spacer(modifier = Modifier.width(8.dp))
                                     Text(
-                                        text = "Ejemplo de contraseÃ±a vÃ¡lida",
+                                        text = "Ejemplo de contraseña válida",
                                         fontSize = 14.sp,
                                         fontWeight = FontWeight.SemiBold,
                                         color = Color(0xFF1565A0)
@@ -328,7 +328,7 @@ fun PasswordRequirementsScreen(
                         
                         Spacer(modifier = Modifier.height(32.dp))
                         
-                        // BotÃ³n guardar
+                        // Botón guardar
                         if (hasChanges) {
                             Button(
                                 onClick = {

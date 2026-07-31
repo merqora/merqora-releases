@@ -107,14 +107,14 @@ fun FeedbackScreen(
                 // Header
                 SettingsScreenHeader(
                     title = "Enviar comentarios",
-                    subtitle = "Tu opiniÃ³n nos importa",
+                    subtitle = "Tu opinión nos importa",
                     icon = Icons.Outlined.RateReview,
                     iconColor = PrimaryPurple,
                     onBack = onDismiss
                 )
                 
                 if (showSuccess) {
-                    // Pantalla de Ã©xito
+                    // Pantalla de éxito
                     Column(
                         modifier = Modifier
                             .fillMaxSize()
@@ -139,7 +139,7 @@ fun FeedbackScreen(
                         Spacer(modifier = Modifier.height(24.dp))
                         
                         Text(
-                            text = "Â¡Gracias por tu feedback!",
+                            text = "¡Gracias por tu feedback!",
                             fontSize = 22.sp,
                             fontWeight = FontWeight.Bold,
                             color = TextPrimary,
@@ -149,7 +149,7 @@ fun FeedbackScreen(
                         Spacer(modifier = Modifier.height(12.dp))
                         
                         Text(
-                            text = "Tu opiniÃ³n nos ayuda a mejorar Merqora cada DÃ­a. Revisaremos tus comentarios con AtenciÃ³n.",
+                            text = "Tu opinión nos ayuda a mejorar Mercora cada Día. Revisaremos tus comentarios con Atención.",
                             fontSize = 15.sp,
                             color = TextMuted,
                             textAlign = TextAlign.Center,
@@ -183,7 +183,7 @@ fun FeedbackScreen(
                         
                         // Intro
                         Text(
-                            text = "Â¿CÃ³mo podemos mejorar?",
+                            text = "¿Cómo podemos mejorar?",
                             fontSize = 20.sp,
                             fontWeight = FontWeight.Bold,
                             color = TextPrimary
@@ -192,7 +192,7 @@ fun FeedbackScreen(
                         Spacer(modifier = Modifier.height(8.dp))
                         
                         Text(
-                            text = "Tu opiniÃ³n es muy importante para nosotros. CuÃ©ntanos quÃ© te gustarÃ­a ver en Vinzay.",
+                            text = "Tu opinión es muy importante para nosotros. Cuéntanos qué te gustaría ver en Mercora.",
                             fontSize = 14.sp,
                             color = TextMuted,
                             lineHeight = 20.sp
@@ -202,7 +202,7 @@ fun FeedbackScreen(
                         
                         // Rating
                         Text(
-                            text = "Â¿CÃ³mo calificarÃ­as tu experiencia?",
+                            text = "¿Cómo calificarías tu experiencia?",
                             fontSize = 15.sp,
                             fontWeight = FontWeight.SemiBold,
                             color = TextPrimary
@@ -231,9 +231,9 @@ fun FeedbackScreen(
                         
                         Spacer(modifier = Modifier.height(24.dp))
                         
-                        // categorÃ­a
+                        // categoría
                         Text(
-                            text = "Â¿Sobre Â¿QuÃ© quieres comentar?",
+                            text = "¿Sobre ¿Qué quieres comentar?",
                             fontSize = 15.sp,
                             fontWeight = FontWeight.SemiBold,
                             color = TextPrimary
@@ -242,7 +242,7 @@ fun FeedbackScreen(
                         Spacer(modifier = Modifier.height(12.dp))
                         
                         val categories = listOf(
-                            Triple("feature_request", "Nueva FunciÃ³n", Icons.Outlined.Lightbulb),
+                            Triple("feature_request", "Nueva Función", Icons.Outlined.Lightbulb),
                             Triple("improvement", "Mejora", Icons.Outlined.TrendingUp),
                             Triple("complaint", "Queja", Icons.Outlined.ThumbDown),
                             Triple("praise", "Elogio", Icons.Outlined.ThumbUp),
@@ -299,7 +299,7 @@ fun FeedbackScreen(
                             onValueChange = { feedbackText = it },
                             placeholder = {
                                 Text(
-                                    "CuÃ©ntanos tu idea o sugerencia...",
+                                    "Cuéntanos tu idea o sugerencia...",
                                     color = TextMuted.copy(alpha = 0.5f)
                                 )
                             },
@@ -356,7 +356,7 @@ fun FeedbackScreen(
                         
                         Spacer(modifier = Modifier.height(32.dp))
                         
-                        // botÃ³n enviar
+                        // botón enviar
                         Button(
                             onClick = {
                                 isSubmitting = true

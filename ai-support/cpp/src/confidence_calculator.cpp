@@ -2,7 +2,7 @@
 #include <algorithm>
 #include <cmath>
 
-namespace vinzay {
+namespace mercora {
 namespace ai {
 
 ConfidenceCalculator::ConfidenceCalculator() = default;
@@ -50,4 +50,4 @@ int ConfidenceCalculator::calculate(
 }
 
 } // namespace ai
-} // namespace vinzay
+} // namespace mercora

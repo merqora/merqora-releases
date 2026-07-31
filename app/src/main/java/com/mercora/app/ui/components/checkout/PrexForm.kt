@@ -36,7 +36,7 @@ import java.util.Locale
 data class SellerPrexInfo(
     val phone: String = "099 123 456",
     val accountNumber: String = "1234567890",
-    val holderName: String = "Juan Carlos PÃ©rez",
+    val holderName: String = "Juan Carlos Pérez",
     val email: String = "",
     val currency: String = "UYU"
 )
@@ -51,7 +51,7 @@ fun PrexForm(
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
-    var reference by remember { mutableStateOf("Pago Vinzay - Orden $orderId") }
+    var reference by remember { mutableStateOf("Pago Mercora - Orden $orderId") }
     var usePhone by remember { mutableStateOf(prexInfo.phone.isNotEmpty()) }
     var recipientValue by remember {
         mutableStateOf(
@@ -80,7 +80,7 @@ fun PrexForm(
         val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
         val data = buildString {
             appendLine("=== Transferencia Prex ===")
-            appendLine("Destino: ${if (usePhone) "TelÃ©fono" else "NÂº Cuenta"}: $recipientValue")
+            appendLine("Destino: ${if (usePhone) "Teléfono" else "Nº Cuenta"}: $recipientValue")
             appendLine("Alias: ${prexInfo.email}")
             appendLine("Referencia: $reference")
             appendLine("Monto: $${NumberFormat.getNumberInstance(Locale.US).format(amount)} ${prexInfo.currency}")
@@ -90,7 +90,7 @@ fun PrexForm(
         val prexPackage = "air.Prex"
         var opened = false
 
-        // 0. Intent deep link a secciÃ³n de transferencia (si existe)
+        // 0. Intent deep link a sección de transferencia (si existe)
         try {
             val deepLink = Intent(Intent.ACTION_VIEW, Uri.parse("prex://transferir")).apply {
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
@@ -131,7 +131,7 @@ fun PrexForm(
             } catch (_: Exception) {}
         }
 
-        // 3. Intent explÃ­cito directo al package
+        // 3. Intent explícito directo al package
         if (!opened) {
             try {
                 val intent = context.packageManager.getLaunchIntentForPackage(prexPackage)
@@ -146,7 +146,7 @@ fun PrexForm(
         if (opened) {
             Toast.makeText(context, "Datos copiados. Pegalos en Prex.", Toast.LENGTH_LONG).show()
         } else {
-            Toast.makeText(context, "Datos copiados. AbrÃ­ Prex manualmente y pega la info.", Toast.LENGTH_LONG).show()
+            Toast.makeText(context, "Datos copiados. Abrí Prex manualmente y pega la info.", Toast.LENGTH_LONG).show()
         }
     }
 
@@ -169,8 +169,8 @@ fun PrexForm(
                 Spacer(Modifier.height(12.dp))
 
                 PrexDataRow("Alias", prexInfo.email)
-                PrexDataRow("TelÃ©fono", prexInfo.phone)
-                PrexDataRow("NÂº Cuenta", prexInfo.accountNumber)
+                PrexDataRow("Teléfono", prexInfo.phone)
+                PrexDataRow("Nº Cuenta", prexInfo.accountNumber)
 
                 Spacer(Modifier.height(4.dp))
                 Divider(color = BorderSubtle)
@@ -181,7 +181,7 @@ fun PrexForm(
                     FilterChip(
                         selected = usePhone,
                         onClick = { usePhone = true; recipientValue = prexInfo.phone },
-                        label = { Text("TelÃ©fono", fontSize = 12.sp) },
+                        label = { Text("Teléfono", fontSize = 12.sp) },
                         colors = FilterChipDefaults.filterChipColors(
                             selectedContainerColor = Color(0xFF00B8A9).copy(alpha = 0.15f),
                             selectedLabelColor = Color(0xFF00B8A9)
@@ -191,7 +191,7 @@ fun PrexForm(
                     FilterChip(
                         selected = !usePhone,
                         onClick = { usePhone = false; recipientValue = prexInfo.accountNumber },
-                        label = { Text("NÂº Cuenta", fontSize = 12.sp) },
+                        label = { Text("Nº Cuenta", fontSize = 12.sp) },
                         colors = FilterChipDefaults.filterChipColors(
                             selectedContainerColor = Color(0xFF00B8A9).copy(alpha = 0.15f),
                             selectedLabelColor = Color(0xFF00B8A9)
@@ -213,7 +213,7 @@ fun PrexForm(
                 OutlinedTextField(
                     value = recipientValue,
                     onValueChange = { recipientValue = it },
-                    label = { Text(if (usePhone) "NÃºmero de telÃ©fono" else "NÃºmero de cuenta") },
+                    label = { Text(if (usePhone) "Número de teléfono" else "Número de cuenta") },
                     leadingIcon = {
                         Icon(
                             if (usePhone) Icons.Outlined.Phone else Icons.Outlined.Pin,
@@ -294,7 +294,7 @@ fun PrexForm(
                     Icon(Icons.Outlined.Info, null, tint = Color(0xFF00B8A9), modifier = Modifier.size(18.dp))
                     Spacer(Modifier.width(8.dp))
                     Text(
-                        "Al pagar se copiarÃ¡n todos los datos y se abrirÃ¡ la app de Prex para que confirmes la transferencia.",
+                        "Al pagar se copiarán todos los datos y se abrirá la app de Prex para que confirmes la transferencia.",
                         fontSize = 12.sp, color = TextSecondary, modifier = Modifier.weight(1f)
                     )
                 }
@@ -310,11 +310,11 @@ fun PrexForm(
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Icon(Icons.Outlined.Warning, null, tint = Color(0xFFFF6B35), modifier = Modifier.size(18.dp))
                         Spacer(Modifier.width(8.dp))
-                        Text("Prex no estÃ¡ instalada", fontSize = 13.sp, fontWeight = FontWeight.SemiBold, color = Color(0xFFFF6B35))
+                        Text("Prex no está instalada", fontSize = 13.sp, fontWeight = FontWeight.SemiBold, color = Color(0xFFFF6B35))
                     }
                     Spacer(Modifier.height(8.dp))
                     Text(
-                        "InstalÃ¡ Prex desde Play Store y volvÃ© para completar el pago. Los datos se copiarÃ¡n al portapapeles.",
+                        "Instalá Prex desde Play Store y volvé para completar el pago. Los datos se copiarán al portapapeles.",
                         fontSize = 12.sp, color = TextSecondary, lineHeight = 16.sp
                     )
                     Spacer(Modifier.height(10.dp))

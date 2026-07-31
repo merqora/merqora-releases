@@ -34,11 +34,11 @@ import kotlinx.coroutines.isActive
 /**
  * Imagen transformable con motor C++ profesional
  * 
- * CaracterÃ­sticas:
+ * Características:
  * - Pan/Scale/Rotate con gestos multitouch
- * - Inercia fÃ­sica al soltar
- * - Rubber-band en lÃ­mites de zoom
- * - Zoom logarÃ­tmico para UX natural
+ * - Inercia física al soltar
+ * - Rubber-band en límites de zoom
+ * - Zoom logarítmico para UX natural
  * - 60+ FPS garantizado
  */
 @Composable
@@ -79,7 +79,7 @@ fun TransformableImage(
         }
     }
     
-    // Actualizar tamaÃ±os
+    // Actualizar tamaños
     LaunchedEffect(viewportSize, bitmap) {
         if (viewportSize.width > 0 && viewportSize.height > 0) {
             engine.setViewportSize(viewportSize.width.toFloat(), viewportSize.height.toFloat())
@@ -179,7 +179,7 @@ fun TransformableImage(
 }
 
 /**
- * Estado de transformaciÃ³n para uso externo
+ * Estado de transformación para uso externo
  */
 data class ImageTransformState(
     val translateX: Float = 0f,

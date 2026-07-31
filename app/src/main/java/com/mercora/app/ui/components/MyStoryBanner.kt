@@ -57,13 +57,13 @@ fun MyStoryBanner(
     val showLoadingAnimation = isLoading
     
     // Cargar avatar automáticamente usando StateFlow del ProfileRepository si no se proporciona
-    val currentProfile by com.vinzay.app.data.repository.ProfileRepository.currentProfile.collectAsState()
+    val currentProfile by com.mercora.app.data.repository.ProfileRepository.currentProfile.collectAsState()
     
     // Cargar perfil al inicio si no está cargado
     LaunchedEffect(Unit) {
         if (currentProfile == null && userAvatar == null) {
             try {
-                com.vinzay.app.data.repository.ProfileRepository.loadCurrentProfile()
+                com.mercora.app.data.repository.ProfileRepository.loadCurrentProfile()
             } catch (e: Exception) { /* Silently fail */ }
         }
     }

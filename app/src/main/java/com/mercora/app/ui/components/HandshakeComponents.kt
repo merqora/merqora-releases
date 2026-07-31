@@ -205,12 +205,12 @@ fun HandshakeProposalModal(
 enum class HandshakeBannerState {
     WAITING,    // Esperando que el otro acepte
     ACCEPTED,   // Ambos aceptaron, esperando confirmaciones
-    COMPLETED,  // TransacciÃ³n completada
-    CANCELLED   // Acuerdo cancelado (muestra penalizaciÃ³n)
+    COMPLETED,  // Transacción completada
+    CANCELLED   // Acuerdo cancelado (muestra penalización)
 }
 
 /**
- * Banner dinÃ¡mico que muestra diferentes estados del handshake
+ * Banner dinámico que muestra diferentes estados del handshake
  * Estados: WAITING â†’ ACCEPTED â†’ COMPLETED
  */
 @Composable
@@ -219,7 +219,7 @@ fun HandshakeActiveBanner(
     currentUserId: String,
     otherUserName: String,
     bannerState: HandshakeBannerState,
-    currentUserReputation: Double = 50.0, // Tu reputaciÃ³n actual
+    currentUserReputation: Double = 50.0, // Tu reputación actual
     reputationChange: Int = 0, // +3, +4, -1, -5, etc.
     onConfirm: () -> Unit,
     onCancel: () -> Unit,
@@ -232,7 +232,7 @@ fun HandshakeActiveBanner(
     val myConfirmed = if (isInitiator) handshake.initiatorConfirmed else handshake.receiverConfirmed
     val otherConfirmed = if (isInitiator) handshake.receiverConfirmed else handshake.initiatorConfirmed
     
-    // Colores segÃºn estado
+    // Colores según estado
     val bannerColor = when (bannerState) {
         HandshakeBannerState.WAITING -> PrimaryPurple.copy(alpha = 0.12f)
         HandshakeBannerState.ACCEPTED -> Color(0xFF22C55E).copy(alpha = 0.12f)
@@ -244,7 +244,7 @@ fun HandshakeActiveBanner(
         else -> Color(0xFF22C55E)
     }
     
-    // AnimaciÃ³n de rotaciÃ³n para el estado WAITING
+    // Animación de rotación para el estado WAITING
     val infiniteTransition = rememberInfiniteTransition(label = "waiting")
     val rotation by infiniteTransition.animateFloat(
         initialValue = 0f,
@@ -279,7 +279,7 @@ fun HandshakeActiveBanner(
             ) {
                 when (state) {
                     HandshakeBannerState.WAITING -> {
-                        // Estado: Esperando aceptaciÃ³n
+                        // Estado: Esperando aceptación
                         Box(
                             modifier = Modifier.size(24.dp),
                             contentAlignment = Alignment.Center
@@ -320,7 +320,7 @@ fun HandshakeActiveBanner(
                         
                         Spacer(modifier = Modifier.width(8.dp))
                         
-                        // BotÃ³n cancelar
+                        // Botón cancelar
                         Surface(
                             modifier = Modifier
                                 .size(28.dp)
@@ -340,7 +340,7 @@ fun HandshakeActiveBanner(
                     }
                     
                     HandshakeBannerState.ACCEPTED -> {
-                        // Estado: Aceptado - diseÃ±o limpio y profesional
+                        // Estado: Aceptado - diseño limpio y profesional
                         Icon(
                             imageVector = Icons.Outlined.SwapHoriz,
                             contentDescription = null,
@@ -351,7 +351,7 @@ fun HandshakeActiveBanner(
                         Spacer(modifier = Modifier.width(8.dp))
                         
                         Column(modifier = Modifier.weight(1f)) {
-                            // Primera lÃ­nea: [Aceptado] [TÃº] | [User]
+                            // Primera línea: [Aceptado] [Tú] | [User]
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Text(
                                     text = "Aceptado",
@@ -360,12 +360,12 @@ fun HandshakeActiveBanner(
                                     color = Color(0xFF22C55E)
                                 )
                                 Spacer(modifier = Modifier.width(8.dp))
-                                // Confirmaciones: TÃº | User
+                                // Confirmaciones: Tú | User
                                 if (myConfirmed) {
                                     Icon(Icons.Default.Check, null, tint = Color(0xFF22C55E), modifier = Modifier.size(12.dp))
                                 }
                                 Text(
-                                    text = "TÃº",
+                                    text = "Tú",
                                     fontSize = 11.sp,
                                     color = if (myConfirmed) Color(0xFF22C55E) else TextMuted,
                                     fontWeight = if (myConfirmed) FontWeight.SemiBold else FontWeight.Normal
@@ -383,7 +383,7 @@ fun HandshakeActiveBanner(
                                     overflow = TextOverflow.Ellipsis
                                 )
                             }
-                            // Segunda lÃ­nea: artÃ­culo
+                            // Segunda línea: artículo
                             Text(
                                 text = handshake.productDescription,
                                 fontSize = 12.sp,
@@ -394,7 +394,7 @@ fun HandshakeActiveBanner(
                             )
                         }
                         
-                        // BotÃ³n cancelar
+                        // Botón cancelar
                         Surface(
                             modifier = Modifier
                                 .size(28.dp)
@@ -414,7 +414,7 @@ fun HandshakeActiveBanner(
                         
                         Spacer(modifier = Modifier.width(6.dp))
                         
-                        // BotÃ³n de confirmaciÃ³n
+                        // Botón de confirmación
                         Surface(
                             modifier = Modifier
                                 .height(28.dp)
@@ -448,9 +448,9 @@ fun HandshakeActiveBanner(
                     }
                     
                     HandshakeBannerState.COMPLETED -> {
-                        // Estado: Completado - tÃ­tulo a la izquierda, badge reputaciÃ³n a la derecha
+                        // Estado: Completado - título a la izquierda, badge reputación a la derecha
                         
-                        // AnimaciÃ³n del nÃºmero de reputaciÃ³n
+                        // Animación del número de reputación
                         val targetReputation = (currentUserReputation + reputationChange).toInt().coerceIn(0, 100)
                         val animatedReputation by animateIntAsState(
                             targetValue = targetReputation,
@@ -458,7 +458,7 @@ fun HandshakeActiveBanner(
                             label = "reputationAnim"
                         )
                         
-                        // AnimaciÃ³n de escala para el badge
+                        // Animación de escala para el badge
                         val badgeScale by animateFloatAsState(
                             targetValue = if (reputationChange != 0) 1.15f else 1f,
                             animationSpec = spring(
@@ -491,17 +491,17 @@ fun HandshakeActiveBanner(
                         
                         Spacer(modifier = Modifier.width(10.dp))
                         
-                        // Contenido central con tÃ­tulo y detalles
+                        // Contenido central con título y detalles
                         Column(modifier = Modifier.weight(1f)) {
-                            // TÃ­tulo a la izquierda
+                            // Título a la izquierda
                             Text(
-                                text = "Â¡TransacciÃ³n completada!",
+                                text = "¡Transacción completada!",
                                 fontSize = 13.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = Color(0xFF22C55E)
                             )
                             Spacer(modifier = Modifier.height(2.dp))
-                            // Username + artÃ­culo
+                            // Username + artículo
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Text(
                                     text = "@$otherUserName",
@@ -509,7 +509,7 @@ fun HandshakeActiveBanner(
                                     color = TextPrimary,
                                     fontWeight = FontWeight.Medium
                                 )
-                                Text(" Â· ", fontSize = 12.sp, color = TextMuted)
+                                Text(" · ", fontSize = 12.sp, color = TextMuted)
                                 Text(
                                     text = handshake.productDescription,
                                     fontSize = 12.sp,
@@ -523,7 +523,7 @@ fun HandshakeActiveBanner(
                         
                         Spacer(modifier = Modifier.width(8.dp))
                         
-                        // Badge de reputaciÃ³n alineado a la derecha con animaciÃ³n
+                        // Badge de reputación alineado a la derecha con animación
                         Surface(
                             shape = RoundedCornerShape(6.dp),
                             color = reputationColor.copy(alpha = 0.15f),
@@ -540,7 +540,7 @@ fun HandshakeActiveBanner(
                             ) {
                                 Icon(
                                     imageVector = Icons.Default.Shield,
-                                    contentDescription = "Tu reputaciÃ³n",
+                                    contentDescription = "Tu reputación",
                                     tint = reputationColor,
                                     modifier = Modifier.size(12.dp)
                                 )
@@ -556,7 +556,7 @@ fun HandshakeActiveBanner(
                     }
                     
                     HandshakeBannerState.CANCELLED -> {
-                        // Estado: Cancelado - muestra penalizaciÃ³n de reputaciÃ³n
+                        // Estado: Cancelado - muestra penalización de reputación
                         val penaltyAmount = if (reputationChange < 0) reputationChange else -2
                         val targetReputation = (currentUserReputation + penaltyAmount).toInt().coerceIn(0, 100)
                         val animatedReputation by animateIntAsState(
@@ -565,7 +565,7 @@ fun HandshakeActiveBanner(
                             label = "cancelledReputationAnim"
                         )
                         
-                        // Icono de cancelaciÃ³n
+                        // Icono de cancelación
                         Box(
                             modifier = Modifier
                                 .size(28.dp)
@@ -582,7 +582,7 @@ fun HandshakeActiveBanner(
                         
                         Spacer(modifier = Modifier.width(10.dp))
                         
-                        // Texto de cancelaciÃ³n
+                        // Texto de cancelación
                         Column(modifier = Modifier.weight(1f)) {
                             Text(
                                 text = "Acuerdo cancelado",
@@ -599,7 +599,7 @@ fun HandshakeActiveBanner(
                             )
                         }
                         
-                        // Badge de reputaciÃ³n disminuyendo
+                        // Badge de reputación disminuyendo
                         Surface(
                             shape = RoundedCornerShape(6.dp),
                             color = Color(0xFFEF5350).copy(alpha = 0.15f)
@@ -610,7 +610,7 @@ fun HandshakeActiveBanner(
                             ) {
                                 Icon(
                                     imageVector = Icons.Default.Shield,
-                                    contentDescription = "Tu reputaciÃ³n",
+                                    contentDescription = "Tu reputación",
                                     tint = Color(0xFFEF5350),
                                     modifier = Modifier.size(12.dp)
                                 )
@@ -706,7 +706,7 @@ fun HandshakeMessageBubble(
                     "PROPOSED" -> "â³ Esperando respuesta"
                     "ACCEPTED" -> "âœ… Aceptado"
                     "REJECTED" -> "âŒ Rechazado"
-                    "COMPLETED" -> "ðŸŽ‰ Completado"
+                    "COMPLETED" -> "🎉 Completado"
                     else -> handshake.status
                 },
                 fontSize = 11.sp,
@@ -717,7 +717,7 @@ fun HandshakeMessageBubble(
 }
 
 /**
- * Modal de confirmaciÃ³n al cancelar una transacciÃ³n
+ * Modal de confirmación al cancelar una transacción
  */
 @Composable
 fun CancelConfirmationModal(
@@ -764,7 +764,7 @@ fun CancelConfirmationModal(
                 Spacer(modifier = Modifier.height(16.dp))
                 
                 Text(
-                    text = "Â¿Cancelar transacciÃ³n?",
+                    text = "¿Cancelar transacción?",
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
                     color = TextPrimary
@@ -789,7 +789,7 @@ fun CancelConfirmationModal(
                     color = Color(0xFFEF5350).copy(alpha = 0.1f)
                 ) {
                     Text(
-                        text = "âš ï¸ Si cancelas, tu reputaciÃ³n podrÃ­a verse afectada negativamente.",
+                        text = "âš ï¸ Si cancelas, tu reputación podría verse afectada negativamente.",
                         fontSize = 12.sp,
                         color = Color(0xFFEF5350),
                         modifier = Modifier.padding(10.dp),
@@ -828,7 +828,7 @@ fun CancelConfirmationModal(
 }
 
 /**
- * Modal de transacciÃ³n completada - aparece cuando ambos confirman
+ * Modal de transacción completada - aparece cuando ambos confirman
  */
 @Composable
 fun TransactionCompletedModal(
@@ -859,20 +859,20 @@ fun TransactionCompletedModal(
                 modifier = Modifier.padding(20.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                // Icono de Ã©xito con animaciÃ³n
+                // Icono de éxito con animación
                 Box(
                     modifier = Modifier
                         .size(56.dp)
                         .background(Color(0xFF22C55E).copy(alpha = 0.15f), CircleShape),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text("ðŸŽ‰", fontSize = 28.sp)
+                    Text("🎉", fontSize = 28.sp)
                 }
                 
                 Spacer(modifier = Modifier.height(16.dp))
                 
                 Text(
-                    text = "Â¡TransacciÃ³n completada!",
+                    text = "¡Transacción completada!",
                     fontSize = 17.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color(0xFF22C55E)
@@ -919,14 +919,14 @@ fun TransactionCompletedModal(
                 Spacer(modifier = Modifier.height(12.dp))
                 
                 Text(
-                    text = "Tu reputaciÃ³n se actualizarÃ¡ en breve",
+                    text = "Tu reputación se actualizará en breve",
                     fontSize = 11.sp,
                     color = TextMuted
                 )
                 
                 Spacer(modifier = Modifier.height(16.dp))
                 
-                // BotÃ³n cerrar
+                // Botón cerrar
                 Surface(
                     modifier = Modifier
                         .size(36.dp)

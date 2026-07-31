@@ -38,7 +38,7 @@ export default function AdminAppManager() {
   }
 
   async function deleteVersion(id) {
-    if (!confirm('Â¿Seguro que querÃ©s eliminar esta versiÃ³n?')) return
+    if (!confirm('¿Seguro que querés eliminar esta versión?')) return
     try {
       const version = versions.find(v => v.id === id)
       // Delete from storage if exists
@@ -83,7 +83,7 @@ export default function AdminAppManager() {
             <Package className="w-7 h-7 text-primary" />
             App Manager
           </h1>
-          <p className="text-text-tertiary text-sm mt-1">SubÃ­ y gestionÃ¡ las versiones de la app Vinzay</p>
+          <p className="text-text-tertiary text-sm mt-1">Subí y gestioná las versiones de la app Mercora</p>
         </div>
         <div className="flex gap-3">
           <button
@@ -96,7 +96,7 @@ export default function AdminAppManager() {
             onClick={() => setShowUploadModal(true)}
             className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary hover:bg-primary-dark text-white font-semibold transition-colors"
           >
-            <Plus className="w-5 h-5" /> Nueva VersiÃ³n
+            <Plus className="w-5 h-5" /> Nueva Versión
           </button>
         </div>
       </div>
@@ -106,7 +106,7 @@ export default function AdminAppManager() {
         {[
           { label: 'Total Descargas', value: stats.totalDownloads, icon: Download, color: 'text-accent-green' },
           { label: 'Versiones Publicadas', value: stats.totalVersions, icon: Package, color: 'text-primary' },
-          { label: 'VersiÃ³n Actual', value: `v${stats.latestVersion}`, icon: Smartphone, color: 'text-accent-gold' },
+          { label: 'Versión Actual', value: `v${stats.latestVersion}`, icon: Smartphone, color: 'text-accent-gold' },
         ].map((s, i) => (
           <div key={i} className="bg-mercora-surface rounded-2xl p-5 border border-primary/5">
             <div className="flex items-center gap-3 mb-2">
@@ -132,7 +132,7 @@ export default function AdminAppManager() {
           <div className="text-center py-16">
             <Package className="w-12 h-12 text-text-muted mx-auto mb-4" />
             <p className="text-text-secondary font-medium">No hay versiones publicadas</p>
-            <p className="text-text-muted text-sm mt-1">SubÃ­ tu primer APK haciendo click en "Nueva VersiÃ³n"</p>
+            <p className="text-text-muted text-sm mt-1">Subí tu primer APK haciendo click en "Nueva Versión"</p>
           </div>
         ) : (
           <div className="divide-y divide-primary/5">
@@ -171,7 +171,7 @@ export default function AdminAppManager() {
                       <button
                         onClick={() => setAsLatest(v.id)}
                         className="px-3 py-2 rounded-lg bg-accent-green/10 text-accent-green text-sm font-medium hover:bg-accent-green/20 transition-colors"
-                        title="Marcar como versiÃ³n actual"
+                        title="Marcar como versión actual"
                       >
                         <CheckCircle className="w-4 h-4" />
                       </button>
@@ -179,7 +179,7 @@ export default function AdminAppManager() {
                     <button
                       onClick={() => deleteVersion(v.id)}
                       className="px-3 py-2 rounded-lg bg-red-500/10 text-red-400 text-sm font-medium hover:bg-red-500/20 transition-colors"
-                      title="Eliminar versiÃ³n"
+                      title="Eliminar versión"
                     >
                       <Trash2 className="w-4 h-4" />
                     </button>
@@ -220,7 +220,7 @@ function UploadModal({ onClose, onUploaded }) {
     const f = e.target.files[0]
     if (f) {
       setFile(f)
-      // Try to extract version from filename like "Vinzay-v1.2.0.apk"
+      // Try to extract version from filename like "Mercora-v1.2.0.apk"
       const match = f.name.match(/v?(\d+\.\d+\.\d+)/)
       if (match && !versionName) setVersionName(match[1])
     }
@@ -228,17 +228,17 @@ function UploadModal({ onClose, onUploaded }) {
 
   async function handleUpload() {
     if (!versionName || !versionCode) {
-      alert('CompletÃ¡ la versiÃ³n y el cÃ³digo de build')
+      alert('Completá la versión y el código de build')
       return
     }
 
     if (uploadMode === 'external' && !externalUrl) {
-      alert('PegÃ¡ el link directo de descarga del APK')
+      alert('Pegá el link directo de descarga del APK')
       return
     }
 
     if (uploadMode === 'local' && !file) {
-      alert('SeleccionÃ¡ un archivo APK')
+      alert('Seleccioná un archivo APK')
       return
     }
 
@@ -250,14 +250,14 @@ function UploadModal({ onClose, onUploaded }) {
 
       if (uploadMode === 'external') {
         // Use external URL (GitHub Releases, etc.)
-        setProgress('Guardando versiÃ³n...')
+        setProgress('Guardando versión...')
         fileUrl = externalUrl
         finalFileSizeMb = fileSizeMb ? parseFloat(fileSizeMb) : null
         filePath = null // No storage path for external
       } else if (file) {
         // Upload to Supabase Storage (max 50MB)
         setProgress('Subiendo APK...')
-        filePath = `Vinzay-v${versionName}.apk`
+        filePath = `Mercora-v${versionName}.apk`
         finalFileSizeMb = Math.round(file.size / 1024 / 1024 * 10) / 10
 
         const { error: uploadError } = await supabase.storage
@@ -291,7 +291,7 @@ function UploadModal({ onClose, onUploaded }) {
 
       if (insertError) throw insertError
 
-      setProgress('Â¡Listo!')
+      setProgress('¡Listo!')
       setTimeout(() => onUploaded(), 500)
     } catch (err) {
       console.error('Upload error:', err)
@@ -308,7 +308,7 @@ function UploadModal({ onClose, onUploaded }) {
         <div className="flex items-center justify-between p-6 border-b border-primary/5">
           <h2 className="text-xl font-bold text-text-primary flex items-center gap-3">
             <Upload className="w-6 h-6 text-primary" />
-            Nueva VersiÃ³n
+            Nueva Versión
           </h2>
           <button onClick={onClose} className="p-2 text-text-muted hover:text-text-primary transition-colors">
             <X className="w-5 h-5" />
@@ -352,13 +352,13 @@ function UploadModal({ onClose, onUploaded }) {
                   type="url"
                   value={externalUrl}
                   onChange={(e) => setExternalUrl(e.target.value)}
-                  placeholder="https://github.com/.../releases/.../Vinzay.apk"
+                  placeholder="https://github.com/.../releases/.../Mercora.apk"
                   className="w-full px-4 py-3 rounded-xl bg-mercora-bg border border-primary/10 text-text-primary placeholder-text-muted focus:border-primary/30 focus:outline-none transition-colors"
                 />
-                <p className="text-text-muted text-xs mt-2">ðŸ’¡ Tip: SubÃ­ el APK a GitHub Releases y copiÃ¡ el link directo aquÃ­</p>
+                <p className="text-text-muted text-xs mt-2">💡 Tip: Subí el APK a GitHub Releases y copiá el link directo aquí</p>
               </div>
               <div>
-                <label className="text-text-secondary text-sm font-medium mb-2 block">TamaÃ±o (MB)</label>
+                <label className="text-text-secondary text-sm font-medium mb-2 block">Tamaño (MB)</label>
                 <input
                   type="number"
                   step="0.1"
@@ -390,7 +390,7 @@ function UploadModal({ onClose, onUploaded }) {
                   <div>
                     <Upload className="w-8 h-8 text-text-muted mx-auto mb-2" />
                     <p className="text-text-secondary text-sm">Click para seleccionar APK</p>
-                    <p className="text-text-muted text-xs mt-1">o arrastrÃ¡ el archivo aquÃ­ (mÃ¡x 50MB)</p>
+                    <p className="text-text-muted text-xs mt-1">o arrastrá el archivo aquí (máx 50MB)</p>
                   </div>
                 )}
               </div>
@@ -400,7 +400,7 @@ function UploadModal({ onClose, onUploaded }) {
           {/* Version Info */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="text-text-secondary text-sm font-medium mb-2 block">VersiÃ³n *</label>
+              <label className="text-text-secondary text-sm font-medium mb-2 block">Versión *</label>
               <input
                 type="text"
                 value={versionName}
@@ -423,7 +423,7 @@ function UploadModal({ onClose, onUploaded }) {
 
           {/* Min Android */}
           <div>
-            <label className="text-text-secondary text-sm font-medium mb-2 block">Android mÃ­nimo</label>
+            <label className="text-text-secondary text-sm font-medium mb-2 block">Android mínimo</label>
             <select
               value={minAndroid}
               onChange={e => setMinAndroid(e.target.value)}
@@ -444,7 +444,7 @@ function UploadModal({ onClose, onUploaded }) {
             <textarea
               value={changelog}
               onChange={e => setChangelog(e.target.value)}
-              placeholder="Â¿QuÃ© hay de nuevo en esta versiÃ³n?"
+              placeholder="¿Qué hay de nuevo en esta versión?"
               rows={4}
               className="w-full px-4 py-2.5 bg-mercora-bg border border-primary/20 rounded-xl text-text-primary placeholder-text-muted focus:outline-none focus:border-primary transition-colors resize-none"
             />
@@ -459,7 +459,7 @@ function UploadModal({ onClose, onUploaded }) {
             >
               {isLatest && <CheckCircle className="w-3.5 h-3.5 text-white" />}
             </div>
-            <span className="text-text-secondary text-sm" onClick={() => setIsLatest(!isLatest)}>Marcar como versiÃ³n actual (la que se muestra para descargar)</span>
+            <span className="text-text-secondary text-sm" onClick={() => setIsLatest(!isLatest)}>Marcar como versión actual (la que se muestra para descargar)</span>
           </label>
         </div>
 

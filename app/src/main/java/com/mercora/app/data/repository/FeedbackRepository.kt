@@ -212,7 +212,7 @@ object FeedbackRepository {
             while (bufferedReader.readLine().also { line = it } != null) {
                 // Filtrar solo logs de nuestra app
                 if (line?.contains("com.mercora.app") == true || 
-                    line?.contains("vinzay") == true ||
+                    line?.contains("Mercora") == true ||
                     line?.contains("E/") == true || 
                     line?.contains("W/") == true) {
                     log.append(line).append("\n")

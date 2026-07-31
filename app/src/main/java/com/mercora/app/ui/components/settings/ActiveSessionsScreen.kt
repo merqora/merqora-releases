@@ -41,7 +41,7 @@ fun ActiveSessionsScreen(
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     
-    // Obtener el ID del dispositivo actual para identificar la sesiÃ³n actual
+    // Obtener el ID del dispositivo actual para identificar la sesión actual
     val currentDeviceId = remember {
         android.provider.Settings.Secure.getString(
             context.contentResolver, 
@@ -81,7 +81,7 @@ fun ActiveSessionsScreen(
             },
             text = { 
                 Text(
-                    "Se cerrarÃ¡n todas las sesiones excepto la actual. TendrÃ¡s que volver a iniciar sesiÃ³n en otros dispositivos.",
+                    "Se cerrarán todas las sesiones excepto la actual. Tendrás que volver a iniciar sesión en otros dispositivos.",
                     color = TextSecondary
                 ) 
             },
@@ -123,20 +123,20 @@ fun ActiveSessionsScreen(
         )
     }
     
-    // Dialog para cerrar sesiÃ³n individual
+    // Dialog para cerrar sesión individual
     if (sessionToEnd != null) {
         AlertDialog(
             onDismissRequest = { sessionToEnd = null },
             title = { 
                 Text(
-                    "Cerrar sesiÃ³n",
+                    "Cerrar sesión",
                     fontWeight = FontWeight.Bold,
                     color = TextPrimary
                 ) 
             },
             text = { 
                 Text(
-                    "Â¿EstÃ¡s seguro de que quieres cerrar esta sesiÃ³n en \"${sessionToEnd?.device_name}\"?",
+                    "¿Estás seguro de que quieres cerrar esta sesión en \"${sessionToEnd?.device_name}\"?",
                     color = TextSecondary
                 ) 
             },
@@ -156,7 +156,7 @@ fun ActiveSessionsScreen(
                     },
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFEF4444))
                 ) {
-                    Text("Cerrar sesiÃ³n")
+                    Text("Cerrar sesión")
                 }
             },
             dismissButton = {
@@ -224,7 +224,7 @@ fun ActiveSessionsScreen(
                                 ) {
                                     Column {
                                         Text(
-                                            text = "${sessions.size} sesiÃ³n${if (sessions.size != 1) "es" else ""} activa${if (sessions.size != 1) "s" else ""}",
+                                            text = "${sessions.size} sesión${if (sessions.size != 1) "es" else ""} activa${if (sessions.size != 1) "s" else ""}",
                                             fontSize = 16.sp,
                                             fontWeight = FontWeight.Bold,
                                             color = TextPrimary
@@ -281,14 +281,14 @@ fun ActiveSessionsScreen(
                                 }
                             }
                         } else {
-                            // Separar sesiÃ³n actual de otras
+                            // Separar sesión actual de otras
                             val currentSession = sessions.find { it.device_id == currentDeviceId }
                             val otherSessions = sessions.filter { it.device_id != currentDeviceId }
                             
                             if (currentSession != null) {
                                 item {
                                     Text(
-                                        text = "SESIÃ“N ACTUAL",
+                                        text = "SESIÓN ACTUAL",
                                         fontSize = 11.sp,
                                         fontWeight = FontWeight.Bold,
                                         color = TextMuted,
@@ -350,7 +350,7 @@ fun ActiveSessionsScreen(
                                     )
                                     Spacer(modifier = Modifier.width(12.dp))
                                     Text(
-                                        text = "Si ves una sesiÃ³n que no reconoces, ciÃ©rrala inmediatamente y cambia tu contraseÃ±a para proteger tu cuenta.",
+                                        text = "Si ves una sesión que no reconoces, ciérrala inmediatamente y cambia tu contraseña para proteger tu cuenta.",
                                         fontSize = 13.sp,
                                         color = TextSecondary
                                     )
@@ -432,7 +432,7 @@ private fun SessionItem(
                 Spacer(modifier = Modifier.height(4.dp))
                 
                 Text(
-                    text = if (isCurrent) "SesiÃ³n activa ahora" else "Ãšltima actividad: ${formatDate(session.last_activity_at)}",
+                    text = if (isCurrent) "Sesión activa ahora" else "Última actividad: ${formatDate(session.last_activity_at)}",
                     fontSize = 12.sp,
                     color = if (isCurrent) Color(0xFF2E8B57) else TextSecondary
                 )
@@ -484,7 +484,7 @@ private fun SessionItem(
                 ) {
                     Icon(
                         imageVector = Icons.Outlined.ExitToApp,
-                        contentDescription = "Cerrar sesiÃ³n",
+                        contentDescription = "Cerrar sesión",
                         tint = Color(0xFFEF4444)
                     )
                 }
@@ -511,7 +511,7 @@ private fun formatDate(dateString: String?): String {
             diffMinutes < 60 -> "Hace $diffMinutes min"
             diffHours < 24 -> "Hace $diffHours h"
             diffDays == 1L -> "Ayer"
-            diffDays < 7 -> "Hace $diffDays dÃ­as"
+            diffDays < 7 -> "Hace $diffDays días"
             else -> {
                 val outputFormat = SimpleDateFormat("dd MMM", Locale("es", "ES"))
                 outputFormat.format(date)

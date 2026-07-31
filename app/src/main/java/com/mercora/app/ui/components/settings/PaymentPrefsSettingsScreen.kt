@@ -34,7 +34,7 @@ data class PaymentMethodOption(
 private val PAYMENT_OPTIONS = listOf(
     PaymentMethodOption(
         id = "acceptsCard",
-        label = "Tarjeta de crÃ©dito/dÃ©bito",
+        label = "Tarjeta de crédito/débito",
         icon = { Icon(Icons.Outlined.CreditCard, null, tint = Color(0xFF1565A0), modifier = Modifier.size(22.dp)) },
         color = Color(0xFF1565A0),
         description = "Visa, Mastercard, OCA, etc."
@@ -44,7 +44,7 @@ private val PAYMENT_OPTIONS = listOf(
         label = "Transferencia bancaria",
         icon = { Icon(Icons.Outlined.AccountBalance, null, tint = Color(0xFF2E8B57), modifier = Modifier.size(22.dp)) },
         color = Color(0xFF2E8B57),
-        description = "DepÃ³sito o transferencia"
+        description = "Depósito o transferencia"
     ),
     PaymentMethodOption(
         id = "acceptsCash",
@@ -144,7 +144,7 @@ fun PaymentPrefsSettingsScreen(
             ) {
                 SettingsScreenHeader(
                     title = "Medios de pago",
-                    subtitle = "Selecciona los mÃ©todos que aceptas",
+                    subtitle = "Selecciona los métodos que aceptas",
                     icon = Icons.Outlined.CreditCard,
                     iconColor = Color(0xFF1565A0),
                     onBack = onDismiss
@@ -204,7 +204,7 @@ fun PaymentPrefsSettingsScreen(
 
                         Spacer(modifier = Modifier.height(20.dp))
 
-                        SettingsSectionTitle("Cuotas sin interÃ©s")
+                        SettingsSectionTitle("Cuotas sin interés")
 
                         Surface(
                             modifier = Modifier.fillMaxWidth(),
@@ -236,13 +236,13 @@ fun PaymentPrefsSettingsScreen(
 
                                 Column(modifier = Modifier.weight(1f)) {
                                     Text(
-                                        text = "MÃ¡ximo de cuotas",
+                                        text = "Máximo de cuotas",
                                         fontSize = 15.sp,
                                         fontWeight = FontWeight.SemiBold,
                                         color = TextPrimary
                                     )
                                     Text(
-                                        text = "Hasta 12 cuotas sin interÃ©s",
+                                        text = "Hasta 12 cuotas sin interés",
                                         fontSize = 12.sp,
                                         color = TextMuted
                                     )

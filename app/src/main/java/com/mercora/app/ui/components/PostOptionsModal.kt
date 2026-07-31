@@ -52,7 +52,7 @@ fun PostOptionsModal(
 ) {
     val haptic = LocalHapticFeedback.current
     
-    // Guardar Ãºltimo post vÃ¡lido para animaciÃ³n
+    // Guardar último post válido para animación
     var lastValidPost by remember { mutableStateOf<Post?>(null) }
     LaunchedEffect(post) {
         if (post != null) lastValidPost = post
@@ -178,11 +178,11 @@ fun PostOptionsModal(
                     Spacer(modifier = Modifier.height(8.dp))
                     
                     if (isOwnPost) {
-                        // Opciones para TU publicaciÃ³n
+                        // Opciones para TU publicación
                         OptionItem(
                             icon = Icons.Outlined.Edit,
-                            title = "Editar publicaciÃ³n",
-                            subtitle = "Modifica tÃ­tulo, descripciÃ³n o precio",
+                            title = "Editar publicación",
+                            subtitle = "Modifica título, descripción o precio",
                             iconColor = Color(0xFF0A3D62),
                             onClick = {
                                 haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
@@ -205,8 +205,8 @@ fun PostOptionsModal(
                         
                         OptionItem(
                             icon = Icons.Outlined.BarChart,
-                            title = "Ver estadÃ­sticas",
-                            subtitle = "Visualizaciones, likes y mÃ¡s",
+                            title = "Ver estadísticas",
+                            subtitle = "Visualizaciones, likes y más",
                             iconColor = Color(0xFF0A3D62),
                             onClick = {
                                 haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
@@ -228,7 +228,7 @@ fun PostOptionsModal(
                         OptionItem(
                             icon = Icons.Outlined.Link,
                             title = "Copiar enlace",
-                            subtitle = "Copia el link de la publicaciÃ³n",
+                            subtitle = "Copia el link de la publicación",
                             iconColor = Color(0xFF2E8B57),
                             onClick = {
                                 haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
@@ -242,8 +242,8 @@ fun PostOptionsModal(
                         
                         OptionItem(
                             icon = Icons.Outlined.Delete,
-                            title = "Eliminar publicaciÃ³n",
-                            subtitle = "Esta acciÃ³n no se puede deshacer",
+                            title = "Eliminar publicación",
+                            subtitle = "Esta acción no se puede deshacer",
                             iconColor = Color(0xFFEF4444),
                             onClick = {
                                 haptic.performHapticFeedback(HapticFeedbackType.LongPress)
@@ -251,8 +251,8 @@ fun PostOptionsModal(
                             }
                         )
                     } else {
-                        // Opciones para publicaciÃ³n de OTROS
-                        // Acciones rÃ¡pidas horizontales - Solo Guardar y CÃ³digo QR
+                        // Opciones para publicación de OTROS
+                        // Acciones rápidas horizontales - Solo Guardar y Código QR
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -272,7 +272,7 @@ fun PostOptionsModal(
                             
                             QuickActionButton(
                                 icon = Icons.Outlined.QrCode2,
-                                label = "CÃ³digo QR",
+                                label = "Código QR",
                                 color = IconAccentBlue,
                                 modifier = Modifier.weight(1f),
                                 onClick = {
@@ -288,8 +288,8 @@ fun PostOptionsModal(
                         
                         OptionItem(
                             icon = Icons.Outlined.VisibilityOff,
-                            title = "Ocultar publicaciÃ³n",
-                            subtitle = "No verÃ¡s esta publicaciÃ³n de nuevo",
+                            title = "Ocultar publicación",
+                            subtitle = "No verás esta publicación de nuevo",
                             iconColor = TextMuted,
                             onClick = {
                                 haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
@@ -300,7 +300,7 @@ fun PostOptionsModal(
                         OptionItem(
                             icon = Icons.Outlined.PersonOff,
                             title = "Dejar de seguir",
-                            subtitle = "No verÃ¡s mÃ¡s publicaciones de @${currentPost?.username}",
+                            subtitle = "No verás más publicaciones de @${currentPost?.username}",
                             iconColor = TextMuted,
                             onClick = {
                                 haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)

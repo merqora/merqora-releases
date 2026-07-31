@@ -56,7 +56,7 @@ fun AddressesScreen(
         android.util.Log.d("AddressesScreen", "currentUserId: $currentUserId")
     }
     
-    // Cargar perfil si no estÃ¡ disponible y luego cargar direcciones
+    // Cargar perfil si no está disponible y luego cargar direcciones
     LaunchedEffect(isVisible) {
         if (isVisible) {
             if (profileFromRepo == null) {
@@ -104,7 +104,7 @@ fun AddressesScreen(
             ) {
                 SettingsScreenHeader(
                     title = "Direcciones",
-                    subtitle = "Gestiona tus direcciones de envÃ­o",
+                    subtitle = "Gestiona tus direcciones de envío",
                     icon = Icons.Outlined.LocationOn,
                     iconColor = Color(0xFF1565A0),
                     onBack = onDismiss
@@ -153,7 +153,7 @@ fun AddressesScreen(
                         EmptyStateCard(
                             icon = Icons.Outlined.LocationOff,
                             title = "Sin direcciones guardadas",
-                            subtitle = "Agrega una direcciÃ³n para facilitar tus compras"
+                            subtitle = "Agrega una dirección para facilitar tus compras"
                         )
                     }
                     
@@ -174,7 +174,7 @@ fun AddressesScreen(
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
-                            text = "Agregar direcciÃ³n",
+                            text = "Agregar dirección",
                             fontWeight = FontWeight.Bold
                         )
                     }
@@ -198,7 +198,7 @@ fun AddressesScreen(
                             )
                             Spacer(modifier = Modifier.width(10.dp))
                             Text(
-                                text = "Tus direcciones se usan para calcular costos de envÃ­o y facilitar el proceso de compra.",
+                                text = "Tus direcciones se usan para calcular costos de envío y facilitar el proceso de compra.",
                                 fontSize = 12.sp,
                                 color = TextSecondary,
                                 lineHeight = 16.sp
@@ -219,7 +219,7 @@ fun AddressesScreen(
             }
         }
         
-        // Modal de agregar direcciÃ³n
+        // Modal de agregar dirección
         if (showAddAddressModal) {
             val userId = SupabaseClient.auth.currentUserOrNull()?.id 
                 ?: ProfileRepository.currentProfile.value?.userId 
@@ -246,10 +246,10 @@ fun AddressesScreen(
             AlertDialog(
                 onDismissRequest = { if (!isDeleting) confirmDeleteAddress = null },
                 icon = { Icon(Icons.Outlined.DeleteForever, contentDescription = null, tint = Color(0xFFEF4444), modifier = Modifier.size(32.dp)) },
-                title = { Text("Eliminar direcciÃ³n", fontWeight = FontWeight.Bold) },
+                title = { Text("Eliminar dirección", fontWeight = FontWeight.Bold) },
                 text = {
                     Column {
-                        Text("Â¿Eliminar definitivamente la direcciÃ³n \"${addrToDelete.label}\"?")
+                        Text("¿Eliminar definitivamente la dirección \"${addrToDelete.label}\"?")
                         if (deleteError != null) {
                             Spacer(modifier = Modifier.height(8.dp))
                             Text(deleteError!!, color = Color(0xFFEF4444), fontSize = 12.sp)

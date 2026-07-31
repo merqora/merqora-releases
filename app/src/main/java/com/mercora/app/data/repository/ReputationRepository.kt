@@ -19,8 +19,8 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 
 /**
- * Repositorio para gestionar la reputaciÃ³n de usuarios con Supabase Realtime
- * La reputaciÃ³n se actualiza automÃ¡ticamente cuando:
+ * Repositorio para gestionar la reputación de usuarios con Supabase Realtime
+ * La reputación se actualiza automáticamente cuando:
  * - Se completa un handshake: +2% a +5%
  * - Se cancela en WAITING: -2%
  * - Se cancela en ACCEPTED: -5%
@@ -32,11 +32,11 @@ object ReputationRepository {
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
     private val json = Json { ignoreUnknownKeys = true }
     
-    // ReputaciÃ³n del usuario actual (0-100)
+    // Reputación del usuario actual (0-100)
     private val _currentUserReputation = MutableStateFlow(50.0)
     val currentUserReputation: StateFlow<Double> = _currentUserReputation.asStateFlow()
     
-    // ReputaciÃ³n del otro usuario en el chat actual
+    // Reputación del otro usuario en el chat actual
     private val _otherUserReputation = MutableStateFlow(50.0)
     val otherUserReputation: StateFlow<Double> = _otherUserReputation.asStateFlow()
     
@@ -51,7 +51,7 @@ object ReputationRepository {
     }
     
     /**
-     * Cargar reputaciÃ³n inicial de un usuario
+     * Cargar reputación inicial de un usuario
      */
     suspend fun loadReputation(userId: String): Double {
         return try {
@@ -73,7 +73,7 @@ object ReputationRepository {
     }
     
     /**
-     * Suscribirse a cambios de reputaciÃ³n en tiempo real
+     * Suscribirse a cambios de reputación en tiempo real
      */
     suspend fun subscribeToReputation(currentUserId: String, otherUserId: String) {
         this.currentUserId = currentUserId
@@ -142,7 +142,7 @@ object ReputationRepository {
     }
     
     /**
-     * Forzar recarga de reputaciÃ³n (Ãºtil despuÃ©s de completar handshake)
+     * Forzar recarga de reputación (útil después de completar handshake)
      */
     suspend fun refreshReputation() {
         currentUserId?.let { 
@@ -154,7 +154,7 @@ object ReputationRepository {
     }
     
     /**
-     * Incrementar reputaciÃ³n del usuario actual (handshake completado)
+     * Incrementar reputación del usuario actual (handshake completado)
      * @return El cambio aplicado (+3 a +4 random)
      */
     suspend fun incrementReputation(): Int {
@@ -191,7 +191,7 @@ object ReputationRepository {
     }
     
     /**
-     * Decrementar reputaciÃ³n del usuario actual (cancelaciÃ³n)
+     * Decrementar reputación del usuario actual (cancelación)
      * @param amount Cantidad a decrementar (1 para WAITING, 5 para ACCEPTED)
      * @return El cambio aplicado (negativo)
      */

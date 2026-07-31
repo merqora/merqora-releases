@@ -41,7 +41,7 @@ import kotlinx.coroutines.launch
 import kotlin.math.abs
 
 /**
- * Optimiza URLs de Cloudinary para mÃ¡ximo rendimiento
+ * Optimiza URLs de Cloudinary para máximo rendimiento
  * Aplica: width, quality auto, format auto
  */
 private fun optimizeCloudinaryUrl(url: String, width: Int = 800): String {
@@ -58,14 +58,14 @@ private fun optimizeCloudinaryUrl(url: String, width: Int = 800): String {
 }
 
 /**
- * PremiumImageCarousel - Carrusel de imÃ¡genes optimizado estilo Instagram
+ * PremiumImageCarousel - Carrusel de imágenes optimizado estilo Instagram
  * 
- * CaracterÃ­sticas:
- * - Snap instantÃ¡neo con fÃ­sica natural
- * - DetecciÃ³n inteligente de intenciÃ³n del gesto
+ * Características:
+ * - Snap instantáneo con física natural
+ * - Detección inteligente de intención del gesto
  * - Animaciones en GPU (graphicsLayer)
- * - Umbral de velocidad bajo para cambio rÃ¡pido
- * - Pre-carga de imÃ¡genes adyacentes
+ * - Umbral de velocidad bajo para cambio rápido
+ * - Pre-carga de imágenes adyacentes
  * - Sin conflicto con scroll vertical del feed
  */
 @OptIn(ExperimentalFoundationApi::class)
@@ -83,7 +83,7 @@ fun PremiumImageCarousel(
     
     val pagerState = rememberPagerState(pageCount = { images.size })
     
-    // ConfiguraciÃ³n de fling optimizada para swipes cortos y rÃ¡pidos
+    // Configuración de fling optimizada para swipes cortos y rápidos
     val flingBehavior = PagerDefaults.flingBehavior(
         state = pagerState,
         pagerSnapDistance = PagerSnapDistance.atMost(1),
@@ -123,7 +123,7 @@ fun PremiumImageCarousel(
                             .crossfade(100)
                             .memoryCachePolicy(CachePolicy.ENABLED)
                             .diskCachePolicy(CachePolicy.ENABLED)
-                            // Sin .size() fijo: Coil decodifica al tamaÃ±o MEDIDO del
+                            // Sin .size() fijo: Coil decodifica al tamaño MEDIDO del
                             // composable (menos memoria y decode que 1080x1350 fijo)
                             .build()
                     },
@@ -134,7 +134,7 @@ fun PremiumImageCarousel(
             }
         }
         
-        // Indicadores de pÃ¡gina (dots) - OPTIMIZADO sin animaciones
+        // Indicadores de página (dots) - OPTIMIZADO sin animaciones
         if (showIndicators && images.size > 1) {
             Row(
                 modifier = Modifier
@@ -157,7 +157,7 @@ fun PremiumImageCarousel(
             }
         }
         
-        // Contador de imÃ¡genes
+        // Contador de imágenes
         if (showCounter && images.size > 1) {
             Surface(
                 modifier = Modifier
@@ -180,19 +180,19 @@ fun PremiumImageCarousel(
 }
 
 /**
- * PostImageCarousel V2 - TAP INSTANTÃNEO sin delay
+ * PostImageCarousel V2 - TAP INSTANTÁNEO sin delay
  * 
- * OPTIMIZACIÃ“N CRÃTICA: 
- * - Se eliminÃ³ combinedClickable con onDoubleClick que causaba delay de 300-500ms
+ * OPTIMIZACIÓN CRÍTICA: 
+ * - Se eliminó combinedClickable con onDoubleClick que causaba delay de 300-500ms
  *   en el onClick (esperando a determinar si era doble tap)
- * - Ahora usa clickable + pointerInput separados para respuesta tÃ¡ctil INMEDIATA
+ * - Ahora usa clickable + pointerInput separados para respuesta táctil INMEDIATA
  * - Sin conflicto con HorizontalPager: los taps se registran AL INSTANTE
  * - Doble tap redirigido solo a onDoubleTap sin bloquear el single tap
  *
- * @param images Lista de URLs de imÃ¡genes
- * @param contentDescription DescripciÃ³n para accesibilidad
- * @param onTap Callback que se dispara INSTANTÃNEAMENTE al pulsar (sin esperar doble tap)
- * @param onDoubleTap Callback para doble tap (se dispara ADEMÃS del single tap)
+ * @param images Lista de URLs de imágenes
+ * @param contentDescription Descripción para accesibilidad
+ * @param onTap Callback que se dispara INSTANTÁNEAMENTE al pulsar (sin esperar doble tap)
+ * @param onDoubleTap Callback para doble tap (se dispara ADEMÁS del single tap)
  * @param modifier Modificador
  */
 @Suppress("DEPRECATION")
@@ -237,15 +237,15 @@ fun PostImageCarousel(
                     .crossfade(100)
                     .memoryCachePolicy(CachePolicy.ENABLED)
                     .diskCachePolicy(CachePolicy.ENABLED)
-                    // Sin .size() fijo: Coil decodifica al tamaÃ±o MEDIDO del
+                    // Sin .size() fijo: Coil decodifica al tamaño MEDIDO del
                     // composable (menos memoria y decode que 1080x1350 fijo)
                     .build()
             }
             
-            // CUSTOM GESTURE DETECTOR: Tap instantÃ¡neo + doble tap
+            // CUSTOM GESTURE DETECTOR: Tap instantáneo + doble tap
             // No usa clickable ni detectTapGestures para evitar conflictos con HorizontalPager
             // onTap se dispara INMEDIATAMENTE al levantar el dedo (sin esperar doble tap timeout)
-            // Si llega un segundo tap dentro de 300ms, dispara ADEMÃS onDoubleTap (like)
+            // Si llega un segundo tap dentro de 300ms, dispara ADEMÁS onDoubleTap (like)
             var lastTapTimeMs by remember { mutableLongStateOf(0L) }
             
             AsyncImage(
@@ -260,11 +260,11 @@ fun PostImageCarousel(
                             if (firstUp != null) {
                                 val now = System.currentTimeMillis()
                                 if (now - lastTapTimeMs < 300L && lastTapTimeMs != 0L) {
-                                    // DOUBLE TAP: dispara like, onTap ya se disparÃ³ en el primer tap
+                                    // DOUBLE TAP: dispara like, onTap ya se disparó en el primer tap
                                     lastTapTimeMs = 0L
                                     onDoubleTap(Offset(firstDown.position.x, firstDown.position.y))
                                 } else {
-                                    // SINGLE TAP: dispara INMEDIATAMENTE (navegaciÃ³n a ProductPage)
+                                    // SINGLE TAP: dispara INMEDIATAMENTE (navegación a ProductPage)
                                     lastTapTimeMs = now
                                     onTap()
                                 }

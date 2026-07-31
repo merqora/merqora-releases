@@ -33,7 +33,7 @@ object VerificationRepository {
     
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
     
-    // Estado de verificaciÃ³n del otro usuario (para tiempo real)
+    // Estado de verificación del otro usuario (para tiempo real)
     private val _otherUserVerified = MutableStateFlow(false)
     val otherUserVerified: StateFlow<Boolean> = _otherUserVerified.asStateFlow()
     
@@ -70,7 +70,7 @@ object VerificationRepository {
         val verification_type: String? = null
     )
 
-    // Datos de la cuenta para el formulario de verificaciÃ³n
+    // Datos de la cuenta para el formulario de verificación
     data class AccountDataForVerification(
         val username: String?,
         val email: String?,
@@ -84,7 +84,7 @@ object VerificationRepository {
         val salesCount: Int
     )
 
-    // Obtener estado de verificaciÃ³n del usuario actual
+    // Obtener estado de verificación del usuario actual
     suspend fun getVerificationStatus(userId: String): UserVerificationStatus? = withContext(Dispatchers.IO) {
         try {
             val result = SupabaseClient.client
@@ -94,15 +94,15 @@ object VerificationRepository {
                 }
                 .decodeSingleOrNull<UserVerificationStatus>()
             
-            Log.d(TAG, "âœ… Estado de verificaciÃ³n obtenido: ${result?.is_verified}")
+            Log.d(TAG, "âœ… Estado de verificación obtenido: ${result?.is_verified}")
             result
         } catch (e: Exception) {
-            Log.e(TAG, "âŒ Error obteniendo estado de verificaciÃ³n: ${e.message}")
+            Log.e(TAG, "âŒ Error obteniendo estado de verificación: ${e.message}")
             null
         }
     }
 
-    // Obtener solicitud de verificaciÃ³n pendiente
+    // Obtener solicitud de verificación pendiente
     suspend fun getPendingRequest(userId: String): VerificationRequest? = withContext(Dispatchers.IO) {
         try {
             val result = SupabaseClient.client
@@ -125,7 +125,7 @@ object VerificationRepository {
         }
     }
 
-    // Obtener Ãºltima solicitud (cualquier estado)
+    // Obtener última solicitud (cualquier estado)
     suspend fun getLatestRequest(userId: String): VerificationRequest? = withContext(Dispatchers.IO) {
         try {
             val result = SupabaseClient.client
@@ -137,15 +137,15 @@ object VerificationRepository {
                 }
                 .decodeSingleOrNull<VerificationRequest>()
             
-            Log.d(TAG, "âœ… Ãšltima solicitud: ${result?.status}")
+            Log.d(TAG, "âœ… Última solicitud: ${result?.status}")
             result
         } catch (e: Exception) {
-            Log.e(TAG, "âŒ Error obteniendo Ãºltima solicitud: ${e.message}")
+            Log.e(TAG, "âŒ Error obteniendo última solicitud: ${e.message}")
             null
         }
     }
 
-    // Crear nueva solicitud de verificaciÃ³n
+    // Crear nueva solicitud de verificación
     suspend fun submitVerificationRequest(
         userId: String,
         verificationType: String,
@@ -214,7 +214,7 @@ object VerificationRepository {
                 .from("verification_requests")
                 .insert(request)
 
-            Log.d(TAG, "âœ… Solicitud de verificaciÃ³n enviada")
+            Log.d(TAG, "âœ… Solicitud de verificación enviada")
             true
         } catch (e: Exception) {
             Log.e(TAG, "âŒ Error enviando solicitud: ${e.message}")
@@ -242,7 +242,7 @@ object VerificationRepository {
         }
     }
 
-    // Obtener datos de la cuenta para el formulario de verificaciÃ³n
+    // Obtener datos de la cuenta para el formulario de verificación
     suspend fun getAccountDataForVerification(): AccountDataForVerification? = withContext(Dispatchers.IO) {
         try {
             val userId = SupabaseClient.auth.currentUserOrNull()?.id ?: return@withContext null
@@ -319,17 +319,17 @@ object VerificationRepository {
         }
     }
 
-    // CachÃ© en memoria de badges verificados: evita una query Supabase por
+    // Caché en memoria de badges verificados: evita una query Supabase por
     // item del feed cada vez que el LazyColumn recicla composables
     private val verifiedCache = java.util.concurrent.ConcurrentHashMap<String, Boolean>()
 
-    // VersiÃ³n cacheada para uso en el feed (una query por usuario por sesiÃ³n)
+    // Versión cacheada para uso en el feed (una query por usuario por sesión)
     suspend fun isUserVerifiedCached(userId: String): Boolean {
         verifiedCache[userId]?.let { return it }
         return isUserVerified(userId).also { verifiedCache[userId] = it }
     }
 
-    // Verificar si un usuario estÃ¡ verificado (para mostrar badge)
+    // Verificar si un usuario está verificado (para mostrar badge)
     suspend fun isUserVerified(userId: String): Boolean = withContext(Dispatchers.IO) {
         try {
             val result = SupabaseClient.client
@@ -352,15 +352,15 @@ object VerificationRepository {
         return sdf.format(Date())
     }
     
-    // Suscribirse a cambios de verificaciÃ³n de un usuario en tiempo real
+    // Suscribirse a cambios de verificación de un usuario en tiempo real
     suspend fun subscribeToVerification(userId: String) {
         // Si ya estamos suscritos al mismo usuario, no hacer nada
         if (subscribedUserId == userId && verificationChannel != null) {
-            Log.d(TAG, "Ya suscrito a verificaciÃ³n de $userId")
+            Log.d(TAG, "Ya suscrito a verificación de $userId")
             return
         }
         
-        // Limpiar suscripciÃ³n anterior
+        // Limpiar suscripción anterior
         unsubscribeFromVerification()
         
         subscribedUserId = userId
@@ -368,21 +368,21 @@ object VerificationRepository {
         // Cargar estado inicial
         val initialStatus = isUserVerified(userId)
         _otherUserVerified.value = initialStatus
-        Log.d(TAG, ">>> Estado inicial de verificaciÃ³n para $userId: $initialStatus")
+        Log.d(TAG, ">>> Estado inicial de verificación para $userId: $initialStatus")
         
         try {
             // Crear canal para escuchar cambios en la tabla usuarios
             val channelId = "verification-$userId-${System.currentTimeMillis()}"
             verificationChannel = SupabaseClient.client.realtime.channel(channelId)
             
-            // Escuchar cambios en el usuario especÃ­fico
+            // Escuchar cambios en el usuario específico
             verificationChannel?.postgresChangeFlow<PostgresAction>(
                 schema = "public"
             ) {
                 table = "usuarios"
                 filter = "user_id=eq.$userId"
             }?.onEach { action ->
-                Log.d(TAG, ">>> Realtime verificaciÃ³n recibido: ${action::class.simpleName}")
+                Log.d(TAG, ">>> Realtime verificación recibido: ${action::class.simpleName}")
                 when (action) {
                     is PostgresAction.Update -> {
                         val record = action.record
@@ -395,21 +395,21 @@ object VerificationRepository {
             }?.launchIn(scope)
             
             verificationChannel?.subscribe()
-            Log.d(TAG, "âœ… Suscrito a cambios de verificaciÃ³n de $userId")
+            Log.d(TAG, "âœ… Suscrito a cambios de verificación de $userId")
             
         } catch (e: Exception) {
-            Log.e(TAG, "âŒ Error suscribiendo a verificaciÃ³n: ${e.message}")
+            Log.e(TAG, "âŒ Error suscribiendo a verificación: ${e.message}")
         }
     }
     
-    // Cancelar suscripciÃ³n
+    // Cancelar suscripción
     fun unsubscribeFromVerification() {
         scope.launch {
             try {
                 verificationChannel?.unsubscribe()
                 verificationChannel = null
                 subscribedUserId = null
-                Log.d(TAG, "Desuscrito de verificaciÃ³n")
+                Log.d(TAG, "Desuscrito de verificación")
             } catch (e: Exception) {
                 Log.e(TAG, "Error desuscribiendo: ${e.message}")
             }

@@ -1,20 +1,43 @@
 ﻿package com.mercora.app.data.biometric
 
 import android.content.Context
+import android.content.SharedPreferences
+import androidx.security.crypto.EncryptedSharedPreferences
+import androidx.security.crypto.MasterKey
 import com.mercora.app.data.remote.SessionPersistence
 import com.mercora.app.data.repository.SecurityRepository
 import com.mercora.app.data.remote.SupabaseClient
+import kotlinx.coroutines.launch
 
 object BiometricEnrollmentManager {
 
-    private const val PREFS_NAME = "biometric_enrollment"
+    private const val PREFS_NAME = "biometric_enrollment_encrypted"
     private const val KEY_ENROLLED_USERS = "enrolled_user_ids"
     private const val KEY_LAST_EMAIL = "last_email"
     private const val KEY_LAST_PASSWORD = "last_password"
     private const val KEY_HAS_SAVED_CREDENTIALS = "has_saved_creds"
 
-    private fun prefs(context: Context) =
-        context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+    private var encryptedPrefs: SharedPreferences? = null
+
+    private fun prefs(context: Context): SharedPreferences {
+        if (encryptedPrefs == null) {
+            try {
+                val masterKey = MasterKey.Builder(context)
+                    .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
+                    .build()
+                encryptedPrefs = EncryptedSharedPreferences.create(
+                    context,
+                    PREFS_NAME,
+                    masterKey,
+                    EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+                    EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+                )
+            } catch (e: Exception) {
+                encryptedPrefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+            }
+        }
+        return encryptedPrefs!!
+    }
 
     fun isEnrolled(context: Context, userId: String): Boolean {
         val set = prefs(context).getStringSet(KEY_ENROLLED_USERS, emptySet()) ?: emptySet()
@@ -83,5 +106,10 @@ object BiometricEnrollmentManager {
 
     fun clearAll(context: Context) {
         prefs(context).edit().clear().apply()
+        kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.IO).launch {
+            try {
+                SupabaseClient.auth.signOut()
+            } catch (_: Exception) { }
+        }
     }
 }

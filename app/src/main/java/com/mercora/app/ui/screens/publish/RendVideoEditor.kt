@@ -72,7 +72,7 @@ import androidx.compose.ui.graphics.drawscope.Stroke
  * REND VIDEO EDITOR - Editor de Video Profesional estilo Instagram EDITS
  * â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
  * 
- * CaracterÃ­sticas:
+ * Características:
  * - Timeline horizontal con scrubbing ultra fluido
  * - Playhead central fijo con desplazamiento del timeline
  * - Capas: video, audio, texto, efectos
@@ -86,14 +86,14 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 
 /**
  * â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
- * ARQUITECTURA DE CAPAS - TimelineItem (PreparaciÃ³n para ediciÃ³n profesional)
+ * ARQUITECTURA DE CAPAS - TimelineItem (Preparación para edición profesional)
  * â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
  * 
  * Modelo de datos escalable para soportar:
  * - Clips cortables
  * - Overlays reales
  * - Texto animado
- * - Efectos con duraciÃ³n
+ * - Efectos con duración
  */
 enum class TimelineItemType {
     VIDEO, AUDIO, TEXT, EFFECT, IMAGE, STICKER
@@ -176,14 +176,14 @@ private val TEXT_CONTEXT_TOOLS = listOf(
 private val EFFECT_CONTEXT_TOOLS = listOf(
     EditorTool("back", Icons.Default.ArrowBack, ""),
     EditorTool("intensity", Icons.Outlined.Tune, "Intensidad"),
-    EditorTool("duration", Icons.Outlined.Timer, "DuraciÃ³n"),
+    EditorTool("duration", Icons.Outlined.Timer, "Duración"),
     EditorTool("duplicate", Icons.Outlined.ContentCopy, "Duplicar"),
     EditorTool("delete", Icons.Outlined.Delete, "Eliminar")
 )
 
 /**
  * â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
- * THUMBNAIL CACHE - LRU Cache para optimizaciÃ³n de memoria
+ * THUMBNAIL CACHE - LRU Cache para optimización de memoria
  * â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
  */
 object ThumbnailCache {
@@ -226,7 +226,7 @@ private val EDITOR_TOOLS = listOf(
     EditorTool("text", Icons.Outlined.TextFields, "Texto"),
     EditorTool("voice", Icons.Outlined.Mic, "Voz"),
     EditorTool("stickers", Icons.Outlined.Face, "Stickers"),
-    EditorTool("captions", Icons.Outlined.ClosedCaption, "SubtÃ­tulos"),
+    EditorTool("captions", Icons.Outlined.ClosedCaption, "Subtítulos"),
     EditorTool("adjust", Icons.Outlined.Tune, "Ajustar"),
     EditorTool("filters", Icons.Outlined.FilterVintage, "Filtros"),
     EditorTool("effects", Icons.Outlined.AutoAwesome, "Efectos")
@@ -239,7 +239,7 @@ private val EDITOR_TOOLS = listOf(
 // Herramientas para AUDIO (al pulsar Audio en toolbar principal)
 private val AUDIO_TOOLS = listOf(
     EditorTool("back", Icons.Default.ArrowBack, ""),
-    EditorTool("music", Icons.Outlined.LibraryMusic, "MÃºsica"),
+    EditorTool("music", Icons.Outlined.LibraryMusic, "Música"),
     EditorTool("sounds", Icons.Outlined.SurroundSound, "Sonidos"),
     EditorTool("voiceover", Icons.Outlined.RecordVoiceOver, "Voz en off")
 )
@@ -247,7 +247,7 @@ private val AUDIO_TOOLS = listOf(
 // Herramientas para TEXTO
 private val TEXT_TOOLS = listOf(
     EditorTool("back", Icons.Default.ArrowBack, ""),
-    EditorTool("add_text", Icons.Outlined.Add, "AÃ±adir"),
+    EditorTool("add_text", Icons.Outlined.Add, "Añadir"),
     EditorTool("templates", Icons.Outlined.TextSnippet, "Plantillas"),
     EditorTool("styles", Icons.Outlined.FormatColorText, "Estilos")
 )
@@ -268,7 +268,7 @@ private val STICKER_TOOLS = listOf(
     EditorTool("shapes", Icons.Outlined.Category, "Formas")
 )
 
-// Herramientas para SUBTÃTULOS
+// Herramientas para SUBTÍTULOS
 private val CAPTIONS_TOOLS = listOf(
     EditorTool("back", Icons.Default.ArrowBack, ""),
     EditorTool("auto", Icons.Outlined.AutoFixHigh, "Auto"),
@@ -282,25 +282,25 @@ private val ADJUST_TOOLS = listOf(
     EditorTool("back", Icons.Default.ArrowBack, ""),
     EditorTool("brightness", Icons.Outlined.WbSunny, "Brillo"),
     EditorTool("contrast", Icons.Outlined.Contrast, "Contraste"),
-    EditorTool("saturation", Icons.Outlined.Palette, "SaturaciÃ³n"),
-    EditorTool("exposure", Icons.Outlined.Exposure, "ExposiciÃ³n"),
+    EditorTool("saturation", Icons.Outlined.Palette, "Saturación"),
+    EditorTool("exposure", Icons.Outlined.Exposure, "Exposición"),
     EditorTool("highlights", Icons.Outlined.LightMode, "Luces"),
     EditorTool("shadows", Icons.Outlined.DarkMode, "Sombras"),
     EditorTool("temperature", Icons.Outlined.Thermostat, "Temperatura"),
     EditorTool("sharpen", Icons.Outlined.Deblur, "Nitidez"),
-    EditorTool("vignette", Icons.Outlined.Vignette, "ViÃ±eta")
+    EditorTool("vignette", Icons.Outlined.Vignette, "Viñeta")
 )
 
 // Herramientas para FILTROS - Presets profesionales
 private val FILTER_TOOLS = listOf(
     EditorTool("back", Icons.Default.ArrowBack, ""),
     EditorTool("none", Icons.Outlined.Block, "Original"),
-    EditorTool("vivid", Icons.Outlined.AutoAwesome, "VÃ­vido"),
-    EditorTool("warm", Icons.Outlined.WbSunny, "CÃ¡lido"),
-    EditorTool("cool", Icons.Outlined.AcUnit, "FrÃ­o"),
+    EditorTool("vivid", Icons.Outlined.AutoAwesome, "Vívido"),
+    EditorTool("warm", Icons.Outlined.WbSunny, "Cálido"),
+    EditorTool("cool", Icons.Outlined.AcUnit, "Frío"),
     EditorTool("bw", Icons.Outlined.FilterBAndW, "B&N"),
     EditorTool("vintage", Icons.Outlined.FilterVintage, "Vintage"),
-    EditorTool("dramatic", Icons.Outlined.Thunderstorm, "DramÃ¡tico"),
+    EditorTool("dramatic", Icons.Outlined.Thunderstorm, "Dramático"),
     EditorTool("fade", Icons.Outlined.Gradient, "Fade")
 )
 
@@ -357,7 +357,7 @@ fun RendVideoEditor(
     var selectedToolId by remember { mutableStateOf<String?>(null) }
     
     // â•â•â• MODO DE HERRAMIENTAS â•â•â•
-    // Controla quÃ© set de herramientas se muestra en el toolbar
+    // Controla qué set de herramientas se muestra en el toolbar
     var toolMode by remember { mutableStateOf(EditorToolMode.MAIN) }
     
     // â•â•â• ESTADO DE MODALES â•â•â•
@@ -369,8 +369,8 @@ fun RendVideoEditor(
     // â•â•â• ESTADO DE TEXTO OVERLAY â•â•â•
     // Lista de textos persistentes sobre el video
     var textOverlays by remember { mutableStateOf(listOf<VideoTextOverlay>()) }
-    // Estado temporal para ediciÃ³n
-    var editingTextState by remember { mutableStateOf(com.vinzay.app.ui.components.StoryTextState()) }
+    // Estado temporal para edición
+    var editingTextState by remember { mutableStateOf(com.mercora.app.ui.components.StoryTextState()) }
     
     // â•â•â• ESTADO PARA OCULTAR HEADER â•â•â•
     val isAnyModalOpen = showTextModal || showFiltersModal || showEffectsModal || showAdjustModal
@@ -391,22 +391,22 @@ fun RendVideoEditor(
     )) }
     
     // â•â•â• ESTADO DE FILTROS â•â•â•
-    var selectedFilter by remember { mutableStateOf(com.vinzay.app.ui.components.STORY_FILTERS.first()) }
+    var selectedFilter by remember { mutableStateOf(com.mercora.app.ui.components.STORY_FILTERS.first()) }
     var selectedEffect by remember { mutableStateOf("none") }
     
     // â•â•â• TIMELINE SCROLL INTELIGENTE (Anti "peleas") â•â•â•
-    // Flag para detectar cuando el usuario estÃ¡ interactuando manualmente
+    // Flag para detectar cuando el usuario está interactuando manualmente
     var isUserScrubbing by remember { mutableStateOf(false) }
-    // Flag para distinguir scroll programÃ¡tico vs manual
+    // Flag para distinguir scroll programático vs manual
     var isProgrammaticScroll by remember { mutableStateOf(false) }
     
     // â•â•â• ITEM SELECCIONADO EN TIMELINE â•â•â•
     var selectedTimelineItem by remember { mutableStateOf<TimelineItem?>(null) }
     
-    // â•â•â• MODAL DEL BOTÃ“N (+) PARA AGREGAR CLIPS â•â•â•
+    // â•â•â• MODAL DEL BOTÓN (+) PARA AGREGAR CLIPS â•â•â•
     var showAddClipMenu by remember { mutableStateOf(false) }
     
-    // â•â•â• ESTADOS DE HERRAMIENTAS DE EDICIÃ“N â•â•â•
+    // â•â•â• ESTADOS DE HERRAMIENTAS DE EDICIÓN â•â•â•
     var showSpeedModal by remember { mutableStateOf(false) }
     var showVolumeModal by remember { mutableStateOf(false) }
     var videoSpeed by remember { mutableFloatStateOf(1f) }
@@ -452,7 +452,7 @@ fun RendVideoEditor(
         return redoStack.removeLast()
     }
     
-    // â•â•â• GALERÃA Y CÃMARA â•â•â•
+    // â•â•â• GALERÍA Y CÁMARA â•â•â•
     var videoUriForCamera by remember { mutableStateOf<Uri?>(null) }
     
     fun onMediaSelected(uri: Uri) {
@@ -480,7 +480,7 @@ fun RendVideoEditor(
                 pushUndoState(timelineItems.toList())
                 timelineItems.add(newItem)
                 
-                android.util.Log.d("RendVideoEditor", "Clip agregado: $uri duraciÃ³n=${clipDurationMs}ms")
+                android.util.Log.d("RendVideoEditor", "Clip agregado: $uri duración=${clipDurationMs}ms")
             } catch (e: Exception) {
                 android.util.Log.e("RendVideoEditor", "Error al agregar clip", e)
             }
@@ -505,7 +505,7 @@ fun RendVideoEditor(
     var isLoadingThumbnails by remember { mutableStateOf(true) }
     
     // Capas del timeline - solo mostramos video al inicio
-    // Las demÃ¡s capas se agregan dinÃ¡micamente cuando el usuario las usa
+    // Las demás capas se agregan dinámicamente cuando el usuario las usa
     val layers = remember(timelineItems.toList()) {
         val hasAudio = timelineItems.any { it.type == TimelineItemType.AUDIO }
         val hasEffects = timelineItems.any { it.type == TimelineItemType.EFFECT }
@@ -517,7 +517,7 @@ fun RendVideoEditor(
         }
     }
     
-    // ExoPlayer para reproducciÃ³n
+    // ExoPlayer para reproducción
     val exoPlayer = remember {
         ExoPlayer.Builder(context).build().apply {
             setMediaItem(MediaItem.fromUri(videoUri))
@@ -527,8 +527,8 @@ fun RendVideoEditor(
     }
     
     // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-    // SINCRONIZACIÃ“N DE PLAYBACK ESCALABLE (Player.Listener)
-    // Arquitectura preparada para mÃºltiples clips, layers y ediciones
+    // SINCRONIZACIÓN DE PLAYBACK ESCALABLE (Player.Listener)
+    // Arquitectura preparada para múltiples clips, layers y ediciones
     // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
     DisposableEffect(exoPlayer) {
         val listener = object : Player.Listener {
@@ -555,7 +555,7 @@ fun RendVideoEditor(
                 newPosition: Player.PositionInfo,
                 reason: Int
             ) {
-                // Capturar seeks externos o cambios de posiciÃ³n
+                // Capturar seeks externos o cambios de posición
                 currentPositionMs = newPosition.positionMs
             }
         }
@@ -565,7 +565,7 @@ fun RendVideoEditor(
         }
     }
     
-    // Actualizar posiciÃ³n durante reproducciÃ³n (loop de 60fps)
+    // Actualizar posición durante reproducción (loop de 60fps)
     // Solo actualiza si NO estamos haciendo scrubbing manual
     LaunchedEffect(isPlaying, isUserScrubbing) {
         while (isPlaying && !isUserScrubbing) {
@@ -586,7 +586,7 @@ fun RendVideoEditor(
     }
     
     // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-    // OPTIMIZACIÃ“N DE THUMBNAILS CON LRU CACHE
+    // OPTIMIZACIÓN DE THUMBNAILS CON LRU CACHE
     // Cero OOM, scrolling fluido, estable en gama media/baja
     // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
     val videoUriKey = videoUri.toString()
@@ -656,7 +656,7 @@ fun RendVideoEditor(
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
             // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-            // HEADER - Animado, se mantiene visible pero vacÃ­o en modales
+            // HEADER - Animado, se mantiene visible pero vacío en modales
             // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
             val headerHeight by animateDpAsState(
                 targetValue = if (isAnyModalOpen && !showTextModal) 0.dp else 52.dp,
@@ -677,7 +677,7 @@ fun RendVideoEditor(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     if (showTextModal) {
-                        // Header vacÃ­o para modo texto - el botÃ³n "Listo" estÃ¡ en StoryTextEditor
+                        // Header vacío para modo texto - el botón "Listo" está en StoryTextEditor
                         Spacer(modifier = Modifier.weight(1f))
                     } else {
                         // Header normal del editor
@@ -747,7 +747,7 @@ fun RendVideoEditor(
                 
                 // â•â•â• TEXTOS OVERLAY PERSISTENTES â•â•â•
                 textOverlays.forEach { textOverlay ->
-                    // Solo mostrar si estÃ¡ en el rango de tiempo actual
+                    // Solo mostrar si está en el rango de tiempo actual
                     if (currentPositionMs in textOverlay.startMs..textOverlay.endMs) {
                         var isDragging by remember { mutableStateOf(false) }
                         
@@ -772,7 +772,7 @@ fun RendVideoEditor(
                                         onDragEnd = { isDragging = false },
                                         onDrag = { change, dragAmount ->
                                             change.consume()
-                                            // Actualizar posiciÃ³n del texto
+                                            // Actualizar posición del texto
                                             textOverlays = textOverlays.map { t ->
                                                 if (t.id == textOverlay.id) {
                                                     t.copy(
@@ -847,7 +847,7 @@ fun RendVideoEditor(
                 },
                 onZoomChange = { timelineZoom = it },
                 onUserScrubbingChange = { scrubbing ->
-                    // Solo activar scrubbing si NO es scroll programÃ¡tico
+                    // Solo activar scrubbing si NO es scroll programático
                     if (!isProgrammaticScroll) {
                         isUserScrubbing = scrubbing
                     }
@@ -882,12 +882,12 @@ fun RendVideoEditor(
                         val originalDuration = if (item.originalDurationMs > 0) item.originalDurationMs else videoDurationMs
                         
                         // Calcular nuevos tiempos de trim
-                        // trimStartMs: cuÃ¡nto se recorta del inicio (0 = sin recorte)
-                        // trimEndMs: posiciÃ³n final del video (originalDuration = sin recorte)
+                        // trimStartMs: cuánto se recorta del inicio (0 = sin recorte)
+                        // trimEndMs: posición final del video (originalDuration = sin recorte)
                         val newTrimStart = (item.trimStartMs + startDeltaMs).coerceIn(0L, item.trimEndMs - 500L)
                         val newTrimEnd = (item.trimEndMs + endDeltaMs).coerceIn(item.trimStartMs + 500L, originalDuration)
                         
-                        // La duraciÃ³n visible es trimEndMs - trimStartMs
+                        // La duración visible es trimEndMs - trimStartMs
                         val newDuration = newTrimEnd - newTrimStart
                         
                         timelineItems[index] = item.copy(
@@ -896,7 +896,7 @@ fun RendVideoEditor(
                             endMs = item.startMs + newDuration
                         )
                         
-                        // Sincronizar el player con los nuevos lÃ­mites de trim
+                        // Sincronizar el player con los nuevos límites de trim
                         if (item.type == TimelineItemType.VIDEO) {
                             exoPlayer.seekTo(newTrimStart)
                         }
@@ -920,7 +920,7 @@ fun RendVideoEditor(
                     TimelineItemType.EFFECT -> EFFECT_CONTEXT_TOOLS
                     else -> EDITOR_TOOLS
                 }
-                // Si no, mostrar segÃºn toolMode
+                // Si no, mostrar según toolMode
                 else -> when (toolMode) {
                     EditorToolMode.MAIN -> EDITOR_TOOLS
                     EditorToolMode.AUDIO -> AUDIO_TOOLS
@@ -967,7 +967,7 @@ fun RendVideoEditor(
                         "effects" -> {
                             showEffectsModal = true
                         }
-                        // Herramientas que abren submenÃºs
+                        // Herramientas que abren submenús
                         "audio" -> toolMode = EditorToolMode.AUDIO
                         "voice" -> toolMode = EditorToolMode.VOICE
                         "stickers" -> toolMode = EditorToolMode.STICKERS
@@ -982,7 +982,7 @@ fun RendVideoEditor(
                         
                         // â•â•â• HERRAMIENTAS CONTEXTUALES DE TIMELINE â•â•â•
                         "split" -> {
-                            // Dividir clip en la posiciÃ³n actual del playhead
+                            // Dividir clip en la posición actual del playhead
                             selectedTimelineItem?.let { item ->
                                 val splitPosition = currentPositionMs
                                 if (splitPosition > item.startMs && splitPosition < item.endMs) {
@@ -991,7 +991,7 @@ fun RendVideoEditor(
                                         val originalItem = timelineItems[index]
                                         val origDur = if (originalItem.originalDurationMs > 0) originalItem.originalDurationMs else videoDurationMs
                                         
-                                        // Primera parte: desde trimStart hasta la posiciÃ³n de corte
+                                        // Primera parte: desde trimStart hasta la posición de corte
                                         val firstDuration = splitPosition - originalItem.startMs
                                         val firstPart = originalItem.copy(
                                             id = "${originalItem.id}_part1",
@@ -1000,7 +1000,7 @@ fun RendVideoEditor(
                                             trimEndMs = originalItem.trimStartMs + firstDuration
                                         )
                                         
-                                        // Segunda parte: desde la posiciÃ³n de corte hasta trimEnd
+                                        // Segunda parte: desde la posición de corte hasta trimEnd
                                         val secondPart = originalItem.copy(
                                             id = "${originalItem.id}_part2",
                                             startMs = splitPosition,
@@ -1076,7 +1076,7 @@ fun RendVideoEditor(
                         "delete" -> {
                             // Eliminar el item seleccionado
                             selectedTimelineItem?.let { item ->
-                                // No permitir eliminar el video principal Ãºnico
+                                // No permitir eliminar el video principal único
                                 val videoItems = timelineItems.filter { it.type == TimelineItemType.VIDEO }
                                 if (item.type != TimelineItemType.VIDEO || videoItems.size > 1) {
                                     timelineItems.removeAll { it.id == item.id }
@@ -1104,13 +1104,13 @@ fun RendVideoEditor(
                     val adjustConfig = mapOf(
                         "brightness" to Triple("Brillo", -100f, 100f),
                         "contrast" to Triple("Contraste", -100f, 100f),
-                        "saturation" to Triple("SaturaciÃ³n", -100f, 100f),
-                        "exposure" to Triple("ExposiciÃ³n", -2f, 2f),
+                        "saturation" to Triple("Saturación", -100f, 100f),
+                        "exposure" to Triple("Exposición", -2f, 2f),
                         "highlights" to Triple("Luces", -100f, 100f),
                         "shadows" to Triple("Sombras", -100f, 100f),
                         "temperature" to Triple("Temperatura", -100f, 100f),
                         "sharpen" to Triple("Nitidez", 0f, 100f),
-                        "vignette" to Triple("ViÃ±eta", 0f, 100f)
+                        "vignette" to Triple("Viñeta", 0f, 100f)
                     )
                     
                     val config = adjustConfig[adjustId]
@@ -1142,7 +1142,7 @@ fun RendVideoEditor(
         // MODAL DE TEXTO - Estilo Instagram con teclado
         // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
         if (showTextModal) {
-            com.vinzay.app.ui.components.StoryTextEditor(
+            com.mercora.app.ui.components.StoryTextEditor(
                 visible = true,
                 previewHeight = 400.dp,
                 onDismiss = { 
@@ -1156,8 +1156,8 @@ fun RendVideoEditor(
                             endMs = videoDurationMs
                         )
                         textOverlays = textOverlays + newOverlay
-                        // Reset estado de ediciÃ³n
-                        editingTextState = com.vinzay.app.ui.components.StoryTextState()
+                        // Reset estado de edición
+                        editingTextState = com.mercora.app.ui.components.StoryTextState()
                     }
                     showTextModal = false 
                 },
@@ -1168,7 +1168,7 @@ fun RendVideoEditor(
         }
         
         // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-        // MODAL DE FILTROS - Altura automÃ¡tica, no sobrepasa el preview
+        // MODAL DE FILTROS - Altura automática, no sobrepasa el preview
         // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
         AnimatedVisibility(
             visible = showFiltersModal,
@@ -1190,7 +1190,7 @@ fun RendVideoEditor(
         }
         
         // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-        // MODAL DE EFECTOS - Altura automÃ¡tica, no sobrepasa el preview
+        // MODAL DE EFECTOS - Altura automática, no sobrepasa el preview
         // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
         AnimatedVisibility(
             visible = showEffectsModal,
@@ -1213,7 +1213,7 @@ fun RendVideoEditor(
         }
         
         // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-        // MODAL DE AJUSTES - Altura automÃ¡tica, no sobrepasa el preview
+        // MODAL DE AJUSTES - Altura automática, no sobrepasa el preview
         // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
         AnimatedVisibility(
             visible = showAdjustModal,
@@ -1285,15 +1285,19 @@ fun RendVideoEditor(
 private fun EditorHeader(
     projectName: String,
     onBack: () -> Unit,
-    onNext: () -> Unit
+    onNext: () -> Unit,
+    onNameChange: (String) -> Unit = {}
 ) {
+    var showEditNameDialog by remember { mutableStateOf(false) }
+    var editNameText by remember { mutableStateOf(projectName) }
+    
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 12.dp), // paddingTop reducido
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // BotÃ³n cerrar
+        // Botón cerrar
         IconButton(
             onClick = onBack,
             modifier = Modifier.size(40.dp)
@@ -1310,7 +1314,7 @@ private fun EditorHeader(
         Row(
             modifier = Modifier
                 .weight(1f)
-                .clickable { /* TODO: Editar nombre */ },
+                .clickable { showEditNameDialog = true },
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -1328,7 +1332,37 @@ private fun EditorHeader(
             )
         }
         
-        // BotÃ³n Siguiente
+        // Edit name dialog
+        if (showEditNameDialog) {
+            AlertDialog(
+                onDismissRequest = { showEditNameDialog = false },
+                title = { Text("Editar nombre del proyecto") },
+                text = {
+                    OutlinedTextField(
+                        value = editNameText,
+                        onValueChange = { editNameText = it },
+                        label = { Text("Nombre") },
+                        singleLine = true,
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedBorderColor = AccentGold,
+                            unfocusedBorderColor = BorderSubtle
+                        )
+                    )
+                },
+                confirmButton = {
+                    TextButton(onClick = {
+                        onNameChange(editNameText)
+                        showEditNameDialog = false
+                    }) { Text("Guardar") }
+                },
+                dismissButton = {
+                    TextButton(onClick = { showEditNameDialog = false }) { Text("Cancelar") }
+                }
+            )
+        }
+        
+        // Botón Siguiente
         Surface(
             onClick = onNext,
             shape = RoundedCornerShape(20.dp),
@@ -1450,7 +1484,7 @@ private fun buildVideoColorMatrix(
         matrix.postConcat(cm)
     }
     
-    // SaturaciÃ³n
+    // Saturación
     if (saturation != 0f) {
         val s = 1f + saturation / 100f
         val sm = android.graphics.ColorMatrix()
@@ -1470,7 +1504,7 @@ private fun buildVideoColorMatrix(
         matrix.postConcat(tm)
     }
     
-    // ExposiciÃ³n: multiplicador general
+    // Exposición: multiplicador general
     if (exposure != 0f) {
         val e = Math.pow(2.0, exposure.toDouble()).toFloat()
         val em = android.graphics.ColorMatrix(floatArrayOf(
@@ -1599,11 +1633,11 @@ private fun PlaybackControls(
  * TIMELINE AREA - Scroll Inteligente Anti "peleas"
  * â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
  * 
- * CaracterÃ­sticas:
- * - Detecta cuando el usuario estÃ¡ interactuando manualmente (drag/fling/scrub)
- * - animateScrollTo() solo cuando el usuario NO estÃ¡ tocando
+ * Características:
+ * - Detecta cuando el usuario está interactuando manualmente (drag/fling/scrub)
+ * - animateScrollTo() solo cuando el usuario NO está tocando
  * - Scroll manual sin interferencia del sistema
- * - Experiencia idÃ©ntica a Instagram/CapCut
+ * - Experiencia idéntica a Instagram/CapCut
  */
 @Composable
 private fun TimelineArea(
@@ -1644,7 +1678,7 @@ private fun TimelineArea(
         }
     }
     
-    // â•â•â• ESTADO DE DRAG & DROP CON GUÃAS â•â•â•
+    // â•â•â• ESTADO DE DRAG & DROP CON GUÍAS â•â•â•
     var isDraggingElement by remember { mutableStateOf(false) }
     var draggedElementId by remember { mutableStateOf<String?>(null) }
     var dragOffsetX by remember { mutableFloatStateOf(0f) }
@@ -1658,8 +1692,8 @@ private fun TimelineArea(
         } else 0.001f
     }
     
-    // â•â•â• DETECCIÃ“N DE INTERACCIÃ“N DEL USUARIO â•â•â•
-    // Solo detecta scroll manual, ignora scroll programÃ¡tico
+    // â•â•â• DETECCIÓN DE INTERACCIÓN DEL USUARIO â•â•â•
+    // Solo detecta scroll manual, ignora scroll programático
     LaunchedEffect(timelineScrollState.isScrollInProgress, isProgrammaticScroll) {
         if (timelineScrollState.isScrollInProgress && !isProgrammaticScroll) {
             onUserScrubbingChange(true)
@@ -1675,7 +1709,7 @@ private fun TimelineArea(
             .height(200.dp)
     ) {
         Row(modifier = Modifier.fillMaxSize()) {
-            // Layer icons (izquierda) - DINÃMICO basado en capas activas
+            // Layer icons (izquierda) - DINÁMICO basado en capas activas
             Column(
                 modifier = Modifier
                     .width(40.dp)
@@ -1716,18 +1750,18 @@ private fun TimelineArea(
                     .fillMaxHeight()
                     .onSizeChanged { timelineWidth = it.width }
             ) {
-                // â•â•â• PADDING DINÃMICO PARA SCROLL COMPLETO â•â•â•
-                // El playhead estÃ¡ centrado, asÃ­ que necesitamos padding = mitad del viewport
+                // â•â•â• PADDING DINÁMICO PARA SCROLL COMPLETO â•â•â•
+                // El playhead está centrado, así que necesitamos padding = mitad del viewport
                 // para que el inicio y fin del video puedan alinearse con el playhead
                 val horizontalPadding = with(density) { (timelineWidth / 2).toDp() }
                 
-                // Scrollable timeline con detecciÃ³n de gestos
-                // OPTIMIZACIÃ“N: graphicsLayer fuerza composiciÃ³n en capa separada (GPU)
+                // Scrollable timeline con detección de gestos
+                // OPTIMIZACIÓN: graphicsLayer fuerza composición en capa separada (GPU)
                 Row(
                     modifier = Modifier
                         .fillMaxSize()
                         .graphicsLayer { 
-                            // Forzar composiciÃ³n en capa GPU para scroll ultra fluido
+                            // Forzar composición en capa GPU para scroll ultra fluido
                             compositingStrategy = CompositingStrategy.Offscreen
                         }
                         .horizontalScroll(
@@ -1745,13 +1779,13 @@ private fun TimelineArea(
                             .padding(vertical = 8.dp)
                             .pointerInput(videoDurationMs, pixelsPerMs, horizontalPadding) {
                                 detectTapGestures { offset ->
-                                    // Tap para buscar posiciÃ³n (ajustado por padding)
+                                    // Tap para buscar posición (ajustado por padding)
                                     val tappedMs = (offset.x / pixelsPerMs).toLong()
                                         .coerceIn(0, videoDurationMs)
                                     onSeek(tappedMs)
                                 }
                             }
-                            // â•â•â• GUÃAS PUNTEADAS DE ALINEACIÃ“N â•â•â•
+                            // â•â•â• GUÍAS PUNTEADAS DE ALINEACIÓN â•â•â•
                             .drawBehind {
                                 if (isDraggingElement && showVerticalGuide) {
                                     val dashPath = PathEffect.dashPathEffect(floatArrayOf(10f, 10f), 0f)
@@ -1766,7 +1800,7 @@ private fun TimelineArea(
                             },
                         verticalArrangement = Arrangement.Center
                     ) {
-                        // Renderizar capas dinÃ¡micamente basado en timelineItems
+                        // Renderizar capas dinámicamente basado en timelineItems
                         val videoItems = timelineItems.filter { it.type == TimelineItemType.VIDEO }
                         val audioItems = timelineItems.filter { it.type == TimelineItemType.AUDIO }
                         val effectItems = timelineItems.filter { it.type == TimelineItemType.EFFECT }
@@ -1869,7 +1903,7 @@ private fun TimelineArea(
                                         .height(80.dp)
                                 )
                                 
-                                // Spacer para el espacio restante despuÃ©s del trim derecho
+                                // Spacer para el espacio restante después del trim derecho
                                 val endSpaceFraction = 1f - startOffsetFraction - widthFraction
                                 if (endSpaceFraction > 0.01f) {
                                     Spacer(modifier = Modifier.weight(endSpaceFraction.coerceAtLeast(0.01f)))
@@ -1938,7 +1972,7 @@ private fun TimelineArea(
                     Spacer(modifier = Modifier.width(horizontalPadding))
                 }
                 
-                // â•â•â• GUÃA VERTICAL CENTRAL PUNTEADA (visible durante drag) â•â•â•
+                // â•â•â• GUÍA VERTICAL CENTRAL PUNTEADA (visible durante drag) â•â•â•
                 if (isDraggingElement) {
                     Box(
                         modifier = Modifier
@@ -1967,13 +2001,13 @@ private fun TimelineArea(
                         .zIndex(10f)
                 )
                 
-                // â•â•â• BOTÃ“N (+) CON MENÃš POPUP â•â•â•
+                // â•â•â• BOTÓN (+) CON MENÚ POPUP â•â•â•
                 Box(
                     modifier = Modifier
                         .align(Alignment.CenterEnd)
                         .padding(end = 8.dp)
                 ) {
-                    // BotÃ³n principal
+                    // Botón principal
                     Box(
                         modifier = Modifier
                             .size(44.dp)
@@ -1993,7 +2027,7 @@ private fun TimelineArea(
                         )
                     }
                     
-                    // MenÃº popup fluido
+                    // Menú popup fluido
                     androidx.compose.animation.AnimatedVisibility(
                         visible = showAddClipMenu,
                         enter = fadeIn(animationSpec = tween(150)) + 
@@ -2013,7 +2047,7 @@ private fun TimelineArea(
                                 modifier = Modifier.padding(8.dp),
                                 horizontalAlignment = Alignment.CenterHorizontally
                             ) {
-                                // OpciÃ³n GalerÃ­a
+                                // Opción Galería
                                 Surface(
                                     onClick = onAddFromGallery,
                                     shape = RoundedCornerShape(12.dp),
@@ -2026,13 +2060,13 @@ private fun TimelineArea(
                                     ) {
                                         Icon(
                                             imageVector = Icons.Outlined.PhotoLibrary,
-                                            contentDescription = "GalerÃ­a",
+                                            contentDescription = "Galería",
                                             tint = Color.White,
                                             modifier = Modifier.size(22.dp)
                                         )
                                         Spacer(modifier = Modifier.width(12.dp))
                                         Text(
-                                            text = "GalerÃ­a",
+                                            text = "Galería",
                                             color = Color.White,
                                             fontSize = 14.sp,
                                             fontWeight = FontWeight.Medium
@@ -2048,7 +2082,7 @@ private fun TimelineArea(
                                         .background(Color.White.copy(alpha = 0.1f))
                                 )
                                 
-                                // OpciÃ³n CÃ¡mara
+                                // Opción Cámara
                                 Surface(
                                     onClick = onAddFromCamera,
                                     shape = RoundedCornerShape(12.dp),
@@ -2061,13 +2095,13 @@ private fun TimelineArea(
                                     ) {
                                         Icon(
                                             imageVector = Icons.Outlined.Videocam,
-                                            contentDescription = "CÃ¡mara",
+                                            contentDescription = "Cámara",
                                             tint = Color.White,
                                             modifier = Modifier.size(22.dp)
                                         )
                                         Spacer(modifier = Modifier.width(12.dp))
                                         Text(
-                                            text = "CÃ¡mara",
+                                            text = "Cámara",
                                             color = Color.White,
                                             fontSize = 14.sp,
                                             fontWeight = FontWeight.Medium
@@ -2082,9 +2116,9 @@ private fun TimelineArea(
         }
     }
     
-    // â•â•â• SINCRONIZACIÃ“N INTELIGENTE: Video â†’ Scroll â•â•â•
-    // Usa scrollTo directo (sin animaciÃ³n) para mÃ¡xima fluidez durante reproducciÃ³n
-    // El flag isProgrammaticScroll evita que esto dispare detecciÃ³n de scrubbing
+    // â•â•â• SINCRONIZACIÓN INTELIGENTE: Video â†’ Scroll â•â•â•
+    // Usa scrollTo directo (sin animación) para máxima fluidez durante reproducción
+    // El flag isProgrammaticScroll evita que esto dispare detección de scrubbing
     LaunchedEffect(currentPositionMs, pixelsPerMs, isUserScrubbing) {
         if (videoDurationMs > 0 && !isUserScrubbing) {
             val targetScroll = (currentPositionMs * pixelsPerMs).toInt()
@@ -2092,12 +2126,12 @@ private fun TimelineArea(
             
             // Solo scrollear si hay diferencia significativa
             if ((targetScroll - timelineScrollState.value).absoluteValue > 2) {
-                // Marcar como scroll programÃ¡tico ANTES de scrollear
+                // Marcar como scroll programático ANTES de scrollear
                 onProgrammaticScrollChange(true)
                 scope.launch {
-                    // Scroll directo sin animaciÃ³n para fluidez mÃ¡xima
+                    // Scroll directo sin animación para fluidez máxima
                     timelineScrollState.scrollTo(targetScroll)
-                    // PequeÃ±o delay y luego desactivar flag
+                    // Pequeño delay y luego desactivar flag
                     delay(16)
                     onProgrammaticScrollChange(false)
                 }
@@ -2105,8 +2139,8 @@ private fun TimelineArea(
         }
     }
     
-    // â•â•â• SINCRONIZACIÃ“N: Scroll â†’ Video â•â•â•
-    // Solo cuando el usuario hace scroll MANUAL (no programÃ¡tico)
+    // â•â•â• SINCRONIZACIÓN: Scroll â†’ Video â•â•â•
+    // Solo cuando el usuario hace scroll MANUAL (no programático)
     LaunchedEffect(timelineScrollState.value, isUserScrubbing, isProgrammaticScroll) {
         if (isUserScrubbing && !isProgrammaticScroll && videoDurationMs > 0 && timelineWidth > 0) {
             val newPositionMs = (timelineScrollState.value / pixelsPerMs).toLong()
@@ -2164,7 +2198,7 @@ private fun EffectsLayerTrack(
             }
         }
         
-        // Handles de trim (solo cuando estÃ¡ seleccionado)
+        // Handles de trim (solo cuando está seleccionado)
         if (isSelected) {
             // Handle izquierdo
             Box(
@@ -2267,14 +2301,14 @@ private fun VideoLayerTrack(
     var isLongPressDragging by remember { mutableStateOf(false) }
     var isTrimming by remember { mutableStateOf(false) }
     
-    // AnimaciÃ³n de escala al arrastrar
+    // Animación de escala al arrastrar
     val scale by animateFloatAsState(
         targetValue = if (isLongPressDragging) 1.03f else 1f,
         animationSpec = spring(dampingRatio = 0.7f, stiffness = 300f),
         label = "videoTrackScale"
     )
     
-    // Fondo grisÃ¡ceo del canal
+    // Fondo grisáceo del canal
     Box(
         modifier = modifier
             .clip(RoundedCornerShape(10.dp))
@@ -2374,7 +2408,7 @@ private fun VideoLayerTrack(
             }
         }
         
-        // â•â•â• HANDLES DE CORTE (Zero-slop: sigue al dedo instantÃ¡neamente) â•â•â•
+        // â•â•â• HANDLES DE CORTE (Zero-slop: sigue al dedo instantáneamente) â•â•â•
         if (isSelected) {
             // Handle izquierdo (inicio)
             Box(
@@ -2501,14 +2535,14 @@ private fun AudioLayerTrack(
     var isLongPressDragging by remember { mutableStateOf(false) }
     var isTrimming by remember { mutableStateOf(false) }
     
-    // AnimaciÃ³n de escala al arrastrar
+    // Animación de escala al arrastrar
     val scale by animateFloatAsState(
         targetValue = if (isLongPressDragging) 1.05f else 1f,
         animationSpec = spring(dampingRatio = 0.7f, stiffness = 300f),
         label = "audioTrackScale"
     )
     
-    // Fondo grisÃ¡ceo del canal
+    // Fondo grisáceo del canal
     Box(
         modifier = modifier
             .clip(RoundedCornerShape(8.dp))
@@ -2567,7 +2601,7 @@ private fun AudioLayerTrack(
             }
         }
         
-        // â•â•â• HANDLES DE CORTE (Zero-slop: sigue al dedo instantÃ¡neamente) â•â•â•
+        // â•â•â• HANDLES DE CORTE (Zero-slop: sigue al dedo instantáneamente) â•â•â•
         if (isSelected) {
             // Handle izquierdo
             Box(
@@ -2717,8 +2751,8 @@ private fun Playhead(modifier: Modifier = Modifier) {
 /**
  * EditorToolbar - Barra de herramientas con soporte para modo contextual
  * 
- * Cuando isContextMode = true, muestra herramientas especÃ­ficas del item
- * seleccionado con un botÃ³n de "back" a la izquierda para volver a las
+ * Cuando isContextMode = true, muestra herramientas específicas del item
+ * seleccionado con un botón de "back" a la izquierda para volver a las
  * herramientas principales.
  */
 @Composable
@@ -2742,7 +2776,7 @@ private fun EditorToolbar(
             val isBackButton = tool.id == "back"
             
             if (isBackButton && isContextMode) {
-                // BotÃ³n de back especial - alineado a la izquierda
+                // Botón de back especial - alineado a la izquierda
                 Box(
                     modifier = Modifier
                         .size(44.dp)
@@ -2833,7 +2867,7 @@ private fun AdjustSliderPanel(
     ) {
         // Valor actual con badge
         val displayValue = if (maxValue <= 2f) {
-            // Para exposiciÃ³n usar formato EV
+            // Para exposición usar formato EV
             String.format("%+.1f", value)
         } else {
             String.format("%+.0f", value)
@@ -2893,8 +2927,8 @@ private fun AdjustSliderPanel(
  */
 @Composable
 private fun FiltersModal(
-    selectedFilter: com.vinzay.app.ui.components.ImageFilter,
-    onFilterSelected: (com.vinzay.app.ui.components.ImageFilter) -> Unit,
+    selectedFilter: com.mercora.app.ui.components.ImageFilter,
+    onFilterSelected: (com.mercora.app.ui.components.ImageFilter) -> Unit,
     onDismiss: () -> Unit
 ) {
     Box(
@@ -2912,7 +2946,7 @@ private fun FiltersModal(
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp))
                 .background(Color(0xFF1A1A2E))
-                .clickable(enabled = false) {} // Evitar propagaciÃ³n del click
+                .clickable(enabled = false) {} // Evitar propagación del click
                 .padding(vertical = 20.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -2942,8 +2976,8 @@ private fun FiltersModal(
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
                 contentPadding = PaddingValues(horizontal = 16.dp)
             ) {
-                items(com.vinzay.app.ui.components.STORY_FILTERS.size) { index ->
-                    val filter = com.vinzay.app.ui.components.STORY_FILTERS[index]
+                items(com.mercora.app.ui.components.STORY_FILTERS.size) { index ->
+                    val filter = com.mercora.app.ui.components.STORY_FILTERS[index]
                     val isSelected = filter.id == selectedFilter.id
                     
                     Column(
@@ -2989,7 +3023,7 @@ private fun FiltersModal(
             
             Spacer(modifier = Modifier.height(16.dp))
             
-            // BotÃ³n aplicar
+            // Botón aplicar
             Button(
                 onClick = onDismiss,
                 modifier = Modifier
@@ -3128,13 +3162,13 @@ private fun AdjustModal(
     val adjustOptions = listOf(
         Triple("brightness", Icons.Outlined.WbSunny, "Brillo"),
         Triple("contrast", Icons.Outlined.Contrast, "Contraste"),
-        Triple("saturation", Icons.Outlined.Palette, "SaturaciÃ³n"),
-        Triple("exposure", Icons.Outlined.Exposure, "ExposiciÃ³n"),
+        Triple("saturation", Icons.Outlined.Palette, "Saturación"),
+        Triple("exposure", Icons.Outlined.Exposure, "Exposición"),
         Triple("highlights", Icons.Outlined.LightMode, "Luces"),
         Triple("shadows", Icons.Outlined.DarkMode, "Sombras"),
         Triple("temperature", Icons.Outlined.Thermostat, "Temperatura"),
         Triple("sharpen", Icons.Outlined.Deblur, "Nitidez"),
-        Triple("vignette", Icons.Outlined.Vignette, "ViÃ±eta")
+        Triple("vignette", Icons.Outlined.Vignette, "Viñeta")
     )
     
     var selectedAdjust by remember { mutableStateOf<String?>(null) }
@@ -3287,7 +3321,7 @@ private fun AdjustModal(
             
             Spacer(modifier = Modifier.height(12.dp))
             
-            // BotÃ³n aplicar
+            // Botón aplicar
             Button(
                 onClick = onDismiss,
                 modifier = Modifier
@@ -3303,17 +3337,17 @@ private fun AdjustModal(
 
 /**
  * â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
- * MODALES COMPACTOS - Preview visible sobre el modal (mÃ¡s altos, tapan controles)
+ * MODALES COMPACTOS - Preview visible sobre el modal (más altos, tapan controles)
  * â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
  */
 
 @Composable
 private fun FiltersModalCompact(
-    selectedFilter: com.vinzay.app.ui.components.ImageFilter,
-    onFilterSelected: (com.vinzay.app.ui.components.ImageFilter) -> Unit,
+    selectedFilter: com.mercora.app.ui.components.ImageFilter,
+    onFilterSelected: (com.mercora.app.ui.components.ImageFilter) -> Unit,
     onDismiss: () -> Unit
 ) {
-    val filters = com.vinzay.app.ui.components.STORY_FILTERS
+    val filters = com.mercora.app.ui.components.STORY_FILTERS
     val scrollState = rememberScrollState()
     
     Column(
@@ -3563,13 +3597,13 @@ private fun AdjustModalCompact(
     val adjustOptions = listOf(
         Triple("brightness", Icons.Outlined.WbSunny, "Brillo"),
         Triple("contrast", Icons.Outlined.Contrast, "Contraste"),
-        Triple("saturation", Icons.Outlined.Palette, "SaturaciÃ³n"),
-        Triple("exposure", Icons.Outlined.Exposure, "ExposiciÃ³n"),
+        Triple("saturation", Icons.Outlined.Palette, "Saturación"),
+        Triple("exposure", Icons.Outlined.Exposure, "Exposición"),
         Triple("highlights", Icons.Outlined.LightMode, "Luces"),
         Triple("shadows", Icons.Outlined.DarkMode, "Sombras"),
         Triple("temperature", Icons.Outlined.Thermostat, "Temp."),
         Triple("sharpen", Icons.Outlined.Deblur, "Nitidez"),
-        Triple("vignette", Icons.Outlined.Vignette, "ViÃ±eta")
+        Triple("vignette", Icons.Outlined.Vignette, "Viñeta")
     )
     
     Column(
@@ -3898,7 +3932,7 @@ private fun VolumeModalCompact(
         
         Spacer(modifier = Modifier.height(16.dp))
         
-        // Botones rÃ¡pidos
+        // Botones rápidos
         Row(
             modifier = Modifier
                 .fillMaxWidth()

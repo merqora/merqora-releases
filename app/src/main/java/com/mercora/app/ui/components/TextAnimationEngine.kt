@@ -21,16 +21,16 @@ import kotlin.math.sin
 // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 // MOTOR DE ANIMACIONES DE TEXTO - GPU-First, 60 FPS
 // Nivel Instagram Stories: Todas las animaciones usan graphicsLayer
-// para ejecutarse en la GPU sin recomposiciÃ³n
+// para ejecutarse en la GPU sin recomposición
 // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 /**
- * Aplica la animaciÃ³n seleccionada al texto overlay.
- * Usa SOLO graphicsLayer para mÃ¡ximo rendimiento (GPU, sin recomposiciÃ³n).
+ * Aplica la animación seleccionada al texto overlay.
+ * Usa SOLO graphicsLayer para máximo rendimiento (GPU, sin recomposición).
  * 
- * @param animationId ID de la animaciÃ³n ("none", "fade", "slide", "bounce", "typewriter", "glow")
+ * @param animationId ID de la animación ("none", "fade", "slide", "bounce", "typewriter", "glow")
  * @param textColor Color del texto para efectos que lo necesiten (glow)
- * @param isVisible Si el texto estÃ¡ visible (para trigger de animaciones de entrada)
+ * @param isVisible Si el texto está visible (para trigger de animaciones de entrada)
  */
 @Composable
 fun Modifier.textAnimation(
@@ -89,13 +89,13 @@ private fun slideAnimation(): Modifier {
 }
 
 // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-// BOUNCE - Rebote vertical elÃ¡stico (spring-based)
+// BOUNCE - Rebote vertical elástico (spring-based)
 // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 @Composable
 private fun bounceAnimation(): Modifier {
     val infiniteTransition = rememberInfiniteTransition(label = "bounce")
     
-    // AnimaciÃ³n de tiempo continua para simular bounce con sin()
+    // Animación de tiempo continua para simular bounce con sin()
     val time by infiniteTransition.animateFloat(
         initialValue = 0f,
         targetValue = 2f * Math.PI.toFloat(),
@@ -118,7 +118,7 @@ private fun bounceAnimation(): Modifier {
 }
 
 // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-// TYPEWRITER - ApariciÃ³n progresiva con efecto mÃ¡quina de escribir
+// TYPEWRITER - Aparición progresiva con efecto máquina de escribir
 // Usa clip + translationX para revelar letra por letra
 // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 @Composable

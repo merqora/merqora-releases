@@ -92,7 +92,7 @@ import com.mercora.app.gpu.transformGestures
 import com.mercora.app.gpu.transformGesturesWithDoubleTap
 import com.mercora.app.gpu.applyTransform
 
-// Herramientas de ediciÃ³n para historias
+// Herramientas de edición para historias
 private data class EditTool(
     val id: String,
     val icon: ImageVector,
@@ -124,10 +124,10 @@ fun HistoryScreen(
     val configuration = LocalConfiguration.current
     val screenHeight = configuration.screenHeightDp.dp
     
-    // Permiso de CÃ¡mara - se solicita inmediatamente al entrar
+    // Permiso de Cámara - se solicita inmediatamente al entrar
     val cameraPermission = rememberPermissionState(Manifest.permission.CAMERA)
     
-    // Permiso de galerÃ­a
+    // Permiso de galería
     val galleryPermission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
         Manifest.permission.READ_MEDIA_IMAGES
     } else {
@@ -135,7 +135,7 @@ fun HistoryScreen(
     }
     val galleryPermissionState = rememberPermissionState(galleryPermission)
     
-    // Solicitar permiso de CÃ¡mara al entrar
+    // Solicitar permiso de Cámara al entrar
     LaunchedEffect(Unit) {
         if (!cameraPermission.status.isGranted) {
             cameraPermission.launchPermissionRequest()
@@ -149,40 +149,40 @@ fun HistoryScreen(
     var isPublishing by remember { mutableStateOf(false) }
     var isCapturing by remember { mutableStateOf(false) }
     
-    // Estado para animaciÃ³n de transiciÃ³n fluida
+    // Estado para animación de transición fluida
     var showCapturedPreview by remember { mutableStateOf(false) }
     
     // ---------------------------------------------------------------
     // SISTEMA DE FILTROS - Optimizado para GPU (sin crear Bitmaps para preview)
     // ---------------------------------------------------------------
     var showFilterCarousel by remember { mutableStateOf(false) }
-    var selectedFilter by remember { mutableStateOf(com.vinzay.app.ui.components.STORY_FILTERS.first()) }
+    var selectedFilter by remember { mutableStateOf(com.mercora.app.ui.components.STORY_FILTERS.first()) }
     
     // ---------------------------------------------------------------
     // SISTEMA DE TEXTO - Editor de texto para historias
     // ---------------------------------------------------------------
     var showTextEditor by remember { mutableStateOf(false) }
-    var textState by remember { mutableStateOf(com.vinzay.app.ui.components.StoryTextState()) }
+    var textState by remember { mutableStateOf(com.mercora.app.ui.components.StoryTextState()) }
     var keyboardHeight by remember { mutableStateOf(0.dp) }
     
     // ---------------------------------------------------------------
-    // SISTEMA DE GIF - Modal de SelecciÃ³n de GIFs y overlays
+    // SISTEMA DE GIF - Modal de Selección de GIFs y overlays
     // ---------------------------------------------------------------
     var showGifPicker by remember { mutableStateOf(false) }
     var gifOverlays by remember { mutableStateOf<List<GifOverlay>>(emptyList()) }
     
     // ---------------------------------------------------------------
-    // SISTEMA DE IMÃGENES SUPERPUESTAS - Similar a GIF pero con Imagenes
+    // SISTEMA DE IMÁGENES SUPERPUESTAS - Similar a GIF pero con Imagenes
     // ---------------------------------------------------------------
     var showImagePicker by remember { mutableStateOf(false) }
     var imageOverlays by remember { mutableStateOf<List<ImageOverlay>>(emptyList()) }
     
-    // Launcher para seleccionar Imagenes de la galerÃ­a
+    // Launcher para seleccionar Imagenes de la galería
     val imagePickerLauncher = rememberLauncherForActivityResult(
         contract = androidx.activity.result.contract.ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
         uri?.let {
-            // Agregar nueva imagen como overlay con zIndex MÃ¡s alto
+            // Agregar nueva imagen como overlay con zIndex Más alto
             val newZIndex = (imageOverlays.maxOfOrNull { it.zIndex } ?: -1) + 1
             imageOverlays = imageOverlays + ImageOverlay(uri = it, zIndex = newZIndex)
         }
@@ -200,10 +200,10 @@ fun HistoryScreen(
     // SISTEMA DE DIBUJO - Canvas ultra-optimizado
     // ---------------------------------------------------------------
     var showDrawingMode by remember { mutableStateOf(false) }
-    val drawingStrokesList = remember { mutableStateListOf<com.vinzay.app.ui.components.DrawingStroke>() }
-    var drawingStrokes by remember { mutableStateOf<List<com.vinzay.app.ui.components.DrawingStroke>>(emptyList()) }
+    val drawingStrokesList = remember { mutableStateListOf<com.mercora.app.ui.components.DrawingStroke>() }
+    var drawingStrokes by remember { mutableStateOf<List<com.mercora.app.ui.components.DrawingStroke>>(emptyList()) }
     var drawingColor by remember { mutableStateOf(Color.White) }
-    var drawingTool by remember { mutableStateOf(com.vinzay.app.ui.components.DrawingTool.PEN) }
+    var drawingTool by remember { mutableStateOf(com.mercora.app.ui.components.DrawingTool.PEN) }
     val drawingStrokeWidth = remember { mutableStateOf(8f) }
     
     // ---------------------------------------------------------------
@@ -211,21 +211,21 @@ fun HistoryScreen(
     // Preview en tiempo real a 60+ FPS sin recomposiciones
     // ---------------------------------------------------------------
     var showAdjustMode by remember { mutableStateOf(false) }
-    var adjustState by remember { mutableStateOf(com.vinzay.app.ui.components.ImageAdjustState()) }
-    var selectedAdjustment by remember { mutableStateOf<com.vinzay.app.ui.components.AdjustmentType?>(null) }
+    var adjustState by remember { mutableStateOf(com.mercora.app.ui.components.ImageAdjustState()) }
+    var selectedAdjustment by remember { mutableStateOf<com.mercora.app.ui.components.AdjustmentType?>(null) }
     // Bitmap con filtro pre-aplicado para modo ajustar (evita diferencia de color)
     var filteredBitmapForAdjust by remember { mutableStateOf<Bitmap?>(null) }
     
-    // Estado de ediciÃ³n: true = mostrando herramientas, false = mostrando botones Tu Vitrina/Frecuentes
+    // Estado de edición: true = mostrando herramientas, false = mostrando botones Tu Vitrina/Frecuentes
     var isEditingMode by remember { mutableStateOf(true) }
-    // Para mostrar el texto educativo "Pulsa cuando termines" - SOLO UNA VEZ por SesiÃ³n
+    // Para mostrar el texto educativo "Pulsa cuando termines" - SOLO UNA VEZ por Sesión
     var showEducationalText by remember { mutableStateOf(false) }
     var hasShownEducationalText by remember { mutableStateOf(false) }
     
     // ---------------------------------------------------------------
     // SISTEMA UNDO/REDO - Historial de trazos de dibujo
     // ---------------------------------------------------------------
-    val undoStack = remember { mutableStateListOf<com.vinzay.app.ui.components.DrawingStroke>() }
+    val undoStack = remember { mutableStateListOf<com.mercora.app.ui.components.DrawingStroke>() }
     val canUndo by remember { derivedStateOf { drawingStrokesList.isNotEmpty() } }
     val canRedo by remember { derivedStateOf { undoStack.isNotEmpty() } }
     
@@ -235,7 +235,7 @@ fun HistoryScreen(
     }
     
     // ---------------------------------------------------------------
-    // MOTOR DE TRANSFORMaciÃ³n C++ - Para mover/escalar/rotar imagen capturada
+    // MOTOR DE TRANSFORMación C++ - Para mover/escalar/rotar imagen capturada
     // ---------------------------------------------------------------
     val imageTransformEngine = rememberTransformEngine(
         minScale = 0.5f,
@@ -249,8 +249,8 @@ fun HistoryScreen(
     
     // ---------------------------------------------------------------
     // SISTEMA DE GESTOS ULTRA FLUIDO - Nivel Instagram/TikTok
-    // Usando mutableFloatStateOf para evitar recomposiciÃ³n por frame
-    // Solo se lee en graphicsLayer = MÃ¡ximo rendimiento
+    // Usando mutableFloatStateOf para evitar recomposición por frame
+    // Solo se lee en graphicsLayer = Máximo rendimiento
     // ---------------------------------------------------------------
     val textOffsetX = remember { mutableStateOf(0f) }
     val textOffsetY = remember { mutableStateOf(0f) }
@@ -259,17 +259,17 @@ fun HistoryScreen(
     var isDraggingText by remember { mutableStateOf(false) }
     var isDraggingGif by remember { mutableStateOf(false) }
     
-    // Activar animaciÃ³n cuando hay imagen capturada
+    // Activar animación cuando hay imagen capturada
     LaunchedEffect(capturedBitmap) {
         showCapturedPreview = capturedBitmap != null
         // Notificar al padre para deshabilitar swipe horizontal
         onEditingStateChange(capturedBitmap != null)
         if (capturedBitmap == null) {
             // Reset al cerrar
-            selectedFilter = com.vinzay.app.ui.components.STORY_FILTERS.first()
+            selectedFilter = com.mercora.app.ui.components.STORY_FILTERS.first()
             showFilterCarousel = false
             showTextEditor = false
-            textState = com.vinzay.app.ui.components.StoryTextState()
+            textState = com.mercora.app.ui.components.StoryTextState()
             textOffsetX.value = 0f
             textOffsetY.value = 0f
             textRotation.value = 0f
@@ -277,11 +277,11 @@ fun HistoryScreen(
             isEditingMode = true
             showEducationalText = false
             imageTransformEngine.reset() // Reset motor C++
-            com.vinzay.app.ui.components.FilterProcessor.clearCache()
+            com.mercora.app.ui.components.FilterProcessor.clearCache()
         } else {
             // Resetear estado al capturar nueva imagen
             showTextEditor = false
-            textState = com.vinzay.app.ui.components.StoryTextState()
+            textState = com.mercora.app.ui.components.StoryTextState()
             textOffsetX.value = 0f
             textOffsetY.value = 0f
             textRotation.value = 0f
@@ -292,7 +292,7 @@ fun HistoryScreen(
             drawingStrokesList.clear()
             drawingStrokes = emptyList()
             undoStack.clear()
-            // Mostrar texto educativo SOLO UNA VEZ por SesiÃ³n
+            // Mostrar texto educativo SOLO UNA VEZ por Sesión
             if (!hasShownEducationalText) {
                 kotlinx.coroutines.delay(1500)
                 showEducationalText = true
@@ -304,11 +304,11 @@ fun HistoryScreen(
     }
     
     // Altura fija del preview - calculada una vez para consistencia
-    val previewHeight = screenHeight * 0.86f // Llega hasta MÃ¡s abajo de los botones
+    val previewHeight = screenHeight * 0.86f // Llega hasta Más abajo de los botones
     val previewCornerRadius = 24.dp
-    val previewTopPadding = 8.dp // pequeÃ±o padding para no tocar las curvas del TelÃ©fono
+    val previewTopPadding = 8.dp // pequeño padding para no tocar las curvas del Teléfono
     
-    // Valores en pÃ­xeles para renderizado final (calculados en contexto Composable)
+    // Valores en píxeles para renderizado final (calculados en contexto Composable)
     val density = LocalDensity.current
     val previewHeightPx: Float = with(density) { previewHeight.toPx() }
     val previewWidthPx: Float = previewHeightPx * 0.9f
@@ -350,15 +350,15 @@ fun HistoryScreen(
     ) {
         if (capturedBitmap == null) {
             // ---------------------------------------------------------------
-            // VISTA DE cÃ¡mara - Preview con border radius y altura correcta
+            // VISTA DE cámara - Preview con border radius y altura correcta
             // ---------------------------------------------------------------
             
-            // Preview de CÃ¡mara con border radius - comienza arriba y llega hasta mitad de botones
+            // Preview de Cámara con border radius - comienza arriba y llega hasta mitad de botones
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(previewHeight)
-                    .background(Color.Black) // Fondo negro sÃ³lido para evitar transparencia
+                    .background(Color.Black) // Fondo negro sólido para evitar transparencia
                     .padding(top = previewTopPadding, start = 4.dp, end = 4.dp)
                     .clip(RoundedCornerShape(previewCornerRadius))
                     .clipToBounds() // Evitar fugas visuales del contenido
@@ -389,7 +389,7 @@ fun HistoryScreen(
                             )
                             Spacer(modifier = Modifier.height(16.dp))
                             Text(
-                                text = "Permiso de CÃ¡mara requerido",
+                                text = "Permiso de Cámara requerido",
                                 color = Color.White,
                                 fontSize = 18.sp,
                                 fontWeight = FontWeight.Bold
@@ -454,7 +454,7 @@ fun HistoryScreen(
             }
             
             // ---------------------------------------------------------------
-            // CONTROLES INFERIORES - Botones centrados + Carrusel con GalerÃ­a y Girar a los lados
+            // CONTROLES INFERIORES - Botones centrados + Carrusel con Galería y Girar a los lados
             // ---------------------------------------------------------------
             Column(
                 modifier = Modifier
@@ -464,7 +464,7 @@ fun HistoryScreen(
                     .padding(bottom = 12.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                // botÃ³n de captura central grande
+                // botón de captura central grande
                 Box(
                     modifier = Modifier
                         .size(72.dp)
@@ -499,7 +499,7 @@ fun HistoryScreen(
                 
                 Spacer(modifier = Modifier.height(16.dp))
                 
-                // Row con [GalerÃ­a] [Carrusel de modos] [Girar]
+                // Row con [Galería] [Carrusel de modos] [Girar]
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -507,7 +507,7 @@ fun HistoryScreen(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    // botÃ³n de galerÃ­a (izquierda)
+                    // botón de galería (izquierda)
                     IconButton(
                         onClick = {
                             if (galleryPermissionState.status.isGranted) {
@@ -523,7 +523,7 @@ fun HistoryScreen(
                     ) {
                         Icon(
                             imageVector = Icons.Outlined.PhotoLibrary,
-                            contentDescription = "GalerÃ­a",
+                            contentDescription = "Galería",
                             tint = Color.White,
                             modifier = Modifier.size(22.dp)
                         )
@@ -531,14 +531,14 @@ fun HistoryScreen(
                     
                     // Carrusel de modos (centro) - minimalista estilo Instagram
                     Box(modifier = Modifier.weight(1f)) {
-                        com.vinzay.app.ui.components.ModeCarousel(
+                        com.mercora.app.ui.components.ModeCarousel(
                             currentIndex = currentModeIndex,
                             onModeSelected = onModeSelected,
-                            style = com.vinzay.app.ui.components.CarouselStyle.CENTERED_SINGLE
+                            style = com.mercora.app.ui.components.CarouselStyle.CENTERED_SINGLE
                         )
                     }
                     
-                    // botÃ³n de girar CÃ¡mara (derecha)
+                    // botón de girar Cámara (derecha)
                     IconButton(
                         onClick = {
                             lensFacing = if (lensFacing == CameraSelector.LENS_FACING_BACK) {
@@ -554,7 +554,7 @@ fun HistoryScreen(
                     ) {
                         Icon(
                             imageVector = Icons.Outlined.Cameraswitch,
-                            contentDescription = "Voltear CÃ¡mara",
+                            contentDescription = "Voltear Cámara",
                             tint = Color.White,
                             modifier = Modifier.size(22.dp)
                         )
@@ -564,8 +564,8 @@ fun HistoryScreen(
         }
         
         // ---------------------------------------------------------------
-        // VISTA DE PREVIEW CON IMAGEN CAPTURADA + HERRAMIENTAS DE EDiciÃ³n
-        // TransiciÃ³n fluida con animaciÃ³n de escala y fade
+        // VISTA DE PREVIEW CON IMAGEN CAPTURADA + HERRAMIENTAS DE EDición
+        // Transición fluida con animación de escala y fade
         // ---------------------------------------------------------------
         AnimatedVisibility(
             visible = capturedBitmap != null,
@@ -583,19 +583,19 @@ fun HistoryScreen(
                 val hasImageOverlay = imageOverlays.isNotEmpty()
                 val hasAnyOverlay = hasTextOverlay || hasGifOverlay || hasImageOverlay
                 
-                // Estado compartido para zona de eliminaciÃ³n
+                // Estado compartido para zona de eliminación
                 var showDeleteZone by remember { mutableStateOf(false) }
                 var isOverDeleteZone by remember { mutableStateOf(false) }
                 var deletingOverlayType by remember { mutableStateOf<String?>(null) }
                 
-                // Estado para lÃ­neas GuÃ­a
+                // Estado para líneas Guía
                 var showCenterLineH by remember { mutableStateOf(false) }
                 var showCenterLineV by remember { mutableStateOf(false) }
                 val guideThreshold = 25f
                 val guideSnapForce = 0.35f
                 val guideMagneticRange = 60f
                 
-                // Escala del elemento cuando estÃ¡ sobre zona de eliminaciÃ³n
+                // Escala del elemento cuando está sobre zona de eliminación
                 val deleteScale = remember { mutableStateOf(1f) }
                 
                 // Vibrador
@@ -774,7 +774,7 @@ fun HistoryScreen(
                                     
                                     if (isOverDeleteZone) {
                                         if (movingText) {
-                                            textState = com.vinzay.app.ui.components.StoryTextState()
+                                            textState = com.mercora.app.ui.components.StoryTextState()
                                             textOffsetX.value = 0f
                                             textOffsetY.value = 0f
                                             textRotation.value = 0f
@@ -790,14 +790,14 @@ fun HistoryScreen(
                             }
                     ) {
                         // ---------------------------------------------------------------
-                        // PREVIEW - Con gestos directos para transformaciÃ³n correcta
-                        // Escala y rotaciÃ³n desde el centro, paneo fluido
+                        // PREVIEW - Con gestos directos para transformación correcta
+                        // Escala y rotación desde el centro, paneo fluido
                         // ---------------------------------------------------------------
-                        // MODIFICADO: Bloquear transformaciÃ³n de imagen cuando hay overlay activo
+                        // MODIFICADO: Bloquear transformación de imagen cuando hay overlay activo
                         // Los overlays tienen prioridad - mientras se arrastra un overlay, la imagen NO se mueve
                         val canTransformImage = !showAdjustMode && !showDrawingMode && !showTextEditor && !showFilterCarousel && !isDraggingText && !isDraggingGif
                         
-                        // Estados locales para transformaciÃ³n de imagen principal
+                        // Estados locales para transformación de imagen principal
                         val mainImgOffsetX = remember { mutableStateOf(0f) }
                         val mainImgOffsetY = remember { mutableStateOf(0f) }
                         val mainImgScale = remember { mutableStateOf(1f) }
@@ -818,7 +818,7 @@ fun HistoryScreen(
                             modifier = Modifier
                                 .fillMaxSize()
                                 .pointerInput(canTransformImage, textState.text, "globalDoubleTap") {
-                                    // Doble tap GLOBAL - funciona en toda el Ã¡rea, incluso sobre texto
+                                    // Doble tap GLOBAL - funciona en toda el área, incluso sobre texto
                                     detectTapGestures(
                                         onTap = {
                                             val now = System.currentTimeMillis()
@@ -839,9 +839,9 @@ fun HistoryScreen(
                                         // Paneo directo
                                         mainImgOffsetX.value += pan.x
                                         mainImgOffsetY.value += pan.y
-                                        // Escala con lÃ­mites
+                                        // Escala con límites
                                         mainImgScale.value = (mainImgScale.value * zoom).coerceIn(0.5f, 4f)
-                                        // RotaciÃ³n
+                                        // Rotación
                                         mainImgRotation.value += rotation
                                     }
                                 },
@@ -861,13 +861,13 @@ fun HistoryScreen(
                                 contentAlignment = Alignment.Center
                             ) {
                                 if (showAdjustMode && filteredBitmapForAdjust != null) {
-                                    com.vinzay.app.gpu.GPUAdjustedImage(
+                                    com.mercora.app.gpu.GPUAdjustedImage(
                                         bitmap = filteredBitmapForAdjust,
                                         adjustments = gpuAdjustState,
                                         modifier = Modifier.fillMaxSize()
                                     )
                                 } else {
-                                    com.vinzay.app.ui.components.FilteredImage(
+                                    com.mercora.app.ui.components.FilteredImage(
                                         bitmap = bitmap,
                                         filter = selectedFilter,
                                         modifier = Modifier.fillMaxSize(),
@@ -878,17 +878,17 @@ fun HistoryScreen(
                         }
                         
                         // ---------------------------------------------------------------
-                        // CANVAS DE DIBUJO estÃ¡TICO - Muestra los trazos guardados
+                        // CANVAS DE DIBUJO estáTICO - Muestra los trazos guardados
                         // ---------------------------------------------------------------
                         if (drawingStrokes.isNotEmpty() && !showDrawingMode) {
-                            com.vinzay.app.ui.components.DrawingCanvasStatic(
+                            com.mercora.app.ui.components.DrawingCanvasStatic(
                                 strokes = drawingStrokes,
                                 modifier = Modifier.fillMaxSize()
                             )
                         }
                         
                         // ---------------------------------------------------------------
-                        // botÃ³n VOLVER A cÃ¡mara (Arrow Left) - Solo visible cuando NO hay herramienta activa
+                        // botón VOLVER A cámara (Arrow Left) - Solo visible cuando NO hay herramienta activa
                         // ---------------------------------------------------------------
                         AnimatedVisibility(
                             visible = !showFilterCarousel && !showTextEditor && !showDrawingMode && !showAdjustMode,
@@ -907,12 +907,12 @@ fun HistoryScreen(
                                         // RESET COMPLETO de todas las herramientas
                                         capturedBitmap = null
                                         showAdjustMode = false
-                                        adjustState = com.vinzay.app.ui.components.ImageAdjustState()
+                                        adjustState = com.mercora.app.ui.components.ImageAdjustState()
                                         selectedAdjustment = null
                                         showFilterCarousel = false
-                                        selectedFilter = com.vinzay.app.ui.components.STORY_FILTERS.first()
+                                        selectedFilter = com.mercora.app.ui.components.STORY_FILTERS.first()
                                         showTextEditor = false
-                                        textState = com.vinzay.app.ui.components.StoryTextState()
+                                        textState = com.mercora.app.ui.components.StoryTextState()
                                         textOffsetX.value = 0f
                                         textOffsetY.value = 0f
                                         textRotation.value = 0f
@@ -952,7 +952,7 @@ fun HistoryScreen(
                                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-                                // botÃ³n UNDO
+                                // botón UNDO
                                 Box(
                                     modifier = Modifier
                                         .size(40.dp)
@@ -978,7 +978,7 @@ fun HistoryScreen(
                                     )
                                 }
                                 
-                                // botÃ³n REDO
+                                // botón REDO
                                 Box(
                                     modifier = Modifier
                                         .size(40.dp)
@@ -1007,7 +1007,7 @@ fun HistoryScreen(
                         }
                         
                         // ---------------------------------------------------------------
-                        // botÃ³n TICK (Aplicar Ajustes) - Esquina superior derecha
+                        // botón TICK (Aplicar Ajustes) - Esquina superior derecha
                         // Solo visible en modo ajustes
                         // ---------------------------------------------------------------
                         AnimatedVisibility(
@@ -1020,7 +1020,7 @@ fun HistoryScreen(
                         ) {
                             var isApplying by remember { mutableStateOf(false) }
                             
-                            // Mismo estilo que BotÃ³n arrow left (fondo negro 0.5 alpha, 40dp)
+                            // Mismo estilo que Botón arrow left (fondo negro 0.5 alpha, 40dp)
                             Box(
                                 modifier = Modifier
                                     .size(40.dp)
@@ -1034,15 +1034,15 @@ fun HistoryScreen(
                                                 // Aplicar en thread Default para no bloquear UI
                                                 val adjusted = kotlinx.coroutines.withContext(Dispatchers.Default) {
                                                     (filteredBitmapForAdjust ?: capturedBitmap)?.let { bmp ->
-                                                        com.vinzay.app.ui.components.ImageAdjustProcessor.applyForExport(bmp, adjustState)
+                                                        com.mercora.app.ui.components.ImageAdjustProcessor.applyForExport(bmp, adjustState)
                                                     }
                                                 }
                                                 // Actualizar bitmap y cerrar herramienta
                                                 adjusted?.let { capturedBitmap = it }
                                                 // Resetear filtro a Original: los ajustes ya incluyen el filtro baked-in
-                                                selectedFilter = com.vinzay.app.ui.components.STORY_FILTERS.first()
+                                                selectedFilter = com.mercora.app.ui.components.STORY_FILTERS.first()
                                                 filteredBitmapForAdjust = null
-                                                adjustState = com.vinzay.app.ui.components.ImageAdjustState()
+                                                adjustState = com.mercora.app.ui.components.ImageAdjustState()
                                                 // Cerrar inmediato sin esperar
                                                 showAdjustMode = false
                                                 selectedAdjustment = null
@@ -1076,7 +1076,7 @@ fun HistoryScreen(
                         // ---------------------------------------------------------------
                         // SLIDER DE AJUSTES - En parte baja del preview cuando hay ajuste seleccionado
                         // ---------------------------------------------------------------
-                        com.vinzay.app.ui.components.ImageAdjustOverlay(
+                        com.mercora.app.ui.components.ImageAdjustOverlay(
                             visible = showAdjustMode,
                             bitmap = bitmap,
                             adjustState = adjustState,
@@ -1093,17 +1093,17 @@ fun HistoryScreen(
                                     sourceBmp?.let { bmp ->
                                         if (state.hasChanges()) {
                                             val adjusted = withContext(Dispatchers.Default) {
-                                                com.vinzay.app.ui.components.ImageAdjustProcessor.applyForExport(bmp, state)
+                                                com.mercora.app.ui.components.ImageAdjustProcessor.applyForExport(bmp, state)
                                             }
                                             capturedBitmap = adjusted
                                         }
                                     }
                                     // Resetear filtro a Original: los ajustes ya incluyen el filtro baked-in
-                                    selectedFilter = com.vinzay.app.ui.components.STORY_FILTERS.first()
+                                    selectedFilter = com.mercora.app.ui.components.STORY_FILTERS.first()
                                     filteredBitmapForAdjust = null
                                     showAdjustMode = false
                                     selectedAdjustment = null
-                                    adjustState = com.vinzay.app.ui.components.ImageAdjustState()
+                                    adjustState = com.mercora.app.ui.components.ImageAdjustState()
                                 }
                             },
                             onDismiss = { 
@@ -1126,7 +1126,7 @@ fun HistoryScreen(
                         )
                         
                         // ---------------------------------------------------------------
-                        // ICONO DE BASURA (zona de eliminaciÃ³n)
+                        // ICONO DE BASURA (zona de eliminación)
                         // ---------------------------------------------------------------
                         AnimatedVisibility(
                             visible = showDeleteZone,
@@ -1142,7 +1142,7 @@ fun HistoryScreen(
                                         scaleX = deleteIconScale
                                         scaleY = deleteIconScale
                                     }
-                                    .size(44.dp) // mÃ¡s PequeÃ±o
+                                    .size(44.dp) // más Pequeño
                                     .background(
                                         color = if (isOverDeleteZone) Color.Red.copy(alpha = 0.8f) else Color.Black.copy(alpha = 0.6f),
                                         shape = CircleShape
@@ -1160,7 +1160,7 @@ fun HistoryScreen(
                         }
                         
                         // ---------------------------------------------------------------
-                        // LÃNEAS guÃ­a DE SNAP
+                        // LÍNEAS guía DE SNAP
                         // ---------------------------------------------------------------
                         AnimatedVisibility(
                             visible = showCenterLineH,
@@ -1209,9 +1209,9 @@ fun HistoryScreen(
                                         scaleY = activeScale
                                     }
                                     .pointerInput(textState.text) {
-                                        // Altura del preview en pÃ­xeles
+                                        // Altura del preview en píxeles
                                         val previewHeightPx = with(density) { previewHeight.toPx() }
-                                        // Zona de eliminaciÃ³n: SOLO los Ãºltimos 50dp del borde inferior
+                                        // Zona de eliminación: SOLO los últimos 50dp del borde inferior
                                         val deleteZoneThreshold = with(density) { 50.dp.toPx() }
                                         val deleteZoneStartY = (previewHeightPx / 2f) - deleteZoneThreshold
                                         
@@ -1234,7 +1234,7 @@ fun HistoryScreen(
                                                         val zoom = event.calculateZoom()
                                                         val rotation = event.calculateRotation()
                                                         
-                                                        // Velocidad de paneo CONSTANTE - NO depende del TamaÃ±o/escala del texto
+                                                        // Velocidad de paneo CONSTANTE - NO depende del Tamaño/escala del texto
                                                         // Usamos pan directamente sin modificaciones para velocidad uniforme
                                                         var newX = textOffsetX.value + pan.x
                                                         var newY = textOffsetY.value + pan.y
@@ -1242,14 +1242,14 @@ fun HistoryScreen(
                                                         totalMovement += pan.x.absoluteValue + pan.y.absoluteValue
                                                         if (totalMovement > 30f) hasMovedEnough = true
                                                         
-                                                        // Solo mostrar zona de eliminaciÃ³n despuÃ©s de mover un poco
+                                                        // Solo mostrar zona de eliminación después de mover un poco
                                                         if (hasMovedEnough && !showDeleteZone) {
                                                             showDeleteZone = true
                                                         }
                                                         
                                                         // ---------------------------------------------------------------
-                                                        // ZONA DE ELIMINaciÃ³n - Efecto magnÃ©tico FUERTE hacia el bote
-                                                        // El elemento se mete DENTRO del BotÃ³n de basura
+                                                        // ZONA DE ELIMINación - Efecto magnético FUERTE hacia el bote
+                                                        // El elemento se mete DENTRO del Botón de basura
                                                         // ---------------------------------------------------------------
                                                         val isInDeleteZone = newY > deleteZoneStartY && hasMovedEnough
                                                         
@@ -1257,16 +1257,16 @@ fun HistoryScreen(
                                                             isOverDeleteZone = true
                                                             val proximity = ((newY - deleteZoneStartY) / deleteZoneThreshold).coerceIn(0f, 1f)
                                                             
-                                                            // PosiciÃ³n exacta del bote de basura (centro inferior del preview)
+                                                            // Posición exacta del bote de basura (centro inferior del preview)
                                                             val deleteTargetX = 0f // Centro horizontal
                                                             val deleteTargetY = (previewHeightPx / 2f) - with(density) { 46.dp.toPx() }
                                                             
-                                                            // Fuerza magnÃ©tica MUY fuerte para atraer al bote
+                                                            // Fuerza magnética MUY fuerte para atraer al bote
                                                             val magnetForce = proximity * 0.85f
                                                             newX = newX + (deleteTargetX - newX) * magnetForce
                                                             newY = newY + (deleteTargetY - newY) * magnetForce
                                                             
-                                                            // Escala: reducir drÃ¡sticamente hasta 8% para que QUEPA DENTRO del bote
+                                                            // Escala: reducir drásticamente hasta 8% para que QUEPA DENTRO del bote
                                                             deleteScale.value = (1f - proximity * 0.92f).coerceIn(0.08f, 1f)
                                                             
                                                             if (!vibratedDelete) {
@@ -1280,14 +1280,14 @@ fun HistoryScreen(
                                                         }
                                                         
                                                         // ---------------------------------------------------------------
-                                                        // guÃ­aS DE CENTRADO - Efecto magnÃ©tico suave
-                                                        // Atrae hacia el centro pero es fÃ¡cil de despegar
+                                                        // guíaS DE CENTRADO - Efecto magnético suave
+                                                        // Atrae hacia el centro pero es fácil de despegar
                                                         // ---------------------------------------------------------------
                                                         if (!isOverDeleteZone) {
                                                             val nearCenterX = newX.absoluteValue < guideMagneticRange
                                                             val nearCenterY = newY.absoluteValue < guideMagneticRange
                                                             
-                                                            // Fuerza magnÃ©tica proporcional a la cercanÃ­a (MÃ¡s cerca = MÃ¡s fuerte)
+                                                            // Fuerza magnética proporcional a la cercanía (Más cerca = Más fuerte)
                                                             if (nearCenterX) {
                                                                 val magnetStrength = 1f - (newX.absoluteValue / guideMagneticRange)
                                                                 newX = newX * (1f - guideSnapForce * magnetStrength)
@@ -1318,7 +1318,7 @@ fun HistoryScreen(
                                                         textOffsetX.value = newX
                                                         textOffsetY.value = newY
                                                         
-                                                        // RotaciÃ³n: aplicar directamente (sin modificaciÃ³n por escala)
+                                                        // Rotación: aplicar directamente (sin modificación por escala)
                                                         textRotation.value += rotation
                                                         
                                                         // Zoom: aplicar directamente
@@ -1340,7 +1340,7 @@ fun HistoryScreen(
                                             showCenterLineV = false
                                             
                                             if (isOverDeleteZone) {
-                                                textState = com.vinzay.app.ui.components.StoryTextState()
+                                                textState = com.mercora.app.ui.components.StoryTextState()
                                                 textOffsetX.value = 0f
                                                 textOffsetY.value = 0f
                                                 textRotation.value = 0f
@@ -1354,7 +1354,7 @@ fun HistoryScreen(
                                     }
                             ) {
                                 val textAnimColor = when (textState.backgroundState) {
-                                    com.vinzay.app.ui.components.TextBackgroundState.WHITE -> Color.Black
+                                    com.mercora.app.ui.components.TextBackgroundState.WHITE -> Color.Black
                                     else -> textState.color
                                 }
                                 Text(
@@ -1364,18 +1364,18 @@ fun HistoryScreen(
                                     fontFamily = textState.fontOption.fontFamily,
                                     fontWeight = textState.fontOption.fontWeight,
                                     textAlign = when (textState.alignment) {
-                                        com.vinzay.app.ui.components.TextAlignOption.LEFT -> TextAlign.Start
-                                        com.vinzay.app.ui.components.TextAlignOption.CENTER -> TextAlign.Center
-                                        com.vinzay.app.ui.components.TextAlignOption.RIGHT -> TextAlign.End
+                                        com.mercora.app.ui.components.TextAlignOption.LEFT -> TextAlign.Start
+                                        com.mercora.app.ui.components.TextAlignOption.CENTER -> TextAlign.Center
+                                        com.mercora.app.ui.components.TextAlignOption.RIGHT -> TextAlign.End
                                     },
                                     modifier = (when (textState.backgroundState) {
-                                        com.vinzay.app.ui.components.TextBackgroundState.BLACK -> Modifier
+                                        com.mercora.app.ui.components.TextBackgroundState.BLACK -> Modifier
                                             .background(Color.Black.copy(alpha = 0.85f), RoundedCornerShape(8.dp))
                                             .padding(horizontal = 12.dp, vertical = 8.dp)
-                                        com.vinzay.app.ui.components.TextBackgroundState.WHITE -> Modifier
+                                        com.mercora.app.ui.components.TextBackgroundState.WHITE -> Modifier
                                             .background(Color.White, RoundedCornerShape(8.dp))
                                             .padding(horizontal = 12.dp, vertical = 8.dp)
-                                        com.vinzay.app.ui.components.TextBackgroundState.NONE -> Modifier
+                                        com.mercora.app.ui.components.TextBackgroundState.NONE -> Modifier
                                     }).textAnimation(
                                         animationId = textState.animation.id,
                                         textColor = textAnimColor,
@@ -1408,9 +1408,9 @@ fun HistoryScreen(
                                             scaleY = currentScale
                                         }
                                         .pointerInput(gifOverlay.id) {
-                                            // Altura del preview en pÃ­xeles
+                                            // Altura del preview en píxeles
                                             val previewHeightPx = with(density) { previewHeight.toPx() }
-                                            // Zona de eliminaciÃ³n: SOLO los Ãºltimos 50dp del borde inferior
+                                            // Zona de eliminación: SOLO los últimos 50dp del borde inferior
                                             val deleteZoneThreshold = with(density) { 50.dp.toPx() }
                                             val deleteZoneStartY = (previewHeightPx / 2f) - deleteZoneThreshold
                                             
@@ -1434,7 +1434,7 @@ fun HistoryScreen(
                                                             val rotation = event.calculateRotation()
                                                             
                                                             // Velocidad de paneo UNIFORME - Compensar escala
-                                                            // Multiplicar por escala para que el movimiento sea igual sin importar el TamaÃ±o
+                                                            // Multiplicar por escala para que el movimiento sea igual sin importar el Tamaño
                                                             val currentGifScale = gifScale.value.coerceAtLeast(0.5f)
                                                             var newX = gifOffsetX.value + (pan.x * currentGifScale)
                                                             var newY = gifOffsetY.value + (pan.y * currentGifScale)
@@ -1442,14 +1442,14 @@ fun HistoryScreen(
                                                             totalMovement += pan.x.absoluteValue + pan.y.absoluteValue
                                                             if (totalMovement > 30f) hasMovedEnough = true
                                                             
-                                                            // Solo mostrar zona de eliminaciÃ³n despuÃ©s de mover un poco
+                                                            // Solo mostrar zona de eliminación después de mover un poco
                                                             if (hasMovedEnough && !showDeleteZone) {
                                                                 showDeleteZone = true
                                                             }
                                                             
                                                             // ---------------------------------------------------------------
-                                                            // ZONA DE ELIMINaciÃ³n - Efecto magnÃ©tico FUERTE hacia el bote
-                                                            // El elemento se mete DENTRO del BotÃ³n de basura
+                                                            // ZONA DE ELIMINación - Efecto magnético FUERTE hacia el bote
+                                                            // El elemento se mete DENTRO del Botón de basura
                                                             // ---------------------------------------------------------------
                                                             val isInDeleteZone = newY > deleteZoneStartY && hasMovedEnough
                                                             
@@ -1457,16 +1457,16 @@ fun HistoryScreen(
                                                                 isOverDeleteZone = true
                                                                 val proximity = ((newY - deleteZoneStartY) / deleteZoneThreshold).coerceIn(0f, 1f)
                                                                 
-                                                                // PosiciÃ³n exacta del bote de basura
+                                                                // Posición exacta del bote de basura
                                                                 val deleteTargetX = 0f
                                                                 val deleteTargetY = (previewHeightPx / 2f) - with(density) { 46.dp.toPx() }
                                                                 
-                                                                // Fuerza magnÃ©tica MUY fuerte
+                                                                // Fuerza magnética MUY fuerte
                                                                 val magnetForce = proximity * 0.85f
                                                                 newX = newX + (deleteTargetX - newX) * magnetForce
                                                                 newY = newY + (deleteTargetY - newY) * magnetForce
                                                                 
-                                                                // Escala: reducir drÃ¡sticamente hasta 8%
+                                                                // Escala: reducir drásticamente hasta 8%
                                                                 deleteScale.value = (1f - proximity * 0.92f).coerceIn(0.08f, 1f)
                                                                 
                                                                 if (!vibratedDelete) {
@@ -1480,7 +1480,7 @@ fun HistoryScreen(
                                                             }
                                                             
                                                             // ---------------------------------------------------------------
-                                                            // guÃ­aS DE CENTRADO - Efecto magnÃ©tico suave
+                                                            // guíaS DE CENTRADO - Efecto magnético suave
                                                             // ---------------------------------------------------------------
                                                             if (!isOverDeleteZone) {
                                                                 val nearCenterX = newX.absoluteValue < guideMagneticRange
@@ -1516,7 +1516,7 @@ fun HistoryScreen(
                                                             gifOffsetX.value = newX
                                                             gifOffsetY.value = newY
                                                             
-                                                            // RotaciÃ³n y zoom: aplicar directamente
+                                                            // Rotación y zoom: aplicar directamente
                                                             gifRotation.value += rotation
                                                             if (zoom != 1f) {
                                                                 gifScale.value = (gifScale.value * zoom).coerceIn(0.3f, 3f)
@@ -1576,7 +1576,7 @@ fun HistoryScreen(
                         }
                         
                         // ---------------------------------------------------------------
-                        // IMÃGENES SUPERPUESTAS - Con gestos de transformaciÃ³n
+                        // IMÁGENES SUPERPUESTAS - Con gestos de transformación
                         // Incluye doble tap para centrar y velocidad de paneo normalizada
                         // ---------------------------------------------------------------
                         imageOverlays.sortedBy { it.zIndex }.forEach { imageOverlay ->
@@ -1591,7 +1591,7 @@ fun HistoryScreen(
                                     modifier = Modifier
                                         .align(Alignment.Center)
                                         .graphicsLayer {
-                                            // Usar centro como origen de transformaciÃ³n
+                                            // Usar centro como origen de transformación
                                             transformOrigin = androidx.compose.ui.graphics.TransformOrigin.Center
                                             translationX = imgOffsetX.value
                                             translationY = imgOffsetY.value
@@ -1604,7 +1604,7 @@ fun HistoryScreen(
                                         .pointerInput("doubleTap:${imageOverlay.id}") {
                                             detectTapGestures(
                                                 onDoubleTap = {
-                                                    // Reset a posiciÃ³n central con animaciÃ³n
+                                                    // Reset a posición central con animación
                                                     imgOffsetX.value = 0f
                                                     imgOffsetY.value = 0f
                                                     imgScale.value = 1f
@@ -1722,8 +1722,8 @@ fun HistoryScreen(
                         }
                         
                         // ---------------------------------------------------------------
-                        // botÃ³n TICK - Esquina inferior derecha del PREVIEW
-                        // Mismo TamaÃ±o y color que el BotÃ³n Arrow left
+                        // botón TICK - Esquina inferior derecha del PREVIEW
+                        // Mismo Tamaño y color que el Botón Arrow left
                         // ---------------------------------------------------------------
                         AnimatedVisibility(
                             visible = !showFilterCarousel && !showTextEditor && !showDrawingMode && !showAdjustMode,
@@ -1735,7 +1735,7 @@ fun HistoryScreen(
                         ) {
                             Box(
                                 modifier = Modifier
-                                    .size(40.dp) // Mismo TamaÃ±o que Arrow left
+                                    .size(40.dp) // Mismo Tamaño que Arrow left
                                     .clip(CircleShape)
                                     .background(Color.Black.copy(alpha = 0.5f)) // Mismo color que Arrow left
                                     .clickable {
@@ -1748,7 +1748,7 @@ fun HistoryScreen(
                                     imageVector = if (isEditingMode) Icons.Filled.Check else Icons.Outlined.Edit,
                                     contentDescription = if (isEditingMode) "Listo" else "Editar",
                                     tint = Color.White,
-                                    modifier = Modifier.size(22.dp) // Mismo TamaÃ±o de icono que Arrow left
+                                    modifier = Modifier.size(22.dp) // Mismo Tamaño de icono que Arrow left
                                 )
                             }
                         }
@@ -1799,10 +1799,10 @@ fun HistoryScreen(
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(bottom = 8.dp), // Espacio extra para TÃ­tulos
+                                .padding(bottom = 8.dp), // Espacio extra para Títulos
                             contentAlignment = Alignment.Center
                         ) {
-                            com.vinzay.app.ui.components.FilterCarousel(
+                            com.mercora.app.ui.components.FilterCarousel(
                                 bitmap = bitmap,
                                 currentFilter = selectedFilter,
                                 onFilterSelected = { filter -> selectedFilter = filter }
@@ -1813,7 +1813,7 @@ fun HistoryScreen(
                     // ---------------------------------------------------------------
                     // EDITOR DE TEXTO - Aparece cuando se pulsa herramienta de texto
                     // ---------------------------------------------------------------
-                    com.vinzay.app.ui.components.StoryTextEditor(
+                    com.mercora.app.ui.components.StoryTextEditor(
                         visible = showTextEditor,
                         keyboardHeight = keyboardHeight,
                         previewHeight = previewHeight,
@@ -1821,9 +1821,9 @@ fun HistoryScreen(
                         onDismiss = { showTextEditor = false }
                     )
                     
-                // Top bar con BotÃ³n Listo (cuando hay filtros)
-                // Se oculta cuando el modo dibujo o ajustes estÃ¡n activos
-                // NOTA: Eliminado el BotÃ³n X superior SegÃºn requerimiento
+                // Top bar con Botón Listo (cuando hay filtros)
+                // Se oculta cuando el modo dibujo o ajustes están activos
+                // NOTA: Eliminado el Botón X superior Según requerimiento
                 AnimatedVisibility(
                     visible = !showDrawingMode && !showAdjustMode && showFilterCarousel,
                     enter = fadeIn(tween(200)),
@@ -1837,8 +1837,8 @@ fun HistoryScreen(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.End
                     ) {
-                        // botÃ³n "Tick" - solo visible cuando se muestran filtros
-                        // Mismo estilo que BotÃ³n arrow left (fondo negro 0.5 alpha, 40dp)
+                        // botón "Tick" - solo visible cuando se muestran filtros
+                        // Mismo estilo que Botón arrow left (fondo negro 0.5 alpha, 40dp)
                         Box(
                             modifier = Modifier
                                 .size(40.dp)
@@ -1874,13 +1874,13 @@ fun HistoryScreen(
                     // MODO DIBUJO: Solo carrusel de colores
                     // ---------------------------------------------------------------
                     if (showDrawingMode) {
-                        com.vinzay.app.ui.components.DrawingColorCarousel(
+                        com.mercora.app.ui.components.DrawingColorCarousel(
                             selectedColor = drawingColor,
                             selectedTool = drawingTool,
                             onColorSelected = { color ->
                                 drawingColor = color
-                                if (drawingTool == com.vinzay.app.ui.components.DrawingTool.ERASER) {
-                                    drawingTool = com.vinzay.app.ui.components.DrawingTool.PEN
+                                if (drawingTool == com.mercora.app.ui.components.DrawingTool.ERASER) {
+                                    drawingTool = com.mercora.app.ui.components.DrawingTool.PEN
                                 }
                             },
                             modifier = Modifier.fillMaxWidth()
@@ -1889,7 +1889,7 @@ fun HistoryScreen(
                         // ---------------------------------------------------------------
                         // MODO AJUSTES: Carrusel de herramientas de ajuste
                         // ---------------------------------------------------------------
-                        com.vinzay.app.ui.components.AdjustmentToolsCarousel(
+                        com.mercora.app.ui.components.AdjustmentToolsCarousel(
                             adjustState = adjustState,
                             selectedAdjustment = selectedAdjustment,
                             onAdjustmentSelected = { type -> selectedAdjustment = type },
@@ -1898,14 +1898,14 @@ fun HistoryScreen(
                         )
                     } else if (isEditingMode) {
                         // ---------------------------------------------------------------
-                        // MODO EDiciÃ³n: Carrusel horizontal de herramientas (sin BotÃ³n aÂ¿QuÃ©)
+                        // MODO EDición: Carrusel horizontal de herramientas (sin Botón a¿Qué)
                         // ---------------------------------------------------------------
                         LazyRow(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(start = 16.dp),
                             horizontalArrangement = Arrangement.spacedBy(16.dp),
-                            contentPadding = PaddingValues(end = 16.dp) // Ãºltima herramienta contra borde derecho
+                            contentPadding = PaddingValues(end = 16.dp) // última herramienta contra borde derecho
                         ) {
                             val editTools = listOf(
                                 EditTool("filter", Icons.Outlined.AutoAwesome, "Filtros"),
@@ -1947,7 +1947,7 @@ fun HistoryScreen(
                                                         // Pre-aplicar filtro al bitmap para evitar diferencia de color
                                                         capturedBitmap?.let { bmp ->
                                                             scope.launch(Dispatchers.Default) {
-                                                                val filtered = com.vinzay.app.ui.components.FilterProcessor
+                                                                val filtered = com.mercora.app.ui.components.FilterProcessor
                                                                     .applyFilterForExport(bmp, selectedFilter)
                                                                 withContext(Dispatchers.Main) {
                                                                     filteredBitmapForAdjust = filtered
@@ -1987,7 +1987,7 @@ fun HistoryScreen(
                             horizontalArrangement = Arrangement.spacedBy(8.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            // botÃ³n "Tu Vitrina"
+                            // botón "Tu Vitrina"
                             Box(
                                 modifier = Modifier
                                     .weight(1f)
@@ -2014,7 +2014,7 @@ fun HistoryScreen(
                                                 // ---------------------------------------------------------------
                                                 
                                                 // 1. Aplicar filtro
-                                                var finalBitmap = com.vinzay.app.ui.components.FilterProcessor
+                                                var finalBitmap = com.mercora.app.ui.components.FilterProcessor
                                                     .applyFilterForExport(bitmap, currentFilter)
                                                 
                                                 val scaleX: Float = finalBitmap.width.toFloat() / currentPreviewWidthPx
@@ -2032,7 +2032,7 @@ fun HistoryScreen(
                                                             style = android.graphics.Paint.Style.STROKE
                                                             strokeCap = android.graphics.Paint.Cap.ROUND
                                                             strokeJoin = android.graphics.Paint.Join.ROUND
-                                                            if (stroke.tool == com.vinzay.app.ui.components.DrawingTool.ERASER) {
+                                                            if (stroke.tool == com.mercora.app.ui.components.DrawingTool.ERASER) {
                                                                 xfermode = android.graphics.PorterDuffXfermode(android.graphics.PorterDuff.Mode.CLEAR)
                                                             } else {
                                                                 color = android.graphics.Color.argb(
@@ -2067,9 +2067,9 @@ fun HistoryScreen(
                                                         )
                                                         typeface = android.graphics.Typeface.DEFAULT_BOLD
                                                         textAlign = when (currentTextState.alignment) {
-                                                            com.vinzay.app.ui.components.TextAlignOption.LEFT -> android.graphics.Paint.Align.LEFT
-                                                            com.vinzay.app.ui.components.TextAlignOption.CENTER -> android.graphics.Paint.Align.CENTER
-                                                            com.vinzay.app.ui.components.TextAlignOption.RIGHT -> android.graphics.Paint.Align.RIGHT
+                                                            com.mercora.app.ui.components.TextAlignOption.LEFT -> android.graphics.Paint.Align.LEFT
+                                                            com.mercora.app.ui.components.TextAlignOption.CENTER -> android.graphics.Paint.Align.CENTER
+                                                            com.mercora.app.ui.components.TextAlignOption.RIGHT -> android.graphics.Paint.Align.RIGHT
                                                         }
                                                     }
                                                     
@@ -2082,19 +2082,19 @@ fun HistoryScreen(
                                                     canvas.scale(currentTextScale, currentTextScale)
                                                     
                                                     // Fondo del texto si aplica
-                                                    if (currentTextState.backgroundState != com.vinzay.app.ui.components.TextBackgroundState.NONE) {
+                                                    if (currentTextState.backgroundState != com.mercora.app.ui.components.TextBackgroundState.NONE) {
                                                         val textBounds = android.graphics.Rect()
                                                         textPaint.getTextBounds(currentTextState.text, 0, currentTextState.text.length, textBounds)
                                                         val padding = 20f * scaleX
                                                         val bgPaint = android.graphics.Paint().apply {
                                                             isAntiAlias = true
                                                             color = when (currentTextState.backgroundState) {
-                                                                com.vinzay.app.ui.components.TextBackgroundState.BLACK -> android.graphics.Color.argb(220, 0, 0, 0)
-                                                                com.vinzay.app.ui.components.TextBackgroundState.WHITE -> android.graphics.Color.WHITE
+                                                                com.mercora.app.ui.components.TextBackgroundState.BLACK -> android.graphics.Color.argb(220, 0, 0, 0)
+                                                                com.mercora.app.ui.components.TextBackgroundState.WHITE -> android.graphics.Color.WHITE
                                                                 else -> android.graphics.Color.TRANSPARENT
                                                             }
                                                         }
-                                                        if (currentTextState.backgroundState == com.vinzay.app.ui.components.TextBackgroundState.WHITE) {
+                                                        if (currentTextState.backgroundState == com.mercora.app.ui.components.TextBackgroundState.WHITE) {
                                                             textPaint.color = android.graphics.Color.BLACK
                                                         }
                                                         val bgRect = android.graphics.RectF(
@@ -2163,7 +2163,7 @@ fun HistoryScreen(
                                 }
                             }
                             
-                            // botÃ³n "Frecuentes"
+                            // botón "Frecuentes"
                             Box(
                                 modifier = Modifier
                                     .weight(1f)
@@ -2201,7 +2201,7 @@ fun HistoryScreen(
                 // ---------------------------------------------------------------
                 // MODAL DE GIF PICKER - Al final para que quede sobre todo
                 // ---------------------------------------------------------------
-                com.vinzay.app.ui.components.GifPickerModal(
+                com.mercora.app.ui.components.GifPickerModal(
                     visible = showGifPicker,
                     onDismiss = { showGifPicker = false },
                     onGifSelected = { gifUrl ->
@@ -2213,7 +2213,7 @@ fun HistoryScreen(
                 // ---------------------------------------------------------------
                 // OVERLAY DE DIBUJO - Modo de dibujo completo
                 // ---------------------------------------------------------------
-                com.vinzay.app.ui.components.DrawingOverlay(
+                com.mercora.app.ui.components.DrawingOverlay(
                     visible = showDrawingMode,
                     selectedColor = drawingColor,
                     selectedTool = drawingTool,
@@ -2248,7 +2248,7 @@ fun HistoryScreen(
                         .padding(start = 12.dp)
                         // Sin offset - Alignment.CenterStart ya lo centra verticalmente en el preview
                 ) {
-                    com.vinzay.app.ui.components.DrawingStrokeSliderVertical(
+                    com.mercora.app.ui.components.DrawingStrokeSliderVertical(
                         strokeWidth = drawingStrokeWidth.value,
                         selectedColor = drawingColor,
                         onStrokeWidthChange = { drawingStrokeWidth.value = it }
@@ -2276,19 +2276,19 @@ data class ImageOverlay(
     val uri: android.net.Uri,
     var offsetX: Float = 0f,
     var offsetY: Float = 0f,
-    var scale: Float = 0.5f, // Escala inicial MÃ¡s pequeÃ±a
+    var scale: Float = 0.5f, // Escala inicial Más pequeña
     var rotation: Float = 0f,
     var zIndex: Int = 0 // Para controlar el orden de las capas
 )
 
 // ---------------------------------------------------------------
-// COLUMNA VERTICAL DE HERRAMIENTAS DE EDiciÃ³n - Sin background
+// COLUMNA VERTICAL DE HERRAMIENTAS DE EDición - Sin background
 // ---------------------------------------------------------------
 @Composable
 private fun StoryEditToolsCarousel(
     bitmap: Bitmap?,
-    selectedFilter: com.vinzay.app.ui.components.ImageFilter? = null,
-    textState: com.vinzay.app.ui.components.StoryTextState = com.vinzay.app.ui.components.StoryTextState(),
+    selectedFilter: com.mercora.app.ui.components.ImageFilter? = null,
+    textState: com.mercora.app.ui.components.StoryTextState = com.mercora.app.ui.components.StoryTextState(),
     textOffsetX: Float = 0f,
     textOffsetY: Float = 0f,
     textRotation: Float = 0f,
@@ -2308,14 +2308,14 @@ private fun StoryEditToolsCarousel(
     var isSaving by remember { mutableStateOf(false) }
     var saveProgress by remember { mutableStateOf(0f) }
     
-    // AnimaciÃ³n de progreso vertical
+    // Animación de progreso vertical
     val animatedProgress by animateFloatAsState(
         targetValue = saveProgress,
         animationSpec = tween(durationMillis = 300, easing = LinearEasing),
         label = "saveProgress"
     )
     
-    // FunciÃ³n para renderizar bitmap final con filtro y texto
+    // Función para renderizar bitmap final con filtro y texto
     fun renderFinalBitmap(sourceBitmap: Bitmap): Bitmap {
         // Aplicar filtro primero
         val filteredBitmap = if (selectedFilter?.colorMatrix != null) {
@@ -2346,13 +2346,13 @@ private fun StoryEditToolsCarousel(
             )
             typeface = android.graphics.Typeface.DEFAULT_BOLD
             textAlign = when (textState.alignment) {
-                com.vinzay.app.ui.components.TextAlignOption.LEFT -> android.graphics.Paint.Align.LEFT
-                com.vinzay.app.ui.components.TextAlignOption.CENTER -> android.graphics.Paint.Align.CENTER
-                com.vinzay.app.ui.components.TextAlignOption.RIGHT -> android.graphics.Paint.Align.RIGHT
+                com.mercora.app.ui.components.TextAlignOption.LEFT -> android.graphics.Paint.Align.LEFT
+                com.mercora.app.ui.components.TextAlignOption.CENTER -> android.graphics.Paint.Align.CENTER
+                com.mercora.app.ui.components.TextAlignOption.RIGHT -> android.graphics.Paint.Align.RIGHT
             }
         }
         
-        // Calcular posiciÃ³n del texto escalada al TamaÃ±o del bitmap
+        // Calcular posición del texto escalada al Tamaño del bitmap
         val scaleX = filteredBitmap.width.toFloat() / previewWidth.coerceAtLeast(1)
         val scaleY = filteredBitmap.height.toFloat() / previewHeight.coerceAtLeast(1)
         val centerX = filteredBitmap.width / 2f + (textOffsetX * scaleX)
@@ -2364,21 +2364,21 @@ private fun StoryEditToolsCarousel(
         canvas.scale(textScale, textScale)
         
         // Dibujar fondo del texto si es necesario
-        if (textState.backgroundState != com.vinzay.app.ui.components.TextBackgroundState.NONE) {
+        if (textState.backgroundState != com.mercora.app.ui.components.TextBackgroundState.NONE) {
             val textBounds = android.graphics.Rect()
             textPaint.getTextBounds(textState.text, 0, textState.text.length, textBounds)
             val padding = 20f * scaleX
             val bgPaint = android.graphics.Paint().apply {
                 isAntiAlias = true
                 color = when (textState.backgroundState) {
-                    com.vinzay.app.ui.components.TextBackgroundState.BLACK -> android.graphics.Color.argb(220, 0, 0, 0)
-                    com.vinzay.app.ui.components.TextBackgroundState.WHITE -> android.graphics.Color.WHITE
+                    com.mercora.app.ui.components.TextBackgroundState.BLACK -> android.graphics.Color.argb(220, 0, 0, 0)
+                    com.mercora.app.ui.components.TextBackgroundState.WHITE -> android.graphics.Color.WHITE
                     else -> android.graphics.Color.TRANSPARENT
                 }
             }
             
             // Cambiar color del texto si fondo es blanco
-            if (textState.backgroundState == com.vinzay.app.ui.components.TextBackgroundState.WHITE) {
+            if (textState.backgroundState == com.mercora.app.ui.components.TextBackgroundState.WHITE) {
                 textPaint.color = android.graphics.Color.BLACK
             }
             
@@ -2398,7 +2398,7 @@ private fun StoryEditToolsCarousel(
         return filteredBitmap
     }
     
-    // FunciÃ³n para guardar imagen en galerÃ­a (optimizada con coroutine)
+    // Función para guardar imagen en galería (optimizada con coroutine)
     fun saveToGallery() {
         if (bitmap == null || isSaving) return
         isSaving = true
@@ -2411,12 +2411,12 @@ private fun StoryEditToolsCarousel(
                 
                 withContext(Dispatchers.Main) { saveProgress = 0.6f }
                 
-                val filename = "Vinzay_${System.currentTimeMillis()}.jpg"
+                val filename = "Mercora_${System.currentTimeMillis()}.jpg"
                 val contentValues = android.content.ContentValues().apply {
                     put(MediaStore.Images.Media.DISPLAY_NAME, filename)
                     put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                        put(MediaStore.Images.Media.RELATIVE_PATH, "Pictures/Vinzay")
+                        put(MediaStore.Images.Media.RELATIVE_PATH, "Pictures/Mercora")
                         put(MediaStore.Images.Media.IS_PENDING, 1)
                     }
                 }
@@ -2457,7 +2457,7 @@ private fun StoryEditToolsCarousel(
                 }
             } finally {
                 withContext(Dispatchers.Main) {
-                    // pequeÃ±o delay para mostrar animaciÃ³n completa
+                    // pequeño delay para mostrar animación completa
                     kotlinx.coroutines.delay(200)
                     isSaving = false
                     saveProgress = 0f
@@ -2492,7 +2492,7 @@ private fun StoryEditToolsCarousel(
             ) {
                 if (tool.id == "save") {
                     // ---------------------------------------------------------------
-                    // ANIMaciÃ³n DE CARGA VERTICAL tipo "agua"
+                    // ANIMación DE CARGA VERTICAL tipo "agua"
                     // El fondo blanco sube de abajo hacia arriba
                     // El icono cambia de blanco a negro mientras sube
                     // ---------------------------------------------------------------
@@ -2546,7 +2546,7 @@ private fun CameraPreview(
             clipChildren = true
             clipToPadding = true
             setBackgroundColor(android.graphics.Color.BLACK)
-            // Modo de escala que respeta los lÃ­mites
+            // Modo de escala que respeta los límites
             scaleType = PreviewView.ScaleType.FILL_CENTER
         }
     }
@@ -2600,7 +2600,7 @@ private suspend fun Context.getCameraProvider(): ProcessCameraProvider {
     }
 }
 
-// FunciÃ³n de captura rÃ¡pidA - optimizada para MÃ­nima latencia
+// Función de captura rápidA - optimizada para Mínima latencia
 @androidx.annotation.OptIn(androidx.camera.core.ExperimentalGetImage::class)
 private fun takePhotoToMemoryFast(
     context: Context,
@@ -2608,7 +2608,7 @@ private fun takePhotoToMemoryFast(
     onSuccess: (Bitmap) -> Unit,
     onError: (Exception) -> Unit
 ) {
-    // Captura directa sin ConfiguraciÃ³n adicional para MÃ¡xima velocidad
+    // Captura directa sin Configuración adicional para Máxima velocidad
     imageCapture.takePicture(
         ContextCompat.getMainExecutor(context),
         object : ImageCapture.OnImageCapturedCallback() {
@@ -2640,7 +2640,7 @@ private fun takePhotoToMemoryFast(
     )
 }
 
-// FunciÃ³n para cargar bitmap desde URI de galerÃ­a
+// Función para cargar bitmap desde URI de galería
 private suspend fun loadBitmapFromUri(context: Context, uri: Uri): Bitmap? {
     return withContext(Dispatchers.IO) {
         try {

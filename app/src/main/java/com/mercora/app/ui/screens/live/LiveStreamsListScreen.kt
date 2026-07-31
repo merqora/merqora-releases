@@ -26,60 +26,31 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.mercora.app.data.repository.LiveStream
-import com.mercora.app.data.repository.LiveStreamRepository
 import com.mercora.app.ui.theme.*
-import kotlinx.coroutines.launch
 
 /**
  * Pantalla que muestra todas las transmisiones en vivo activas
- * Con botÃ³n de refresh para actualizar manualmente
+ * Con botón de refresh para actualizar manualmente
  */
 @Composable
 fun LiveStreamsListScreen(
     onBack: () -> Unit,
     onStreamClick: (LiveStream) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    viewModel: LiveStreamsViewModel = hiltViewModel()
 ) {
-    val activeStreams by LiveStreamRepository.activeStreams.collectAsState()
-    val lastError by LiveStreamRepository.lastError.collectAsState()
-    val scope = rememberCoroutineScope()
-    
-    // Estado de refresh
-    var isRefreshing by remember { mutableStateOf(false) }
-    var showErrorDialog by remember { mutableStateOf(false) }
-    var errorMessage by remember { mutableStateOf("") }
-    
-    // Mostrar error si existe
-    LaunchedEffect(lastError) {
-        lastError?.let {
-            errorMessage = it
-            showErrorDialog = true
-        }
-    }
-    
-    // Cargar streams al entrar
-    LaunchedEffect(Unit) {
-        LiveStreamRepository.loadActiveStreams()
-    }
-    
-    // FunciÃ³n de refresh
-    fun onRefresh() {
-        scope.launch {
-            isRefreshing = true
-            LiveStreamRepository.loadActiveStreams()
-            isRefreshing = false
-        }
-    }
+    val activeStreams by viewModel.activeStreams.collectAsState()
+    val isRefreshing by viewModel.isRefreshing.collectAsState()
+    val showErrorDialog by viewModel.showErrorDialog.collectAsState()
+    val errorMessage by viewModel.errorMessage.collectAsState()
     
     // Dialog de error
     if (showErrorDialog) {
         AlertDialog(
-            onDismissRequest = { 
-                showErrorDialog = false
-                LiveStreamRepository.clearError()
-            },
+            onDismissRequest = { viewModel.dismissError() },
             title = { Text("Error cargando transmisiones") },
             text = { 
                 Text(
@@ -88,17 +59,14 @@ fun LiveStreamsListScreen(
                 )
             },
             confirmButton = {
-                TextButton(onClick = { 
-                    showErrorDialog = false
-                    LiveStreamRepository.clearError()
-                }) {
+                TextButton(onClick = { viewModel.dismissError() }) {
                     Text("OK")
                 }
             }
         )
     }
     
-    // AnimaciÃ³n de pulso para indicador LIVE
+    // Animación de pulso para indicador LIVE
     val infiniteTransition = rememberInfiniteTransition(label = "livePulse")
     val pulseAlpha by infiniteTransition.animateFloat(
         initialValue = 0.5f,
@@ -117,7 +85,7 @@ fun LiveStreamsListScreen(
             .statusBarsPadding()
     ) {
         // Header minimalista
-        LiveStreamsHeader(onBack = onBack, onRefresh = { onRefresh() })
+        LiveStreamsHeader(onBack = onBack, onRefresh = { viewModel.pullToRefresh() })
         
         // Contenido
         if (activeStreams.isEmpty() && !isRefreshing) {
@@ -156,7 +124,7 @@ fun LiveStreamsListScreen(
 }
 
 /**
- * Header de la pantalla con botÃ³n de refresh
+ * Header de la pantalla con botón de refresh
  */
 @Composable
 private fun LiveStreamsHeader(onBack: () -> Unit, onRefresh: () -> Unit) {
@@ -216,7 +184,7 @@ private fun LiveStreamsHeader(onBack: () -> Unit, onRefresh: () -> Unit) {
             )
         }
         
-        // BotÃ³n de refresh
+        // Botón de refresh
         IconButton(
             onClick = onRefresh,
             modifier = Modifier
@@ -315,32 +283,63 @@ private fun LiveStreamItem(
                 }
             }
             
-            // Badge LIVE pequeÃ±o
-            Surface(
+            // Badges: LIVE + Viewers (Alineados a la izquierda)
+            Row(
                 modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .offset(y = 4.dp),
-                shape = RoundedCornerShape(4.dp),
-                color = Color(0xFFEF4444)
+                    .align(Alignment.BottomStart)
+                    .padding(start = 4.dp, bottom = 4.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(4.dp)
             ) {
-                Row(
-                    modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(3.dp)
+                // Badge LIVE pequeño
+                Surface(
+                    shape = RoundedCornerShape(4.dp),
+                    color = Color(0xFFEF4444)
                 ) {
-                    Box(
-                        modifier = Modifier
-                            .size(5.dp)
-                            .graphicsLayer { alpha = pulseAlpha }
-                            .clip(CircleShape)
-                            .background(Color.White)
-                    )
-                    Text(
-                        text = "LIVE",
-                        fontSize = 8.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.White
-                    )
+                    Row(
+                        modifier = Modifier.padding(horizontal = 5.dp, vertical = 2.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(3.dp)
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(4.dp)
+                                .graphicsLayer { alpha = pulseAlpha }
+                                .clip(CircleShape)
+                                .background(Color.White)
+                        )
+                        Text(
+                            text = "LIVE",
+                            fontSize = 7.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White
+                        )
+                    }
+                }
+                
+                // Badge de Viewers
+                Surface(
+                    shape = RoundedCornerShape(4.dp),
+                    color = Color.Black.copy(alpha = 0.5f)
+                ) {
+                    Row(
+                        modifier = Modifier.padding(horizontal = 4.dp, vertical = 2.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(2.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Visibility,
+                            contentDescription = null,
+                            tint = Color.White,
+                            modifier = Modifier.size(8.dp)
+                        )
+                        Text(
+                            text = "${stream.viewerCount}",
+                            fontSize = 7.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White
+                        )
+                    }
                 }
             }
         }
@@ -357,7 +356,7 @@ private fun LiveStreamItem(
             overflow = TextOverflow.Ellipsis
         )
         
-        // Nombre de tienda o viewers
+        // Nombre de tienda
         if (stream.broadcasterStoreName != null) {
             Text(
                 text = stream.broadcasterStoreName,
@@ -365,24 +364,6 @@ private fun LiveStreamItem(
                 color = TextMuted,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
-            )
-        }
-        
-        // Contador de viewers
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(2.dp)
-        ) {
-            Icon(
-                imageVector = Icons.Default.Visibility,
-                contentDescription = null,
-                tint = TextMuted,
-                modifier = Modifier.size(10.dp)
-            )
-            Text(
-                text = "${stream.viewerCount}",
-                fontSize = 10.sp,
-                color = TextMuted
             )
         }
     }
@@ -430,7 +411,7 @@ private fun EmptyStreamsContent() {
             Spacer(modifier = Modifier.height(8.dp))
             
             Text(
-                text = "SÃ© el primero en iniciar una transmisiÃ³n\ny conecta con tu audiencia",
+                text = "Sé el primero en iniciar una transmisión\ny conecta con tu audiencia",
                 fontSize = 14.sp,
                 color = TextMuted,
                 textAlign = TextAlign.Center,

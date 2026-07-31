@@ -78,7 +78,7 @@ fun ProductSearchHeader(
                 Box(modifier = Modifier.weight(1f)) {
                     if (searchQuery.isEmpty()) {
                         Text(
-                            text = "Buscar en Vinzay",
+                            text = "Buscar en Mercora",
                             color = TextMuted,
                             fontSize = 14.sp,
                             fontWeight = FontWeight.Medium

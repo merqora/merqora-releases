@@ -239,7 +239,7 @@ fun BiometricEnrollmentScreen(
                 )
             } else {
                 Text(
-                    text = "Â¡ConfiguraciÃ³n completa!",
+                    text = "¡Configuración completa!",
                     fontSize = 22.sp,
                     fontWeight = FontWeight.Bold,
                     color = AccentGreen,
@@ -247,7 +247,7 @@ fun BiometricEnrollmentScreen(
                 )
                 Spacer(Modifier.height(8.dp))
                 Text(
-                    text = "Ahora puedes iniciar sesiÃ³n con tu huella",
+                    text = "Ahora puedes iniciar sesión con tu huella",
                     fontSize = 14.sp,
                     color = TextSecondary,
                     textAlign = TextAlign.Center
@@ -261,23 +261,23 @@ private fun subtitleForStep(step: Int): String = when (step) {
     0 -> "Coloca tu dedo en el sensor para empezar"
     1 -> "Coloca el dedo nuevamente"
     2 -> "Sigue colocando el dedo"
-    3 -> "Â¡Casi listo!"
-    4 -> "Una vez mÃ¡s"
-    else -> "ConfiguraciÃ³n completada"
+    3 -> "¡Casi listo!"
+    4 -> "Una vez más"
+    else -> "Configuración completada"
 }
 
 private fun messageForStep(step: Int): String = when (step) {
     0 -> "Coloca tu dedo"
     1, 2 -> "Coloca el dedo nuevamente"
-    3 -> "Â¡Casi listo!"
-    4 -> "Una vez mÃ¡s"
+    3 -> "¡Casi listo!"
+    4 -> "Una vez más"
     else -> ""
 }
 
 private fun buttonTextForStep(step: Int): String = when (step) {
-    0 -> "Comenzar configuraciÃ³n"
+    0 -> "Comenzar configuración"
     in 1..3 -> "Coloca el dedo nuevamente"
-    4 -> "Una vez mÃ¡s"
+    4 -> "Una vez más"
     else -> "Completado"
 }
 

@@ -1,4 +1,4 @@
-import type { AppVersion } from '@/lib/app'
+﻿import type { AppVersion } from '@/lib/app'
 import styles from './AppDownload.module.css'
 
 export default function AppDownload({ version }: { version: AppVersion | null }) {
@@ -10,7 +10,7 @@ export default function AppDownload({ version }: { version: AppVersion | null })
     <section className={styles.section}>
       <div className="container">
         <div className={styles.card}>
-          <div className={styles.badge}>Vinzay App</div>
+          <div className={styles.badge}>Mercora App</div>
           <h2 className={styles.title}>Descargá la app</h2>
           <p className={styles.subtitle}>
             Comprá y vendé productos únicos desde tu celular.

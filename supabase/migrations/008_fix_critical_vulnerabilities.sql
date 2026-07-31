@@ -107,10 +107,10 @@ END;
 $$;
 
 -- ============================================================
--- CRIT-3: Configuración del Marketplace User ID de Vinzay
+-- CRIT-3: Configuración del Marketplace User ID de Mercora
 -- ============================================================
 INSERT INTO platform_settings (key, value) VALUES
-    ('marketplace_user_id', '{"mp_user_id": "", "description": "MP User ID de Vinzay (la plataforma), usado como sponsor_id en Split Payments"}'::jsonb)
+    ('marketplace_user_id', '{"mp_user_id": "", "description": "MP User ID de Mercora (la plataforma), usado como sponsor_id en Split Payments"}'::jsonb)
 ON CONFLICT (key) DO NOTHING;
 
 -- ============================================================

@@ -27,7 +27,7 @@ data class Story(
 ) {
     // Propiedades calculadas para compatibilidad con UI
     val shares: Int get() = forwarded ?: 0
-    val newFollowers: Int get() = 0 // SerÃ¡ implementado cuando se agregue tracking de seguidores
+    val newFollowers: Int get() = 0 // Será implementado cuando se agregue tracking de seguidores
 }
 
 data class StoryUploadState(

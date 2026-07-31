@@ -45,9 +45,8 @@ import android.Manifest
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import com.mercora.app.data.repository.ExploreItem
-import com.mercora.app.data.repository.ExploreRepository
-import com.mercora.app.data.repository.OffersRepository
 import com.mercora.app.data.repository.OfferCampaign
+import com.mercora.app.data.repository.OffersRepository
 import com.mercora.app.data.repository.OfferProduct
 import com.mercora.app.data.repository.ZoneRepository
 import com.mercora.app.data.repository.ZoneLocationState
@@ -66,8 +65,9 @@ import com.mercora.app.ui.components.UnifiedProductCard
 import com.mercora.app.ui.components.toProductCardData
 import com.mercora.app.ui.screens.search.SearchResultsScreen
 import com.mercora.app.ui.theme.*
-import kotlinx.coroutines.launch
 import com.mercora.app.ui.screens.explore.MySizeScreen
+import androidx.hilt.navigation.compose.hiltViewModel
+import kotlinx.coroutines.launch
 
 // Quick Actions
 private data class QuickAction(
@@ -85,7 +85,7 @@ private val QUICK_ACTIONS = listOf(
     QuickAction("zones", "Zonas", Icons.Outlined.LocationOn, AccentBlue)
 )
 
-// categorÃ­as
+// categorías
 private data class Category(
     val id: String,
     val name: String,
@@ -96,7 +96,7 @@ private val CATEGORIES = listOf(
     Category("ropa", "Ropa", Icons.Outlined.Checkroom),
     Category("zapatos", "Zapatos", Icons.Outlined.Hiking),
     Category("accesorios", "Accesorios", Icons.Outlined.Watch),
-    Category("electronica", "ElectrÃºnica", Icons.Outlined.Devices),
+    Category("electronica", "Electrúnica", Icons.Outlined.Devices),
     Category("hogar", "Hogar", Icons.Outlined.Home),
     Category("deportes", "Deportes", Icons.Outlined.FitnessCenter)
 )
@@ -133,13 +133,13 @@ fun ExploreScreen(
     showNavBar: Boolean = true,
     currentNavRoute: String = "explore",
     onNavNavigate: (String) -> Unit = {},
-    onNavHomeReclick: () -> Unit = {}
+    onNavHomeReclick: () -> Unit = {},
+    viewModel: ExploreViewModel = hiltViewModel()
 ) {
-    var searchQuery by remember { mutableStateOf("") }
-    var selectedCategory by remember { mutableStateOf<String?>(null) }
-    val scope = rememberCoroutineScope()
+    val searchQuery by viewModel.searchQuery.collectAsState()
+    val selectedCategory by viewModel.selectedCategory.collectAsState()
     
-    // Estado para pantalla de "prÃ³ximamente" de En Vivo
+    // Estado para pantalla de "próximamente" de En Vivo
     var showLiveComingSoon by remember { mutableStateOf(false) }
     
     // Estado para pantalla de Ofertas
@@ -154,7 +154,7 @@ fun ExploreScreen(
     // Estado para pantalla de Zonas
     var showZonesScreen by remember { mutableStateOf(false) }
     
-    // Estado para pantalla de bÃºsqueda/Ecommerce
+    // Estado para pantalla de búsqueda/Ecommerce
     var showSearchScreen by remember { mutableStateOf(false) }
     var searchScreenQuery by remember { mutableStateOf("") }
     
@@ -167,17 +167,12 @@ fun ExploreScreen(
     // Product preview â€” delegated to centralized overlay
     val openPreview = LocalOpenProductPreview.current
     
-    // Use cached data from ExploreRepository
-    val exploreItems by ExploreRepository.exploreItems.collectAsState()
-    val isLoading by ExploreRepository.isLoading.collectAsState()
+    // Use cached data from ExploreViewModel
+    val exploreItems by viewModel.exploreItems.collectAsState()
+    val isLoading by viewModel.isLoading.collectAsState()
     val listState = rememberLazyListState()
-    
-    // Load data only if not already loaded (caching)
-    LaunchedEffect(Unit) {
-        ExploreRepository.loadExploreItems(forceRefresh = false)
-    }
-    
-    // Filtrar por CategorÃ­a solamente (bÃºsqueda ahora va a SearchResultsScreen)
+
+    // Filtrar por Categoría solamente (búsqueda ahora va a SearchResultsScreen)
     val filteredItems = remember(selectedCategory, exploreItems) {
         exploreItems.filter { item ->
             val matchesCategory = selectedCategory == null || 
@@ -204,11 +199,11 @@ fun ExploreScreen(
         item {
             SearchBar(
                 query = searchQuery,
-                onQueryChange = { searchQuery = it },
+                onQueryChange = { viewModel.updateSearchQuery(it) },
                 onSearch = { query ->
                     searchScreenQuery = query
                     showSearchScreen = true
-                    searchQuery = "" // Limpiar despuÃ©s de buscar
+                    viewModel.updateSearchQuery("")
                 },
                 modifier = Modifier.padding(vertical = 8.dp)
             )
@@ -225,17 +220,17 @@ fun ExploreScreen(
             )
         }
         
-        // categorÃ­as EspecÃ­ficas
+        // categorías Específicas
         item {
             CategoriesRow(
                 selectedCategory = selectedCategory,
-                onCategorySelected = { 
-                    selectedCategory = if (selectedCategory == it) null else it 
+                onCategorySelected = {
+                    viewModel.selectCategory(if (selectedCategory == it) null else it)
                 }
             )
         }
         
-        // SecciÃ³n: Descubre lo que tenemos para ti
+        // Sección: Descubre lo que tenemos para ti
         if (discoverItems.isNotEmpty()) {
             item {
                 SectionHeader(
@@ -254,11 +249,11 @@ fun ExploreScreen(
             }
         }
         
-        // SecciÃ³n: Populares
+        // Sección: Populares
         if (popularItems.isNotEmpty()) {
             item {
                 SectionHeader(
-                    title = "mÃ¡s populares",
+                    title = "más populares",
                     icon = Icons.Outlined.TrendingUp,
                     showSeeAll = false
                 )
@@ -274,13 +269,13 @@ fun ExploreScreen(
             }
         }
         
-        // SecciÃ³n: Todas las publicaciones
+        // Sección: Todas las publicaciones
         item {
             SectionHeader(
                 title = "Explora todo",
                 icon = Icons.Outlined.GridView,
                 showSeeAll = true,
-                seeAllText = "Ver MÃ¡s",
+                seeAllText = "Ver Más",
                 onSeeAllClick = {
                     searchScreenQuery = ""
                     showSearchScreen = true
@@ -308,7 +303,7 @@ fun ExploreScreen(
                         )
                     }
                 }
-                // Si solo hay 1 producto en la fila, agregar espacio vacÃ­o
+                // Si solo hay 1 producto en la fila, agregar espacio vacío
                 if (rowItems.size == 1) {
                     Spacer(modifier = Modifier.weight(1f))
                 }
@@ -346,7 +341,7 @@ fun ExploreScreen(
         }
     }
     
-    // NavBar embebido - ANTES de todos los modales para que queden SOBRE Ã©l
+    // NavBar embebido - ANTES de todos los modales para que queden SOBRE él
     if (showNavBar) {
         BottomNavBar(
             currentRoute = currentNavRoute,
@@ -356,7 +351,7 @@ fun ExploreScreen(
         )
     }
     
-    // Pantalla de "prÃ³ximamente" para En Vivo (overlay completo)
+    // Pantalla de "próximamente" para En Vivo (overlay completo)
     if (showLiveComingSoon) {
         Box(
             modifier = Modifier
@@ -435,7 +430,7 @@ fun ExploreScreen(
         }
     }
     
-    // Pantalla de bÃºsqueda/Ecommerce
+    // Pantalla de búsqueda/Ecommerce
     if (showSearchScreen) {
         Box(
             modifier = Modifier
@@ -475,7 +470,7 @@ private fun QuickActionsRow(
         horizontalArrangement = Arrangement.SpaceEvenly
     ) {
         QUICK_ACTIONS.forEach { action ->
-            // Determinar si esta SecciÃ³n estÃ¡ bloqueada
+            // Determinar si esta Sección está bloqueada
             val isLocked = action.id == "live" || action.id == "ranking"
             
             Column(
@@ -494,7 +489,7 @@ private fun QuickActionsRow(
                     modifier = Modifier.size(52.dp),
                     contentAlignment = Alignment.Center
                 ) {
-                    // cÃ­rculo de fondo con opacidad reducida si estÃ¡ bloqueado
+                    // círculo de fondo con opacidad reducida si está bloqueado
                     Box(
                         modifier = Modifier
                             .fillMaxSize()
@@ -523,7 +518,7 @@ private fun QuickActionsRow(
                         ) {
                             Icon(
                                 imageVector = Icons.Filled.Lock,
-                                contentDescription = "prÃ³ximamente",
+                                contentDescription = "próximamente",
                                 tint = TextMuted,
                                 modifier = Modifier.size(10.dp)
                             )
@@ -655,7 +650,7 @@ private fun ItemCarousel(
 }
 
 // ---------------------------------------------------------------
-// PANTALLA DE OFERTAS - DinÃ¡mica con Supabase
+// PANTALLA DE OFERTAS - Dinámica con Supabase
 // ---------------------------------------------------------------
 
 private fun campaignIcon(slug: String): ImageVector = when (slug) {
@@ -692,7 +687,7 @@ private fun OffersScreen(
         OffersRepository.loadOffers(forceRefresh = false)
     }
 
-    // Productos de la campaÃ±a seleccionada
+    // Productos de la campaña seleccionada
     val currentProducts = selectedCampaign?.items ?: emptyList()
     val featuredProducts = currentProducts.filter { it.isFeatured }
 
@@ -743,7 +738,7 @@ private fun OffersScreen(
                 state = listState,
                 modifier = Modifier.fillMaxSize()
             ) {
-                // Banner dinÃ¡mico
+                // Banner dinámico
                 item(key = "banner") {
                     selectedCampaign?.let { campaign ->
                         OffersBannerDynamic(campaign = campaign)
@@ -784,7 +779,7 @@ private fun OffersScreen(
                     }
                 }
 
-                // CategorÃ­as STICKY
+                // Categorías STICKY
                 stickyHeader(key = "categories") {
                     OfferCampaignTabs(
                         campaigns = campaigns,
@@ -793,7 +788,7 @@ private fun OffersScreen(
                     )
                 }
 
-                // Stats de la campaÃ±a
+                // Stats de la campaña
                 item(key = "stats") {
                     selectedCampaign?.let { campaign ->
                         Row(
@@ -816,7 +811,7 @@ private fun OffersScreen(
                                     Text("${campaign.items.size} productos", fontSize = 12.sp, color = TextSecondary, fontWeight = FontWeight.Medium)
                                 }
                             }
-                            // Descuento mÃ¡ximo
+                            // Descuento máximo
                             Surface(
                                 shape = RoundedCornerShape(8.dp),
                                 color = Color(0xFFFF6B35).copy(alpha = 0.1f)
@@ -873,7 +868,7 @@ private fun OffersScreen(
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                 Icon(Icons.Outlined.SearchOff, null, tint = TextMuted, modifier = Modifier.size(48.dp))
                                 Spacer(modifier = Modifier.height(12.dp))
-                                Text("Sin productos en esta campaÃ±a", fontSize = 14.sp, color = TextSecondary)
+                                Text("Sin productos en esta campaña", fontSize = 14.sp, color = TextSecondary)
                             }
                         }
                     }
@@ -1155,7 +1150,7 @@ private fun OfferCampaignTabs(
 }
 
 // ---------------------------------------------------------------
-// PANTALLA DE RANKING - Top usuarios por CategorÃ­as
+// PANTALLA DE RANKING - Top usuarios por Categorías
 // ---------------------------------------------------------------
 
 private data class RankingCategory(
@@ -1167,11 +1162,11 @@ private data class RankingCategory(
 )
 
 private val RANKING_CATEGORIES = listOf(
-    RankingCategory("sellers", "Mejores Vendedores", "Los que MÃ¡s venden", Icons.Outlined.Storefront, Color(0xFF22C55E)),
-    RankingCategory("buyers", "mÃ¡s Compradores", "Los que MÃ¡s compran", Icons.Outlined.ShoppingCart, Color(0xFF0A3D62)),
-    RankingCategory("posts", "mÃ¡s Publicaciones", "Los MÃ¡s activos", Icons.Outlined.GridView, Color(0xFFFF6B35)),
-    RankingCategory("likes", "mÃ¡s Likes", "Los MÃ¡s populares", Icons.Outlined.Favorite, Color(0xFF2E8B57)),
-    RankingCategory("rends", "mÃ¡s Rends", "Creadores de video", Icons.Outlined.PlayCircle, Color(0xFFEF4444))
+    RankingCategory("sellers", "Mejores Vendedores", "Los que Más venden", Icons.Outlined.Storefront, Color(0xFF22C55E)),
+    RankingCategory("buyers", "más Compradores", "Los que Más compran", Icons.Outlined.ShoppingCart, Color(0xFF0A3D62)),
+    RankingCategory("posts", "más Publicaciones", "Los Más activos", Icons.Outlined.GridView, Color(0xFFFF6B35)),
+    RankingCategory("likes", "más Likes", "Los Más populares", Icons.Outlined.Favorite, Color(0xFF2E8B57)),
+    RankingCategory("rends", "más Rends", "Creadores de video", Icons.Outlined.PlayCircle, Color(0xFFEF4444))
 )
 
 private data class RankedUser(
@@ -1189,7 +1184,7 @@ private fun RankingScreen(
     onBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    // AnimaciÃ³n del anillo giratorio (como LiveComingSoonScreen)
+    // Animación del anillo giratorio (como LiveComingSoonScreen)
     val infiniteTransition = rememberInfiniteTransition(label = "rankingComingSoon")
     
     val rotateRing by infiniteTransition.animateFloat(
@@ -1239,7 +1234,7 @@ private fun RankingScreen(
                 .statusBarsPadding()
                 .navigationBarsPadding()
         ) {
-            // Top bar con BotÃ³n de volver
+            // Top bar con Botón de volver
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -1261,7 +1256,7 @@ private fun RankingScreen(
                     )
                 }
                 
-                // Badge PrÃ³ximAMENTE
+                // Badge PróximAMENTE
                 Surface(
                     shape = RoundedCornerShape(20.dp),
                     color = Color(0xFFFFD700).copy(alpha = 0.15f)
@@ -1278,7 +1273,7 @@ private fun RankingScreen(
                             modifier = Modifier.size(12.dp)
                         )
                         Text(
-                            text = "PrÃ³ximAMENTE",
+                            text = "PróximAMENTE",
                             color = Color(0xFFFFD700),
                             fontSize = 11.sp,
                             fontWeight = FontWeight.Bold,
@@ -1325,7 +1320,7 @@ private fun RankingScreen(
                                 )
                         )
                         
-                        // cÃ­rculo principal dorado
+                        // círculo principal dorado
                         Box(
                             modifier = Modifier
                                 .size(120.dp)
@@ -1351,9 +1346,9 @@ private fun RankingScreen(
                     
                     Spacer(modifier = Modifier.height(40.dp))
                     
-                    // tÃ­tulo principal
+                    // título principal
                     Text(
-                        text = "Â¡El Ranking estÃ¡ llegando!",
+                        text = "¡El Ranking está llegando!",
                         color = TextPrimary,
                         fontSize = 26.sp,
                         fontWeight = FontWeight.Bold,
@@ -1362,9 +1357,9 @@ private fun RankingScreen(
                     
                     Spacer(modifier = Modifier.height(16.dp))
                     
-                    // SubTÃ­tulo emotivo
+                    // SubTítulo emotivo
                     Text(
-                        text = "PrepÃ¡rate para descubrir quiÃ©nes son\nlos mejores vendedores, compradores\ny creadores de contenido en Vinzay.",
+                        text = "Prepárate para descubrir quiénes son\nlos mejores vendedores, compradores\ny creadores de contenido en Mercora.",
                         color = TextSecondary,
                         fontSize = 15.sp,
                         textAlign = TextAlign.Center,
@@ -1373,7 +1368,7 @@ private fun RankingScreen(
                     
                     Spacer(modifier = Modifier.height(32.dp))
                     
-                    // categorÃ­as preview
+                    // categorías preview
                     Surface(
                         shape = RoundedCornerShape(16.dp),
                         color = Surface.copy(alpha = 0.7f),
@@ -1394,7 +1389,7 @@ private fun RankingScreen(
                                     modifier = Modifier.size(18.dp)
                                 )
                                 Text(
-                                    text = "PrÃ³ximas CategorÃ­as",
+                                    text = "Próximas Categorías",
                                     color = TextPrimary,
                                     fontSize = 14.sp,
                                     fontWeight = FontWeight.SemiBold
@@ -1409,7 +1404,7 @@ private fun RankingScreen(
                             ) {
                                 RankingPreviewCategoryIcon(Icons.Outlined.Storefront, Color(0xFF22C55E), "Top Vendedores")
                                 RankingPreviewCategoryIcon(Icons.Outlined.ShoppingCart, Color(0xFF0A3D62), "Top Compradores")
-                                RankingPreviewCategoryIcon(Icons.Outlined.GridView, Color(0xFFFF6B35), "mÃ¡s Publicados")
+                                RankingPreviewCategoryIcon(Icons.Outlined.GridView, Color(0xFFFF6B35), "más Publicados")
                             }
                             
                             Spacer(modifier = Modifier.height(12.dp))
@@ -1418,8 +1413,8 @@ private fun RankingScreen(
                                 modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.SpaceEvenly
                             ) {
-                                RankingPreviewCategoryIcon(Icons.Outlined.Favorite, Color(0xFF2E8B57), "mÃ¡s Likes")
-                                RankingPreviewCategoryIcon(Icons.Outlined.PlayCircle, Color(0xFFEF4444), "mÃ¡s Rends")
+                                RankingPreviewCategoryIcon(Icons.Outlined.Favorite, Color(0xFF2E8B57), "más Likes")
+                                RankingPreviewCategoryIcon(Icons.Outlined.PlayCircle, Color(0xFFEF4444), "más Rends")
                             }
                         }
                     }
@@ -1428,7 +1423,7 @@ private fun RankingScreen(
                     
                     // Mensaje de expectativa
                     Text(
-                        text = "Â¡SerÃ¡s tÃº el PrÃ³ximo #1?",
+                        text = "¡Serás tú el Próximo #1?",
                         color = Color(0xFFFFD700),
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold,
@@ -1478,10 +1473,10 @@ private fun RankingPreviewCategoryIcon(
 
 private suspend fun loadTopSellers(): List<RankedUser> {
     return try {
-        val users = com.vinzay.app.data.remote.SupabaseClient.database
+        val users = com.mercora.app.data.remote.SupabaseClient.database
             .from("usuarios")
             .select()
-            .decodeList<com.vinzay.app.data.repository.ExploreUserProfile>()
+            .decodeList<com.mercora.app.data.repository.ExploreUserProfile>()
             .sortedByDescending { it.clientes }
             .take(20)
         
@@ -1501,10 +1496,10 @@ private suspend fun loadTopSellers(): List<RankedUser> {
 
 private suspend fun loadTopBuyers(): List<RankedUser> {
     return try {
-        val users = com.vinzay.app.data.remote.SupabaseClient.database
+        val users = com.mercora.app.data.remote.SupabaseClient.database
             .from("usuarios")
             .select()
-            .decodeList<com.vinzay.app.data.repository.ExploreUserProfile>()
+            .decodeList<com.mercora.app.data.repository.ExploreUserProfile>()
             .sortedByDescending { it.clientes }
             .take(20)
         
@@ -1524,10 +1519,10 @@ private suspend fun loadTopBuyers(): List<RankedUser> {
 
 private suspend fun loadTopPosters(): List<RankedUser> {
     return try {
-        val users = com.vinzay.app.data.remote.SupabaseClient.database
+        val users = com.mercora.app.data.remote.SupabaseClient.database
             .from("usuarios")
             .select()
-            .decodeList<com.vinzay.app.data.repository.ExploreUserProfile>()
+            .decodeList<com.mercora.app.data.repository.ExploreUserProfile>()
             .sortedByDescending { it.publicaciones }
             .take(20)
         
@@ -1547,10 +1542,10 @@ private suspend fun loadTopPosters(): List<RankedUser> {
 
 private suspend fun loadTopLiked(): List<RankedUser> {
     return try {
-        val users = com.vinzay.app.data.remote.SupabaseClient.database
+        val users = com.mercora.app.data.remote.SupabaseClient.database
             .from("usuarios")
             .select()
-            .decodeList<com.vinzay.app.data.repository.ExploreUserProfile>()
+            .decodeList<com.mercora.app.data.repository.ExploreUserProfile>()
             .sortedByDescending { it.seguidores }
             .take(20)
         
@@ -1570,10 +1565,10 @@ private suspend fun loadTopLiked(): List<RankedUser> {
 
 private suspend fun loadTopRenders(): List<RankedUser> {
     return try {
-        val users = com.vinzay.app.data.remote.SupabaseClient.database
+        val users = com.mercora.app.data.remote.SupabaseClient.database
             .from("usuarios")
             .select()
-            .decodeList<com.vinzay.app.data.repository.ExploreUserProfile>()
+            .decodeList<com.mercora.app.data.repository.ExploreUserProfile>()
             .sortedByDescending { it.publicaciones }
             .take(20)
         
@@ -1630,7 +1625,7 @@ private fun RankingHeader(onBack: () -> Unit) {
                         color = TextPrimary
                     )
                     Text(
-                        text = "Los mejores de Vinzay",
+                        text = "Los mejores de Mercora",
                         fontSize = 12.sp,
                         color = TextSecondary
                     )
@@ -1732,7 +1727,7 @@ private fun TopThreeSection(
                 )
             }
             
-            // Primer lugar (centro, MÃ¡s alto)
+            // Primer lugar (centro, Más alto)
             if (users.isNotEmpty()) {
                 TopUserPodium(
                     user = users[0],
@@ -1851,7 +1846,7 @@ private fun RankingUserCard(
                 .padding(12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // PosiciÃ³n
+            // Posición
             Text(
                 text = "#$position",
                 fontSize = 16.sp,
@@ -1937,14 +1932,14 @@ private fun EmptyRankingState(category: RankingCategory) {
         )
         Spacer(modifier = Modifier.height(16.dp))
         Text(
-            text = "Sin datos AÃºn",
+            text = "Sin datos Aún",
             fontSize = 18.sp,
             fontWeight = FontWeight.Bold,
             color = TextPrimary
         )
         Spacer(modifier = Modifier.height(8.dp))
         Text(
-            text = "aÃºn no hay suficientes datos para mostrar el ranking",
+            text = "aún no hay suficientes datos para mostrar el ranking",
             fontSize = 14.sp,
             color = TextSecondary,
             textAlign = TextAlign.Center
@@ -1953,7 +1948,7 @@ private fun EmptyRankingState(category: RankingCategory) {
 }
 
 // ---------------------------------------------------------------
-// PANTALLA DE ZONAS - BÃºsqueda por ubicaciÃ³n FUNCIONAL
+// PANTALLA DE ZONAS - Búsqueda por ubicación FUNCIONAL
 // ---------------------------------------------------------------
 
 private data class ZoneCategory(
@@ -1967,9 +1962,9 @@ private data class ZoneCategory(
 private val ZONE_CATEGORIES = listOf(
     ZoneCategory("nearby", "Cerca de ti", Icons.Filled.NearMe, Color(0xFF2E8B57), "Productos a menos de 5km"),
     ZoneCategory("city", "Tu Ciudad", Icons.Outlined.LocationCity, Color(0xFF0A3D62), "Todo en tu ciudad"),
-    ZoneCategory("region", "Tu RegiÃ³n", Icons.Outlined.Map, Color(0xFFFF6B35), "Explora tu regiÃ³n"),
-    ZoneCategory("national", "Nacional", Icons.Outlined.Public, Color(0xFFFF6B35), "Todo el paÃ­s"),
-    ZoneCategory("pickup", "Retiro en persona", Icons.Outlined.Handshake, Color(0xFF2E8B57), "Sin envÃ­o, retiras tÃº")
+    ZoneCategory("region", "Tu Región", Icons.Outlined.Map, Color(0xFFFF6B35), "Explora tu región"),
+    ZoneCategory("national", "Nacional", Icons.Outlined.Public, Color(0xFFFF6B35), "Todo el país"),
+    ZoneCategory("pickup", "Retiro en persona", Icons.Outlined.Handshake, Color(0xFF2E8B57), "Sin envío, retiras tú")
 )
 
 private data class SearchFilter(
@@ -1981,8 +1976,8 @@ private data class SearchFilter(
 private val ZONE_FILTERS = listOf(
     SearchFilter("price", "Precio", Icons.Outlined.AttachMoney),
     SearchFilter("distance", "Distancia", Icons.Outlined.SocialDistance),
-    SearchFilter("rating", "ValoraciÃ³n", Icons.Outlined.Star),
-    SearchFilter("new", "MÃ¡s nuevos", Icons.Outlined.NewReleases),
+    SearchFilter("rating", "Valoración", Icons.Outlined.Star),
+    SearchFilter("new", "Más nuevos", Icons.Outlined.NewReleases),
     SearchFilter("verified", "Verificados", Icons.Outlined.Verified)
 )
 
@@ -2006,7 +2001,7 @@ private fun ZonesScreen(
     val popularSearches by ZoneRepository.popularSearches.collectAsState()
     val recentSearches by ZoneRepository.recentSearches.collectAsState()
     
-    // Permission launcher (reutiliza patrÃ³n de AddAddressModal)
+    // Permission launcher (reutiliza patrón de AddAddressModal)
     val locationPermissionLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
     ) { permissions ->
@@ -2017,7 +2012,7 @@ private fun ZonesScreen(
         }
     }
     
-    // Helper para ejecutar bÃºsqueda
+    // Helper para ejecutar búsqueda
     fun executeSearch(query: String) {
         val finalQuery = ZoneRepository.buildSearchQuery(query, selectedZone, selectedFilters, distanceRadius)
         if (query.isNotBlank()) {
@@ -2026,7 +2021,7 @@ private fun ZonesScreen(
         onSearch(finalQuery)
     }
     
-    // Init: detectar ubicaciÃ³n automÃ¡ticamente al abrir
+    // Init: detectar ubicación automáticamente al abrir
     LaunchedEffect(Unit) {
         ZoneRepository.init(context)
         
@@ -2041,7 +2036,7 @@ private fun ZonesScreen(
             )
         }
         
-        // Cargar bÃºsquedas populares
+        // Cargar búsquedas populares
         ZoneRepository.loadPopularSearches(locationState.city.takeIf { it.isNotBlank() })
     }
     
@@ -2064,7 +2059,7 @@ private fun ZonesScreen(
             modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(bottom = 100.dp)
         ) {
-            // Banner de ubicaciÃ³n REAL
+            // Banner de ubicación REAL
             item {
                 ZonesLocationBanner(
                     locationState = locationState,
@@ -2081,10 +2076,10 @@ private fun ZonesScreen(
                 )
             }
             
-            // CategorÃ­as de zona
+            // Categorías de zona
             item {
                 Text(
-                    text = "Â¿DÃ³nde quieres buscar?",
+                    text = "¿Dónde quieres buscar?",
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
                     color = TextPrimary,
@@ -2109,10 +2104,10 @@ private fun ZonesScreen(
                 }
             }
             
-            // Filtros de bÃºsqueda
+            // Filtros de búsqueda
             item {
                 Text(
-                    text = "Ajusta tu bÃºsqueda",
+                    text = "Ajusta tu búsqueda",
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
                     color = TextPrimary,
@@ -2133,7 +2128,7 @@ private fun ZonesScreen(
                 )
             }
             
-            // BÃºsquedas populares (desde Supabase)
+            // Búsquedas populares (desde Supabase)
             if (popularSearches.isNotEmpty()) {
                 item {
                     Spacer(modifier = Modifier.height(16.dp))
@@ -2144,7 +2139,7 @@ private fun ZonesScreen(
                 }
             }
             
-            // BÃºsquedas recientes (desde SharedPreferences)
+            // Búsquedas recientes (desde SharedPreferences)
             if (recentSearches.isNotEmpty()) {
                 item {
                     Spacer(modifier = Modifier.height(16.dp))
@@ -2217,7 +2212,7 @@ private fun ZonesHeader(
                 Text(
                     text = if (locationState.isLoaded && locationState.city.isNotBlank())
                         locationState.displayLocation
-                    else "Detectando tu ubicaciÃ³n...",
+                    else "Detectando tu ubicación...",
                     fontSize = 12.sp,
                     color = TextSecondary
                 )
@@ -2229,7 +2224,7 @@ private fun ZonesHeader(
 @Composable
 private fun ZonesLocationBanner(
     locationState: ZoneLocationState,
-    zoneStats: com.vinzay.app.data.repository.ZoneStats
+    zoneStats: com.mercora.app.data.repository.ZoneStats
 ) {
     Box(
         modifier = Modifier
@@ -2262,10 +2257,10 @@ private fun ZonesLocationBanner(
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
                     text = when {
-                        locationState.isLoading -> "Detectando ubicaciÃ³n..."
-                        locationState.error != null -> "UbicaciÃ³n no disponible"
+                        locationState.isLoading -> "Detectando ubicación..."
+                        locationState.error != null -> "Ubicación no disponible"
                         locationState.isLoaded -> locationState.displayLocation
-                        else -> "ActivÃ¡ tu ubicaciÃ³n"
+                        else -> "Activá tu ubicación"
                     },
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
@@ -2277,7 +2272,7 @@ private fun ZonesLocationBanner(
                 text = if (locationState.error != null)
                     "Activa el GPS para descubrir productos cerca de ti."
                 else
-                    "Descubre productos increÃ­bles en tu zona. Ahorra en envÃ­os y recoge en persona.",
+                    "Descubre productos increíbles en tu zona. Ahorra en envíos y recoge en persona.",
                 fontSize = 13.sp,
                 color = Color.White.copy(alpha = 0.9f),
                 lineHeight = 18.sp
@@ -2356,7 +2351,7 @@ private fun ZonesSearchBar(
             Box(modifier = Modifier.weight(1f)) {
                 if (query.isEmpty()) {
                     Text(
-                        text = "Â¿QuÃ© estÃ¡s buscando?",
+                        text = "¿Qué estás buscando?",
                         color = TextMuted,
                         fontSize = 15.sp
                     )
@@ -2515,7 +2510,7 @@ private fun DistanceSlider(
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = "Radio de bÃºsqueda",
+                        text = "Radio de búsqueda",
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Medium,
                         color = TextPrimary
@@ -2618,7 +2613,7 @@ private fun ZonesPopularSection(
             )
             Spacer(modifier = Modifier.width(8.dp))
             Text(
-                text = "BÃºsquedas populares en tu zona",
+                text = "Búsquedas populares en tu zona",
                 fontSize = 15.sp,
                 fontWeight = FontWeight.Bold,
                 color = TextPrimary
@@ -2696,7 +2691,7 @@ private fun ZonesRecentSearches(
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    text = "BÃºsquedas recientes",
+                    text = "Búsquedas recientes",
                     fontSize = 15.sp,
                     fontWeight = FontWeight.Bold,
                     color = TextPrimary
@@ -2774,7 +2769,7 @@ private fun ZonesRecentSearches(
 }
 
 // SearchResultsScreen, SearchResultsHeader, SearchCategoriesRow, SearchToolbar
-// eliminados - ahora usamos el unificado desde com.vinzay.app.ui.screens.search.SearchResultsScreen
+// eliminados - ahora usamos el unificado desde com.mercora.app.ui.screens.search.SearchResultsScreen
 
 
 

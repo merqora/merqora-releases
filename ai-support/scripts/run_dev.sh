@@ -1,8 +1,8 @@
 #!/bin/bash
-# Rendly AI Support - Development Server Script (Unix)
+# Mercora AI Support - Development Server Script (Unix)
 # Run this from the ai-support directory
 
-echo "🚀 Starting Rendly AI Support Development Server..."
+echo "🚀 Starting Mercora AI Support Development Server..."
 
 # Navigate to python directory
 cd "$(dirname "$0")/../python" || exit 1

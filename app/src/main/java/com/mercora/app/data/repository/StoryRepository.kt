@@ -77,9 +77,9 @@ object StoryRepository {
         Log.d(TAG, "Story marcada como vista y persistida: $storyId")
     }
     
-    // Limpiar stories vistas antiguas (llamar periÃ³dicamente)
+    // Limpiar stories vistas antiguas (llamar periódicamente)
     fun cleanOldViewedStories(activeStoryIds: Set<String>) {
-        // Solo mantener IDs de stories que aÃºn existen
+        // Solo mantener IDs de stories que aún existen
         val cleanedIds = _viewedStoryIds.value.intersect(activeStoryIds)
         if (cleanedIds.size != _viewedStoryIds.value.size) {
             _viewedStoryIds.value = cleanedIds
@@ -121,7 +121,7 @@ object StoryRepository {
             val uploadResult = CloudflareService.uploadImage(
                 bitmap = bitmap,
                 folder = "stories/$userId",
-                mediaType = com.vinzay.app.media.MediaOptimizer.MediaType.STORY,
+                mediaType = com.mercora.app.media.MediaOptimizer.MediaType.STORY,
                 onProgress = { progress ->
                     val adjustedProgress = progress * 0.7f // 0-70% para upload
                     _uploadState.value = _uploadState.value.copy(progress = adjustedProgress)
@@ -160,7 +160,7 @@ object StoryRepository {
             Log.d(TAG, "Expires At: ${isoFormat.format(expiresAt)}")
             Log.d(TAG, "Data completa: $storyData")
             
-            // Insertar en Supabase - CRÃTICO: no silenciar errores
+            // Insertar en Supabase - CRÍTICO: no silenciar errores
             val insertResult = runCatching {
                 SupabaseClient.database
                     .from("stories")
@@ -170,25 +170,25 @@ object StoryRepository {
             if (insertResult.isFailure) {
                 val dbError = insertResult.exceptionOrNull()
                 Log.e(TAG, "â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•")
-                Log.e(TAG, "ERROR CRÃTICO insertando en Supabase")
+                Log.e(TAG, "ERROR CRÍTICO insertando en Supabase")
                 Log.e(TAG, "Mensaje: ${dbError?.message}")
                 Log.e(TAG, "Causa: ${dbError?.cause?.message}")
                 Log.e(TAG, "â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•")
                 dbError?.printStackTrace()
-                // Re-lanzar el error para que el usuario sepa que fallÃ³
+                // Re-lanzar el error para que el usuario sepa que falló
                 throw Exception("Error guardando story: ${dbError?.message}")
             }
             
             Log.d(TAG, "âœ“ Story insertada exitosamente en Supabase")
             
-            // PequeÃ±o delay para asegurar que Supabase haya procesado la inserciÃ³n
+            // Pequeño delay para asegurar que Supabase haya procesado la inserción
             kotlinx.coroutines.delay(500)
             
             // Refrescar lista de stories ANTES de marcar como completado
             // para que la UI tenga los datos cuando detecte el cambio
             loadMyStories()
             
-            Log.d(TAG, "âœ“ Stories recargadas despuÃ©s de inserciÃ³n")
+            Log.d(TAG, "âœ“ Stories recargadas después de inserción")
             
             _uploadState.value = StoryUploadState(
                 isUploading = false,
@@ -267,7 +267,7 @@ object StoryRepository {
         }
     }
     
-    // Limpiar stories que han expirado (mÃ¡s de 24 horas)
+    // Limpiar stories que han expirado (más de 24 horas)
     suspend fun cleanExpiredStories() = withContext(Dispatchers.IO) {
         try {
             Log.d(TAG, "=== LIMPIANDO STORIES EXPIRADAS ===")
@@ -417,7 +417,7 @@ object StoryRepository {
                         .select {
                             filter { eq("user_id", userId) }
                         }
-                        .decodeSingleOrNull<com.vinzay.app.data.model.Usuario>()
+                        .decodeSingleOrNull<com.mercora.app.data.model.Usuario>()
                     
                     if (user != null) {
                         val userStories = visibleStories.filter { it.userId == userId }
@@ -437,7 +437,7 @@ object StoryRepository {
                 }
             }
             
-            // Ordenar por fecha de creaciÃ³n (mÃ¡s recientes primero)
+            // Ordenar por fecha de creación (más recientes primero)
             val sortedStories = storiesWithUsers.sortedByDescending { it.story.createdAt }
             
             _otherUsersStories.value = sortedStories
@@ -530,7 +530,7 @@ object StoryRepository {
                         .select {
                             filter { eq("user_id", view.viewerId) }
                         }
-                        .decodeSingleOrNull<com.vinzay.app.data.model.Usuario>()
+                        .decodeSingleOrNull<com.mercora.app.data.model.Usuario>()
                     
                     if (user != null) {
                         viewers.add(
@@ -646,7 +646,7 @@ object StoryRepository {
     }
     
     /**
-     * Verificar si una story estÃ¡ liked por el usuario actual
+     * Verificar si una story está liked por el usuario actual
      */
     fun isStoryLiked(storyId: String): Boolean {
         return storyId in _likedStoryIds.value

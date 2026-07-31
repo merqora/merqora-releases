@@ -46,7 +46,7 @@ fun ChangePasswordScreen(
     
     val scope = rememberCoroutineScope()
     
-    // Cargar configuraciÃ³n de seguridad
+    // Cargar configuración de seguridad
     LaunchedEffect(isVisible) {
         if (isVisible) {
             val userId = SupabaseClient.auth.currentUserOrNull()?.id
@@ -56,7 +56,7 @@ fun ChangePasswordScreen(
         }
     }
     
-    // ValidaciÃ³n en tiempo real
+    // Validación en tiempo real
     val passwordValidation = remember(newPassword, securitySettings) {
         securitySettings?.let { settings ->
             SecurityRepository.validatePassword(newPassword, settings)
@@ -97,8 +97,8 @@ fun ChangePasswordScreen(
                     .navigationBarsPadding()
             ) {
                 SettingsScreenHeader(
-                    title = "Cambiar contraseÃ±a",
-                    subtitle = "Actualiza tu contraseÃ±a de acceso",
+                    title = "Cambiar contraseña",
+                    subtitle = "Actualiza tu contraseña de acceso",
                     icon = Icons.Outlined.Key,
                     iconColor = PrimaryPurple,
                     onBack = onDismiss
@@ -112,7 +112,7 @@ fun ChangePasswordScreen(
                 ) {
                     Spacer(modifier = Modifier.height(16.dp))
                     
-                    // Mensajes de error/Ã©xito
+                    // Mensajes de error/éxito
                     errorMessage?.let { error ->
                         Surface(
                             modifier = Modifier.fillMaxWidth(),
@@ -167,7 +167,7 @@ fun ChangePasswordScreen(
                         Spacer(modifier = Modifier.height(16.dp))
                     }
                     
-                    // ContraseÃ±a actual
+                    // Contraseña actual
                     Surface(
                         modifier = Modifier.fillMaxWidth(),
                         shape = RoundedCornerShape(14.dp),
@@ -175,7 +175,7 @@ fun ChangePasswordScreen(
                     ) {
                         Column(modifier = Modifier.padding(16.dp)) {
                             Text(
-                                text = "ContraseÃ±a actual",
+                                text = "Contraseña actual",
                                 fontSize = 14.sp,
                                 fontWeight = FontWeight.Medium,
                                 color = TextPrimary
@@ -188,7 +188,7 @@ fun ChangePasswordScreen(
                                     errorMessage = null
                                 },
                                 modifier = Modifier.fillMaxWidth(),
-                                placeholder = { Text("Ingresa tu contraseÃ±a actual") },
+                                placeholder = { Text("Ingresa tu contraseña actual") },
                                 visualTransformation = if (showCurrentPassword) 
                                     VisualTransformation.None else PasswordVisualTransformation(),
                                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
@@ -216,7 +216,7 @@ fun ChangePasswordScreen(
                     
                     Spacer(modifier = Modifier.height(16.dp))
                     
-                    // Nueva contraseÃ±a
+                    // Nueva contraseña
                     Surface(
                         modifier = Modifier.fillMaxWidth(),
                         shape = RoundedCornerShape(14.dp),
@@ -224,7 +224,7 @@ fun ChangePasswordScreen(
                     ) {
                         Column(modifier = Modifier.padding(16.dp)) {
                             Text(
-                                text = "Nueva contraseÃ±a",
+                                text = "Nueva contraseña",
                                 fontSize = 14.sp,
                                 fontWeight = FontWeight.Medium,
                                 color = TextPrimary
@@ -237,7 +237,7 @@ fun ChangePasswordScreen(
                                     errorMessage = null
                                 },
                                 modifier = Modifier.fillMaxWidth(),
-                                placeholder = { Text("Crea una nueva contraseÃ±a") },
+                                placeholder = { Text("Crea una nueva contraseña") },
                                 visualTransformation = if (showNewPassword) 
                                     VisualTransformation.None else PasswordVisualTransformation(),
                                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
@@ -261,29 +261,29 @@ fun ChangePasswordScreen(
                                 singleLine = true
                             )
                             
-                            // Requisitos de contraseÃ±a
+                            // Requisitos de contraseña
                             if (newPassword.isNotEmpty()) {
                                 Spacer(modifier = Modifier.height(12.dp))
                                 securitySettings?.let { settings ->
                                     PasswordRequirement(
-                                        text = "MÃ­nimo ${settings.password_min_length} caracteres",
+                                        text = "Mínimo ${settings.password_min_length} caracteres",
                                         isMet = newPassword.length >= settings.password_min_length
                                     )
                                     if (settings.require_uppercase) {
                                         PasswordRequirement(
-                                            text = "Al menos una mayÃºscula",
+                                            text = "Al menos una mayúscula",
                                             isMet = newPassword.any { it.isUpperCase() }
                                         )
                                     }
                                     if (settings.require_number) {
                                         PasswordRequirement(
-                                            text = "Al menos un nÃºmero",
+                                            text = "Al menos un número",
                                             isMet = newPassword.any { it.isDigit() }
                                         )
                                     }
                                     if (settings.require_special_char) {
                                         PasswordRequirement(
-                                            text = "Al menos un carÃ¡cter especial",
+                                            text = "Al menos un carácter especial",
                                             isMet = newPassword.any { !it.isLetterOrDigit() }
                                         )
                                     }
@@ -294,7 +294,7 @@ fun ChangePasswordScreen(
                     
                     Spacer(modifier = Modifier.height(16.dp))
                     
-                    // Confirmar contraseÃ±a
+                    // Confirmar contraseña
                     Surface(
                         modifier = Modifier.fillMaxWidth(),
                         shape = RoundedCornerShape(14.dp),
@@ -302,7 +302,7 @@ fun ChangePasswordScreen(
                     ) {
                         Column(modifier = Modifier.padding(16.dp)) {
                             Text(
-                                text = "Confirmar contraseÃ±a",
+                                text = "Confirmar contraseña",
                                 fontSize = 14.sp,
                                 fontWeight = FontWeight.Medium,
                                 color = TextPrimary
@@ -315,7 +315,7 @@ fun ChangePasswordScreen(
                                     errorMessage = null
                                 },
                                 modifier = Modifier.fillMaxWidth(),
-                                placeholder = { Text("Repite la nueva contraseÃ±a") },
+                                placeholder = { Text("Repite la nueva contraseña") },
                                 visualTransformation = if (showConfirmPassword) 
                                     VisualTransformation.None else PasswordVisualTransformation(),
                                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
@@ -353,7 +353,7 @@ fun ChangePasswordScreen(
                                     )
                                     Spacer(modifier = Modifier.width(6.dp))
                                     Text(
-                                        text = if (passwordsMatch) "Las contraseÃ±as coinciden" else "Las contraseÃ±as no coinciden",
+                                        text = if (passwordsMatch) "Las contraseñas coinciden" else "Las contraseñas no coinciden",
                                         fontSize = 12.sp,
                                         color = if (passwordsMatch) Color(0xFF2E8B57) else Color(0xFFEF4444)
                                     )
@@ -364,7 +364,7 @@ fun ChangePasswordScreen(
                     
                     Spacer(modifier = Modifier.height(32.dp))
                     
-                    // BotÃ³n de guardar
+                    // Botón de guardar
                     Button(
                         onClick = {
                             scope.launch {
@@ -373,19 +373,19 @@ fun ChangePasswordScreen(
                                 successMessage = null
                                 
                                 try {
-                                    // Verificar contraseÃ±a actual (re-autenticar)
+                                    // Verificar contraseña actual (re-autenticar)
                                     val email = SupabaseClient.auth.currentUserOrNull()?.email
                                     if (email != null) {
-                                        // Intentar cambiar la contraseÃ±a
+                                        // Intentar cambiar la contraseña
                                         val success = SecurityRepository.changePassword(newPassword)
                                         
                                         if (success) {
-                                            successMessage = "Â¡ContraseÃ±a actualizada correctamente!"
+                                            successMessage = "¡Contraseña actualizada correctamente!"
                                             currentPassword = ""
                                             newPassword = ""
                                             confirmPassword = ""
                                         } else {
-                                            errorMessage = "No se pudo cambiar la contraseÃ±a. Intenta de nuevo."
+                                            errorMessage = "No se pudo cambiar la contraseña. Intenta de nuevo."
                                         }
                                     }
                                 } catch (e: Exception) {
@@ -419,7 +419,7 @@ fun ChangePasswordScreen(
                             )
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
-                                text = "Cambiar contraseÃ±a",
+                                text = "Cambiar contraseña",
                                 fontSize = 15.sp,
                                 fontWeight = FontWeight.SemiBold
                             )

@@ -5,7 +5,7 @@
 #include <sstream>
 #include <cmath>
 
-namespace vinzay {
+namespace mercora {
 namespace ai {
 
 TextAnalyzer::TextAnalyzer() {
@@ -253,4 +253,4 @@ std::vector<std::string> TextAnalyzer::extract_keywords(const std::string& text)
 }
 
 } // namespace ai
-} // namespace vinzay
+} // namespace mercora

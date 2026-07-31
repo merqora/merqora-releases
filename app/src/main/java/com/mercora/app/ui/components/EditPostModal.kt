@@ -68,13 +68,13 @@ data class EditPostData(
     val allowOffers: Boolean = false,
     val freeShipping: Boolean = false,
     // New fields
-    val warranty: String = "Sin garantÃ­a",
+    val warranty: String = "Sin garantía",
     val returnsAccepted: Boolean = false,
     val colors: List<String> = emptyList(),
     val images: List<String> = emptyList(),
-    // Precios por variante - mapa de Ã­ndice de imagen a precio
+    // Precios por variante - mapa de índice de imagen a precio
     val variantPrices: Map<Int, VariantPriceData> = emptyMap(),
-    // Colores asignados a imÃ¡genes - mapa de Ã­ndice de imagen a color
+    // Colores asignados a imágenes - mapa de índice de imagen a color
     val imageColors: Map<Int, String> = emptyMap()
 )
 
@@ -90,7 +90,7 @@ fun EditPostModal(
 ) {
     val haptic = LocalHapticFeedback.current
     
-    // Guardar el Ãºltimo post vÃ¡lido para evitar crash durante animaciÃ³n de salida
+    // Guardar el último post válido para evitar crash durante animación de salida
     var lastValidPost by remember { mutableStateOf<Post?>(null) }
     LaunchedEffect(post) {
         if (post != null) {
@@ -98,10 +98,10 @@ fun EditPostModal(
         }
     }
     
-    // Usar el post actual o el Ãºltimo vÃ¡lido durante la animaciÃ³n
+    // Usar el post actual o el último válido durante la animación
     val currentPost = post ?: lastValidPost
     
-    // Estado de ediciÃ³n
+    // Estado de edición
     var editData by remember(currentPost?.id) {
         val prevPrice = currentPost?.previousPrice
         mutableStateOf(
@@ -113,7 +113,7 @@ fun EditPostModal(
                 showOriginalPrice = prevPrice != null && prevPrice > 0,
                 category = currentPost?.category ?: currentPost?.producto?.categoria ?: "",
                 condition = currentPost?.condition ?: currentPost?.producto?.condicion ?: "Nuevo",
-                warranty = currentPost?.warranty ?: "Sin garantÃ­a",
+                warranty = currentPost?.warranty ?: "Sin garantía",
                 returnsAccepted = currentPost?.returnsAccepted ?: false,
                 allowOffers = currentPost?.allowOffers ?: false,
                 freeShipping = currentPost?.freeShipping ?: false,
@@ -140,7 +140,7 @@ fun EditPostModal(
         }
     }
     
-    // Lista de categorÃ­as - sincronizado con CategoryDrawer
+    // Lista de categorías - sincronizado con CategoryDrawer
     val categories = listOf(
         // Moda Mujer
         "vestidos" to Icons.Outlined.Favorite,
@@ -166,7 +166,7 @@ fun EditPostModal(
         "decoracion" to Icons.Outlined.Palette,
         "plantas" to Icons.Outlined.Spa,
         "iluminacion" to Icons.Outlined.LightMode,
-        // ElectrÃ³nica
+        // Electrónica
         "smartphones" to Icons.Outlined.PhoneAndroid,
         "laptops" to Icons.Outlined.Laptop,
         "audio" to Icons.Outlined.Headphones,
@@ -187,21 +187,21 @@ fun EditPostModal(
         "trajes" to "Trajes",
         "zapatos_h" to "Zapatos Hombre",
         "bolsos" to "Bolsos y Carteras",
-        "joyeria" to "JoyerÃ­a",
+        "joyeria" to "Joyería",
         "relojes" to "Relojes",
         "gafas" to "Gafas de Sol",
         "sombreros" to "Sombreros",
         "muebles" to "Muebles",
-        "decoracion" to "DecoraciÃ³n",
+        "decoracion" to "Decoración",
         "plantas" to "Plantas",
-        "iluminacion" to "IluminaciÃ³n",
+        "iluminacion" to "Iluminación",
         "smartphones" to "Smartphones",
         "laptops" to "Laptops",
         "audio" to "Audio",
         "gaming" to "Gaming"
     )
     
-    // Backdrop con animaciÃ³n
+    // Backdrop con animación
     AnimatedVisibility(
         visible = isVisible,
         enter = fadeIn(tween(200)),
@@ -246,7 +246,7 @@ fun EditPostModal(
                 shape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp),
                 color = HomeBg
             ) {
-                // Estado del contenido: 0 = ediciÃ³n, 1 = eliminar, 2 = editor de imÃ¡genes
+                // Estado del contenido: 0 = edición, 1 = eliminar, 2 = editor de imágenes
                 val contentState = when {
                     showImageEditor -> 2
                     showDeleteConfirm -> 1
@@ -262,7 +262,7 @@ fun EditPostModal(
                 ) { state ->
                     when (state) {
                         0 -> {
-                        // Contenido principal de ediciÃ³n
+                        // Contenido principal de edición
                         Column(
                             modifier = Modifier
                                 .fillMaxSize()
@@ -297,7 +297,7 @@ fun EditPostModal(
                                     .verticalScroll(rememberScrollState())
                             ) {
                                 // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-                                // ACCIONES RÃPIDAS
+                                // ACCIONES RÁPIDAS
                                 // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
                                 QuickActionsRow(
                                     onPromote = {
@@ -316,21 +316,21 @@ fun EditPostModal(
                                 Spacer(modifier = Modifier.height(24.dp))
                                 
                                 // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-                                // INFORMACIÃ“N BÃSICA
+                                // INFORMACIÓN BÁSICA
                                 // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
                                 EditSectionHeader(
                                     icon = Icons.Outlined.Edit,
-                                    title = "InformaciÃ³n bÃ¡sica",
+                                    title = "Información básica",
                                     iconColor = PrimaryPurple
                                 )
                                 
                                 Spacer(modifier = Modifier.height(12.dp))
                                 
                                 EditPostField(
-                                    label = "TÃ­tulo del producto",
+                                    label = "Título del producto",
                                     value = editData.title,
                                     onValueChange = { editData = editData.copy(title = it) },
-                                    placeholder = "Ej: Remera algodÃ³n premium",
+                                    placeholder = "Ej: Remera algodón premium",
                                     icon = Icons.Outlined.ShoppingBag,
                                     maxChars = 80
                                 )
@@ -338,7 +338,7 @@ fun EditPostModal(
                                 Spacer(modifier = Modifier.height(14.dp))
                                 
                                 EditPostField(
-                                    label = "DescripciÃ³n",
+                                    label = "Descripción",
                                     value = editData.description,
                                     onValueChange = { editData = editData.copy(description = it) },
                                     placeholder = "Describe tu producto...",
@@ -350,7 +350,7 @@ fun EditPostModal(
                                 
                                 Spacer(modifier = Modifier.height(14.dp))
                                 
-                                // Selector de categorÃ­a
+                                // Selector de categoría
                                 CategorySelector(
                                     selectedCategory = editData.category,
                                     categories = categories,
@@ -396,11 +396,11 @@ fun EditPostModal(
                                 
                                 Spacer(modifier = Modifier.height(10.dp))
                                 
-                                // Toggle de envÃ­o gratis
+                                // Toggle de envío gratis
                                 ToggleOption(
                                     icon = Icons.Outlined.LocalShipping,
-                                    title = "EnvÃ­o gratis",
-                                    subtitle = "Ofrecer envÃ­o sin costo adicional",
+                                    title = "Envío gratis",
+                                    subtitle = "Ofrecer envío sin costo adicional",
                                     isEnabled = editData.freeShipping,
                                     onToggle = { editData = editData.copy(freeShipping = it) },
                                     iconColor = Color(0xFF1565A0)
@@ -438,7 +438,7 @@ fun EditPostModal(
                                 
                                 Spacer(modifier = Modifier.height(12.dp))
                                 
-                                // Selector de garantÃ­a
+                                // Selector de garantía
                                 WarrantySelector(
                                     selectedWarranty = editData.warranty,
                                     onWarrantySelected = { editData = editData.copy(warranty = it) }
@@ -494,13 +494,13 @@ fun EditPostModal(
                                         
                                         Column(modifier = Modifier.weight(1f)) {
                                             Text(
-                                                text = "Eliminar publicaciÃ³n",
+                                                text = "Eliminar publicación",
                                                 fontSize = 14.sp,
                                                 fontWeight = FontWeight.SemiBold,
                                                 color = Color(0xFFEF4444)
                                             )
                                             Text(
-                                                text = "Esta acciÃ³n no se puede deshacer",
+                                                text = "Esta acción no se puede deshacer",
                                                 fontSize = 12.sp,
                                                 color = TextMuted
                                             )
@@ -518,7 +518,7 @@ fun EditPostModal(
                                 Spacer(modifier = Modifier.height(24.dp))
                             }
                             
-                            // BotÃ³n guardar - Se oculta cuando el modal de precios estÃ¡ abierto
+                            // Botón guardar - Se oculta cuando el modal de precios está abierto
                             if (!showPriceSettings) {
                                 Button(
                                     onClick = {
@@ -560,9 +560,9 @@ fun EditPostModal(
                         }
                         }
                         1 -> {
-                            // Pantalla de confirmaciÃ³n de eliminaciÃ³n
+                            // Pantalla de confirmación de eliminación
                             DeleteConfirmationContent(
-                                postTitle = currentPost?.title ?: currentPost?.producto?.titulo ?: "esta publicaciÃ³n",
+                                postTitle = currentPost?.title ?: currentPost?.producto?.titulo ?: "esta publicación",
                                 postImage = currentPost?.images?.firstOrNull() ?: currentPost?.producto?.imagenUrl?.firstOrNull(),
                                 onCancel = { showDeleteConfirm = false },
                                 onConfirm = {
@@ -572,7 +572,7 @@ fun EditPostModal(
                             )
                         }
                         2 -> {
-                            // Editor de imÃ¡genes con asignaciÃ³n de colores
+                            // Editor de imágenes con asignación de colores
                             ImageEditorContent(
                                 post = currentPost!!,
                                 initialImageColors = editData.imageColors,
@@ -592,7 +592,7 @@ fun EditPostModal(
         }
     }
     
-    // Modal de configuraciÃ³n de precio - Pantalla completa
+    // Modal de configuración de precio - Pantalla completa
     if (showPriceSettings) {
         PriceSettingsModal(
             currentPrice = editData.price,
@@ -631,7 +631,7 @@ private fun EditPostHeader(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // Thumbnail del producto con botÃ³n de editar
+        // Thumbnail del producto con botón de editar
         Box(
             modifier = Modifier
                 .size(60.dp)
@@ -655,7 +655,7 @@ private fun EditPostHeader(
             ) {
                 Icon(
                     imageVector = Icons.Outlined.PhotoCamera,
-                    contentDescription = "Editar imÃ¡genes",
+                    contentDescription = "Editar imágenes",
                     tint = Color.White,
                     modifier = Modifier.size(24.dp)
                 )
@@ -666,7 +666,7 @@ private fun EditPostHeader(
         
         Column(modifier = Modifier.weight(1f)) {
             Text(
-                text = "Editar publicaciÃ³n",
+                text = "Editar publicación",
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
                 color = TextPrimary
@@ -717,7 +717,7 @@ private fun QuickActionsRow(
         
         QuickActionButton(
             icon = Icons.Outlined.Analytics,
-            label = "EstadÃ­sticas",
+            label = "Estadísticas",
             color = Color(0xFF1565A0),
             modifier = Modifier.weight(1f),
             onClick = onStats
@@ -967,7 +967,7 @@ private fun PriceEditCard(
                     }
                 }
                 
-                // BotÃ³n de configuraciÃ³n avanzada
+                // Botón de configuración avanzada
                 IconButton(
                     onClick = onOpenSettings,
                     modifier = Modifier
@@ -977,14 +977,14 @@ private fun PriceEditCard(
                 ) {
                     Icon(
                         imageVector = Icons.Outlined.Settings,
-                        contentDescription = "ConfiguraciÃ³n de precio",
+                        contentDescription = "Configuración de precio",
                         tint = PrimaryPurple,
                         modifier = Modifier.size(20.dp)
                     )
                 }
             }
             
-            // Mostrar precio original si estÃ¡ configurado
+            // Mostrar precio original si está configurado
             if (showOriginalPrice && originalPrice != null && originalPrice > price) {
                 Spacer(modifier = Modifier.height(8.dp))
                 
@@ -1143,8 +1143,8 @@ private fun AvailabilityCard(
                     color = if (isAvailable) Color(0xFF2E8B57) else Color(0xFFEF4444)
                 )
                 Text(
-                    text = if (isAvailable) "Tu producto estÃ¡ visible para compradores"
-                           else "Tu producto estÃ¡ oculto temporalmente",
+                    text = if (isAvailable) "Tu producto está visible para compradores"
+                           else "Tu producto está oculto temporalmente",
                     fontSize = 12.sp,
                     color = TextMuted
                 )
@@ -1198,7 +1198,7 @@ private fun DeleteConfirmationContent(
         Spacer(modifier = Modifier.height(24.dp))
         
         Text(
-            text = "Â¿Eliminar publicaciÃ³n?",
+            text = "¿Eliminar publicación?",
             fontSize = 22.sp,
             fontWeight = FontWeight.Bold,
             color = TextPrimary,
@@ -1254,7 +1254,7 @@ private fun DeleteConfirmationContent(
         Spacer(modifier = Modifier.height(16.dp))
         
         Text(
-            text = "Esta acciÃ³n eliminarÃ¡ permanentemente tu publicaciÃ³n, incluyendo todas las imÃ¡genes, estadÃ­sticas y comentarios asociados.",
+            text = "Esta acción eliminará permanentemente tu publicación, incluyendo todas las imágenes, estadísticas y comentarios asociados.",
             fontSize = 14.sp,
             color = TextSecondary,
             textAlign = TextAlign.Center,
@@ -1387,7 +1387,7 @@ private fun PriceSettingsModal(
                     
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
-                            text = "ConfiguraciÃ³n de precios",
+                            text = "Configuración de precios",
                             fontSize = 18.sp,
                             fontWeight = FontWeight.Bold,
                             color = TextPrimary
@@ -1443,7 +1443,7 @@ private fun PriceSettingsModal(
                                     color = TextPrimary
                                 )
                                 Text(
-                                    text = "Aplica a todas las variantes sin precio especÃ­fico",
+                                    text = "Aplica a todas las variantes sin precio específico",
                                     fontSize = 11.sp,
                                     color = TextMuted
                                 )
@@ -1703,7 +1703,7 @@ private fun PriceSettingsModal(
                                         .padding(12.dp),
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
-                                    // Thumbnail mÃ¡s alto que ancho
+                                    // Thumbnail más alto que ancho
                                     Box(
                                         modifier = Modifier
                                             .width(50.dp)
@@ -1717,7 +1717,7 @@ private fun PriceSettingsModal(
                                             modifier = Modifier.fillMaxSize()
                                         )
                                         
-                                        // NÃºmero de variante
+                                        // Número de variante
                                         Surface(
                                             modifier = Modifier
                                                 .align(Alignment.TopStart)
@@ -1800,7 +1800,7 @@ private fun PriceSettingsModal(
                                         }
                                     }
                                     
-                                    // BotÃ³n editar/eliminar precio
+                                    // Botón editar/eliminar precio
                                     if (hasCustomPrice) {
                                         IconButton(
                                             onClick = {
@@ -1833,7 +1833,7 @@ private fun PriceSettingsModal(
                                     }
                                 }
                                 
-                                // Panel de ediciÃ³n expandido
+                                // Panel de edición expandido
                                 AnimatedVisibility(
                                     visible = selectedVariantIndex == index,
                                     enter = expandVertically() + fadeIn(),
@@ -1907,7 +1907,7 @@ private fun PriceSettingsModal(
                                                 }
                                             }
                                             
-                                            // BotÃ³n aplicar
+                                            // Botón aplicar
                                             Button(
                                                 onClick = {
                                                     val price = variantPriceText.toDoubleOrNull()
@@ -1962,7 +1962,7 @@ private fun PriceSettingsModal(
                             )
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
-                                text = "Las variantes sin precio personalizado usarÃ¡n el precio base",
+                                text = "Las variantes sin precio personalizado usarán el precio base",
                                 fontSize = 12.sp,
                                 color = Color(0xFF1565A0),
                                 lineHeight = 16.sp
@@ -1974,7 +1974,7 @@ private fun PriceSettingsModal(
                 Spacer(modifier = Modifier.height(100.dp))
             }
             
-            // BotÃ³n guardar fijo abajo
+            // Botón guardar fijo abajo
             Surface(
                 modifier = Modifier.fillMaxWidth(),
                 color = HomeBg,
@@ -2001,7 +2001,7 @@ private fun PriceSettingsModal(
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = "Guardar configuraciÃ³n",
+                        text = "Guardar configuración",
                         fontSize = 15.sp,
                         fontWeight = FontWeight.Bold
                     )
@@ -2030,7 +2030,7 @@ private fun CategorySelector(
     
     Column(modifier = Modifier.fillMaxWidth()) {
         Text(
-            text = "CategorÃ­a",
+            text = "Categoría",
             color = TextMuted,
             fontSize = 12.sp,
             fontWeight = FontWeight.Medium,
@@ -2063,7 +2063,7 @@ private fun CategorySelector(
                     Spacer(modifier = Modifier.width(10.dp))
                     
                     Text(
-                        text = if (selectedCategory.isEmpty()) "Seleccionar categorÃ­a" else selectedDisplayName,
+                        text = if (selectedCategory.isEmpty()) "Seleccionar categoría" else selectedDisplayName,
                         fontSize = 14.sp,
                         color = if (selectedCategory.isEmpty()) TextMuted.copy(alpha = 0.5f) else TextPrimary,
                         modifier = Modifier.weight(1f)
@@ -2157,20 +2157,20 @@ private fun WarrantySelector(
     var isExpanded by remember { mutableStateOf(false) }
     
     val warrantyOptions = listOf(
-        "Sin garantÃ­a",
-        "7 dÃ­as",
-        "15 dÃ­as",
-        "30 dÃ­as",
+        "Sin garantía",
+        "7 días",
+        "15 días",
+        "30 días",
         "3 meses",
         "6 meses",
         "12 meses",
         "24 meses",
-        "GarantÃ­a de por vida"
+        "Garantía de por vida"
     )
     
     Column(modifier = Modifier.fillMaxWidth()) {
         Text(
-            text = "GarantÃ­a",
+            text = "Garantía",
             color = TextMuted,
             fontSize = 12.sp,
             fontWeight = FontWeight.Medium,
@@ -2290,7 +2290,7 @@ private val availableProductColors = listOf(
     "Naranja" to Color(0xFFF97316),
     "Rosa" to Color(0xFF2E8B57),
     "Morado" to Color(0xFFFF6B35),
-    "MarrÃ³n" to Color(0xFF92400E),
+    "Marrón" to Color(0xFF92400E),
     "Beige" to Color(0xFFD4C4A8)
 )
 
@@ -2430,7 +2430,7 @@ private fun ColorSelector(
                                                 Icon(
                                                     imageVector = Icons.Default.Check,
                                                     contentDescription = null,
-                                                    tint = if (colorName == "Negro" || colorName == "Azul" || colorName == "Verde" || colorName == "Morado" || colorName == "MarrÃ³n") Color.White else Color.Black,
+                                                    tint = if (colorName == "Negro" || colorName == "Azul" || colorName == "Verde" || colorName == "Morado" || colorName == "Marrón") Color.White else Color.Black,
                                                     modifier = Modifier.size(18.dp)
                                                 )
                                             }
@@ -2469,7 +2469,7 @@ private fun ImageEditorContent(
         (post.images.ifEmpty { post.producto.imagenUrl }).toMutableStateList()
     }
     
-    // Estado para colores asignados a imÃ¡genes
+    // Estado para colores asignados a imágenes
     val imageColors = remember(initialImageColors) {
         initialImageColors.toMutableMap().toMutableStateMap()
     }
@@ -2509,7 +2509,7 @@ private fun ImageEditorContent(
         
         Spacer(modifier = Modifier.height(16.dp))
         
-        // Header con botÃ³n atrÃ¡s
+        // Header con botón atrás
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
@@ -2533,19 +2533,19 @@ private fun ImageEditorContent(
             
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = "Editar imÃ¡genes",
+                    text = "Editar imágenes",
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
                     color = TextPrimary
                 )
                 Text(
-                    text = "${images.size}/10 imÃ¡genes",
+                    text = "${images.size}/10 imágenes",
                     fontSize = 13.sp,
                     color = TextSecondary
                 )
             }
             
-            // BotÃ³n agregar
+            // Botón agregar
             IconButton(
                 onClick = { imagePickerLauncher.launch("image/*") },
                 modifier = Modifier
@@ -2564,7 +2564,7 @@ private fun ImageEditorContent(
         
         Spacer(modifier = Modifier.height(20.dp))
         
-        // Grid de imÃ¡genes con nÃºmeros
+        // Grid de imágenes con números
         Column(
             modifier = Modifier
                 .weight(1f)
@@ -2572,7 +2572,7 @@ private fun ImageEditorContent(
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             if (images.isEmpty()) {
-                // Estado vacÃ­o
+                // Estado vacío
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -2594,13 +2594,13 @@ private fun ImageEditorContent(
                         )
                         Spacer(modifier = Modifier.height(12.dp))
                         Text(
-                            text = "Agregar imÃ¡genes",
+                            text = "Agregar imágenes",
                             fontSize = 16.sp,
                             fontWeight = FontWeight.SemiBold,
                             color = PrimaryPurple
                         )
                         Text(
-                            text = "MÃ¡ximo 10 imÃ¡genes",
+                            text = "Máximo 10 imágenes",
                             fontSize = 13.sp,
                             color = TextMuted
                         )
@@ -2634,7 +2634,7 @@ private fun ImageEditorContent(
                             )
                     )
                     
-                    // Badge de principal con nÃºmero
+                    // Badge de principal con número
                     Row(
                         modifier = Modifier
                             .align(Alignment.TopStart)
@@ -2667,7 +2667,7 @@ private fun ImageEditorContent(
                         }
                     }
                     
-                    // BotÃ³n eliminar (solo si hay mÃ¡s de 1 imagen)
+                    // Botón eliminar (solo si hay más de 1 imagen)
                     if (images.size > 1) {
                         Box(
                             modifier = Modifier
@@ -2691,7 +2691,7 @@ private fun ImageEditorContent(
                         }
                     }
                     
-                    // BotÃ³n para asignar color a imagen principal
+                    // Botón para asignar color a imagen principal
                     val assignedColor = imageColors[0]
                     val colorValue = assignedColor?.let { colorName ->
                         availableProductColors.find { it.first == colorName }?.second
@@ -2744,7 +2744,7 @@ private fun ImageEditorContent(
                     }
                 }
                 
-                // Grid de imÃ¡genes secundarias
+                // Grid de imágenes secundarias
                 if (images.size > 1) {
                     val secondaryImages = images.drop(1)
                     val rows = secondaryImages.chunked(3)
@@ -2770,7 +2770,7 @@ private fun ImageEditorContent(
                                         modifier = Modifier.fillMaxSize()
                                     )
                                     
-                                    // NÃºmero de posiciÃ³n - clickable para reordenar
+                                    // Número de posición - clickable para reordenar
                                     Surface(
                                         modifier = Modifier
                                             .align(Alignment.TopStart)
@@ -2793,7 +2793,7 @@ private fun ImageEditorContent(
                                         )
                                     }
                                     
-                                    // BotÃ³n eliminar
+                                    // Botón eliminar
                                     Box(
                                         modifier = Modifier
                                             .align(Alignment.TopEnd)
@@ -2815,7 +2815,7 @@ private fun ImageEditorContent(
                                         )
                                     }
                                     
-                                    // BotÃ³n para hacer principal
+                                    // Botón para hacer principal
                                     Box(
                                         modifier = Modifier
                                             .align(Alignment.BottomStart)
@@ -2848,7 +2848,7 @@ private fun ImageEditorContent(
                                         }
                                     }
                                     
-                                    // BotÃ³n para asignar color a imagen secundaria
+                                    // Botón para asignar color a imagen secundaria
                                     val secAssignedColor = imageColors[actualIndex]
                                     val secColorValue = secAssignedColor?.let { colorName ->
                                         availableProductColors.find { it.first == colorName }?.second
@@ -2894,7 +2894,7 @@ private fun ImageEditorContent(
                     }
                 }
                 
-                // BotÃ³n agregar mÃ¡s imÃ¡genes
+                // Botón agregar más imágenes
                 if (images.size < 10) {
                     Surface(
                         modifier = Modifier
@@ -2920,7 +2920,7 @@ private fun ImageEditorContent(
                             )
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
-                                text = "Agregar mÃ¡s imÃ¡genes",
+                                text = "Agregar más imágenes",
                                 fontSize = 14.sp,
                                 fontWeight = FontWeight.SemiBold,
                                 color = PrimaryPurple
@@ -2960,7 +2960,7 @@ private fun ImageEditorContent(
                         )
                         Spacer(modifier = Modifier.height(2.dp))
                         Text(
-                            text = "â€¢ Toca el nÃºmero para cambiar el orden\nâ€¢ Toca â˜… para hacer una imagen principal",
+                            text = "• Toca el número para cambiar el orden\n• Toca â˜… para hacer una imagen principal",
                             fontSize = 11.sp,
                             color = TextMuted,
                             lineHeight = 16.sp
@@ -2972,7 +2972,7 @@ private fun ImageEditorContent(
         
         Spacer(modifier = Modifier.height(16.dp))
         
-        // BotÃ³n guardar
+        // Botón guardar
         Button(
             onClick = { onSaveImages(images.toList(), imageColors.toMap()) },
             modifier = Modifier
@@ -3050,7 +3050,7 @@ private fun ImageEditorContent(
                                 color = TextPrimary
                             )
                             Text(
-                                text = "Este color representarÃ¡ esta variante",
+                                text = "Este color representará esta variante",
                                 fontSize = 12.sp,
                                 color = TextMuted
                             )
@@ -3109,7 +3109,7 @@ private fun ImageEditorContent(
                         Spacer(modifier = Modifier.height(8.dp))
                     }
                     
-                    // OpciÃ³n para quitar color
+                    // Opción para quitar color
                     if (imageColors.containsKey(showColorPickerForIndex)) {
                         Spacer(modifier = Modifier.height(8.dp))
                         Surface(
@@ -3163,14 +3163,14 @@ private fun ImageEditorContent(
             },
             title = {
                 Text(
-                    text = "Cambiar posiciÃ³n",
+                    text = "Cambiar posición",
                     fontWeight = FontWeight.Bold
                 )
             },
             text = {
                 Column {
                     Text(
-                        text = "Selecciona la nueva posiciÃ³n para esta imagen:",
+                        text = "Selecciona la nueva posición para esta imagen:",
                         fontSize = 14.sp,
                         color = TextSecondary
                     )

@@ -50,23 +50,23 @@ fun VerificationScreen(
     var notablePresence by remember { mutableStateOf("") }
     var isSubmitting by remember { mutableStateOf(false) }
     
-    // Datos para requisitos dinÃ¡micos
+    // Datos para requisitos dinámicos
     var accountData by remember { mutableStateOf<AccountDataForVerification?>(null) }
     
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     
-    // Cargar estado de VerificaciÃ³n y datos de cuenta
+    // Cargar estado de Verificación y datos de cuenta
     LaunchedEffect(isVisible) {
         if (isVisible) {
             isLoading = true
             val userId = SupabaseClient.auth.currentUserOrNull()?.id
             if (userId != null) {
-                // Verificar si ya estÃ¡ verificado
+                // Verificar si ya está verificado
                 val status = VerificationRepository.getVerificationStatus(userId)
                 isVerified = status?.is_verified ?: false
                 
-                // Si estÃ¡ verificado, recargar el perfil para actualizar el badge en toda la app
+                // Si está verificado, recargar el perfil para actualizar el badge en toda la app
                 if (isVerified) {
                     ProfileRepository.loadCurrentProfile()
                 }
@@ -113,7 +113,7 @@ fun VerificationScreen(
                     .navigationBarsPadding()
             ) {
                 SettingsScreenHeader(
-                    title = "VerificaciÃ³n",
+                    title = "Verificación",
                     subtitle = "Verifica tu cuenta",
                     icon = Icons.Outlined.VerifiedUser,
                     iconColor = Color(0xFF1565A0),
@@ -129,7 +129,7 @@ fun VerificationScreen(
                     Spacer(modifier = Modifier.height(16.dp))
                     
                     if (isVerified) {
-                        // Pantalla de felicitaciÃ³n para usuarios verificados
+                        // Pantalla de felicitación para usuarios verificados
                         VerifiedCelebrationContent()
                     } else {
                         // Pantalla normal para usuarios no verificados
@@ -169,7 +169,7 @@ fun VerificationScreen(
                                 Spacer(modifier = Modifier.height(16.dp))
                                 
                                 Text(
-                                    text = "VerificaciÃ³n de cuenta",
+                                    text = "Verificación de cuenta",
                                     fontSize = 20.sp,
                                     fontWeight = FontWeight.Bold,
                                     color = TextPrimary
@@ -178,7 +178,7 @@ fun VerificationScreen(
                                 Spacer(modifier = Modifier.height(8.dp))
                                 
                                 Text(
-                                    text = "ObtÃ©n el badge de VerificaciÃ³n para mostrar autenticidad.",
+                                    text = "Obtén el badge de Verificación para mostrar autenticidad.",
                                     fontSize = 14.sp,
                                     color = TextSecondary,
                                     textAlign = TextAlign.Center
@@ -204,7 +204,7 @@ fun VerificationScreen(
                                         )
                                         Spacer(modifier = Modifier.width(8.dp))
                                         Text(
-                                            text = "Solicitar VerificaciÃ³n",
+                                            text = "Solicitar Verificación",
                                             fontWeight = FontWeight.Bold
                                         )
                                     }
@@ -229,7 +229,7 @@ fun VerificationScreen(
                                         )
                                         Spacer(modifier = Modifier.width(6.dp))
                                         Text(
-                                            text = if (verificationStatus == "under_review") "En RevisiÃ³n por el equipo" else "Solicitud en RevisiÃ³n",
+                                            text = if (verificationStatus == "under_review") "En Revisión por el equipo" else "Solicitud en Revisión",
                                             fontSize = 12.sp,
                                             fontWeight = FontWeight.SemiBold,
                                             color = Color(0xFFFF6B35)
@@ -291,7 +291,7 @@ fun VerificationScreen(
                     Spacer(modifier = Modifier.height(24.dp))
                     
                     // Beneficios
-                    SettingsSectionTitle("Beneficios de la VerificaciÃ³n")
+                    SettingsSectionTitle("Beneficios de la Verificación")
                     
                     Surface(
                         modifier = Modifier.fillMaxWidth(),
@@ -301,7 +301,7 @@ fun VerificationScreen(
                         Column {
                             BenefitItem(
                                 icon = Icons.Outlined.Verified,
-                                title = "Badge de VerificaciÃ³n",
+                                title = "Badge de Verificación",
                                 description = "Distintivo azul junto a tu nombre",
                                 iconColor = Color(0xFF1565A0)
                             )
@@ -309,21 +309,21 @@ fun VerificationScreen(
                             BenefitItem(
                                 icon = Icons.Outlined.TrendingUp,
                                 title = "Mayor visibilidad",
-                                description = "Apareces primero en BÃºsquedas",
+                                description = "Apareces primero en Búsquedas",
                                 iconColor = Color(0xFF2E8B57)
                             )
                             Divider(color = BorderSubtle, modifier = Modifier.padding(horizontal = 16.dp))
                             BenefitItem(
                                 icon = Icons.Outlined.Security,
                                 title = "Confianza",
-                                description = "Los usuarios confÃ­an MÃ¡s en cuentas verificadas",
+                                description = "Los usuarios confían Más en cuentas verificadas",
                                 iconColor = Color(0xFFFF6B35)
                             )
                             Divider(color = BorderSubtle, modifier = Modifier.padding(horizontal = 16.dp))
                             BenefitItem(
                                 icon = Icons.Outlined.Support,
                                 title = "Soporte prioritario",
-                                description = "AtenciÃ³n preferente del equipo de soporte",
+                                description = "Atención preferente del equipo de soporte",
                                 iconColor = Color(0xFFFF6B35)
                             )
                         }
@@ -331,8 +331,8 @@ fun VerificationScreen(
                     
                     Spacer(modifier = Modifier.height(24.dp))
                     
-                    // Requisitos dinÃ¡micos basados en mÃ©tricas reales
-                    SettingsSectionTitle("Requisitos para VerificaciÃ³n")
+                    // Requisitos dinámicos basados en métricas reales
+                    SettingsSectionTitle("Requisitos para Verificación")
                     
                     Surface(
                         modifier = Modifier.fillMaxWidth(),
@@ -340,10 +340,10 @@ fun VerificationScreen(
                         color = Surface
                     ) {
                         Column(modifier = Modifier.padding(16.dp)) {
-                            // Requisito 1: mÃ­nimo 50 seguidores
+                            // Requisito 1: mínimo 50 seguidores
                             val hasMinFollowers = (accountData?.followersCount ?: 0) >= 50
                             RequirementItemWithProgress(
-                                text = "mÃ­nimo 50 seguidores",
+                                text = "mínimo 50 seguidores",
                                 current = accountData?.followersCount ?: 0,
                                 target = 50,
                                 isMet = hasMinFollowers
@@ -351,10 +351,10 @@ fun VerificationScreen(
                             
                             Spacer(modifier = Modifier.height(12.dp))
                             
-                            // Requisito 2: mÃ­nimo 10 publicaciones
+                            // Requisito 2: mínimo 10 publicaciones
                             val hasMinPosts = (accountData?.postsCount ?: 0) >= 10
                             RequirementItemWithProgress(
-                                text = "mÃ­nimo 10 publicaciones",
+                                text = "mínimo 10 publicaciones",
                                 current = accountData?.postsCount ?: 0,
                                 target = 10,
                                 isMet = hasMinPosts
@@ -362,10 +362,10 @@ fun VerificationScreen(
                             
                             Spacer(modifier = Modifier.height(12.dp))
                             
-                            // Requisito 3: ReputaciÃ³n MÃ­nima 80%
+                            // Requisito 3: Reputación Mínima 80%
                             val hasMinReputation = (accountData?.reputation ?: 0) >= 80
                             RequirementItemWithProgress(
-                                text = "ReputaciÃ³n MÃ­nima 80%",
+                                text = "Reputación Mínima 80%",
                                 current = accountData?.reputation ?: 0,
                                 target = 80,
                                 isMet = hasMinReputation,
@@ -377,7 +377,7 @@ fun VerificationScreen(
                             // Requisito 4: Al menos 5 ventas realizadas
                             val hasMinSales = (accountData?.salesCount ?: 0) >= 5
                             RequirementItemWithProgress(
-                                text = "mÃ­nimo 5 ventas realizadas",
+                                text = "mínimo 5 ventas realizadas",
                                 current = accountData?.salesCount ?: 0,
                                 target = 5,
                                 isMet = hasMinSales
@@ -389,7 +389,7 @@ fun VerificationScreen(
                             val hasCompleteProfile = accountData?.username != null && 
                                 (accountData?.email?.isNotBlank() == true)
                             RequirementItem(
-                                text = "Perfil completo con foto y BiografÃ­a",
+                                text = "Perfil completo con foto y Biografía",
                                 isMet = hasCompleteProfile
                             )
                             
@@ -399,7 +399,7 @@ fun VerificationScreen(
                             val isActiveAccount = accountData?.memberSince != null && 
                                 accountData?.memberSince != "---"
                             RequirementItem(
-                                text = "Cuenta activa por MÃ¡s de 30 DÃ­as",
+                                text = "Cuenta activa por Más de 30 Días",
                                 isMet = isActiveAccount
                             )
                         }
@@ -407,8 +407,8 @@ fun VerificationScreen(
                     
                     Spacer(modifier = Modifier.height(24.dp))
                     
-                    // Tipos de VerificaciÃ³n
-                    SettingsSectionTitle("Tipos de VerificaciÃ³n")
+                    // Tipos de Verificación
+                    SettingsSectionTitle("Tipos de Verificación")
                     
                     Surface(
                         modifier = Modifier.fillMaxWidth(),
@@ -420,21 +420,33 @@ fun VerificationScreen(
                                 icon = Icons.Outlined.Person,
                                 title = "Cuenta personal",
                                 description = "Para creadores de contenido e influencers",
-                                iconColor = PrimaryPurple
+                                iconColor = PrimaryPurple,
+                                onClick = {
+                                    selectedType = "personal"
+                                    showRequestForm = true
+                                }
                             )
                             Divider(color = BorderSubtle, modifier = Modifier.padding(horizontal = 16.dp))
                             VerificationTypeItem(
                                 icon = Icons.Outlined.Store,
                                 title = "Negocio",
                                 description = "Para tiendas y empresas",
-                                iconColor = Color(0xFF2E8B57)
+                                iconColor = Color(0xFF2E8B57),
+                                onClick = {
+                                    selectedType = "business"
+                                    showRequestForm = true
+                                }
                             )
                             Divider(color = BorderSubtle, modifier = Modifier.padding(horizontal = 16.dp))
                             VerificationTypeItem(
                                 icon = Icons.Outlined.Campaign,
                                 title = "Marca oficial",
                                 description = "Para marcas reconocidas",
-                                iconColor = Color(0xFF1565A0)
+                                iconColor = Color(0xFF1565A0),
+                                onClick = {
+                                    selectedType = "brand"
+                                    showRequestForm = true
+                                }
                             )
                         }
                     }
@@ -459,7 +471,7 @@ fun VerificationScreen(
                             )
                             Spacer(modifier = Modifier.width(10.dp))
                             Text(
-                                text = "La VerificaciÃ³n es gratuita y el proceso puede tardar entre 1-7 DÃ­as hÃ¡biles.",
+                                text = "La Verificación es gratuita y el proceso puede tardar entre 1-7 Días hábiles.",
                                 fontSize = 12.sp,
                                 color = TextSecondary,
                                 lineHeight = 16.sp
@@ -473,7 +485,7 @@ fun VerificationScreen(
             }
         }
         
-        // Modal de solicitud de VerificaciÃ³n - pantalla completa desde abajo
+        // Modal de solicitud de Verificación - pantalla completa desde abajo
         VerificationRequestModal(
             isVisible = showRequestForm,
             onDismiss = { if (!isSubmitting) showRequestForm = false },
@@ -518,14 +530,14 @@ fun VerificationScreen(
     }
 }
 
-// Componente de celebraciÃ³n para usuarios verificados
+// Componente de celebración para usuarios verificados
 @Composable
 private fun VerifiedCelebrationContent() {
     Column(
         modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // Header de celebraciÃ³n
+        // Header de celebración
         Surface(
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(20.dp),
@@ -537,7 +549,7 @@ private fun VerifiedCelebrationContent() {
                     .padding(32.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                // Icono de VerificaciÃ³n grande con animaciÃ³n
+                // Icono de Verificación grande con animación
                 Box(
                     modifier = Modifier
                         .size(100.dp)
@@ -563,7 +575,7 @@ private fun VerifiedCelebrationContent() {
                 Spacer(modifier = Modifier.height(20.dp))
                 
                 Text(
-                    text = "Â¡Felicidades!",
+                    text = "¡Felicidades!",
                     fontSize = 28.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color(0xFF2E8B57)
@@ -572,7 +584,7 @@ private fun VerifiedCelebrationContent() {
                 Spacer(modifier = Modifier.height(8.dp))
                 
                 Text(
-                    text = "Tu cuenta estÃ¡ verificada",
+                    text = "Tu cuenta está verificada",
                     fontSize = 18.sp,
                     fontWeight = FontWeight.SemiBold,
                     color = TextPrimary
@@ -581,7 +593,7 @@ private fun VerifiedCelebrationContent() {
                 Spacer(modifier = Modifier.height(12.dp))
                 
                 Text(
-                    text = "Ahora tienes el distintivo oficial de Merqora. Tu perfil es reconocido como autÃ©ntico.",
+                    text = "Ahora tienes el distintivo oficial de Mercora. Tu perfil es reconocido como auténtico.",
                     fontSize = 14.sp,
                     color = TextSecondary,
                     textAlign = TextAlign.Center,
@@ -612,7 +624,7 @@ private fun VerifiedCelebrationContent() {
             Column {
                 ActiveBenefitItem(
                     icon = Icons.Default.Verified,
-                    title = "Badge de VerificaciÃ³n",
+                    title = "Badge de Verificación",
                     description = "Visible en tu perfil y publicaciones",
                     iconColor = Color(0xFF1565A0),
                     isActive = true
@@ -621,7 +633,7 @@ private fun VerifiedCelebrationContent() {
                 ActiveBenefitItem(
                     icon = Icons.Outlined.TrendingUp,
                     title = "Mayor visibilidad",
-                    description = "Tu perfil aparece primero en BÃºsquedas",
+                    description = "Tu perfil aparece primero en Búsquedas",
                     iconColor = Color(0xFF2E8B57),
                     isActive = true
                 )
@@ -629,7 +641,7 @@ private fun VerifiedCelebrationContent() {
                 ActiveBenefitItem(
                     icon = Icons.Outlined.Security,
                     title = "Confianza aumentada",
-                    description = "Los usuarios confÃ­an MÃ¡s en tu cuenta",
+                    description = "Los usuarios confían Más en tu cuenta",
                     iconColor = Color(0xFFFF6B35),
                     isActive = true
                 )
@@ -637,7 +649,7 @@ private fun VerifiedCelebrationContent() {
                 ActiveBenefitItem(
                     icon = Icons.Outlined.Support,
                     title = "Soporte prioritario",
-                    description = "Respuestas MÃ¡s RÃ¡pidas del equipo",
+                    description = "Respuestas Más Rápidas del equipo",
                     iconColor = Color(0xFFFF6B35),
                     isActive = true
                 )
@@ -646,7 +658,7 @@ private fun VerifiedCelebrationContent() {
         
         Spacer(modifier = Modifier.height(24.dp))
         
-        // Info de VerificaciÃ³n permanente
+        // Info de Verificación permanente
         Surface(
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(12.dp),
@@ -664,7 +676,7 @@ private fun VerifiedCelebrationContent() {
                 )
                 Spacer(modifier = Modifier.width(10.dp))
                 Text(
-                    text = "Tu VerificaciÃ³n es permanente mientras mantengas los estÃ¡ndares de la comunidad.",
+                    text = "Tu Verificación es permanente mientras mantengas los estándares de la comunidad.",
                     fontSize = 12.sp,
                     color = TextSecondary,
                     lineHeight = 16.sp
@@ -732,7 +744,7 @@ private fun ActiveBenefitItem(
     }
 }
 
-// FunciÃ³n auxiliar para calcular probabilidad de VerificaciÃ³n
+// Función auxiliar para calcular probabilidad de Verificación
 private fun calculateVerificationProbability(accountData: AccountDataForVerification?): Int {
     val followersScore = ((accountData?.followersCount ?: 0).toFloat() / 50f).coerceIn(0f, 1f) * 20
     val postsScore = ((accountData?.postsCount ?: 0).toFloat() / 10f).coerceIn(0f, 1f) * 15
@@ -787,7 +799,7 @@ private fun VerificationProbabilityBar(
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = "Probabilidad de VerificaciÃ³n",
+                        text = "Probabilidad de Verificación",
                         fontSize = 13.sp,
                         fontWeight = FontWeight.Medium,
                         color = TextPrimary
@@ -898,7 +910,7 @@ private fun VerificationRequestModal(
                     
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
-                            text = "Solicitar VerificaciÃ³n",
+                            text = "Solicitar Verificación",
                             fontSize = 18.sp,
                             fontWeight = FontWeight.Bold,
                             color = TextPrimary
@@ -945,7 +957,7 @@ private fun VerificationRequestModal(
                         .verticalScroll(rememberScrollState())
                         .padding(16.dp)
                 ) {
-                    // Datos de tu cuenta (automÃ¡ticos)
+                    // Datos de tu cuenta (automáticos)
                     Text(
                         text = "DATOS DE TU CUENTA",
                         fontSize = 11.sp,
@@ -986,21 +998,21 @@ private fun VerificationRequestModal(
                                 Spacer(modifier = Modifier.height(12.dp))
                                 AccountDataRow(
                                     icon = Icons.Outlined.Email,
-                                    label = "Correo ElectrÃ³nico",
+                                    label = "Correo Electrónico",
                                     value = accountData?.email ?: "No disponible",
                                     iconColor = Color(0xFF1565A0)
                                 )
                                 Spacer(modifier = Modifier.height(12.dp))
                                 AccountDataRow(
                                     icon = Icons.Outlined.Phone,
-                                    label = "telÃ©fono",
+                                    label = "teléfono",
                                     value = accountData?.phone ?: "No registrado",
                                     iconColor = Color(0xFF2E8B57)
                                 )
                                 
                                 Divider(color = BorderSubtle, modifier = Modifier.padding(vertical = 12.dp))
                                 
-                                // estadÃ­sticas
+                                // estadísticas
                                 Row(
                                     modifier = Modifier.fillMaxWidth(),
                                     horizontalArrangement = Arrangement.SpaceEvenly
@@ -1022,7 +1034,7 @@ private fun VerificationRequestModal(
                                     )
                                     StatColumn(
                                         value = "${accountData?.reputation ?: 0}%",
-                                        label = "ReputaciÃ³n",
+                                        label = "Reputación",
                                         iconColor = Color(0xFFFF6B35)
                                     )
                                 }
@@ -1056,9 +1068,9 @@ private fun VerificationRequestModal(
                     
                     Spacer(modifier = Modifier.height(24.dp))
                     
-                    // Tipo de VerificaciÃ³n
+                    // Tipo de Verificación
                     Text(
-                        text = "TIPO DE VERIFICaciÃ³n",
+                        text = "TIPO DE VERIFICación",
                         fontSize = 11.sp,
                         fontWeight = FontWeight.Bold,
                         color = TextMuted,
@@ -1118,9 +1130,9 @@ private fun VerificationRequestModal(
                     
                     Spacer(modifier = Modifier.height(24.dp))
                     
-                    // InformaciÃ³n adicional
+                    // Información adicional
                     Text(
-                        text = "INFORMaciÃ³n ADICIONAL",
+                        text = "INFORMación ADICIONAL",
                         fontSize = 11.sp,
                         fontWeight = FontWeight.Bold,
                         color = TextMuted,
@@ -1162,8 +1174,8 @@ private fun VerificationRequestModal(
                             OutlinedTextField(
                                 value = reasonForVerification,
                                 onValueChange = onReasonChange,
-                                label = { Text("Â¿Por Â¿QuÃ© quieres verificarte? *") },
-                                placeholder = { Text("Explica por Â¿QuÃ© tu cuenta merece ser verificada...") },
+                                label = { Text("¿Por ¿Qué quieres verificarte? *") },
+                                placeholder = { Text("Explica por ¿Qué tu cuenta merece ser verificada...") },
                                 modifier = Modifier.fillMaxWidth(),
                                 colors = OutlinedTextFieldDefaults.colors(
                                     focusedBorderColor = Color(0xFF1565A0),
@@ -1223,14 +1235,14 @@ private fun VerificationRequestModal(
                             Spacer(modifier = Modifier.width(10.dp))
                             Column {
                                 Text(
-                                    text = "Los datos de tu cuenta se enviarÃ¡n automÃ¡ticamente con tu solicitud.",
+                                    text = "Los datos de tu cuenta se enviarán automáticamente con tu solicitud.",
                                     fontSize = 12.sp,
                                     color = TextSecondary,
                                     lineHeight = 16.sp
                                 )
                                 Spacer(modifier = Modifier.height(4.dp))
                                 Text(
-                                    text = "El proceso de RevisiÃ³n tarda de 1 a 7 DÃ­as hÃ¡biles.",
+                                    text = "El proceso de Revisión tarda de 1 a 7 Días hábiles.",
                                     fontSize = 12.sp,
                                     color = TextMuted,
                                     lineHeight = 16.sp
@@ -1433,12 +1445,13 @@ private fun VerificationTypeItem(
     icon: ImageVector,
     title: String,
     description: String,
-    iconColor: Color
+    iconColor: Color,
+    onClick: () -> Unit = {}
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { /* TODO */ }
+            .clickable { onClick() }
             .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {

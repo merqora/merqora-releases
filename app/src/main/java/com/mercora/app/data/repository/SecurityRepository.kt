@@ -1,4 +1,4 @@
-﻿package com.mercora.app.data.repository
+package com.mercora.app.data.repository
 
 import android.content.Context
 import android.os.Build
@@ -29,6 +29,7 @@ object SecurityRepository {
         val biometric_enabled: Boolean = false,
         val two_factor_enabled: Boolean = false,
         val two_factor_method: String = "totp",
+        val totp_secret: String? = null,
         val login_alerts_enabled: Boolean = true,
         val require_strong_password: Boolean = true,
         val password_min_length: Int = 8,
@@ -121,10 +122,10 @@ object SecurityRepository {
                 }
                 .decodeSingleOrNull<SecuritySettings>()
             
-            Log.d(TAG, "âœ… ConfiguraciÃ³n de seguridad obtenida")
+            Log.d(TAG, "âœ… Configuración de seguridad obtenida")
             result
         } catch (e: Exception) {
-            Log.e(TAG, "âŒ Error obteniendo configuraciÃ³n: ${e.message}")
+            Log.e(TAG, "âŒ Error obteniendo configuración: ${e.message}")
             null
         }
     }
@@ -138,7 +139,8 @@ object SecurityRepository {
         passwordMinLength: Int? = null,
         requireUppercase: Boolean? = null,
         requireNumber: Boolean? = null,
-        requireSpecialChar: Boolean? = null
+        requireSpecialChar: Boolean? = null,
+        totpSecret: String? = null
     ): Boolean = withContext(Dispatchers.IO) {
         try {
             val updates = buildJsonObject {
@@ -150,6 +152,7 @@ object SecurityRepository {
                 requireUppercase?.let { put("require_uppercase", JsonPrimitive(it)) }
                 requireNumber?.let { put("require_number", JsonPrimitive(it)) }
                 requireSpecialChar?.let { put("require_special_char", JsonPrimitive(it)) }
+                totpSecret?.let { put("totp_secret", JsonPrimitive(it)) }
                 put("updated_at", JsonPrimitive(getCurrentTimestamp()))
             }
 
@@ -159,10 +162,10 @@ object SecurityRepository {
                     filter { eq("user_id", userId) }
                 }
 
-            Log.d(TAG, "âœ… ConfiguraciÃ³n de seguridad actualizada")
+            Log.d(TAG, "âœ… Configuración de seguridad actualizada")
             true
         } catch (e: Exception) {
-            Log.e(TAG, "âŒ Error actualizando configuraciÃ³n: ${e.message}")
+            Log.e(TAG, "âŒ Error actualizando configuración: ${e.message}")
             false
         }
     }
@@ -174,10 +177,10 @@ object SecurityRepository {
                 .from("user_security_settings")
                 .insert(settings)
             
-            Log.d(TAG, "âœ… ConfiguraciÃ³n de seguridad creada")
+            Log.d(TAG, "âœ… Configuración de seguridad creada")
             true
         } catch (e: Exception) {
-            Log.e(TAG, "âŒ Error creando configuraciÃ³n: ${e.message}")
+            Log.e(TAG, "âŒ Error creando configuración: ${e.message}")
             false
         }
     }
@@ -310,10 +313,10 @@ object SecurityRepository {
                 .from("user_sessions")
                 .insert(session)
 
-            Log.d(TAG, "âœ… SesiÃ³n creada")
+            Log.d(TAG, "âœ… Sesión creada")
             true
         } catch (e: Exception) {
-            Log.e(TAG, "âŒ Error creando sesiÃ³n: ${e.message}")
+            Log.e(TAG, "âŒ Error creando sesión: ${e.message}")
             false
         }
     }
@@ -334,11 +337,11 @@ object SecurityRepository {
                     }
                 }
 
-            logActivity(userId, "session_ended", "SesiÃ³n cerrada manualmente")
-            Log.d(TAG, "âœ… SesiÃ³n cerrada")
+            logActivity(userId, "session_ended", "Sesión cerrada manualmente")
+            Log.d(TAG, "âœ… Sesión cerrada")
             true
         } catch (e: Exception) {
-            Log.e(TAG, "âŒ Error cerrando sesiÃ³n: ${e.message}")
+            Log.e(TAG, "âŒ Error cerrando sesión: ${e.message}")
             false
         }
     }
@@ -418,7 +421,7 @@ object SecurityRepository {
                 .from("user_activity_logs")
                 .insert(log)
 
-            // Si es sospechoso, tambiÃ©n crear en suspicious_activities
+            // Si es sospechoso, también crear en suspicious_activities
             if (isSuspicious) {
                 val suspicious = buildJsonObject {
                     put("user_id", JsonPrimitive(userId))
@@ -508,7 +511,7 @@ object SecurityRepository {
                 password = newPassword
             }
 
-            // Actualizar fecha de Ãºltimo cambio
+            // Actualizar fecha de último cambio
             val userId = SupabaseClient.auth.currentUserOrNull()?.id
             if (userId != null) {
                 val updates = buildJsonObject {
@@ -522,13 +525,13 @@ object SecurityRepository {
                         filter { eq("user_id", userId) }
                     }
 
-                logActivity(userId, "password_change", "ContraseÃ±a actualizada")
+                logActivity(userId, "password_change", "Contraseña actualizada")
             }
 
-            Log.d(TAG, "âœ… ContraseÃ±a cambiada")
+            Log.d(TAG, "âœ… Contraseña cambiada")
             true
         } catch (e: Exception) {
-            Log.e(TAG, "âŒ Error cambiando contraseÃ±a: ${e.message}")
+            Log.e(TAG, "âŒ Error cambiando contraseña: ${e.message}")
             false
         }
     }
@@ -537,19 +540,19 @@ object SecurityRepository {
         val errors = mutableListOf<String>()
 
         if (password.length < settings.password_min_length) {
-            errors.add("MÃ­nimo ${settings.password_min_length} caracteres")
+            errors.add("Mínimo ${settings.password_min_length} caracteres")
         }
 
         if (settings.require_uppercase && !password.any { it.isUpperCase() }) {
-            errors.add("Debe incluir al menos una mayÃºscula")
+            errors.add("Debe incluir al menos una mayúscula")
         }
 
         if (settings.require_number && !password.any { it.isDigit() }) {
-            errors.add("Debe incluir al menos un nÃºmero")
+            errors.add("Debe incluir al menos un número")
         }
 
         if (settings.require_special_char && !password.any { !it.isLetterOrDigit() }) {
-            errors.add("Debe incluir al menos un carÃ¡cter especial")
+            errors.add("Debe incluir al menos un carácter especial")
         }
 
         return Pair(errors.isEmpty(), errors)
@@ -561,15 +564,12 @@ object SecurityRepository {
 
     suspend fun enable2FA(userId: String): Pair<Boolean, String?> = withContext(Dispatchers.IO) {
         try {
-            // Generar una clave secreta TOTP localmente
-            // En producciÃ³n, esto deberÃ­a integrarse con Supabase MFA cuando estÃ© habilitado
             val secret = generateTOTPSecret()
-            
-            // DO NOT set two_factor_enabled here - only after verify2FACode succeeds
-            Log.d(TAG, "âœ… 2FA secret generated (not yet enabled)")
+            updateSecuritySettings(userId, twoFactorEnabled = false, totpSecret = secret)
+            Log.d(TAG, "2FA secret generated and stored")
             Pair(true, secret)
         } catch (e: Exception) {
-            Log.e(TAG, "âŒ Error habilitando 2FA: ${e.message}")
+            Log.e(TAG, "Error habilitando 2FA: ${e.message}")
             Pair(false, null)
         }
     }
@@ -577,7 +577,7 @@ object SecurityRepository {
     suspend fun disable2FA(userId: String): Boolean = withContext(Dispatchers.IO) {
         try {
             updateSecuritySettings(userId, twoFactorEnabled = false)
-            logActivity(userId, "2fa_disabled", "AutenticaciÃ³n de dos factores desactivada")
+            logActivity(userId, "2fa_disabled", "Autenticación de dos factores desactivada")
 
             Log.d(TAG, "âœ… 2FA deshabilitado")
             true
@@ -589,25 +589,85 @@ object SecurityRepository {
 
     suspend fun verify2FACode(code: String, userId: String? = null): Boolean = withContext(Dispatchers.IO) {
         try {
-            // ValidaciÃ³n bÃ¡sica del cÃ³digo (6 dÃ­gitos)
             if (code.length != 6 || !code.all { it.isDigit() }) {
                 return@withContext false
             }
-            // En producciÃ³n, verificar contra el servidor TOTP
-            // Por ahora, aceptamos cualquier cÃ³digo de 6 dÃ­gitos para testing
-            
-            // NOW set two_factor_enabled = true after successful verification
-            if (userId != null) {
-                updateSecuritySettings(userId, twoFactorEnabled = true)
-                logActivity(userId, "2fa_enabled", "AutenticaciÃ³n de dos factores activada")
+
+            val uid = userId ?: SupabaseClient.auth.currentUserOrNull()?.id
+            if (uid == null) {
+                Log.w(TAG, "No user ID available for 2FA verification")
+                return@withContext false
             }
-            
-            Log.d(TAG, "âœ… CÃ³digo 2FA verificado y 2FA habilitado")
+
+            val settings = getSecuritySettings(uid)
+            val secret = settings?.totp_secret
+            if (secret.isNullOrEmpty()) {
+                Log.w(TAG, "No TOTP secret found for user")
+                return@withContext false
+            }
+
+            val isValid = verifyTOTP(secret, code)
+            if (!isValid) {
+                Log.w(TAG, "Invalid 2FA code")
+                return@withContext false
+            }
+
+            updateSecuritySettings(uid, twoFactorEnabled = true)
+            logActivity(uid, "2fa_enabled", "Autenticación de dos factores activada")
+            Log.d(TAG, "Código 2FA verificado y 2FA habilitado")
             true
         } catch (e: Exception) {
-            Log.e(TAG, "âŒ Error verificando 2FA: ${e.message}")
+            Log.e(TAG, "Error verificando 2FA: ${e.message}")
             false
         }
+    }
+
+    private fun verifyTOTP(secretBase32: String, code: String): Boolean {
+        return try {
+            val decodedSecret = decodeBase32(secretBase32)
+            val timeWindow = System.currentTimeMillis() / 30_000L
+            for (offset in -1L..1L) {
+                val expectedCode = generateTOTPCode(decodedSecret, timeWindow + offset)
+                if (expectedCode == code) return true
+            }
+            false
+        } catch (e: Exception) {
+            Log.e(TAG, "TOTP verification error: ${e.message}")
+            false
+        }
+    }
+
+    private fun generateTOTPCode(secret: ByteArray, timeWindow: Long): String {
+        val data = ByteArray(8)
+        var remaining = timeWindow
+        for (i in 7 downTo 0) {
+            data[i] = (remaining and 0xFFL).toByte()
+            remaining = remaining shr 8
+        }
+        val hmac = javax.crypto.Mac.getInstance("HmacSHA1")
+        val keySpec = javax.crypto.spec.SecretKeySpec(secret, "HmacSHA1")
+        hmac.init(keySpec)
+        val hash = hmac.doFinal(data)
+        val offset = hash[hash.size - 1].toInt() and 0xF
+        val binary = ((hash[offset].toInt() and 0x7F) shl 24) or
+                ((hash[offset + 1].toInt() and 0xFF) shl 16) or
+                ((hash[offset + 2].toInt() and 0xFF) shl 8) or
+                (hash[offset + 3].toInt() and 0xFF)
+        val otp = binary % 1_000_000
+        return otp.toString().padStart(6, '0')
+    }
+
+    private fun decodeBase32(input: String): ByteArray {
+        val clean = input.replace(" ", "").replace("-", "").uppercase()
+        val alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567"
+        val bits = clean.map { alphabet.indexOf(it) }
+            .filter { it >= 0 }
+            .flatMap { (0..4).map { b -> (it shr (4 - b)) and 1 } }
+        return bits.chunked(8)
+            .filter { it.size == 8 }
+            .map { byte -> byte.fold(0) { acc, bit -> (acc shl 1) or bit } }
+            .map { it.toByte() }
+            .toByteArray()
     }
     
     private fun generateTOTPSecret(): String {
@@ -772,7 +832,7 @@ object SecurityRepository {
                 Log.w(TAG, "No se pudieron eliminar activity_logs: ${e.message}")
             }
 
-            // Eliminar solicitudes de verificaciÃ³n
+            // Eliminar solicitudes de verificación
             try {
                 SupabaseClient.client
                     .from("verification_requests")

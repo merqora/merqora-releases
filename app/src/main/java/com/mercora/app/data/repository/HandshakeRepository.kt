@@ -54,7 +54,7 @@ object HandshakeRepository {
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
     private val json = Json { ignoreUnknownKeys = true }
     
-    // Estado del handshake activo en la conversaciÃ³n actual
+    // Estado del handshake activo en la conversación actual
     private val _activeHandshake = MutableStateFlow<HandshakeTransaction?>(null)
     val activeHandshake: StateFlow<HandshakeTransaction?> = _activeHandshake.asStateFlow()
     
@@ -67,17 +67,17 @@ object HandshakeRepository {
     val handshakeEvents: Flow<HandshakeEvent> = _handshakeEvents.asSharedFlow()
     
     // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-    // CACHÃ‰ IN-MEMORY: Persiste handshakes activos entre entradas/salidas
+    // CACHÉ IN-MEMORY: Persiste handshakes activos entre entradas/salidas
     // del chat. Key = conversationId, Value = HandshakeTransaction
-    // MÃ¡ximo ~1M entradas = ~200MB worst case, pero en la prÃ¡ctica serÃ¡n
-    // decenas. Se limpia automÃ¡ticamente cuando un handshake se completa/cancela.
+    // Máximo ~1M entradas = ~200MB worst case, pero en la práctica serán
+    // decenas. Se limpia automáticamente cuando un handshake se completa/cancela.
     // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
     private val handshakeCache = ConcurrentHashMap<String, HandshakeTransaction>()
     
     /**
      * Enviar mensaje de estado del handshake al chat.
-     * Se llama SOLO desde los mÃ©todos de acciÃ³n (accept, reject, confirm, cancel)
-     * para que solo el usuario que ejecuta la acciÃ³n envÃ­e el mensaje (evita duplicados).
+     * Se llama SOLO desde los métodos de acción (accept, reject, confirm, cancel)
+     * para que solo el usuario que ejecuta la acción envíe el mensaje (evita duplicados).
      */
     private suspend fun sendHandshakeStatusMessage(handshake: HandshakeTransaction, type: String) {
         try {
@@ -99,24 +99,24 @@ object HandshakeRepository {
     }
     
     /**
-     * Obtener handshake cacheado para una conversaciÃ³n (instantÃ¡neo, sin red)
+     * Obtener handshake cacheado para una conversación (instantáneo, sin red)
      */
     fun getCachedHandshake(conversationId: String): HandshakeTransaction? {
         return handshakeCache[conversationId]
     }
     
     /**
-     * Guardar handshake en cachÃ© (llamar al salir del chat o cuando cambia el estado)
+     * Guardar handshake en caché (llamar al salir del chat o cuando cambia el estado)
      */
     private fun cacheHandshake(handshake: HandshakeTransaction?) {
         val convId = handshake?.conversationId ?: return
         val status = handshake.status
         if (status in listOf("COMPLETED", "CANCELLED", "REJECTED")) {
-            // Limpiar del cachÃ© si estÃ¡ en estado terminal
+            // Limpiar del caché si está en estado terminal
             handshakeCache.remove(convId)
             Log.d(TAG, ">>> Cache REMOVED for conv=$convId (status=$status)")
         } else {
-            // Limitar tamaÃ±o del cachÃ©
+            // Limitar tamaño del caché
             if (handshakeCache.size >= MAX_CACHE_SIZE && !handshakeCache.containsKey(convId)) {
                 handshakeCache.keys.firstOrNull()?.let { handshakeCache.remove(it) }
             }
@@ -126,7 +126,7 @@ object HandshakeRepository {
     }
     
     /**
-     * Limpiar cachÃ© de una conversaciÃ³n especÃ­fica
+     * Limpiar caché de una conversación específica
      */
     fun clearCacheForConversation(conversationId: String) {
         handshakeCache.remove(conversationId)
@@ -140,7 +140,7 @@ object HandshakeRepository {
     
     private fun trackSentKey(key: String) {
         sentStatusKeys.add(key)
-        // Evitar crecimiento infinito: si supera el lÃ­mite, limpiar las mÃ¡s antiguas
+        // Evitar crecimiento infinito: si supera el límite, limpiar las más antiguas
         if (sentStatusKeys.size > MAX_SENT_KEYS) {
             val toRemove = sentStatusKeys.take(sentStatusKeys.size - MAX_SENT_KEYS / 2)
             toRemove.forEach { sentStatusKeys.remove(it) }
@@ -161,7 +161,7 @@ object HandshakeRepository {
     
     /**
      * Suscribirse a cambios de handshake para un usuario.
-     * IDEMPOTENTE: si ya estÃ¡ suscrito para el mismo usuario, solo recarga propuestas pendientes.
+     * IDEMPOTENTE: si ya está suscrito para el mismo usuario, solo recarga propuestas pendientes.
      * Esto evita gaps en la cobertura Realtime al navegar entre ChatScreen y MessagesScreen.
      */
     suspend fun subscribeToHandshakes(userId: String) {
@@ -179,7 +179,7 @@ object HandshakeRepository {
             // Cargar propuestas pendientes
             loadPendingProposals(userId)
             
-            // Cancelar suscripciÃ³n anterior si existe (solo si es para otro usuario)
+            // Cancelar suscripción anterior si existe (solo si es para otro usuario)
             if (realtimeChannel != null) {
                 try {
                     realtimeChannel?.unsubscribe()
@@ -196,7 +196,7 @@ object HandshakeRepository {
             val realtime = supabase.realtime
             try {
                 realtime.connect()
-                delay(500) // Esperar a que se establezca la conexiÃ³n
+                delay(500) // Esperar a que se establezca la conexión
             } catch (e: Exception) {
                 if (!e.message.orEmpty().contains("already connected", ignoreCase = true)) {
                     Log.e(TAG, ">>> WS connection error: ${e.message}")
@@ -242,10 +242,10 @@ object HandshakeRepository {
                     if (handshake.initiatorId == userId || handshake.receiverId == userId) {
                         Log.d(TAG, ">>> INSERT is for us, processing...")
                         
-                        // Guardar en cachÃ©
+                        // Guardar en caché
                         cacheHandshake(handshake)
                         
-                        // Si soy el receptor y estÃ¡ en PROPOSED, agregar a pendientes
+                        // Si soy el receptor y está en PROPOSED, agregar a pendientes
                         if (handshake.receiverId == userId && handshake.status == "PROPOSED") {
                             _pendingProposals.value = _pendingProposals.value + handshake
                             Log.d(TAG, ">>> Added to pendingProposals (now ${_pendingProposals.value.size})")
@@ -269,7 +269,7 @@ object HandshakeRepository {
                     if (handshake.initiatorId == userId || handshake.receiverId == userId) {
                         Log.d(TAG, ">>> UPDATE is for us, processing status=${handshake.status}...")
                         
-                        // Actualizar cachÃ©
+                        // Actualizar caché
                         cacheHandshake(handshake)
                         
                         // Actualizar lista de pendientes
@@ -283,8 +283,8 @@ object HandshakeRepository {
                         Log.d(TAG, ">>> _activeHandshake UPDATED: $previousStatus â†’ ${handshake.status}")
                         
                         // â•â•â• ENVIAR MENSAJE AL CHAT SI NO FUE ENVIADO POR ESTE DISPOSITIVO â•â•â•
-                        // Esto cubre el caso donde admin-web u otro dispositivo cambiÃ³ el estado
-                        // Funciona tanto si el usuario estÃ¡ en el chat como si estÃ¡ en MessagesScreen
+                        // Esto cubre el caso donde admin-web u otro dispositivo cambió el estado
+                        // Funciona tanto si el usuario está en el chat como si está en MessagesScreen
                         val messageType = when (handshake.status) {
                             "ACCEPTED" -> "ACCEPTED"
                             "IN_PROGRESS" -> "CONFIRMED"
@@ -302,7 +302,7 @@ object HandshakeRepository {
                             }
                         }
                         
-                        // Si el handshake se cancelÃ³ o rechazÃ³, limpiar despuÃ©s de emitir evento
+                        // Si el handshake se canceló o rechazó, limpiar después de emitir evento
                         if (handshake.status in listOf("CANCELLED", "REJECTED")) {
                             Log.d(TAG, ">>> Clearing _activeHandshake due to status: ${handshake.status}")
                             // Delay breve para que el UI procese el cambio antes de limpiar
@@ -345,7 +345,7 @@ object HandshakeRepository {
             // 6. Guardar referencia ANTES de suscribir
             realtimeChannel = channel
             
-            // 7. Suscribirse al canal (bloquear hasta confirmar suscripciÃ³n)
+            // 7. Suscribirse al canal (bloquear hasta confirmar suscripción)
             Log.d(TAG, ">>> Step 7: Subscribing to channel (blockUntilSubscribed)...")
             channel.subscribe(blockUntilSubscribed = true)
             isSubscribed = true
@@ -360,7 +360,7 @@ object HandshakeRepository {
     
     /**
      * Refrescar el handshake activo desde la DB (polling fallback)
-     * Llamar periÃ³dicamente desde ChatScreen como safety net
+     * Llamar periódicamente desde ChatScreen como safety net
      */
     suspend fun refreshActiveHandshake(conversationId: String): Boolean {
         return try {
@@ -572,7 +572,7 @@ object HandshakeRepository {
     }
     
     /**
-     * Confirmar la transacciÃ³n (cada parte confirma)
+     * Confirmar la transacción (cada parte confirma)
      */
     suspend fun confirmTransaction(handshakeId: String, userId: String): Boolean {
         return try {
@@ -584,7 +584,7 @@ object HandshakeRepository {
                 return false
             }
             
-            // Determinar quÃ© campo actualizar
+            // Determinar qué campo actualizar
             val isInitiator = handshake.initiatorId == userId
             val fieldToUpdate = if (isInitiator) "initiator_confirmed" else "receiver_confirmed"
             
@@ -642,7 +642,7 @@ object HandshakeRepository {
             
             Log.d(TAG, ">>> Supabase update SUCCESS for handshake: $handshakeId")
             
-            // Enviar mensaje de cancelaciÃ³n al chat ANTES de limpiar el estado
+            // Enviar mensaje de cancelación al chat ANTES de limpiar el estado
             val cancelledHandshake = _activeHandshake.value
             if (cancelledHandshake?.id == handshakeId && cancelledHandshake != null) {
                 trackSentKey("${handshakeId}_AGREEMENT_CANCELLED")
@@ -683,7 +683,7 @@ object HandshakeRepository {
     }
     
     /**
-     * Obtener handshake activo para una conversaciÃ³n
+     * Obtener handshake activo para una conversación
      */
     suspend fun getActiveHandshakeForConversation(conversationId: String): HandshakeTransaction? {
         currentConversationId = conversationId
@@ -703,7 +703,7 @@ object HandshakeRepository {
                 .decodeSingleOrNull<HandshakeTransaction>()
             
             _activeHandshake.value = handshake
-            // Actualizar cachÃ©
+            // Actualizar caché
             if (handshake != null) {
                 cacheHandshake(handshake)
             }
@@ -717,7 +717,7 @@ object HandshakeRepository {
     }
     
     /**
-     * Obtener el handshake MÃS RECIENTE de una conversaciÃ³n, INCLUYENDO estados terminales
+     * Obtener el handshake MÁS RECIENTE de una conversación, INCLUYENDO estados terminales
      * (COMPLETED, CANCELLED, REJECTED). Se usa al re-entrar al chat para reconciliar.
      */
     suspend fun getLatestHandshakeForConversation(conversationId: String): HandshakeTransaction? {
@@ -742,8 +742,8 @@ object HandshakeRepository {
     /**
      * Reconciliar mensajes de handshake al re-entrar al chat.
      * Busca mensajes DIRECTAMENTE desde la DB (no depende de estado en memoria)
-     * y envÃ­a los que faltan. Esto cubre el caso donde admin-web u otro
-     * dispositivo cambiÃ³ el estado sin enviar mensajes al chat.
+     * y envía los que faltan. Esto cubre el caso donde admin-web u otro
+     * dispositivo cambió el estado sin enviar mensajes al chat.
      */
     suspend fun reconcileHandshakeMessages(conversationId: String) {
         try {
@@ -754,7 +754,7 @@ object HandshakeRepository {
             }
             Log.d(TAG, ">>> RECONCILE START: handshake=${latest.id} status=${latest.status}")
             
-            // Mapear status actual a los tipos de mensaje que DEBERÃAN existir en el chat
+            // Mapear status actual a los tipos de mensaje que DEBERÍAN existir en el chat
             val expectedTypes = mutableListOf<String>()
             when (latest.status) {
                 "COMPLETED" -> {
@@ -781,10 +781,10 @@ object HandshakeRepository {
             }
             
             // Buscar mensajes HANDSHAKE_STATUS directamente en la DB (no depender de memoria)
-            // Esto es mÃ¡s robusto que leer ChatRepository.currentMessages que puede estar vacÃ­o
-            // Buscamos los Ãºltimos 50 mensajes de la conversaciÃ³n y filtramos client-side
+            // Esto es más robusto que leer ChatRepository.currentMessages que puede estar vacío
+            // Buscamos los últimos 50 mensajes de la conversación y filtramos client-side
             val existingHandshakeMessages = try {
-                com.vinzay.app.data.remote.SupabaseClient.database
+                com.mercora.app.data.remote.SupabaseClient.database
                     .from("messages")
                     .select {
                         filter {
@@ -846,23 +846,23 @@ object HandshakeRepository {
     }
     
     /**
-     * Suspender la suscripciÃ³n al salir del chat.
-     * Guarda el handshake activo en cachÃ© ANTES de limpiar el estado.
+     * Suspender la suscripción al salir del chat.
+     * Guarda el handshake activo en caché ANTES de limpiar el estado.
      */
     suspend fun suspendForConversation(conversationId: String) {
-        // Guardar en cachÃ© antes de limpiar
+        // Guardar en caché antes de limpiar
         val current = _activeHandshake.value
         if (current != null && current.conversationId == conversationId) {
             cacheHandshake(current)
             Log.d(TAG, ">>> Suspended handshake for conv=$conversationId (status=${current.status})")
         }
-        // Limpiar estado activo sin borrar cachÃ©
+        // Limpiar estado activo sin borrar caché
         _activeHandshake.value = null
     }
     
     suspend fun unsubscribe() {
         try {
-            // Guardar handshake activo en cachÃ© antes de desuscribirse
+            // Guardar handshake activo en caché antes de desuscribirse
             val current = _activeHandshake.value
             if (current != null) {
                 cacheHandshake(current)
@@ -885,7 +885,7 @@ object HandshakeRepository {
     }
     
     /**
-     * Verificar si la suscripciÃ³n estÃ¡ activa
+     * Verificar si la suscripción está activa
      */
     fun isRealtimeActive(): Boolean = isSubscribed && realtimeChannel != null
 }

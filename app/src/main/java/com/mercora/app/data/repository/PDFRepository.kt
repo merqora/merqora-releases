@@ -48,7 +48,7 @@ object PDFRepository {
         role: String
     ): Result<String> = withContext(Dispatchers.IO) {
         try {
-            val fileName = "Vinzay-${order.orderNumber}-${role}.pdf"
+            val fileName = "Mercora-${order.orderNumber}-${role}.pdf"
             val file = generatePdfFile(context, order, fileName)
 
             val bucket = "pdfs"
@@ -114,16 +114,16 @@ object PDFRepository {
         val leftMargin = 50f
         val rightLimit = 545f
 
-        // Logo / tÃ­tulo
-        canvas.drawText("vinzay", leftMargin, y, titlePaint)
+        // Logo / título
+        canvas.drawText("Mercora", leftMargin, y, titlePaint)
         y += 36f
-        canvas.drawText("Comprobante de transacciÃ³n", leftMargin, y, headerPaint)
+        canvas.drawText("Comprobante de transacción", leftMargin, y, headerPaint)
         y += 10f
         canvas.drawLine(leftMargin, y, rightLimit, y, linePaint)
         y += 26f
 
-        // NÂ° de orden
-        canvas.drawText("NÂ° de orden", leftMargin, y, labelPaint)
+        // N° de orden
+        canvas.drawText("N° de orden", leftMargin, y, labelPaint)
         y += 14f
         canvas.drawText(order.orderNumber, leftMargin, y, bodyPaint)
         y += 26f
@@ -145,16 +145,16 @@ object PDFRepository {
         canvas.drawText(order.statusDisplayName, leftMargin, y, bodyPaint)
         y += 36f
 
-        // LÃ­nea separadora
+        // Línea separadora
         canvas.drawLine(leftMargin, y, rightLimit, y, linePaint)
         y += 26f
 
         // Items
-        canvas.drawText("ArtÃ­culos", leftMargin, y, headerPaint)
+        canvas.drawText("Artículos", leftMargin, y, headerPaint)
         y += 26f
 
         for (item in order.items) {
-            canvas.drawText("â€¢ ${item.title}", leftMargin, y, bodyPaint)
+            canvas.drawText("• ${item.title}", leftMargin, y, bodyPaint)
             y += 14f
             canvas.drawText(
                 "  Cant: ${item.quantity} x $${
@@ -167,7 +167,7 @@ object PDFRepository {
             y += 22f
         }
 
-        // LÃ­nea separadora
+        // Línea separadora
         y += 4f
         canvas.drawLine(leftMargin, y, rightLimit, y, linePaint)
         y += 26f
@@ -176,7 +176,7 @@ object PDFRepository {
         canvas.drawText("Subtotal", leftMargin, y, bodyPaint)
         canvas.drawText("$${String.format("%,.0f", order.subtotal)}", rightLimit - 100f, y, bodyPaint)
         y += 18f
-        canvas.drawText("EnvÃ­o", leftMargin, y, bodyPaint)
+        canvas.drawText("Envío", leftMargin, y, bodyPaint)
         canvas.drawText("$${String.format("%,.0f", order.shippingCost)}", rightLimit - 100f, y, bodyPaint)
         y += 22f
 
@@ -192,11 +192,11 @@ object PDFRepository {
         )
         y += 36f
 
-        // MÃ©todo de pago
+        // Método de pago
         canvas.drawLine(leftMargin, y, rightLimit, y, linePaint)
         y += 26f
         val paymentMethod = order.payment?.paymentMethodId ?: "Mercado Pago"
-        canvas.drawText("MÃ©todo de pago", leftMargin, y, labelPaint)
+        canvas.drawText("Método de pago", leftMargin, y, labelPaint)
         y += 14f
         canvas.drawText(paymentMethod.replaceFirstChar { it.uppercase() }, leftMargin, y, bodyPaint)
 
@@ -208,7 +208,7 @@ object PDFRepository {
             color = Color.GRAY
             textSize = 9f
         }
-        canvas.drawText("Merqora â€” Comprobante generado el ${formattedDate}", leftMargin, y, footerPaint)
+        canvas.drawText("Mercora â€” Comprobante generado el ${formattedDate}", leftMargin, y, footerPaint)
 
         document.finishPage(page)
 

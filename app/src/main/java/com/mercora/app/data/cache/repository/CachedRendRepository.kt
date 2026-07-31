@@ -36,7 +36,7 @@ class CachedRendRepository(
     private val context: Context
 ) : CacheFirstRepository<List<Rend>>("CachedRendRepo") {
     
-    private val database: VinzayDatabase by lazy { VinzayDatabase.getInstance(context) }
+    private val database: MercoraDatabase by lazy { MercoraDatabase.getInstance(context) }
     private val rendDao: CachedRendDao by lazy { database.cachedRendDao() }
     private val userDao: CachedUserDao by lazy { database.cachedUserDao() }
     private val syncMetadataDao: CacheSyncMetadataDao by lazy { database.cacheSyncMetadataDao() }

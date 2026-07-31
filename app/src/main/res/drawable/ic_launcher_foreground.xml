@@ -43,7 +43,7 @@
         android:fillColor="#00000000"
         android:strokeLineCap="round"/>
     
-    <!-- Texto "Vinzay" - version simplificada pero legible -->
+    <!-- Texto "Mercora" - version simplificada pero legible -->
     <path
         android:fillColor="#FFFFFF"
         android:pathData="M18,58 h6 v10 h-3 v-3 h-1 l-1,3 h-2 L18,58 Z M20,60 v3 h1 v-3 h-1 Z

@@ -40,13 +40,13 @@ enum class CallStatus {
     OUTGOING,       // Llamada saliente (esperando que contesten)
     INCOMING,       // Llamada entrante (sonando)
     CONNECTED,      // Llamada activa/conectada
-    RECONNECTING,   // Reconectando (pÃ©rdida temporal de red)
+    RECONNECTING,   // Reconectando (pérdida temporal de red)
     ENDED           // Llamada finalizada
 }
 
-/** RazÃ³n de finalizaciÃ³n */
+/** Razón de finalización */
 enum class CallEndReason {
-    NORMAL,         // ColgÃ³ normalmente
+    NORMAL,         // Colgó normalmente
     MISSED,         // No contestaron
     REJECTED,       // Rechazaron la llamada
     BUSY,           // Ocupado
@@ -70,7 +70,7 @@ data class CallState(
     val isMuted: Boolean = false,
     val isSpeakerOn: Boolean = false,
     
-    // DuraciÃ³n
+    // Duración
     val durationSeconds: Int = 0,
     
     // Fin

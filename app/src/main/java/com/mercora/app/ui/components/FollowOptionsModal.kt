@@ -67,9 +67,9 @@ fun FollowOptionsModal(
                         modifier = Modifier.padding(20.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        // TÃ­tulo
+                        // Título
                         Text(
-                            text = "Â¿CÃ³mo quieres seguir?",
+                            text = "¿Cómo quieres seguir?",
                             color = TextPrimary,
                             fontSize = 18.sp,
                             fontWeight = FontWeight.Bold,
@@ -79,7 +79,7 @@ fun FollowOptionsModal(
                         Spacer(modifier = Modifier.height(6.dp))
                         
                         Text(
-                            text = "Elige el tipo de relaciÃ³n",
+                            text = "Elige el tipo de relación",
                             color = TextMuted,
                             fontSize = 13.sp,
                             textAlign = TextAlign.Center
@@ -87,7 +87,7 @@ fun FollowOptionsModal(
                         
                         Spacer(modifier = Modifier.height(20.dp))
                         
-                        // OpciÃ³n: Seguir
+                        // Opción: Seguir
                         FollowOptionCard(
                             icon = Icons.Outlined.PersonAdd,
                             title = "Seguir",
@@ -99,7 +99,7 @@ fun FollowOptionsModal(
                         
                         Spacer(modifier = Modifier.height(12.dp))
                         
-                        // OpciÃ³n: Ser Cliente
+                        // Opción: Ser Cliente
                         FollowOptionCard(
                             icon = Icons.Filled.ShoppingBag,
                             title = "Ser Cliente",
@@ -111,7 +111,7 @@ fun FollowOptionsModal(
                         
                         Spacer(modifier = Modifier.height(16.dp))
                         
-                        // BotÃ³n cancelar
+                        // Botón cancelar
                         TextButton(
                             onClick = onDismiss,
                             enabled = !isLoading

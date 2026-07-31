@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 
 /**
  * -------------------------------------------------------------------------------
- * MODELOS DE ÓRDENES Y PAGOS - Sistema de compras Merqora
+ * MODELOS DE ÓRDENES Y PAGOS - Sistema de compras Mercora
  * -------------------------------------------------------------------------------
  */
 

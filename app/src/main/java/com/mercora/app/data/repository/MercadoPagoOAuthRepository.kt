@@ -57,7 +57,7 @@ object MercadoPagoOAuthRepository {
             }
         } catch (e: Exception) {
             Log.e(TAG, "Error fetching MP connection: ${e.message}")
-            val state = MpConnectionState.Error(e.message ?: "Error al verificar conexiÃ³n")
+            val state = MpConnectionState.Error(e.message ?: "Error al verificar conexión")
             _connectionState.value = state
             state
         }
@@ -74,10 +74,10 @@ object MercadoPagoOAuthRepository {
                     filter { eq("user_id", userId) }
                 }
             _connectionState.value = MpConnectionState.Disconnected
-            Log.d(TAG, "âœ… ConexiÃ³n MP revocada")
+            Log.d(TAG, "âœ… Conexión MP revocada")
             Result.success(Unit)
         } catch (e: Exception) {
-            Log.e(TAG, "Error revocando conexiÃ³n MP: ${e.message}")
+            Log.e(TAG, "Error revocando conexión MP: ${e.message}")
             Result.failure(e)
         }
     }
@@ -104,7 +104,7 @@ object MercadoPagoOAuthRepository {
                 .build()
 
             val response = okHttpClient.newCall(request).execute()
-            val responseText = response.body?.string() ?: throw Exception("Respuesta vacÃ­a")
+            val responseText = response.body?.string() ?: throw Exception("Respuesta vacía")
             Log.d(TAG, "OAuth exchange response: $responseText")
 
             val result = Json { ignoreUnknownKeys = true }
@@ -123,13 +123,13 @@ object MercadoPagoOAuthRepository {
             }
         } catch (e: Exception) {
             Log.e(TAG, "Error en OAuth exchange: ${e.message}")
-            _oauthResult.value = OAuthResult.Error(e.message ?: "Error de conexiÃ³n")
+            _oauthResult.value = OAuthResult.Error(e.message ?: "Error de conexión")
             Result.failure(e)
         }
     }
 
     fun buildOAuthUrl(clientId: String, state: String): String {
-        val redirectUri = "vinzay://mp-oauth/callback"
+        val redirectUri = "mercora://mp-oauth/callback"
         return "https://auth.mercadopago.com.uy/authorization" +
             "?client_id=$clientId" +
             "&response_type=code" +
@@ -140,7 +140,7 @@ object MercadoPagoOAuthRepository {
 
     fun handleOAuthRedirect(intent: Intent): String? {
         val data = intent.data ?: return null
-        if (data.scheme != "vinzay" || data.host != "mp-oauth") return null
+        if (data.scheme != "Mercora" || data.host != "mp-oauth") return null
         return data.getQueryParameter("code")
     }
 

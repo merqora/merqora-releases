@@ -79,7 +79,7 @@ fun MapboxMapPicker(
         onDismiss()
     }
     
-    // AnimaciÃ³n mÃ¡s fluida con spring
+    // Animación más fluida con spring
     val animationProgress by animateFloatAsState(
         targetValue = if (isVisible) 1f else 0f,
         animationSpec = spring(
@@ -161,7 +161,7 @@ fun MapboxMapPicker(
                 
                 // Title
                 Text(
-                    text = "Seleccionar ubicaciÃ³n",
+                    text = "Seleccionar ubicación",
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color.White
@@ -237,7 +237,7 @@ fun MapboxMapPicker(
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
-                            text = "UbicaciÃ³n seleccionada",
+                            text = "Ubicación seleccionada",
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Medium,
                             color = TextMuted
@@ -300,7 +300,7 @@ fun MapboxMapPicker(
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
-                            text = "Confirmar ubicaciÃ³n",
+                            text = "Confirmar ubicación",
                             fontWeight = FontWeight.Bold,
                             fontSize = 15.sp
                         )
@@ -311,7 +311,7 @@ fun MapboxMapPicker(
             // Help text
             Spacer(modifier = Modifier.height(12.dp))
             Text(
-                text = "Arrastra el mapa para mover el pin a la ubicaciÃ³n deseada",
+                text = "Arrastra el mapa para mover el pin a la ubicación deseada",
                 fontSize = 12.sp,
                 color = Color.White.copy(alpha = 0.8f),
                 textAlign = TextAlign.Center,
@@ -459,7 +459,7 @@ private fun MapWebView(
                     ) {
                         super.onReceivedError(view, request, error)
                         if (request?.isForMainFrame == true) {
-                            onError("Error de conexiÃ³n")
+                            onError("Error de conexión")
                         }
                     }
                 }
@@ -554,11 +554,11 @@ private fun generateMapHtml(lat: Double, lng: Double, accessToken: String): Stri
                     if (data.features && data.features.length > 0) {
                         Android.onAddressFound(data.features[0].place_name);
                     } else {
-                        Android.onAddressFound('UbicaciÃ³n: ' + lat.toFixed(6) + ', ' + lng.toFixed(6));
+                        Android.onAddressFound('Ubicación: ' + lat.toFixed(6) + ', ' + lng.toFixed(6));
                     }
                 })
                 .catch(err => {
-                    Android.onAddressFound('UbicaciÃ³n: ' + lat.toFixed(6) + ', ' + lng.toFixed(6));
+                    Android.onAddressFound('Ubicación: ' + lat.toFixed(6) + ', ' + lng.toFixed(6));
                 });
         }
         

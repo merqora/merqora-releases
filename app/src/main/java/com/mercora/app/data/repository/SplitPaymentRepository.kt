@@ -64,7 +64,7 @@ object SplitPaymentRepository {
                 .build()
 
             val response = okHttpClient.newCall(request).execute()
-            val responseText = response.body?.string() ?: throw Exception("Respuesta vacÃ­a")
+            val responseText = response.body?.string() ?: throw Exception("Respuesta vacía")
             Log.d(TAG, "Respuesta process-card-payment: $responseText")
 
             if (!response.isSuccessful) {
@@ -125,7 +125,7 @@ object SplitPaymentRepository {
                 .build()
 
             val response = okHttpClient.newCall(request).execute()
-            val responseText = response.body?.string() ?: throw Exception("Respuesta vacÃ­a")
+            val responseText = response.body?.string() ?: throw Exception("Respuesta vacía")
             Log.d(TAG, "Respuesta create-mp-preference: $responseText")
 
             val result = json.decodeFromString<PreferenceResult>(responseText)

@@ -78,7 +78,7 @@ object RendRepository {
             _isLoading.value = true
             _errorMessage.value = null
             Log.d(TAG, "Loading rends from Supabase...")
-            Log.d(TAG, "Supabase URL: ${com.vinzay.app.BuildConfig.SUPABASE_URL}")
+            Log.d(TAG, "Supabase URL: ${com.mercora.app.BuildConfig.SUPABASE_URL}")
             
             val rendsDB = SupabaseClient.database
                 .from("rends")
@@ -144,7 +144,7 @@ object RendRepository {
             if (errorMsg.contains("relation") && errorMsg.contains("does not exist")) {
                 _errorMessage.value = "La tabla 'rends' no existe. Ejecuta SUPABASE_RENDS_TABLE.sql en Supabase."
             } else if (errorMsg.contains("localhost")) {
-                _errorMessage.value = "Error de conexiÃ³n: Verifica tu conexiÃ³n a internet y reinicia la app."
+                _errorMessage.value = "Error de conexión: Verifica tu conexión a internet y reinicia la app."
             } else {
                 _errorMessage.value = "Error cargando Rends: $errorMsg"
             }
@@ -373,7 +373,7 @@ object RendRepository {
                 if (!location.isNullOrBlank()) put("location", location)
             }
             
-            // Actualizar stats de hashtags y categorÃ­a
+            // Actualizar stats de hashtags y categoría
             if (hashtags.isNotEmpty()) {
                 try {
                     SupabaseClient.database.rpc(
@@ -405,7 +405,7 @@ object RendRepository {
             
             _uploadState.value = _uploadState.value.copy(progress = 0.90f)
             
-            // Insertar con manejo de errores explÃ­cito
+            // Insertar con manejo de errores explícito
             val insertResult = runCatching {
                 SupabaseClient.database
                     .from("rends")
@@ -415,7 +415,7 @@ object RendRepository {
             if (insertResult.isFailure) {
                 val dbError = insertResult.exceptionOrNull()
                 Log.e(TAG, "â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•")
-                Log.e(TAG, "ERROR CRÃTICO insertando Rend en Supabase")
+                Log.e(TAG, "ERROR CRÍTICO insertando Rend en Supabase")
                 Log.e(TAG, "Mensaje: ${dbError?.message}")
                 Log.e(TAG, "Causa: ${dbError?.cause?.message}")
                 Log.e(TAG, "â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•")
@@ -603,6 +603,24 @@ object RendRepository {
     /**
      * Get popular categories sorted by usage count
      */
+    suspend fun updateRendDescription(rendId: String, title: String, description: String): Result<Unit> = withContext(Dispatchers.IO) {
+        try {
+            val updateData = buildJsonObject {
+                put("title", title)
+                put("description", description)
+            }
+            SupabaseClient.database
+                .from("rends")
+                .update(updateData) {
+                    filter { eq("id", rendId) }
+                }
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Log.e(TAG, "Error updating rend description", e)
+            Result.failure(e)
+        }
+    }
+
     suspend fun getPopularCategories(limit: Int = 12): List<PopularCategory> = withContext(Dispatchers.IO) {
         try {
             val result = SupabaseClient.database

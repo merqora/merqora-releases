@@ -50,7 +50,7 @@ import com.mercora.app.ui.theme.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-// CategorÃ­as de tendencias
+// Categorías de tendencias
 private data class TrendCategory(
     val id: String,
     val name: String,
@@ -200,7 +200,7 @@ fun TendenciasScreen(
                 Spacer(modifier = Modifier.height(8.dp))
             }
             
-            // SecciÃ³n "Videos en Tendencia"
+            // Sección "Videos en Tendencia"
             item(key = "videos_header") {
                 Row(
                     modifier = Modifier
@@ -443,7 +443,7 @@ private fun TendenciasHeaderScrollable(
     }
 }
 
-// SecciÃ³n de hashtags en tendencia con carrusel horizontal
+// Sección de hashtags en tendencia con carrusel horizontal
 @Composable
 private fun TrendingHashtagsSection(
     hashtags: List<TrendingTagItem>,
@@ -452,7 +452,7 @@ private fun TrendingHashtagsSection(
     Column(
         modifier = Modifier.fillMaxWidth()
     ) {
-        // Header de la secciÃ³n
+        // Header de la sección
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -611,7 +611,7 @@ private fun TrendingHashtagCard(
                     color = Color(0xFFFF6B35).copy(alpha = 0.15f)
                 ) {
                     Text(
-                        text = "Ver mÃ¡s",
+                        text = "Ver más",
                         color = Color(0xFFFF6B35),
                         fontSize = 10.sp,
                         fontWeight = FontWeight.SemiBold,

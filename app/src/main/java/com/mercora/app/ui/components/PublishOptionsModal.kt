@@ -36,8 +36,8 @@ data class PublishOption(
 private val PUBLISH_OPTIONS = listOf(
     PublishOption(
         id = "post",
-        label = "PublicaciÃ³n",
-        description = "ArtÃ­culo permanente en tu perfil",
+        label = "Publicación",
+        description = "Artículo permanente en tu perfil",
         icon = Icons.Outlined.AddBox,
         accentColor = Color(0xFFFF6B35),
         modeIndex = 0
@@ -61,7 +61,7 @@ private val PUBLISH_OPTIONS = listOf(
     PublishOption(
         id = "live",
         label = "En Vivo",
-        description = "TransmisiÃ³n en tiempo real",
+        description = "Transmisión en tiempo real",
         icon = Icons.Outlined.Videocam,
         accentColor = Color(0xFFEF4444),
         modeIndex = 3
@@ -84,7 +84,7 @@ fun PublishOptionsModal(
         )
     }
     
-    // Modal con animaciÃ³n slide desde abajo
+    // Modal con animación slide desde abajo
     AnimatedVisibility(
         visible = isVisible,
         enter = slideInVertically(
@@ -153,7 +153,7 @@ fun PublishOptionsModal(
                     Spacer(modifier = Modifier.height(8.dp))
                     
                     Text(
-                        text = "Â¿QuÃ© te gustarÃ­a publicar?",
+                        text = "¿Qué te gustaría publicar?",
                         fontSize = 14.sp,
                         color = TextMuted
                     )

@@ -49,7 +49,7 @@ fun CallScreen(
 ) {
     val scope = rememberCoroutineScope()
     
-    // AnimaciÃ³n de pulso para el avatar cuando estÃ¡ sonando/conectando
+    // Animación de pulso para el avatar cuando está sonando/conectando
     val infiniteTransition = rememberInfiniteTransition(label = "callPulse")
     val pulseScale by infiniteTransition.animateFloat(
         initialValue = 1f,
@@ -61,7 +61,7 @@ fun CallScreen(
         label = "pulse"
     )
     
-    // Gradiente de fondo segÃºn estado
+    // Gradiente de fondo según estado
     val bgGradient = when (callState.status) {
         CallStatus.OUTGOING -> Brush.verticalGradient(
             colors = listOf(Color(0xFF1A1A2E), Color(0xFF16213E), Color(0xFF0F3460))
@@ -111,7 +111,7 @@ fun CallScreen(
                         CallEndReason.REJECTED -> "Llamada rechazada"
                         CallEndReason.BUSY -> "Ocupado"
                         CallEndReason.MISSED, CallEndReason.TIMEOUT -> "Sin respuesta"
-                        CallEndReason.NETWORK_ERROR -> "Error de conexiÃ³n"
+                        CallEndReason.NETWORK_ERROR -> "Error de conexión"
                         else -> "Llamada finalizada"
                     }
                     else -> ""
@@ -136,14 +136,14 @@ fun CallScreen(
             
             Spacer(modifier = Modifier.height(8.dp))
             
-            // â•â•â• DuraciÃ³n / Estado secundario â•â•â•
+            // â•â•â• Duración / Estado secundario â•â•â•
             Text(
                 text = when (callState.status) {
                     CallStatus.CONNECTED -> CallRepository.formatDuration(callState.durationSeconds)
                     CallStatus.OUTGOING -> "Esperando respuesta..."
-                    CallStatus.RECONNECTING -> "Verificando conexiÃ³n..."
+                    CallStatus.RECONNECTING -> "Verificando conexión..."
                     CallStatus.ENDED -> if (callState.durationSeconds > 0) 
-                        "DuraciÃ³n: ${CallRepository.formatDuration(callState.durationSeconds)}" else ""
+                        "Duración: ${CallRepository.formatDuration(callState.durationSeconds)}" else ""
                     else -> ""
                 },
                 fontSize = 16.sp,
@@ -327,7 +327,7 @@ fun CallScreen(
 }
 
 /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-   BOTÃ“N DE CONTROL DE LLAMADA
+   BOTÓN DE CONTROL DE LLAMADA
 â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 
 @Composable

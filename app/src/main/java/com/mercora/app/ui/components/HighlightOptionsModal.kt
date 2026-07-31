@@ -33,7 +33,7 @@ import com.mercora.app.ui.theme.*
 
 /**
  * Modal de opciones para Highlights existentes
- * Permite eliminar o agregar nuevas imÃ¡genes al highlight
+ * Permite eliminar o agregar nuevas imágenes al highlight
  */
 @Composable
 fun HighlightOptionsModal(
@@ -48,7 +48,7 @@ fun HighlightOptionsModal(
     val haptic = LocalHapticFeedback.current
     var showDeleteConfirm by remember { mutableStateOf(false) }
     
-    // Picker para mÃºltiples archivos (imÃ¡genes o videos)
+    // Picker para múltiples archivos (imágenes o videos)
     val multipleMediaPicker = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetMultipleContents()
     ) { uris ->
@@ -147,7 +147,7 @@ fun HighlightOptionsModal(
                             }
                         }
                         
-                        // TÃ­tulo
+                        // Título
                         Column(modifier = Modifier.weight(1f)) {
                             Text(
                                 text = highlightTitle,
@@ -178,11 +178,11 @@ fun HighlightOptionsModal(
                             Column(
                                 verticalArrangement = Arrangement.spacedBy(8.dp)
                             ) {
-                                // Agregar imÃ¡genes
+                                // Agregar imágenes
                                 OptionRow(
                                     icon = Icons.Outlined.AddPhotoAlternate,
                                     title = "Agregar historia",
-                                    subtitle = "AÃ±ade nuevas fotos o videos a este highlight",
+                                    subtitle = "Añade nuevas fotos o videos a este highlight",
                                     iconTint = AccentGreen,
                                     onClick = {
                                         haptic.performHapticFeedback(HapticFeedbackType.LongPress)
@@ -200,7 +200,7 @@ fun HighlightOptionsModal(
                                 OptionRow(
                                     icon = Icons.Outlined.Delete,
                                     title = "Eliminar highlight",
-                                    subtitle = "Esta acciÃ³n no se puede deshacer",
+                                    subtitle = "Esta acción no se puede deshacer",
                                     iconTint = Color(0xFFEF4444),
                                     titleColor = Color(0xFFEF4444),
                                     onClick = {
@@ -210,7 +210,7 @@ fun HighlightOptionsModal(
                                 )
                             }
                         } else {
-                            // ConfirmaciÃ³n de eliminaciÃ³n
+                            // Confirmación de eliminación
                             Column(
                                 horizontalAlignment = Alignment.CenterHorizontally
                             ) {
@@ -224,7 +224,7 @@ fun HighlightOptionsModal(
                                 Spacer(modifier = Modifier.height(16.dp))
                                 
                                 Text(
-                                    text = "Â¿Eliminar \"$highlightTitle\"?",
+                                    text = "¿Eliminar \"$highlightTitle\"?",
                                     fontSize = 18.sp,
                                     fontWeight = FontWeight.Bold,
                                     color = TextPrimary,
@@ -234,7 +234,7 @@ fun HighlightOptionsModal(
                                 Spacer(modifier = Modifier.height(8.dp))
                                 
                                 Text(
-                                    text = "Esta acciÃ³n eliminarÃ¡ el highlight y todo su contenido permanentemente.",
+                                    text = "Esta acción eliminará el highlight y todo su contenido permanentemente.",
                                     fontSize = 14.sp,
                                     color = TextMuted,
                                     textAlign = TextAlign.Center
@@ -260,7 +260,7 @@ fun HighlightOptionsModal(
                                         )
                                     }
                                     
-                                    // Confirmar eliminaciÃ³n
+                                    // Confirmar eliminación
                                     Button(
                                         onClick = {
                                             haptic.performHapticFeedback(HapticFeedbackType.LongPress)

@@ -62,8 +62,8 @@ fun AboutScreen(
             ) {
                 // Header
                 SettingsScreenHeader(
-                    title = "Acerca de Merqora",
-                    subtitle = "InformaciÃ³n de la AplicaciÃ³n",
+                    title = "Acerca de Mercora",
+                    subtitle = "Información de la Aplicación",
                     icon = Icons.Outlined.Info,
                     iconColor = Color(0xFFFF6B35),
                     onBack = onDismiss
@@ -77,7 +77,7 @@ fun AboutScreen(
                 ) {
                     Spacer(modifier = Modifier.height(24.dp))
                     
-                    // Logo y VersiÃ³n
+                    // Logo y Versión
                     Column(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalAlignment = Alignment.CenterHorizontally
@@ -107,7 +107,7 @@ fun AboutScreen(
                         Spacer(modifier = Modifier.height(16.dp))
                         
                         Text(
-                            text = "vinzay",
+                            text = "Mercora",
                             fontSize = 28.sp,
                             fontWeight = FontWeight.Bold,
                             color = TextPrimary
@@ -116,7 +116,7 @@ fun AboutScreen(
                         Spacer(modifier = Modifier.height(4.dp))
                         
                         Text(
-                            text = "VersiÃ³n 1.0.0 (Build 2024.01.25)",
+                            text = "Versión 1.0.0 (Build 2024.01.25)",
                             fontSize = 14.sp,
                             color = TextMuted
                         )
@@ -139,7 +139,7 @@ fun AboutScreen(
                     
                     Spacer(modifier = Modifier.height(32.dp))
                     
-                    // DescripciÃ³n
+                    // Descripción
                     Surface(
                         modifier = Modifier.fillMaxWidth(),
                         shape = RoundedCornerShape(16.dp),
@@ -160,7 +160,7 @@ fun AboutScreen(
                             Spacer(modifier = Modifier.height(12.dp))
                             
                             Text(
-                                text = "Merqora combina lo mejor de las redes sociales con un marketplace moderno. Compra, vende y conecta con personas que comparten tus intereses.",
+                                text = "Mercora combina lo mejor de las redes sociales con un marketplace moderno. Compra, vende y conecta con personas que comparten tus intereses.",
                                 fontSize = 14.sp,
                                 color = TextMuted,
                                 textAlign = TextAlign.Center,
@@ -171,9 +171,9 @@ fun AboutScreen(
                     
                     Spacer(modifier = Modifier.height(24.dp))
                     
-                    // estadÃ­sticas
+                    // estadísticas
                     Text(
-                        text = "Merqora en NÃºmeros",
+                        text = "Mercora en Números",
                         fontSize = 16.sp,
                         fontWeight = FontWeight.SemiBold,
                         color = TextPrimary
@@ -201,7 +201,7 @@ fun AboutScreen(
                         )
                         StatCard(
                             value = "50+",
-                            label = "PaÃ­ses",
+                            label = "Países",
                             icon = Icons.Outlined.Public,
                             color = Color(0xFFFF6B35),
                             modifier = Modifier.weight(1f)
@@ -212,7 +212,7 @@ fun AboutScreen(
                     
                     // Links
                     Text(
-                        text = "mÃ¡s InformaciÃ³n",
+                        text = "más Información",
                         fontSize = 16.sp,
                         fontWeight = FontWeight.SemiBold,
                         color = TextPrimary
@@ -229,9 +229,9 @@ fun AboutScreen(
                             AboutLinkItem(
                                 icon = Icons.Outlined.Language,
                                 title = "Sitio web",
-                                subtitle = "www.vinzay.app",
+                                subtitle = "www.mercora.app",
                                 onClick = {
-                                    context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://www.vinzay.app")))
+                                    context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://www.mercora.app")))
                                 }
                             )
                             
@@ -239,10 +239,10 @@ fun AboutScreen(
                             
                             AboutLinkItem(
                                 icon = Icons.Outlined.Description,
-                                title = "tÃ©rminos y condiciones",
-                                subtitle = "Lee nuestros TÃ©rminos de uso",
+                                title = "términos y condiciones",
+                                subtitle = "Lee nuestros Términos de uso",
                                 onClick = {
-                                    context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://www.vinzay.app/terms")))
+                                    context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://www.mercora.app/terms")))
                                 }
                             )
                             
@@ -250,10 +250,10 @@ fun AboutScreen(
                             
                             AboutLinkItem(
                                 icon = Icons.Outlined.Policy,
-                                title = "polÃ­tica de privacidad",
-                                subtitle = "cÃ³mo manejamos tus datos",
+                                title = "política de privacidad",
+                                subtitle = "cómo manejamos tus datos",
                                 onClick = {
-                                    context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://www.vinzay.app/privacy")))
+                                    context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://www.mercora.app/privacy")))
                                 }
                             )
                             
@@ -261,10 +261,10 @@ fun AboutScreen(
                             
                             AboutLinkItem(
                                 icon = Icons.Outlined.Code,
-                                title = "Licencias de CÃ³digo abierto",
+                                title = "Licencias de Código abierto",
                                 subtitle = "Bibliotecas que usamos",
                                 onClick = {
-                                    context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://www.vinzay.app/licenses")))
+                                    context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://www.mercora.app/licenses")))
                                 }
                             )
                         }
@@ -274,7 +274,7 @@ fun AboutScreen(
                     
                     // Redes sociales
                     Text(
-                        text = "SÃ­guenos",
+                        text = "Síguenos",
                         fontSize = 16.sp,
                         fontWeight = FontWeight.SemiBold,
                         color = TextPrimary
@@ -290,7 +290,7 @@ fun AboutScreen(
                             icon = Icons.Default.Facebook,
                             color = Color(0xFF1877F2),
                             onClick = {
-                                context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://facebook.com/vinzay")))
+                                context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://facebook.com/Mercora")))
                             },
                             modifier = Modifier.weight(1f)
                         )
@@ -298,7 +298,7 @@ fun AboutScreen(
                             icon = Icons.Default.Camera,
                             color = Color(0xFFE4405F),
                             onClick = {
-                                context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://instagram.com/vinzay")))
+                                context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://instagram.com/Mercora")))
                             },
                             modifier = Modifier.weight(1f)
                         )
@@ -306,7 +306,7 @@ fun AboutScreen(
                             icon = Icons.Default.Close,
                             color = TextPrimary,
                             onClick = {
-                                context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://tiktok.com/@vinzay")))
+                                context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://tiktok.com/@Mercora")))
                             },
                             modifier = Modifier.weight(1f)
                         )
@@ -314,7 +314,7 @@ fun AboutScreen(
                             icon = Icons.Default.PlayArrow,
                             color = Color(0xFFFF0000),
                             onClick = {
-                                context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://youtube.com/@vinzay")))
+                                context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://youtube.com/@Mercora")))
                             },
                             modifier = Modifier.weight(1f)
                         )
@@ -351,7 +351,7 @@ fun AboutScreen(
                             Spacer(modifier = Modifier.height(8.dp))
                             
                             Text(
-                                text = "Por un equipo apasionado por crear experiencias increÃ­bles para compradores y vendedores.",
+                                text = "Por un equipo apasionado por crear experiencias increíbles para compradores y vendedores.",
                                 fontSize = 13.sp,
                                 color = TextMuted,
                                 textAlign = TextAlign.Center,
@@ -364,7 +364,7 @@ fun AboutScreen(
                     
                     // Copyright
                     Text(
-                        text = "Â© 2024 Merqora. Todos los derechos reservados.",
+                        text = "© 2024 Mercora. Todos los derechos reservados.",
                         fontSize = 12.sp,
                         color = TextMuted.copy(alpha = 0.7f),
                         textAlign = TextAlign.Center,

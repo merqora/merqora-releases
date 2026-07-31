@@ -1,5 +1,6 @@
 ﻿package com.mercora.app.ui.components.settings
 
+import android.widget.Toast
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
@@ -16,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -54,11 +56,14 @@ fun BillingScreen(
 
     if (!isVisible && slideOffset == 1f) return
 
+    val context = LocalContext.current
+    
     var rut by remember { mutableStateOf("") }
     var businessName by remember { mutableStateOf("") }
     var fiscalAddress by remember { mutableStateOf("") }
     var billingEmail by remember { mutableStateOf("") }
     var selectedInvoiceType by remember { mutableStateOf("B") }
+    var showInvoiceRequestDialog by remember { mutableStateOf(false) }
 
     Box(
         modifier = Modifier
@@ -79,8 +84,8 @@ fun BillingScreen(
                     .navigationBarsPadding()
             ) {
                 SettingsScreenHeader(
-                    title = "FacturaciÃ³n",
-                    subtitle = "GestionÃ¡ tus facturas y datos fiscales",
+                    title = "Facturación",
+                    subtitle = "Gestioná tus facturas y datos fiscales",
                     icon = Icons.Outlined.Receipt,
                     iconColor = AccentGold,
                     onBack = onDismiss
@@ -124,7 +129,7 @@ fun BillingScreen(
                             OutlinedTextField(
                                 value = businessName,
                                 onValueChange = { businessName = it },
-                                label = { Text("RazÃ³n social", color = TextSecondary) },
+                                label = { Text("Razón social", color = TextSecondary) },
                                 placeholder = { Text("Nombre completo o empresa", color = TextMuted) },
                                 singleLine = true,
                                 modifier = Modifier.fillMaxWidth(),
@@ -143,8 +148,8 @@ fun BillingScreen(
                             OutlinedTextField(
                                 value = fiscalAddress,
                                 onValueChange = { fiscalAddress = it },
-                                label = { Text("DirecciÃ³n fiscal", color = TextSecondary) },
-                                placeholder = { Text("Calle, nÃºmero, ciudad", color = TextMuted) },
+                                label = { Text("Dirección fiscal", color = TextSecondary) },
+                                placeholder = { Text("Calle, número, ciudad", color = TextMuted) },
                                 singleLine = true,
                                 modifier = Modifier.fillMaxWidth(),
                                 shape = RoundedCornerShape(10.dp),
@@ -162,7 +167,7 @@ fun BillingScreen(
                             OutlinedTextField(
                                 value = billingEmail,
                                 onValueChange = { billingEmail = it },
-                                label = { Text("Email de facturaciÃ³n", color = TextSecondary) },
+                                label = { Text("Email de facturación", color = TextSecondary) },
                                 placeholder = { Text("factura@ejemplo.com", color = TextMuted) },
                                 singleLine = true,
                                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
@@ -223,7 +228,7 @@ fun BillingScreen(
                         EmptyStateCard(
                             icon = Icons.Outlined.Receipt,
                             title = "Sin facturas",
-                            subtitle = "Tus facturas aparecerÃ¡n aquÃ­"
+                            subtitle = "Tus facturas aparecerán aquí"
                         )
                     } else {
                         mockInvoices.forEach { invoice ->
@@ -235,7 +240,7 @@ fun BillingScreen(
                     Spacer(modifier = Modifier.height(24.dp))
 
                     Button(
-                        onClick = { /* TODO: abrir solicitud */ },
+                        onClick = { showInvoiceRequestDialog = true },
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(50.dp),
@@ -274,7 +279,7 @@ fun BillingScreen(
                             )
                             Spacer(modifier = Modifier.width(10.dp))
                             Text(
-                                text = "Las facturas se generan automÃ¡ticamente al cierre de cada mes. PodÃ©s solicitar facturas adicionales por ventas pasadas desde el botÃ³n \"Solicitar factura\". Los comprobantes en PDF estarÃ¡n disponibles en esta secciÃ³n.",
+                                text = "Las facturas se generan automáticamente al cierre de cada mes. Podés solicitar facturas adicionales por ventas pasadas desde el botón \"Solicitar factura\". Los comprobantes en PDF estarán disponibles en esta sección.",
                                 fontSize = 12.sp,
                                 color = TextSecondary,
                                 lineHeight = 16.sp
@@ -286,6 +291,62 @@ fun BillingScreen(
                 }
             }
         }
+    }
+    
+    // Invoice request dialog
+    if (showInvoiceRequestDialog) {
+        var selectedType by remember { mutableStateOf("A") }
+        var invoiceRut by remember { mutableStateOf(rut) }
+        var invoiceBusinessName by remember { mutableStateOf(businessName) }
+        
+        AlertDialog(
+            onDismissRequest = { showInvoiceRequestDialog = false },
+            title = { Text("Solicitar factura") },
+            text = {
+                Column {
+                    Text("Seleccioná el tipo de factura:", fontSize = 13.sp, color = TextMuted)
+                    Spacer(modifier = Modifier.height(8.dp))
+                    InvoiceTypeOption("A", "Factura A", "Responsable inscripto", selectedType == "A", { selectedType = "A" })
+                    Spacer(modifier = Modifier.height(6.dp))
+                    InvoiceTypeOption("B", "Factura B", "Consumidor final", selectedType == "B", { selectedType = "B" })
+                    Spacer(modifier = Modifier.height(6.dp))
+                    InvoiceTypeOption("C", "Factura C", "Monotributista", selectedType == "C", { selectedType = "C" })
+                    Spacer(modifier = Modifier.height(12.dp))
+                    OutlinedTextField(
+                        value = invoiceRut,
+                        onValueChange = { invoiceRut = it },
+                        label = { Text("RUT/CUIT") },
+                        singleLine = true,
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedBorderColor = AccentGold,
+                            unfocusedBorderColor = BorderSubtle
+                        )
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    OutlinedTextField(
+                        value = invoiceBusinessName,
+                        onValueChange = { invoiceBusinessName = it },
+                        label = { Text("Razón social") },
+                        singleLine = true,
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedBorderColor = AccentGold,
+                            unfocusedBorderColor = BorderSubtle
+                        )
+                    )
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = {
+                    Toast.makeText(context, "Solicitud enviada", Toast.LENGTH_SHORT).show()
+                    showInvoiceRequestDialog = false
+                }) { Text("Enviar") }
+            },
+            dismissButton = {
+                TextButton(onClick = { showInvoiceRequestDialog = false }) { Text("Cancelar") }
+            }
+        )
     }
 }
 
@@ -338,6 +399,7 @@ private fun InvoiceTypeOption(
 
 @Composable
 private fun InvoiceCard(invoice: Invoice) {
+    val cardContext = LocalContext.current
     val statusColor = when (invoice.status) {
         "Emitida" -> AccentGold
         "Pagada" -> AccentGreen
@@ -436,7 +498,13 @@ private fun InvoiceCard(invoice: Invoice) {
                         .clip(RoundedCornerShape(6.dp))
                         .background(AccentGold.copy(alpha = 0.1f))
                         .padding(4.dp)
-                        .clickable { /* TODO: descargar PDF */ }
+                        .clickable {
+                            val intent = android.content.Intent(android.content.Intent.ACTION_VIEW).apply {
+                                data = android.net.Uri.parse(invoice.pdfUrl)
+                                flags = android.content.Intent.FLAG_ACTIVITY_NEW_TASK
+                            }
+                            cardContext.startActivity(intent)
+                        }
                 )
             }
         }

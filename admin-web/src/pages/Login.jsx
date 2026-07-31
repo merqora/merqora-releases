@@ -30,7 +30,7 @@ export default function Login({ onLogin }) {
     } catch (error) {
       console.error('âŒ Error de login:', error)
       setError(error.message === 'Invalid login credentials' 
-        ? 'Credenciales invÃ¡lidas. Verifica tu email y contraseÃ±a.'
+        ? 'Credenciales inválidas. Verifica tu email y contraseña.'
         : error.message
       )
     } finally {
@@ -51,9 +51,9 @@ export default function Login({ onLogin }) {
 
       if (error) throw error
 
-      setSuccess('Â¡Enlace de recuperaciÃ³n enviado! Revisa tu email (tambiÃ©n la carpeta de spam).')
+      setSuccess('¡Enlace de recuperación enviado! Revisa tu email (también la carpeta de spam).')
     } catch (error) {
-      console.error('âŒ Error al enviar recuperaciÃ³n:', error)
+      console.error('âŒ Error al enviar recuperación:', error)
       setError(error.message)
     } finally {
       setLoading(false)
@@ -67,7 +67,7 @@ export default function Login({ onLogin }) {
     setSuccess('')
 
     if (password.length < 6) {
-      setError('La contraseÃ±a debe tener al menos 6 caracteres')
+      setError('La contraseña debe tener al menos 6 caracteres')
       setLoading(false)
       return
     }
@@ -86,7 +86,7 @@ export default function Login({ onLogin }) {
       if (error) throw error
 
       if (data.user && !data.session) {
-        setSuccess('Â¡Usuario creado! Revisa tu email para confirmar la cuenta, o inicia sesiÃ³n directamente.')
+        setSuccess('¡Usuario creado! Revisa tu email para confirmar la cuenta, o inicia sesión directamente.')
         setMode('login')
       } else if (data.session) {
         console.log('âœ… Registro y login exitoso:', data.user.email)
@@ -95,7 +95,7 @@ export default function Login({ onLogin }) {
     } catch (error) {
       console.error('âŒ Error al registrar:', error)
       if (error.message.includes('already registered')) {
-        setError('Este email ya estÃ¡ registrado. Intenta iniciar sesiÃ³n.')
+        setError('Este email ya está registrado. Intenta iniciar sesión.')
       } else {
         setError(error.message)
       }
@@ -113,7 +113,7 @@ export default function Login({ onLogin }) {
             <Bot className="w-10 h-10 text-white" />
           </div>
           <h1 className="text-3xl font-bold text-text-primary">Mercora Admin</h1>
-          <p className="text-text-tertiary mt-2">Panel de AdministraciÃ³n</p>
+          <p className="text-text-tertiary mt-2">Panel de Administración</p>
         </div>
 
         {/* Form */}
@@ -134,13 +134,13 @@ export default function Login({ onLogin }) {
               </button>
             )}
             <h2 className="text-xl font-semibold text-text-primary mb-2">
-              {mode === 'login' && 'Iniciar SesiÃ³n'}
-              {mode === 'recover' && 'Recuperar ContraseÃ±a'}
+              {mode === 'login' && 'Iniciar Sesión'}
+              {mode === 'recover' && 'Recuperar Contraseña'}
               {mode === 'register' && 'Crear Usuario Admin'}
             </h2>
             <p className="text-text-muted text-sm">
-              {mode === 'login' && 'Accede al panel de administraciÃ³n'}
-              {mode === 'recover' && 'Te enviaremos un enlace para restablecer tu contraseÃ±a'}
+              {mode === 'login' && 'Accede al panel de administración'}
+              {mode === 'recover' && 'Te enviaremos un enlace para restablecer tu contraseña'}
               {mode === 'register' && 'Crea una nueva cuenta de administrador'}
             </p>
           </div>
@@ -184,7 +184,7 @@ export default function Login({ onLogin }) {
             {mode !== 'recover' && (
               <div>
                 <label className="block text-text-secondary text-sm font-medium mb-2">
-                  ContraseÃ±a {mode === 'register' && <span className="text-text-muted">(mÃ­n. 6 caracteres)</span>}
+                  Contraseña {mode === 'register' && <span className="text-text-muted">(mín. 6 caracteres)</span>}
                 </label>
                 <div className="relative">
                   <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-text-muted" />
@@ -222,14 +222,14 @@ export default function Login({ onLogin }) {
             {loading ? (
               <>
                 <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                {mode === 'login' && 'Iniciando sesiÃ³n...'}
+                {mode === 'login' && 'Iniciando sesión...'}
                 {mode === 'recover' && 'Enviando...'}
                 {mode === 'register' && 'Creando usuario...'}
               </>
             ) : (
               <>
-                {mode === 'login' && 'Iniciar SesiÃ³n'}
-                {mode === 'recover' && 'Enviar Enlace de RecuperaciÃ³n'}
+                {mode === 'login' && 'Iniciar Sesión'}
+                {mode === 'recover' && 'Enviar Enlace de Recuperación'}
                 {mode === 'register' && (
                   <>
                     <UserPlus className="w-5 h-5" />
@@ -248,7 +248,7 @@ export default function Login({ onLogin }) {
                 onClick={() => { setMode('recover'); setError(''); setSuccess(''); }}
                 className="w-full text-center text-text-muted hover:text-primary text-sm transition-colors"
               >
-                Â¿Olvidaste tu contraseÃ±a?
+                ¿Olvidaste tu contraseña?
               </button>
               
               <div className="relative">
@@ -272,13 +272,13 @@ export default function Login({ onLogin }) {
           )}
 
           <p className="text-center text-text-muted text-xs">
-            Solo personal autorizado de Vinzay
+            Solo personal autorizado de Mercora
           </p>
         </form>
 
         {/* Footer */}
         <p className="text-center text-text-muted text-sm mt-6">
-          Â© 2024 Vinzay. Todos los derechos reservados.
+          © 2024 Mercora. Todos los derechos reservados.
         </p>
       </div>
     </div>

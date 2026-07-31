@@ -39,12 +39,12 @@ data class QuickQuestion(
 )
 
 private val QUICK_QUESTIONS = listOf(
-    QuickQuestion("1", Icons.Default.Star, "Â¿CuÃ¡l es el precio final?"),
-    QuickQuestion("2", Icons.Default.Send, "Â¿Haces envÃ­os?"),
-    QuickQuestion("3", Icons.Default.Refresh, "Â¿Aceptas cambios?"),
-    QuickQuestion("4", Icons.Default.ShoppingCart, "Â¿Aceptas pagos en cuotas?"),
-    QuickQuestion("5", Icons.Default.DateRange, "Â¿CuÃ¡nto demora el envÃ­o?"),
-    QuickQuestion("6", Icons.Default.Check, "Â¿Tiene garantÃ­a?")
+    QuickQuestion("1", Icons.Default.Star, "¿Cuál es el precio final?"),
+    QuickQuestion("2", Icons.Default.Send, "¿Haces envíos?"),
+    QuickQuestion("3", Icons.Default.Refresh, "¿Aceptas cambios?"),
+    QuickQuestion("4", Icons.Default.ShoppingCart, "¿Aceptas pagos en cuotas?"),
+    QuickQuestion("5", Icons.Default.DateRange, "¿Cuánto demora el envío?"),
+    QuickQuestion("6", Icons.Default.Check, "¿Tiene garantía?")
 )
 
 @Composable
@@ -133,7 +133,7 @@ fun FastConsultationModal(
                     ) {
                         Column {
                             Text(
-                                text = "Consulta rÃ¡pida",
+                                text = "Consulta rápida",
                                 fontSize = 20.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = TextPrimary
@@ -265,7 +265,7 @@ fun FastConsultationModal(
                                 Box {
                                     if (message.isEmpty()) {
                                         Text(
-                                            text = "Escribe tu consulta aquÃ­...",
+                                            text = "Escribe tu consulta aquí...",
                                             color = TextMuted,
                                             fontSize = 15.sp
                                         )

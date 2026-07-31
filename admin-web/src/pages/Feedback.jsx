@@ -42,7 +42,7 @@ export default function Feedback() {
         }
       )
       .subscribe((status) => {
-        console.log('ðŸ“¡ Feedback realtime status:', status)
+        console.log('📡 Feedback realtime status:', status)
         if (status === 'SUBSCRIBED') {
           console.log('âœ… Suscrito a cambios de app_feedback en tiempo real')
         }
@@ -56,7 +56,7 @@ export default function Feedback() {
   async function loadFeedback() {
     setLoading(true)
     try {
-      console.log('ðŸ“¥ Cargando app_feedback...')
+      console.log('📥 Cargando app_feedback...')
       const { data, error } = await supabase
         .from('app_feedback')
         .select('*')
@@ -137,9 +137,9 @@ export default function Feedback() {
 
   const getCategoryLabel = (category) => {
     const labels = {
-      feature_request: 'ðŸ’¡ Nueva funciÃ³n',
-      improvement: 'ðŸ“ˆ Mejora',
-      complaint: 'ðŸ˜¤ Queja',
+      feature_request: '💡 Nueva función',
+      improvement: '📈 Mejora',
+      complaint: '😤 Queja',
       praise: 'ðŸ‘ Elogio',
       other: 'ðŸ“ Otro'
     }
@@ -213,7 +213,7 @@ export default function Feedback() {
               : 'bg-mercora-surface text-text-secondary hover:bg-mercora-surface-elevated'
           }`}
         >
-          En revisiÃ³n ({feedbackList.filter(f => f.status === 'reviewing').length})
+          En revisión ({feedbackList.filter(f => f.status === 'reviewing').length})
         </button>
         <button
           onClick={() => setFilter('planned')}
@@ -258,8 +258,8 @@ export default function Feedback() {
                       {feedback.status}
                     </span>
                     <span className={`text-sm font-medium ${getPriorityColor(feedback.priority)}`}>
-                      {feedback.priority === 'high' && 'ðŸ”´'}
-                      {feedback.priority === 'medium' && 'ðŸŸ¡'}
+                      {feedback.priority === 'high' && '🔴'}
+                      {feedback.priority === 'medium' && '🟡'}
                       {feedback.priority === 'low' && 'âšª'}
                     </span>
                   </div>
@@ -274,7 +274,7 @@ export default function Feedback() {
               </div>
               
               <div className="flex items-center justify-between text-xs text-text-muted mt-3 pt-3 border-t border-primary/10">
-                <span>Usuario: {feedback.user_name || 'AnÃ³nimo'}</span>
+                <span>Usuario: {feedback.user_name || 'Anónimo'}</span>
                 <span>{new Date(feedback.created_at).toLocaleString('es-ES')}</span>
               </div>
             </div>
@@ -301,13 +301,13 @@ export default function Feedback() {
                   onClick={() => setSelectedFeedback(null)}
                   className="text-gray-400 hover:text-gray-600 text-2xl"
                 >
-                  Ã—
+                  ×
                 </button>
               </div>
 
               <div className="space-y-4">
                 <div>
-                  <label className="text-sm font-medium text-gray-700 block mb-1">DescripciÃ³n</label>
+                  <label className="text-sm font-medium text-gray-700 block mb-1">Descripción</label>
                   <p className="text-gray-900 bg-gray-50 p-3 rounded">{selectedFeedback.description}</p>
                 </div>
 
@@ -320,7 +320,7 @@ export default function Feedback() {
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
                     >
                       <option value="pending">Pendiente</option>
-                      <option value="reviewing">En revisiÃ³n</option>
+                      <option value="reviewing">En revisión</option>
                       <option value="planned">Planificado</option>
                       <option value="implemented">Implementado</option>
                       <option value="rejected">Rechazado</option>
@@ -337,7 +337,7 @@ export default function Feedback() {
                       <option value="low">Baja</option>
                       <option value="medium">Media</option>
                       <option value="high">Alta</option>
-                      <option value="critical">CrÃ­tica</option>
+                      <option value="critical">Crítica</option>
                     </select>
                   </div>
                 </div>
@@ -382,7 +382,7 @@ export default function Feedback() {
                 )}
 
                 <div className="text-xs text-gray-500 pt-4 border-t border-gray-200">
-                  <div>Usuario: {selectedFeedback.user_name || 'AnÃ³nimo'}</div>
+                  <div>Usuario: {selectedFeedback.user_name || 'Anónimo'}</div>
                   <div>Email: {selectedFeedback.user_email || 'No proporcionado'}</div>
                   <div>Fecha: {new Date(selectedFeedback.created_at).toLocaleString('es-ES')}</div>
                   <div>ID: {selectedFeedback.id}</div>

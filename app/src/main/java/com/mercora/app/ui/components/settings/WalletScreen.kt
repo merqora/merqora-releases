@@ -195,12 +195,12 @@ fun WalletScreen(
                                 )
                                 Spacer(modifier = Modifier.height(12.dp))
                                 Text(
-                                    "Sin movimientos aÃºn",
+                                    "Sin movimientos aún",
                                     color = TextMuted,
                                     fontSize = 14.sp
                                 )
                                 Text(
-                                    "Los pagos que recibas aparecerÃ¡n aquÃ­",
+                                    "Los pagos que recibas aparecerán aquí",
                                     color = TextMuted.copy(alpha = 0.7f),
                                     fontSize = 12.sp
                                 )

@@ -79,7 +79,8 @@ import com.mercora.app.data.repository.ProfileRepository
 import com.mercora.app.data.repository.StoryRepository
 import com.mercora.app.data.repository.ViewTracker
 import com.mercora.app.data.cache.BadgeCountCache
-import com.mercora.app.data.repository.AppUpdateRepository
+import com.mercora.app.native.FeedEngine
+import com.mercora.app.native.NativeFlingBehavior
 import com.mercora.app.ui.theme.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CloudDownload
@@ -151,7 +152,7 @@ fun HomeContent(
     val errorMessage = feedState.errorMessage
     val listState = homeListState
     
-    // Avatar desde ProfileRepository (mÃ¡s confiable)
+    // Avatar desde ProfileRepository (más confiable)
     val profileFromRepo by ProfileRepository.currentProfile.collectAsState()
     val userAvatarUrl = profileFromRepo?.avatarUrl ?: currentUser?.avatarUrl
     
@@ -165,13 +166,13 @@ fun HomeContent(
     // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
     // COLD START OPTIMIZATION V2: Carga ultra-diferida post-first-frame
     // 
-    // Estrategia: Mostrar UI instantÃ¡neamente, cargar datos en 2 fases
-    // FASE 1: Datos crÃ­ticos para primer scroll (posts) - ya manejado por ViewModel
+    // Estrategia: Mostrar UI instantáneamente, cargar datos en 2 fases
+    // FASE 1: Datos críticos para primer scroll (posts) - ya manejado por ViewModel
     // FASE 2: Datos secundarios diferidos 300ms (stories, rends, notificaciones)
     // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
     val initScope = rememberCoroutineScope()
     
-    // Variable para controlar si ya se ejecutÃ³ la inicializaciÃ³n diferida
+    // Variable para controlar si ya se ejecutó la inicialización diferida
     var deferredInitDone by remember { mutableStateOf(false) }
     
     // Solicitar permiso de notificaciones (Android 13+)
@@ -231,7 +232,7 @@ fun HomeContent(
     }
     
     // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-    // VIDEO GATING (patrÃ³n Instagram): solo el video con >50% visible en
+    // VIDEO GATING (patrón Instagram): solo el video con >50% visible en
     // viewport reproduce. derivedStateOf devuelve la KEY del item -> solo
     // recompone cuando cambia el video elegido, no en cada frame de scroll.
     // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
@@ -276,12 +277,12 @@ fun HomeContent(
     }
     
     // PREFETCH DE AVATARES: Cuando cambian los posts visibles, encolar carga de avatares
-    // de los posts que estÃ¡n cerca pero aÃºn no visibles. Reduce perceived loading a ~0ms.
+    // de los posts que están cerca pero aún no visibles. Reduce perceived loading a ~0ms.
     LaunchedEffect(posts.size) {
         if (posts.isNotEmpty()) {
             val imageLoader = com.mercora.app.MercoraApplication.getImageLoader(context)
             val visibleKeys = listState.layoutInfo.visibleItemsInfo.map { it.key }.toSet()
-            // Prefetch avatares de posts que estÃ¡n en el feed pero no visibles aÃºn (max 10)
+            // Prefetch avatares de posts que están en el feed pero no visibles aún (max 10)
             posts.take(15).forEach { post ->
                 val avatarUrl = if (post.userAvatar.startsWith("http")) post.userAvatar
                     else "https://xyrpmmnegzjkbysoocpc.supabase.co/storage/v1/object/public/avatars_new/${post.userAvatar}"
@@ -298,7 +299,7 @@ fun HomeContent(
         }
     }
     
-    // Prefetch inteligente basado en posiciÃ³n de scroll
+    // Prefetch inteligente basado en posición de scroll
     // Optimizado: prefetch un poco antes (5 \u00edtems del final) para que los datos lleguen sin lag
     val shouldPrefetchMore by remember {
         derivedStateOf {
@@ -312,6 +313,41 @@ fun HomeContent(
     LaunchedEffect(shouldPrefetchMore) {
         if (shouldPrefetchMore) {
             viewModel.loadMorePosts()
+        }
+    }
+    
+    // Motor de scroll nativo C++: física de fling (inercia, fricción, reposo)
+    // + prefetch predictivo de imágenes según dirección y velocidad del scroll
+    LaunchedEffect(Unit) {
+        FeedEngine.init(0f, 10_000_000f)
+    }
+    val currentPostsForPrefetch by rememberUpdatedState(posts)
+    val prefetchCursor = remember { intArrayOf(Int.MIN_VALUE) }
+    val flingBehavior = remember {
+        NativeFlingBehavior { direction, count ->
+            if (direction > 0 && currentPostsForPrefetch.isNotEmpty()) {
+                val start = listState.firstVisibleItemIndex + 1
+                val end = minOf(start + count, currentPostsForPrefetch.size - 1)
+                if (end > prefetchCursor[0]) {
+                    val imageLoader = com.mercora.app.MercoraApplication.getImageLoader(context)
+                    for (i in start..end) {
+                        val post = currentPostsForPrefetch[i]
+                        val urls = (listOf(post.userAvatar) + post.images)
+                            .filter { it.startsWith("http") }
+                            .take(3)
+                        urls.forEach { url ->
+                            imageLoader.enqueue(
+                                coil.request.ImageRequest.Builder(context)
+                                    .data(url)
+                                    .memoryCachePolicy(coil.request.CachePolicy.ENABLED)
+                                    .diskCachePolicy(coil.request.CachePolicy.ENABLED)
+                                    .build()
+                            )
+                        }
+                    }
+                    prefetchCursor[0] = end
+                }
+            }
         }
     }
     
@@ -394,9 +430,6 @@ fun HomeContent(
     // Rend navigation - navigate to videos section with specific rend ID
     // (handled via onNavNavigate callback to MainScreen)
     
-    // WelcomeOverlay state â€” ocultar contenido del Home mientras la animaciÃ³n de bienvenida se reproduce
-    val welcomeData by com.mercora.app.data.model.WelcomeState.welcome.collectAsState()
-    
     // PostOptionsModal state
     var showPostOptionsModal by remember { mutableStateOf(false) }
     var selectedPostForOptions by remember { mutableStateOf<Post?>(null) }
@@ -421,13 +454,13 @@ fun HomeContent(
     // Post pending hide actions (for showing HiddenPostPlaceholder)
     var postWithHideOptions by remember { mutableStateOf<Post?>(null) }
     
-    // Posts que ya procesaron su acciÃ³n y deben desaparecer completamente
+    // Posts que ya procesaron su acción y deben desaparecer completamente
     var fullyHiddenPostIds by remember { mutableStateOf(setOf<String>()) }
 
     // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-    // CALLBACKS DE MODERACIÃ“N: creados UNA vez para todo el feed.
+    // CALLBACKS DE MODERACIÓN: creados UNA vez para todo el feed.
     // Antes cada item hidden inflaba lambdas gigantes con queries Supabase
-    // inline, invalidando el items block en cada recomposiciÃ³n.
+    // inline, invalidando el items block en cada recomposición.
     // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
     val onHiddenReport: (Post) -> Unit = remember {
         { post ->
@@ -489,12 +522,12 @@ fun HomeContent(
     var selectedStoryForViewers by remember { mutableStateOf("") }
     val storyScope = rememberCoroutineScope()
     
-    // OPTIMIZADO: Memoizar cÃ¡lculo de vistas totales
+    // OPTIMIZADO: Memoizar cálculo de vistas totales
     val myStoriesViewsCount = remember(myStories) { myStories.sumOf { it.views } }
 
     // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
     // FEED PRE-COMPUTADO EN VIEWMODEL (Dispatchers.Default):
-    // distinctBy/drop/interleaving ya vienen resueltos - la composiciÃ³n
+    // distinctBy/drop/interleaving ya vienen resueltos - la composición
     // no recalcula NADA al emitirse la lista (p.ej. en un like)
     // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
     val feedUi by viewModel.feedUi.collectAsState()
@@ -518,7 +551,7 @@ fun HomeContent(
     // Recargar posts cuando termine la subida de un post
     LaunchedEffect(postUploadState.isComplete) {
         if (postUploadState.isComplete) {
-            // Esperar 2 segundos despuÃ©s de que el banner desaparezca
+            // Esperar 2 segundos después de que el banner desaparezca
             kotlinx.coroutines.delay(2000)
             viewModel.refreshPosts()
         }
@@ -531,59 +564,6 @@ fun HomeContent(
         }
     }
 
-    var updateInfo by remember { mutableStateOf<AppUpdateRepository.UpdateInfo?>(null) }
-    var showUpdateDialog by remember { mutableStateOf(false) }
-
-    LaunchedEffect(Unit) {
-        val info = AppUpdateRepository.checkForUpdate()
-        if (info != null && info.hasUpdate) {
-            updateInfo = info
-            showUpdateDialog = true
-        }
-    }
-
-    val updateInfoValue = updateInfo
-
-    if (showUpdateDialog && updateInfoValue != null) {
-        AlertDialog(
-            onDismissRequest = { showUpdateDialog = false },
-            containerColor = Color(0xFF1A1A2E),
-            titleContentColor = Color.White,
-            textContentColor = Color(0xFFB0B0B0),
-            icon = {
-                Icon(Icons.Default.CloudDownload, contentDescription = null, tint = Color(0xFF2E8B57))
-            },
-            title = {
-                Text("Actualizacion disponible", fontWeight = FontWeight.Bold)
-            },
-            text = {
-                Column {
-                    Text("Mercora v${updateInfoValue.latest.version_name} disponible")
-                    if (!updateInfoValue.latest.changelog.isNullOrBlank()) {
-                        Spacer(Modifier.height(8.dp))
-                        Text("Cambios:", fontWeight = FontWeight.SemiBold, fontSize = 14.sp)
-                        Spacer(Modifier.height(4.dp))
-                        Text(updateInfoValue.latest.changelog, fontSize = 13.sp)
-                    }
-                    Spacer(Modifier.height(12.dp))
-                    Text("Version actual: ${updateInfoValue.currentVersion}", fontSize = 12.sp, color = Color(0xFF808080))
-                }
-            },
-            confirmButton = {
-                TextButton(onClick = {
-                    showUpdateDialog = false
-                    AppUpdateRepository.downloadAndInstall(context, updateInfoValue.latest)
-                }) {
-                    Text("Descargar", color = Color(0xFF2E8B57))
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { showUpdateDialog = false }) {
-                    Text("Ahora no", color = Color(0xFF808080))
-                }
-            }
-        )
-    }
 
     Box(
         modifier = Modifier
@@ -594,13 +574,14 @@ fun HomeContent(
         // Premium refresh spinner overlay (hidden until refresh)
         // Handled inside LazyColumn for smooth animation
         
-        // Sin spinner de carga â€” el overlay HomeBg cubre hasta que posts estÃ©n listos
-        // Scroll con fÃ­sica personalizada: exponencial decay + pre-composiciÃ³n de items fuera de vista
+        // Sin spinner de carga â€” el overlay HomeBg cubre hasta que posts estén listos
+        // Scroll con física nativa C++: fling, inercia y prefetch predictivo
         LazyColumn(
             state = listState,
             modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(bottom = 72.dp),
             userScrollEnabled = true,
+            flingBehavior = flingBehavior,
         ) {
                 // Header como parte del scroll
                 item(key = "header", contentType = "header") {
@@ -643,7 +624,7 @@ fun HomeContent(
                     }
                 }
                 
-                // Banner de progreso de publicaciÃ³n (arriba del search)
+                // Banner de progreso de publicación (arriba del search)
                 item(key = "upload_banner", contentType = "banner_upload") {
                     UploadProgressBanner(
                         isVisible = postUploadState.isUploading || postUploadState.isComplete || postUploadState.error != null,
@@ -675,7 +656,7 @@ fun HomeContent(
                 
                 // My Story Banner
                 item(key = "story_banner", contentType = "banner") {
-                    // OPTIMIZADO: Calcular estadÃ­sticas con derivedStateOf para evitar recÃ¡lculos
+                    // OPTIMIZADO: Calcular estadísticas con derivedStateOf para evitar recálculos
                     val myStoriesLikesCount = remember(myStories) { myStories.sumOf { it.likes ?: 0 } }
                     val myStoriesSharesCount = remember(myStories) { myStories.sumOf { it.shares } }
                     val myStoriesFollowersCount = remember(myStories) { myStories.sumOf { it.newFollowers } }
@@ -725,7 +706,7 @@ fun HomeContent(
                 // Stories de otros usuarios (carrusel horizontal)
                 if (otherUsersStories.isNotEmpty()) {
                     item(key = "stories_carousel", contentType = "stories_carousel") {
-                        // OPTIMIZADO: Callbacks memoizados para evitar recomposiciÃ³n
+                        // OPTIMIZADO: Callbacks memoizados para evitar recomposición
                         val onStoryClickCallback = remember {
                             { _: String, index: Int ->
                                 selectedStoryUserIndex = index
@@ -745,7 +726,7 @@ fun HomeContent(
                     items(
                         items = firstThreePosts,
                         key = { it.id },
-                        // contentType PURO: no lee estado (leer hiddenPostIds aquÃ­
+                        // contentType PURO: no lee estado (leer hiddenPostIds aquí
                         // invalidaba el item provider completo al ocultar un post)
                         contentType = { "post" }
                     ) { post ->
@@ -776,9 +757,9 @@ fun HomeContent(
                         }
                     }
                     
-                    // Carrusel de Rends - aparece despuÃ©s de 3 posts
+                    // Carrusel de Rends - aparece después de 3 posts
                     item(key = "rends_carousel", contentType = "rends_carousel") {
-                        // Callbacks para navegar a la secciÃ³n de videos con el rend pulsado
+                        // Callbacks para navegar a la sección de videos con el rend pulsado
                         val onRendClickCallback = remember { 
                             { rend: com.mercora.app.data.model.Rend -> 
                                 com.mercora.app.data.repository.RendRepository.setPendingRendId(rend.id)
@@ -798,7 +779,7 @@ fun HomeContent(
                         )
                     }
                     
-                    // Suggested Accounts Carousel - "Personas que quizÃ¡s conozcas"
+                    // Suggested Accounts Carousel - "Personas que quizás conozcas"
                     item(key = "suggested_accounts", contentType = "suggested_accounts") {
                         SuggestedAccountsCarousel(
                             onProfileClick = { userId ->
@@ -808,7 +789,7 @@ fun HomeContent(
                         )
                     }
                     
-                    // Featured Posts Section - 6 publicaciones destacadas (despuÃ©s de 3 posts y rends)
+                    // Featured Posts Section - 6 publicaciones destacadas (después de 3 posts y rends)
                     if (posts.size >= 6) {
                         item(key = "featured_posts", contentType = "featured_posts") {
                             FeaturedPostsSection(
@@ -829,12 +810,12 @@ fun HomeContent(
                 
                 // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
                 // FEED ESTABLE: Usa lista pre-computada (no recomputa en scroll)
-                // Previene crashes por items shifting durante recomposiciÃ³n
+                // Previene crashes por items shifting durante recomposición
                 // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
                 items(
                     items = stableFeed,
                     key = { it.id },
-                    // contentType PURO: no lee estado (leer hiddenPostIds aquÃ­
+                    // contentType PURO: no lee estado (leer hiddenPostIds aquí
                     // invalidaba el item provider completo al ocultar un post)
                     contentType = { entry ->
                         if (entry.type == "rend") "video_rend" else "post"
@@ -860,7 +841,7 @@ fun HomeContent(
                                 isVisible = entry.id == mostVisibleVideoKey
                             )
                         } else {
-                            // Slot pre-allocado pero rend aÃºn no cargado - no renderizar nada
+                            // Slot pre-allocado pero rend aún no cargado - no renderizar nada
                             return@items
                         }
                     } else {
@@ -915,7 +896,7 @@ fun HomeContent(
                                     )
                                     Spacer(modifier = Modifier.height(8.dp))
                                     Text(
-                                        text = "Cargando mÃ¡s...",
+                                        text = "Cargando más...",
                                         color = TextMuted,
                                         fontSize = 12.sp
                                     )
@@ -944,7 +925,7 @@ fun HomeContent(
                             contentAlignment = Alignment.Center
                         ) {
                             Text(
-                                text = "No hay mÃ¡s publicaciones",
+                                text = "No hay más publicaciones",
                                 color = TextMuted,
                                 fontSize = 12.sp
                             )
@@ -953,11 +934,11 @@ fun HomeContent(
                 }
         }
         
-        // ReseÃ±as Sheet con reseÃ±as reales
+        // Reseñas Sheet con reseñas reales
         val commentsFromRepo by CommentRepository.comments.collectAsState()
         val isCommentsLoading by CommentRepository.isLoading.collectAsState()
         
-        // Cargar reseÃ±as cuando se selecciona un post
+        // Cargar reseñas cuando se selecciona un post
         // SIEMPRE usar product_reviews
         LaunchedEffect(selectedPostForComments) {
             selectedPostForComments?.let { post ->
@@ -968,7 +949,7 @@ fun HomeContent(
             }
         }
         
-        // OPTIMIZADO: Memoizar transformaciÃ³n de comentarios
+        // OPTIMIZADO: Memoizar transformación de comentarios
         val mappedComments = remember(commentsFromRepo) {
             commentsFromRepo.map { c ->
                 Comment(
@@ -1001,7 +982,7 @@ fun HomeContent(
             }
         }
         
-        // NavBar embebido - ANTES de todos los modales para que queden SOBRE Ã©l
+        // NavBar embebido - ANTES de todos los modales para que queden SOBRE él
         if (showNavBar) {
                 BottomNavBar(
                     currentRoute = currentNavRoute,
@@ -1012,7 +993,7 @@ fun HomeContent(
                 )
         }
         
-        // Category Drawer - DESPUÃ‰S del NavBar para overlay correcto (queda SOBRE la navbar)
+        // Category Drawer - DESPUÉS del NavBar para overlay correcto (queda SOBRE la navbar)
         CategoryDrawer(
             isVisible = showCategoryDrawer,
             onDismiss = { showCategoryDrawer = false },
@@ -1070,7 +1051,7 @@ fun HomeContent(
                                 // Actualizar contador de reviews en el post
                                 viewModel.updateReviewsCount(post.id, increment = true)
                                 
-                                // Notificar al dueÃ±o del post
+                                // Notificar al dueño del post
                                 NotificationRepository.createCommentNotification(
                                     recipientId = post.userId,
                                     postId = post.id,
@@ -1118,7 +1099,7 @@ fun HomeContent(
             },
             isLoading = isCommentsLoading,
             currentUserAvatar = userAvatarUrl,
-            currentUsername = currentUser?.username ?: "TÃº",
+            currentUsername = currentUser?.username ?: "Tú",
             currentUserId = currentUser?.userId
         )
         
@@ -1135,7 +1116,7 @@ fun HomeContent(
                 selectedPostForConsult?.let { post ->
                     scope.launch {
                         try {
-                            // Obtener o crear conversaciÃ³n con el vendedor del producto
+                            // Obtener o crear conversación con el vendedor del producto
                             val conversationId = ChatRepository.getOrCreateConversation(post.userId)
                             if (conversationId != null) {
                                 // Formato especial para consultas: [CONSULT_POST]JSON
@@ -1150,7 +1131,7 @@ fun HomeContent(
                                     put("ownerAvatar", post.userAvatar)
                                     put("isOwnerVerified", post.isUserVerified)
                                     put("message", consultMessage)
-                                    put("type", if (consultMessage.contains("ðŸ’° OFERTA")) "offer" else "inquiry")
+                                    put("type", if (consultMessage.contains("💰 OFERTA")) "offer" else "inquiry")
                                 }
                                 val consultPostMessage = "[CONSULT_POST]${consultData}"
                                 
@@ -1159,7 +1140,7 @@ fun HomeContent(
                                 if (success) {
                                     android.widget.Toast.makeText(
                                         context, 
-                                        if (consultMessage.contains("ðŸ’° OFERTA")) "Â¡Oferta enviada!" else "Â¡Consulta enviada!",
+                                        if (consultMessage.contains("💰 OFERTA")) "¡Oferta enviada!" else "¡Consulta enviada!",
                                         android.widget.Toast.LENGTH_SHORT
                                     ).show()
                                 }
@@ -1211,7 +1192,7 @@ fun HomeContent(
         
         // OPTIMIZADO: Pre-calcular myStoriesData con remember para evitar parsing en UI thread
         val currentUserId = currentUser?.id ?: ""
-        val currentUsername = currentUser?.username ?: "TÃº"
+        val currentUsername = currentUser?.username ?: "Tú"
         val currentUserAvatar = currentUser?.avatarUrl
         val preparedMyStoriesData = remember(myStories, currentUserId, currentUsername, currentUserAvatar) {
             if (myStories.isEmpty()) emptyList()
@@ -1325,12 +1306,12 @@ fun HomeContent(
                 showCartModal = false
             },
             onOpenCategories = {
-                // Abrir drawer de categorÃ­as
+                // Abrir drawer de categorías
                 showCategoryDrawer = true
             },
             onOpenExplore = {
-                // Abrir SearchResultsScreen directamente (igual que al pulsar una categorÃ­a)
-                searchResultsQuery = "" // Query vacÃ­a muestra todos los productos
+                // Abrir SearchResultsScreen directamente (igual que al pulsar una categoría)
+                searchResultsQuery = "" // Query vacía muestra todos los productos
                 showSearchResults = true
             },
             onVisibilityChange = onCartModalVisibilityChange,
@@ -1394,7 +1375,7 @@ fun HomeContent(
                     initialQuery = searchResultsQuery,
                     onBack = { 
                         showSearchResults = false
-                        searchQuery = "" // Limpiar bÃºsqueda del Home
+                        searchQuery = "" // Limpiar búsqueda del Home
                     },
                     onProductClick = { post ->
                         openProduct(post)
@@ -1404,7 +1385,7 @@ fun HomeContent(
             }
         }
         
-        // Post Options Modal - DESPUÃ‰S del NavBar para que quede SOBRE Ã©l
+        // Post Options Modal - DESPUÉS del NavBar para que quede SOBRE él
         PostOptionsModal(
             isVisible = showPostOptionsModal,
             post = selectedPostForOptions,
@@ -1431,7 +1412,7 @@ fun HomeContent(
                                     filter { eq("id", post.id) }
                                 }
                             viewModel.removePost(post.id)
-                            android.widget.Toast.makeText(context, "PublicaciÃ³n eliminada", android.widget.Toast.LENGTH_SHORT).show()
+                            android.widget.Toast.makeText(context, "Publicación eliminada", android.widget.Toast.LENGTH_SHORT).show()
                         } catch (e: Exception) {
                             android.util.Log.e("HomeScreen", "Error eliminando post: ${e.message}")
                             android.widget.Toast.makeText(context, "Error al eliminar", android.widget.Toast.LENGTH_SHORT).show()
@@ -1563,7 +1544,7 @@ fun HomeContent(
                                     filter { eq("id", post.id) }
                                 }
                             viewModel.refreshPosts()
-                            android.widget.Toast.makeText(context, "PublicaciÃ³n actualizada", android.widget.Toast.LENGTH_SHORT).show()
+                            android.widget.Toast.makeText(context, "Publicación actualizada", android.widget.Toast.LENGTH_SHORT).show()
                         } catch (e: Exception) {
                             android.util.Log.e("HomeScreen", "Error actualizando post: ${e.message}")
                             android.widget.Toast.makeText(context, "Error al actualizar", android.widget.Toast.LENGTH_SHORT).show()
@@ -1583,7 +1564,7 @@ fun HomeContent(
                                     filter { eq("id", post.id) }
                                 }
                             viewModel.removePost(post.id)
-                            android.widget.Toast.makeText(context, "PublicaciÃ³n eliminada", android.widget.Toast.LENGTH_SHORT).show()
+                            android.widget.Toast.makeText(context, "Publicación eliminada", android.widget.Toast.LENGTH_SHORT).show()
                         } catch (e: Exception) {
                             android.util.Log.e("HomeScreen", "Error eliminando post: ${e.message}")
                         }
@@ -1595,23 +1576,21 @@ fun HomeContent(
         )
         
         // OVERLAY: Cubre el Home mientras carga â€” HomeFeedSkeleton + loading hasta que posts lleguen
-        // El usuario ve un skeleton profesional en lugar de pantalla vacÃ­a â†’ percepciÃ³n de velocidad
-        if (welcomeData.show || (isLoading && posts.isEmpty())) {
+        // El usuario ve un skeleton profesional en lugar de pantalla vacía â†’ percepción de velocidad
+        if (isLoading && posts.isEmpty()) {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
                     .background(HomeBg)
             ) {
-                if (!welcomeData.show) {
-                    HomeFeedSkeleton()
-                }
+                HomeFeedSkeleton()
             }
         }
     }
 }
 
 /**
- * OPTIMIZACIÃ“N: ThreadLocal cache para SimpleDateFormat
+ * OPTIMIZACIÓN: ThreadLocal cache para SimpleDateFormat
  * SimpleDateFormat NO es thread-safe y crear instancias es costoso (~0.5ms cada una)
  * Con ThreadLocal, cada thread reutiliza su propia instancia
  */
@@ -1620,7 +1599,7 @@ private val dateFormatCache: java.lang.ThreadLocal<java.text.SimpleDateFormat> =
         java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", java.util.Locale.US)
     }
 
-// FunciÃ³n para formatear el tiempo de las reseÃ±as - OPTIMIZADA con cache
+// Función para formatear el tiempo de las reseñas - OPTIMIZADA con cache
 private fun formatCommentTime(createdAt: String): String {
     return try {
         val date = dateFormatCache.get()?.parse(createdAt.substringBefore("+").substringBefore("."))
@@ -1644,7 +1623,7 @@ private fun formatCommentTime(createdAt: String): String {
 }
 
 /**
- * OPTIMIZACIÃ“N: Parser de timestamp para stories usando cache ThreadLocal
+ * OPTIMIZACIÓN: Parser de timestamp para stories usando cache ThreadLocal
  * Evita crear SimpleDateFormat en cada frame durante scroll.
  */
 private fun parseStoryTimestamp(createdAt: String): Long {
@@ -1656,13 +1635,13 @@ private fun parseStoryTimestamp(createdAt: String): Long {
 }
 
 /**
- * OPTIMIZACIÃ“N CRÃTICA: Subcomposable estable para PostItem
+ * OPTIMIZACIÓN CRÍTICA: Subcomposable estable para PostItem
  * 
  * Elimina jank causado por:
  * 1. Lambdas inestables que capturan objetos mutables
  * 2. Recomposiciones en cascada cuando cambia cualquier estado del padre
  * 
- * Al extraer a un composable separado con parÃ¡metros estables,
+ * Al extraer a un composable separado con parámetros estables,
  * Compose puede skipear recomposiciones cuando el post no cambia.
  */
 @Composable
@@ -1678,7 +1657,7 @@ private fun StablePostItem(
     onNavigateToProfile: () -> Unit,
     onSelectForOptions: (Post, Boolean) -> Unit
 ) {
-    // CRÃTICO: Extraer IDs para callbacks estables que no dependan del objeto post
+    // CRÍTICO: Extraer IDs para callbacks estables que no dependan del objeto post
     val postId = post.id
     val postUserId = post.userId
     
@@ -1688,7 +1667,7 @@ private fun StablePostItem(
     val onInfo = remember(postId) { { viewModel.toggleStats(postId) } }
     
     // Para callbacks que necesitan el post, usamos rememberUpdatedState
-    // Esto garantiza que siempre tengamos la versiÃ³n mÃ¡s reciente sin invalidar el remember
+    // Esto garantiza que siempre tengamos la versión más reciente sin invalidar el remember
     val currentPost by rememberUpdatedState(post)
     
     val onComment = remember(postId) { { onSelectForComments(currentPost) } }
@@ -1826,8 +1805,8 @@ private fun StableVideoPostItem(
 }
 
 /**
- * OPTIMIZACIÃ“N: Data class para consolidar estados de visibility en snapshotFlow.
- * Evita mÃºltiples LaunchedEffects separados que compiten por el UI thread.
+ * OPTIMIZACIÓN: Data class para consolidar estados de visibility en snapshotFlow.
+ * Evita múltiples LaunchedEffects separados que compiten por el UI thread.
  */
 private data class VisibilityState(
     val userProfile: Boolean,

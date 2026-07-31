@@ -27,7 +27,7 @@ import androidx.room.RoomDatabase
     version = 1,
     exportSchema = false
 )
-abstract class VinzayDatabase : RoomDatabase() {
+abstract class MercoraDatabase : RoomDatabase() {
     
     abstract fun cachedUserDao(): CachedUserDao
     abstract fun cachedPostDao(): CachedPostDao
@@ -41,21 +41,21 @@ abstract class VinzayDatabase : RoomDatabase() {
     abstract fun pendingOperationDao(): PendingOperationDao
     
     companion object {
-        private const val DATABASE_NAME = "Vinzay_cache.db"
+        private const val DATABASE_NAME = "Mercora_cache.db"
         
         @Volatile
-        private var INSTANCE: VinzayDatabase? = null
+        private var INSTANCE: MercoraDatabase? = null
         
-        fun getInstance(context: Context): VinzayDatabase {
+        fun getInstance(context: Context): MercoraDatabase {
             return INSTANCE ?: synchronized(this) {
                 INSTANCE ?: buildDatabase(context).also { INSTANCE = it }
             }
         }
         
-        private fun buildDatabase(context: Context): VinzayDatabase {
+        private fun buildDatabase(context: Context): MercoraDatabase {
             return Room.databaseBuilder(
                 context.applicationContext,
-                VinzayDatabase::class.java,
+                MercoraDatabase::class.java,
                 DATABASE_NAME
             )
                 .fallbackToDestructiveMigration()

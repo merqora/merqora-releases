@@ -452,7 +452,7 @@ fun PayoutMethodsScreen(
                                     if (msg.contains("column")) {
                                         android.widget.Toast.makeText(
                                             context,
-                                            "EjecutÃ¡ 003_payout_extra_columns.sql en Supabase SQL editor para agregar las columnas faltantes, o volvÃ© a intentar.",
+                                            "Ejecutá 003_payout_extra_columns.sql en Supabase SQL editor para agregar las columnas faltantes, o volvé a intentar.",
                                             android.widget.Toast.LENGTH_LONG
                                         ).show()
                                     } else {

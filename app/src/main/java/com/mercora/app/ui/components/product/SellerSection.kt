@@ -100,7 +100,7 @@ fun SellerSectionV2(
         ) {
             SellerStatItem(
                 value = reputationValue,
-                label = "ReputaciÃ³n",
+                label = "Reputación",
                 color = if (sellerStats?.reputationScore != null && sellerStats.reputationScore >= 80) AccentGreen else IconAccentBlue
             )
             SellerStatItem(

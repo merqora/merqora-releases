@@ -372,7 +372,7 @@ fun CardPaymentForm(
                                 orderId = orderId,
                                 token = token.id,
                                 amount = totalAmount,
-                                description = "Compra en Vinzay - Orden #$orderId",
+                                description = "Compra en Mercora - Orden #$orderId",
                                 installments = selectedInstallments,
                                 paymentMethodId = paymentMethodId,
                                 issuerId = null,

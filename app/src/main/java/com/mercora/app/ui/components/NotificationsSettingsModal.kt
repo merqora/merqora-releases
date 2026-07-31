@@ -28,8 +28,8 @@ import com.mercora.app.ui.theme.*
 import android.content.Context
 
 /**
- * Modal para configurar notificaciones de un usuario especÃ­fico
- * Abre desde abajo con animaciÃ³n fluida
+ * Modal para configurar notificaciones de un usuario específico
+ * Abre desde abajo con animación fluida
  */
 @Composable
 fun NotificationsSettingsModal(
@@ -62,7 +62,7 @@ fun NotificationsSettingsModal(
         )
     }
     
-    // Modal con animaciÃ³n desde abajo
+    // Modal con animación desde abajo
     AnimatedVisibility(
         visible = isVisible,
         enter = slideInVertically(
@@ -155,7 +155,7 @@ fun NotificationsSettingsModal(
                             }
                         }
                         
-                        // BotÃ³n cerrar
+                        // Botón cerrar
                         IconButton(
                             onClick = onDismiss,
                             modifier = Modifier
@@ -175,14 +175,14 @@ fun NotificationsSettingsModal(
                     Spacer(modifier = Modifier.height(8.dp))
                     
                     Text(
-                        text = "Elige quÃ© notificaciones recibir de este usuario",
+                        text = "Elige qué notificaciones recibir de este usuario",
                         color = TextMuted,
                         fontSize = 13.sp
                     )
                     
                     Spacer(modifier = Modifier.height(24.dp))
                     
-                    // Opciones de notificaciÃ³n
+                    // Opciones de notificación
                     NotificationOption(
                         icon = Icons.Outlined.Image,
                         title = "Publicaciones",
@@ -226,7 +226,7 @@ fun NotificationsSettingsModal(
                     
                     Spacer(modifier = Modifier.height(24.dp))
                     
-                    // BotÃ³n guardar
+                    // Botón guardar
                     Button(
                         onClick = {
                             prefs.edit()

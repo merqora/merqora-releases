@@ -213,9 +213,9 @@ private fun WalletContent(
             }
         }
 
-        // Ãšltimos movimientos
+        // Últimos movimientos
         item {
-            Text("Ãšltimos movimientos", fontSize = 14.sp, fontWeight = FontWeight.SemiBold, color = TextPrimary)
+            Text("Últimos movimientos", fontSize = 14.sp, fontWeight = FontWeight.SemiBold, color = TextPrimary)
         }
 
         if (transactions.isEmpty()) {
@@ -263,12 +263,12 @@ private fun HistoryContent(
         // Orders recent
         item {
             Spacer(modifier = Modifier.height(16.dp))
-            Text("Ã“rdenes recientes", fontSize = 14.sp, fontWeight = FontWeight.SemiBold, color = TextPrimary)
+            Text("Órdenes recientes", fontSize = 14.sp, fontWeight = FontWeight.SemiBold, color = TextPrimary)
             Spacer(modifier = Modifier.height(8.dp))
         }
         val recentOrders = (purchases + sales).sortedByDescending { it.createdAt }.take(10)
         if (recentOrders.isEmpty()) {
-            item { Text("Sin Ã³rdenes", color = TextMuted, fontSize = 12.sp) }
+            item { Text("Sin órdenes", color = TextMuted, fontSize = 12.sp) }
         } else {
             recentOrders.forEach { order ->
                 item { OrderCard(order, if (order.buyerId == SupabaseClient.auth.currentUserOrNull()?.id) "Compra" else "Venta") }
@@ -325,7 +325,7 @@ private fun TransactionMiniItem(tx: JsonObject) {
             ) { Icon(Icons.Outlined.ArrowUpward, contentDescription = null, tint = iconColor, modifier = Modifier.size(18.dp)) }
             Spacer(modifier = Modifier.width(10.dp))
             Column(modifier = Modifier.weight(1f)) {
-                Text(desc.ifEmpty { if (isCredit) "CrÃ©dito" else "DÃ©bito" }, fontSize = 13.sp, fontWeight = FontWeight.Medium, color = TextPrimary, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                Text(desc.ifEmpty { if (isCredit) "Crédito" else "Débito" }, fontSize = 13.sp, fontWeight = FontWeight.Medium, color = TextPrimary, maxLines = 1, overflow = TextOverflow.Ellipsis)
                 Text(date, fontSize = 10.sp, color = TextMuted)
             }
             Text("$sign$${String.format("%,.0f", amount)}", fontSize = 15.sp, fontWeight = FontWeight.Bold, color = iconColor)
@@ -394,7 +394,7 @@ private fun PDFItem(
             Spacer(modifier = Modifier.width(12.dp))
             Column(modifier = Modifier.weight(1f)) {
                 Text(fileName, fontSize = 13.sp, fontWeight = FontWeight.Medium, color = TextPrimary, maxLines = 1, overflow = TextOverflow.Ellipsis)
-                Text("$date Â· $time", fontSize = 11.sp, color = TextMuted)
+                Text("$date · $time", fontSize = 11.sp, color = TextMuted)
             }
             TextButton(onClick = {
                 try {

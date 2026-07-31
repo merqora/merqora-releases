@@ -52,7 +52,7 @@ data class PublishMode(
 private val PUBLISH_MODES = listOf(
     PublishMode(
         id = "post",
-        label = "PublicaciÃ³n",
+        label = "Publicación",
         icon = Icons.Outlined.AddBox,
         description = "Permanente",
         accentColor = Color(0xFFFF6B35)
@@ -89,7 +89,7 @@ fun PublishScreen(
     initialMode: Int = 1, // 1 = Historia (modo por defecto)
     modifier: Modifier = Modifier
 ) {
-    // Validar que initialMode estÃ© dentro del rango vÃ¡lido
+    // Validar que initialMode esté dentro del rango válido
     val safeInitialMode = initialMode.coerceIn(0, PUBLISH_MODES.size - 1)
     var selectedModeIndex by remember { mutableIntStateOf(safeInitialMode) }
     
@@ -98,7 +98,7 @@ fun PublishScreen(
         { newIndex -> selectedModeIndex = newIndex.coerceIn(0, PUBLISH_MODES.size - 1) } 
     }
     
-    // StatusBar y NavigationBar negros para coincidir con el fondo de la cÃ¡mara
+    // StatusBar y NavigationBar negros para coincidir con el fondo de la cámara
     val view = LocalView.current
     DisposableEffect(Unit) {
         val window = (view.context as? android.app.Activity)?.window
@@ -118,7 +118,7 @@ fun PublishScreen(
             .clipToBounds()
             .background(Color.Black)
     ) {
-        // Usar Crossfade en lugar de AnimatedContent (mÃ¡s ligero)
+        // Usar Crossfade en lugar de AnimatedContent (más ligero)
         Crossfade(
             targetState = selectedModeIndex,
             animationSpec = tween(150),
@@ -161,4 +161,4 @@ fun PublishScreen(
     }
 }
 
-// El nuevo ModeCarousel estÃ¡ en com.vinzay.app.ui.components.ModeCarousel
+// El nuevo ModeCarousel está en com.mercora.app.ui.components.ModeCarousel

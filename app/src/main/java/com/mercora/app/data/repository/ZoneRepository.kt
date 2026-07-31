@@ -29,18 +29,18 @@ import java.util.Locale
 
 /**
  * â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
- * ZONE REPOSITORY - GeolocalizaciÃ³n + bÃºsquedas por zona
+ * ZONE REPOSITORY - Geolocalización + búsquedas por zona
  * â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
  * 
- * Reutiliza el mismo patrÃ³n de FusedLocationProviderClient de AddressViewModel
+ * Reutiliza el mismo patrón de FusedLocationProviderClient de AddressViewModel
  * pero de forma ligera (sin ViewModel, singleton para toda la app).
  * 
  * Funcionalidades:
- * âœ“ Auto-detecciÃ³n de ubicaciÃ³n del usuario (GPS + Geocoder)
+ * âœ“ Auto-detección de ubicación del usuario (GPS + Geocoder)
  * âœ“ Stats de zona desde Supabase (posts/vendedores cercanos)
- * âœ“ BÃºsquedas populares por zona desde Supabase
- * âœ“ Historial de bÃºsquedas recientes (SharedPreferences)
- * âœ“ Cache de ubicaciÃ³n (evita re-detectar en cada apertura)
+ * âœ“ Búsquedas populares por zona desde Supabase
+ * âœ“ Historial de búsquedas recientes (SharedPreferences)
+ * âœ“ Cache de ubicación (evita re-detectar en cada apertura)
  */
 object ZoneRepository {
     private const val TAG = "ZoneRepository"
@@ -59,7 +59,7 @@ object ZoneRepository {
     private lateinit var prefs: SharedPreferences
     private var cancellationTokenSource: CancellationTokenSource? = null
     
-    // Estado de ubicaciÃ³n actual
+    // Estado de ubicación actual
     private val _locationState = MutableStateFlow(ZoneLocationState())
     val locationState: StateFlow<ZoneLocationState> = _locationState.asStateFlow()
     
@@ -67,11 +67,11 @@ object ZoneRepository {
     private val _zoneStats = MutableStateFlow(ZoneStats())
     val zoneStats: StateFlow<ZoneStats> = _zoneStats.asStateFlow()
     
-    // BÃºsquedas populares
+    // Búsquedas populares
     private val _popularSearches = MutableStateFlow<List<PopularSearch>>(emptyList())
     val popularSearches: StateFlow<List<PopularSearch>> = _popularSearches.asStateFlow()
     
-    // BÃºsquedas recientes
+    // Búsquedas recientes
     private val _recentSearches = MutableStateFlow<List<RecentSearch>>(emptyList())
     val recentSearches: StateFlow<List<RecentSearch>> = _recentSearches.asStateFlow()
     
@@ -96,15 +96,15 @@ object ZoneRepository {
     }
     
     /**
-     * Detectar ubicaciÃ³n del usuario. Llama DESPUÃ‰S de verificar/obtener permisos.
+     * Detectar ubicación del usuario. Llama DESPUÉS de verificar/obtener permisos.
      */
     @Suppress("MissingPermission")
     suspend fun detectLocation(context: Context) {
-        // Si hay cache vÃ¡lido, usar eso
+        // Si hay cache válido, usar eso
         val cached = _locationState.value
         if (cached.isLoaded && !cached.isStale()) {
             Log.d(TAG, "Using cached location: ${cached.city}, ${cached.country}")
-            // Cargar stats con ubicaciÃ³n cacheada
+            // Cargar stats con ubicación cacheada
             loadZoneStats(cached.latitude, cached.longitude)
             return
         }
@@ -125,26 +125,26 @@ object ZoneRepository {
                 Log.d(TAG, "GPS location: ${location.latitude}, ${location.longitude}")
                 reverseGeocodeAndUpdate(context, location.latitude, location.longitude)
             } else {
-                // Intentar Ãºltima ubicaciÃ³n conocida como fallback
+                // Intentar última ubicación conocida como fallback
                 val lastLocation = fusedClient.lastLocation.await()
                 if (lastLocation != null) {
                     Log.d(TAG, "Using last known location: ${lastLocation.latitude}, ${lastLocation.longitude}")
                     reverseGeocodeAndUpdate(context, lastLocation.latitude, lastLocation.longitude)
                 } else {
                     _locationState.update { 
-                        it.copy(isLoading = false, error = "No se pudo obtener tu ubicaciÃ³n. Activa el GPS.")
+                        it.copy(isLoading = false, error = "No se pudo obtener tu ubicación. Activa el GPS.")
                     }
                 }
             }
         } catch (e: SecurityException) {
             Log.e(TAG, "Permission denied", e)
             _locationState.update { 
-                it.copy(isLoading = false, error = "Permiso de ubicaciÃ³n denegado")
+                it.copy(isLoading = false, error = "Permiso de ubicación denegado")
             }
         } catch (e: Exception) {
             Log.e(TAG, "Error detecting location", e)
             _locationState.update { 
-                it.copy(isLoading = false, error = "Error al detectar ubicaciÃ³n: ${e.message}")
+                it.copy(isLoading = false, error = "Error al detectar ubicación: ${e.message}")
             }
         }
     }
@@ -183,14 +183,14 @@ object ZoneRepository {
                 loadZoneStats(lat, lon)
             } catch (e: Exception) {
                 Log.e(TAG, "Reverse geocode error", e)
-                // AÃºn asÃ­ guardar las coordenadas
+                // Aún así guardar las coordenadas
                 _locationState.update { 
                     it.copy(
                         isLoading = false,
                         isLoaded = true,
                         latitude = lat,
                         longitude = lon,
-                        city = "Tu ubicaciÃ³n",
+                        city = "Tu ubicación",
                         error = null,
                         timestamp = System.currentTimeMillis()
                     )
@@ -229,7 +229,7 @@ object ZoneRepository {
             Log.d(TAG, "Zone stats: ${stats.postCount} posts, ${stats.sellerCount} sellers")
         } catch (e: Exception) {
             Log.e(TAG, "Error loading zone stats: ${e.message}")
-            // No es crÃ­tico, dejar los defaults
+            // No es crítico, dejar los defaults
             _zoneStats.value = ZoneStats(isLoaded = true)
         }
     }
@@ -247,7 +247,7 @@ object ZoneRepository {
                 }
                 .decodeList<PopularSearchDB>()
                 .let { all ->
-                    // Priorizar bÃºsquedas de la ciudad del usuario, luego globales
+                    // Priorizar búsquedas de la ciudad del usuario, luego globales
                     if (!city.isNullOrBlank()) {
                         val local = all.filter { it.city.equals(city, ignoreCase = true) }
                         val global = all.filter { it.city.isNullOrBlank() }
@@ -281,7 +281,7 @@ object ZoneRepository {
         current.removeAll { it.query.equals(query, ignoreCase = true) }
         // Agregar al inicio
         current.add(0, RecentSearch(query = query, timestamp = System.currentTimeMillis()))
-        // Limitar tamaÃ±o
+        // Limitar tamaño
         val trimmed = current.take(MAX_RECENT_SEARCHES)
         _recentSearches.value = trimmed
         saveRecentSearches(trimmed)
@@ -431,7 +431,7 @@ data class ZoneLocationState(
         city.isNotBlank() && country.isNotBlank() -> "$city, $country"
         city.isNotBlank() -> city
         country.isNotBlank() -> country
-        else -> "Detectando ubicaciÃ³n..."
+        else -> "Detectando ubicación..."
     }
 }
 

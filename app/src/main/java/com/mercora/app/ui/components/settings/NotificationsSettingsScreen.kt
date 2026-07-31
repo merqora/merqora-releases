@@ -150,7 +150,7 @@ fun NotificationsSettingsScreen(
             ) {
                 SettingsScreenHeader(
                     title = "Notificaciones",
-                    subtitle = "Configura cÃ³mo te contactamos",
+                    subtitle = "Configura cómo te contactamos",
                     icon = Icons.Outlined.Notifications,
                     iconColor = Color(0xFFFF6B35),
                     onBack = onDismiss
@@ -173,7 +173,7 @@ fun NotificationsSettingsScreen(
                         }
                     } else {
                     
-                    SettingsSectionTitle("Canales de notificaciÃ³n")
+                    SettingsSectionTitle("Canales de notificación")
                     
                     Surface(
                         modifier = Modifier.fillMaxWidth(),
@@ -195,7 +195,7 @@ fun NotificationsSettingsScreen(
                             Divider(color = BorderSubtle, modifier = Modifier.padding(horizontal = 16.dp))
                             NotificationToggle(
                                 icon = Icons.Outlined.Email,
-                                title = "Correo electrÃ³nico",
+                                title = "Correo electrónico",
                                 subtitle = "Recibe notificaciones por email",
                                 isEnabled = emailEnabled,
                                 onToggle = { 

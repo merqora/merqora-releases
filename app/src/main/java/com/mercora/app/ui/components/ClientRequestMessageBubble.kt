@@ -121,11 +121,11 @@ fun ClientRequestMessageBubble(
                 
                 Spacer(modifier = Modifier.height(12.dp))
                 
-                // TÃ­tulo segÃºn tipo
+                // Título según tipo
                 Text(
                     text = when (requestType) {
                         ClientRequestType.REQUEST -> "Solicitud de Cliente"
-                        ClientRequestType.ACCEPTED -> "Â¡Solicitud Aceptada!"
+                        ClientRequestType.ACCEPTED -> "¡Solicitud Aceptada!"
                         ClientRequestType.REJECTED -> "Solicitud Rechazada"
                         ClientRequestType.PENDING -> "Esperando Respuesta"
                     },
@@ -146,11 +146,11 @@ fun ClientRequestMessageBubble(
                     lineHeight = 18.sp
                 )
                 
-                // Botones de acciÃ³n solo para REQUEST y si NO es mi mensaje (soy el vendedor)
+                // Botones de acción solo para REQUEST y si NO es mi mensaje (soy el vendedor)
                 if (requestType == ClientRequestType.REQUEST && !isFromMe) {
                     Spacer(modifier = Modifier.height(16.dp))
                     
-                    // BotÃ³n Ver Historial
+                    // Botón Ver Historial
                     TextButton(
                         onClick = onViewHistory,
                         modifier = Modifier.fillMaxWidth()
@@ -266,7 +266,7 @@ fun ClientRequestMessageBubble(
         }
     }
     
-    // DiÃ¡logo de rechazo
+    // Diálogo de rechazo
     if (showRejectDialog) {
         AlertDialog(
             onDismissRequest = { showRejectDialog = false },
@@ -281,7 +281,7 @@ fun ClientRequestMessageBubble(
             text = {
                 Column {
                     Text(
-                        text = "Â¿Deseas indicar un motivo? (opcional)",
+                        text = "¿Deseas indicar un motivo? (opcional)",
                         color = TextSecondary,
                         fontSize = 14.sp
                     )

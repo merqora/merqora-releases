@@ -32,7 +32,7 @@ data class CarouselMode(
 )
 
 val CAROUSEL_MODES = listOf(
-    CarouselMode("post", "PUBLICACIÃ“N", Color(0xFFFF6B35)),
+    CarouselMode("post", "PUBLICACIÓN", Color(0xFFFF6B35)),
     CarouselMode("story", "HISTORIA", Color(0xFF2E8B57)),
     CarouselMode("rend", "REND", Color(0xFFFF6B35)),
     CarouselMode("live", "EN VIVO", Color(0xFFEF4444))
@@ -42,7 +42,7 @@ val CAROUSEL_MODES = listOf(
 enum class CarouselStyle {
     FULL,           // Muestra todos los modos (default)
     CENTERED_SINGLE, // Solo muestra el modo actual centrado (HISTORIA, REND)
-    FLOATING_RIGHT   // Flotante a la derecha con fondo (PUBLICACIÃ“N)
+    FLOATING_RIGHT   // Flotante a la derecha con fondo (PUBLICACIÓN)
 }
 
 @Composable
@@ -76,7 +76,7 @@ fun ModeCarousel(
 
 /**
  * Modo centrado simple - Solo muestra el modo actual con swipe para cambiar
- * Usado en HISTORIA y REND debajo del botÃ³n central
+ * Usado en HISTORIA y REND debajo del botón central
  */
 @Composable
 private fun CenteredSingleMode(
@@ -120,7 +120,7 @@ private fun CenteredSingleMode(
         ) {
             // Flecha izquierda (si hay modo anterior)
             Text(
-                text = "â€¹",
+                text = "\u2039",
                 fontSize = 18.sp,
                 color = if (currentIndex > 0) Color.White.copy(alpha = 0.4f) else Color.Transparent,
                 modifier = Modifier.padding(end = 16.dp)
@@ -138,7 +138,7 @@ private fun CenteredSingleMode(
                 
                 Spacer(modifier = Modifier.height(4.dp))
                 
-                // LÃ­nea indicadora
+                // Línea indicadora
                 Box(
                     modifier = Modifier
                         .width(24.dp)
@@ -150,7 +150,7 @@ private fun CenteredSingleMode(
             
             // Flecha derecha (si hay modo siguiente)
             Text(
-                text = "â€º",
+                text = "\u203A",
                 fontSize = 18.sp,
                 color = if (currentIndex < CAROUSEL_MODES.lastIndex) Color.White.copy(alpha = 0.4f) else Color.Transparent,
                 modifier = Modifier.padding(start = 16.dp)
@@ -160,7 +160,7 @@ private fun CenteredSingleMode(
 }
 
 /**
- * Modo flotante a la derecha - Para PUBLICACIÃ“N
+ * Modo flotante a la derecha - Para PUBLICACIÓN
  * Fondo azul oscuro, pegado a la derecha, border radius solo a la izquierda
  */
 @Composable
@@ -179,10 +179,10 @@ private fun FloatingRightMode(
     ) {
         Box(
             modifier = Modifier
-                .fillMaxWidth(0.60f) // 60% del ancho - mÃ¡s compacto
+                .fillMaxWidth(0.60f) // 60% del ancho - más compacto
                 .height(44.dp)
                 .clip(RoundedCornerShape(topStart = 22.dp, bottomStart = 22.dp, topEnd = 0.dp, bottomEnd = 0.dp))
-                .background(Color(0xFF0F2942)) // Azul mÃ¡s oscuro
+                .background(Color(0xFF0F2942)) // Azul más oscuro
                 .pointerInput(currentIndex) {
                     detectHorizontalDragGestures(
                         onDragEnd = {
@@ -212,7 +212,7 @@ private fun FloatingRightMode(
             ) {
                 // Flecha izquierda
                 Text(
-                    text = "â€¹",
+                    text = "\u2039",
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Light,
                     color = if (currentIndex > 0) Color.White.copy(alpha = 0.6f) else Color.Transparent
@@ -241,7 +241,7 @@ private fun FloatingRightMode(
                 
                 // Flecha derecha
                 Text(
-                    text = "â€º",
+                    text = "\u203A",
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Light,
                     color = if (currentIndex < CAROUSEL_MODES.lastIndex) Color.White.copy(alpha = 0.6f) else Color.Transparent
@@ -295,7 +295,7 @@ private fun FullModeCarousel(
             CAROUSEL_MODES.forEachIndexed { index, mode ->
                 val isSelected = index == currentIndex
                 
-                // AnimaciÃ³n simplificada - solo escala y alpha
+                // Animación simplificada - solo escala y alpha
                 val scale by animateFloatAsState(
                     targetValue = if (isSelected) 1.1f else 0.85f,
                     animationSpec = tween(150),
@@ -337,7 +337,7 @@ private fun FullModeCarousel(
                     
                     Spacer(modifier = Modifier.height(4.dp))
                     
-                    // Indicador sin animaciÃ³n de ancho
+                    // Indicador sin animación de ancho
                     if (isSelected) {
                         Box(
                             modifier = Modifier

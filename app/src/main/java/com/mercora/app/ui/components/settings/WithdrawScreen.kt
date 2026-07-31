@@ -179,8 +179,8 @@ fun WithdrawScreen(
                         )
                     }
 
-                    // MÃ©todo de retiro
-                    Text("MÃ©todo de retiro", fontSize = 14.sp, fontWeight = FontWeight.SemiBold, color = TextPrimary)
+                    // Método de retiro
+                    Text("Método de retiro", fontSize = 14.sp, fontWeight = FontWeight.SemiBold, color = TextPrimary)
 
                     withdrawMethods.forEach { method ->
                         val isConfigured = when (method.id) {
@@ -259,7 +259,7 @@ fun WithdrawScreen(
                         Text(successMessage!!, color = Color(0xFF22C55E), fontSize = 13.sp)
                     }
 
-                    // BotÃ³n de solicitar
+                    // Botón de solicitar
                     Button(
                         onClick = {
                             if (!canSubmit) return@Button
@@ -336,7 +336,7 @@ fun WithdrawScreen(
                             Icon(Icons.Outlined.Info, contentDescription = null, tint = Color(0xFFFFA726), modifier = Modifier.size(18.dp))
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
-                                "Los retiros son procesados manualmente por el equipo de Merqora. RecibirÃ¡s una notificaciÃ³n cuando el retiro estÃ© completado.",
+                                "Los retiros son procesados manualmente por el equipo de Mercora. Recibirás una notificación cuando el retiro esté completado.",
                                 fontSize = 12.sp,
                                 color = TextMuted
                             )

@@ -43,11 +43,11 @@ import kotlinx.coroutines.withContext
 
 /**
  * â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
- * SUGGESTED ACCOUNTS CAROUSEL - "Personas que quizÃ¡s conozcas"
+ * SUGGESTED ACCOUNTS CAROUSEL - "Personas que quizás conozcas"
  * â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
  * Carrusel horizontal profesional con cuentas sugeridas.
- * Cada tarjeta muestra avatar, username, nombre de tienda y botÃ³n de seguir.
- * DiseÃ±o Ãºnico tipo tarjeta con gradiente sutil, no copia Instagram.
+ * Cada tarjeta muestra avatar, username, nombre de tienda y botón de seguir.
+ * Diseño único tipo tarjeta con gradiente sutil, no copia Instagram.
  */
 
 data class SuggestedAccount(
@@ -60,7 +60,7 @@ data class SuggestedAccount(
     val postsCount: Int = 0
 )
 
-// CachÃ© de sesiÃ³n: el fetch de sugerencias corre UNA vez por proceso, no cada
+// Caché de sesión: el fetch de sugerencias corre UNA vez por proceso, no cada
 // vez que el LazyColumn del Home recicla este item durante scroll
 private object SuggestedAccountsCache {
     @Volatile

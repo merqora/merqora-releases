@@ -1,10 +1,10 @@
 -- ════════════════════════════════════════════════════════════════
 -- MERCADO PAGO MARKETPLACE + SPLIT PAYMENTS
 -- ════════════════════════════════════════════════════════════════
--- Arquitectura: Vinzay actúa como Marketplace en MP.
+-- Arquitectura: Mercora actúa como Marketplace en MP.
 -- Los vendedores se conectan via OAuth.
 -- MP divide el pago automáticamente: vendedor recibe (total - comisión),
--- Vinzay recibe la comisión. Vinzay NUNCA custodia dinero real.
+-- Mercora recibe la comisión. Mercora NUNCA custodia dinero real.
 -- ════════════════════════════════════════════════════════════════
 
 -- ============================================================
@@ -44,7 +44,7 @@ CREATE POLICY mp_connections_update ON mercadopago_connections
     FOR UPDATE USING (auth.uid() = user_id);
 
 -- ============================================================
--- 2. PLATFORM SETTINGS (comisión, cuentas MP de Vinzay)
+-- 2. PLATFORM SETTINGS (comisión, cuentas MP de Mercora)
 -- ============================================================
 CREATE TABLE IF NOT EXISTS platform_settings (
     key TEXT PRIMARY KEY,
@@ -56,7 +56,7 @@ CREATE TABLE IF NOT EXISTS platform_settings (
 INSERT INTO platform_settings (key, value) VALUES
     ('commission_percentage', '{"percentage": 10.0, "min_fee": 5.0, "max_fee": 5000.0, "currency": "UYU"}'::jsonb),
     ('mercadopago', '{"marketplace_id": "", "platform_access_token_encrypted": "", "platform_user_id": "", "app_id": "", "client_id": "", "sandbox": true}'::jsonb),
-    ('seller_oauth', '{"redirect_uri": "vinzay://mp-oauth/callback", "auth_url_template": "https://auth.mercadopago.com.uy/authorization?client_id={client_id}&response_type=code&platform_id=mp&redirect_uri={redirect_uri}&state={state}"}'::jsonb),
+    ('seller_oauth', '{"redirect_uri": "mercora://mp-oauth/callback", "auth_url_template": "https://auth.mercadopago.com.uy/authorization?client_id={client_id}&response_type=code&platform_id=mp&redirect_uri={redirect_uri}&state={state}"}'::jsonb),
     ('webhook_secret', '{"secret": ""}'::jsonb)
 ON CONFLICT (key) DO NOTHING;
 

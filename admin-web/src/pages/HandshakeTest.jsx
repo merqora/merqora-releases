@@ -36,11 +36,11 @@ function HandshakeTest() {
           table: 'handshake_transactions'
         },
         (payload) => {
-          console.log('ðŸ”” Handshake change:', payload)
+          console.log('🔔 Handshake change:', payload)
           
           if (payload.eventType === 'INSERT') {
             setHandshakes(prev => [payload.new, ...prev])
-            showNotification('ðŸ†• Nuevo handshake recibido!', 'success')
+            showNotification('🆕 Nuevo handshake recibido!', 'success')
           } else if (payload.eventType === 'UPDATE') {
             setHandshakes(prev => 
               prev.map(h => h.id === payload.new.id ? payload.new : h)
@@ -132,7 +132,7 @@ function HandshakeTest() {
         .eq('id', handshakeId)
 
       if (error) throw error
-      showNotification('ðŸš« Handshake cancelado', 'info')
+      showNotification('🚫 Handshake cancelado', 'info')
     } catch (error) {
       console.error('Error cancelling handshake:', error)
       showNotification('Error al cancelar: ' + error.message, 'error')
@@ -155,7 +155,7 @@ function HandshakeTest() {
         .eq('id', handshakeId)
 
       if (error) throw error
-      showNotification('âœ… ConfirmaciÃ³n registrada!', 'success')
+      showNotification('âœ… Confirmación registrada!', 'success')
     } catch (error) {
       console.error('Error confirming:', error)
       showNotification('Error al confirmar: ' + error.message, 'error')
@@ -208,7 +208,7 @@ function HandshakeTest() {
             Test de Handshakes
           </h1>
           <p className="text-text-muted mt-1">
-            Prueba el sistema de handshakes desde aquÃ­. Los cambios se reflejan en tiempo real.
+            Prueba el sistema de handshakes desde aquí. Los cambios se reflejan en tiempo real.
           </p>
         </div>
 
@@ -249,13 +249,13 @@ function HandshakeTest() {
 
       {/* Info box */}
       <div className="bg-primary/10 border border-primary/30 rounded-xl p-4">
-        <h3 className="font-semibold text-primary mb-2">ðŸ“± Instrucciones de prueba:</h3>
+        <h3 className="font-semibold text-primary mb-2">📱 Instrucciones de prueba:</h3>
         <ol className="list-decimal list-inside space-y-1 text-text-secondary text-sm">
           <li>Abre la app Android y ve a un chat con otro usuario</li>
-          <li>Pulsa el botÃ³n de handshake (ðŸ¤) a la izquierda del input</li>
+          <li>Pulsa el botón de handshake (ðŸ¤) a la izquierda del input</li>
           <li>Completa los datos y pulsa "Iniciar"</li>
-          <li>El handshake aparecerÃ¡ aquÃ­ en tiempo real</li>
-          <li>Acepta o rechaza desde esta pÃ¡gina para ver el cambio en la app</li>
+          <li>El handshake aparecerá aquí en tiempo real</li>
+          <li>Acepta o rechaza desde esta página para ver el cambio en la app</li>
         </ol>
       </div>
 
@@ -285,7 +285,7 @@ function HandshakeTest() {
             <Grip className="w-16 h-16 text-text-muted mx-auto mb-4" />
             <h3 className="text-lg font-medium text-text-primary mb-2">No hay handshakes</h3>
             <p className="text-text-muted">
-              Inicia uno desde la app Android para verlo aquÃ­
+              Inicia uno desde la app Android para verlo aquí
             </p>
           </div>
         ) : (
@@ -347,10 +347,10 @@ function HandshakeTest() {
                   {(handshake.status === 'ACCEPTED' || handshake.status === 'IN_PROGRESS') && (
                     <div className="flex items-center gap-4 pt-2 border-t border-primary/10">
                       <span className={`text-sm ${handshake.initiator_confirmed ? 'text-green-400' : 'text-text-muted'}`}>
-                        {handshake.initiator_confirmed ? 'âœ…' : 'â³'} Iniciador confirmÃ³
+                        {handshake.initiator_confirmed ? 'âœ…' : 'â³'} Iniciador confirmó
                       </span>
                       <span className={`text-sm ${handshake.receiver_confirmed ? 'text-green-400' : 'text-text-muted'}`}>
-                        {handshake.receiver_confirmed ? 'âœ…' : 'â³'} Receptor confirmÃ³
+                        {handshake.receiver_confirmed ? 'âœ…' : 'â³'} Receptor confirmó
                       </span>
                     </div>
                   )}

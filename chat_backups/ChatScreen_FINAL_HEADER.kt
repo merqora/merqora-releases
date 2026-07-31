@@ -25,7 +25,7 @@ fun ChatScreen(
     // Estado para controlar si ya se hizo el scroll inicial
     var initialScrollDone by remember { mutableStateOf(false) }
     var messagesReady by remember { mutableStateOf(false) }
-    // Guard: evitar parpadeo/salto por reconciliaciÃ³n de mensajes tras carga inicial
+    // Guard: evitar parpadeo/salto por reconciliación de mensajes tras carga inicial
     var settledAfterLoad by remember { mutableStateOf(false) }
     
     // Observar cuando la carga inicial de mensajes del servidor termina
@@ -37,14 +37,14 @@ fun ChatScreen(
     var selectedMessage by remember { mutableStateOf<Message?>(null) }
     var showMessageOptionsModal by remember { mutableStateOf(false) }
     
-    // Estado para ediciÃ³n de mensaje
+    // Estado para edición de mensaje
     var editingMessage by remember { mutableStateOf<Message?>(null) }
     var isEditMode by remember { mutableStateOf(false) }
     
     // Estado para respuesta a mensaje (swipe-to-reply)
     var replyingToMessage by remember { mutableStateOf<Message?>(null) }
     
-    // Estado para reenvÃ­o de posts compartidos
+    // Estado para reenvío de posts compartidos
     var sharedPostToForward by remember { mutableStateOf<SharedPostData?>(null) }
     var showForwardSharedPostModal by remember { mutableStateOf(false) }
     
@@ -52,11 +52,11 @@ fun ChatScreen(
     var rendScreenRendId by remember { mutableStateOf<String?>(null) }
     var showRendScreenOverlay by remember { mutableStateOf(false) }
     
-    // Estado para envÃ­o de media
+    // Estado para envío de media
     var selectedMediaUri by remember { mutableStateOf<Uri?>(null) }
     var isUploadingMedia by remember { mutableStateOf(false) }
     
-    // Estado para modal de handshake (confirmaciÃ³n de compra)
+    // Estado para modal de handshake (confirmación de compra)
     var showHandshakeModal by remember { mutableStateOf(false) }
     var pendingHandshakeId by remember { mutableStateOf<String?>(null) }
     var isWaitingForAcceptance by remember { mutableStateOf(false) }
@@ -68,7 +68,7 @@ fun ChatScreen(
     val wallpaperContext = LocalContext.current
     var chatWallpaper by remember { mutableStateOf(ChatWallpaper.load(wallpaperContext)) }
     
-    // Estado para bÃºsqueda inline en el header
+    // Estado para búsqueda inline en el header
     var isSearchMode by remember { mutableStateOf(false) }
     var searchQuery by remember { mutableStateOf("") }
     var searchResults by remember { mutableStateOf<List<Message>>(emptyList()) }
@@ -87,7 +87,7 @@ fun ChatScreen(
     // Estados para modales de cancelar y completado
     var showCancelConfirmModal by remember { mutableStateOf(false) }
     var completedHandshakeInfo by remember { mutableStateOf<HandshakeTransaction?>(null) }
-    var cancelledHandshakeInfo by remember { mutableStateOf<HandshakeTransaction?>(null) } // Para mantener referencia durante animaciÃ³n de cancelaciÃ³n
+    var cancelledHandshakeInfo by remember { mutableStateOf<HandshakeTransaction?>(null) } // Para mantener referencia durante animación de cancelación
     var animateReputationBadge by remember { mutableStateOf(false) }
     var lastReputationChange by remember { mutableIntStateOf(0) } // +3, +4, -1, -5, etc.
     var showHandshakeBanner by remember { mutableStateOf(false) }
@@ -97,18 +97,18 @@ fun ChatScreen(
     // Handshake creado localmente (para mostrar banner antes de que Realtime sincronice)
     var localCreatedHandshake by remember { mutableStateOf<HandshakeTransaction?>(null) }
     
-    // Tracking: si ya tuvimos un handshake activo (cachÃ© o red) para controlar cleanup
+    // Tracking: si ya tuvimos un handshake activo (caché o red) para controlar cleanup
     var hadActiveHandshake by remember { mutableStateOf(false) }
     
-    // Flag: la carga inicial del handshake desde red ya terminÃ³
+    // Flag: la carga inicial del handshake desde red ya terminó
     // Hasta que esto sea true, el LaunchedEffect(activeHandshake) NO debe interferir
     var isInitialHandshakeLoaded by remember { mutableStateOf(false) }
     
-    // ReputaciÃ³n en tiempo real desde Supabase
+    // Reputación en tiempo real desde Supabase
     val otherUserReputation by ReputationRepository.otherUserReputation.collectAsState()
     val currentUserReputation by ReputationRepository.currentUserReputation.collectAsState()
     
-    // VerificaciÃ³n en tiempo real del otro usuario
+    // Verificación en tiempo real del otro usuario
     val isOtherUserVerified by VerificationRepository.otherUserVerified.collectAsState()
     
     // Estado de llamadas
@@ -123,18 +123,18 @@ fun ChatScreen(
         CallRepository.initialize(context)
     }
     
-    // Estado para grabaciÃ³n de audio
+    // Estado para grabación de audio
     var isRecording by remember { mutableStateOf(false) }
     var mediaRecorder by remember { mutableStateOf<MediaRecorder?>(null) }
     var audioFile by remember { mutableStateOf<File?>(null) }
     
-    // Estado para envÃ­o de ubicaciÃ³n
+    // Estado para envío de ubicación
     var isGettingLocation by remember { mutableStateOf(false) }
     val fusedLocationClient = remember {
         com.google.android.gms.location.LocationServices.getFusedLocationProviderClient(context)
     }
     
-    // FunciÃ³n para obtener y enviar ubicaciÃ³n
+    // Función para obtener y enviar ubicación
     @Suppress("MissingPermission")
     fun fetchAndSendLocation() {
         scope.launch {

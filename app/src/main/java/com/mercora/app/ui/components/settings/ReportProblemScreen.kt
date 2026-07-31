@@ -1,6 +1,8 @@
 ﻿package com.mercora.app.ui.components.settings
 
 import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -53,6 +55,12 @@ fun ReportProblemScreen(
     var showError by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf("") }
     var attachedScreenshots by remember { mutableStateOf<List<Uri>>(emptyList()) }
+    
+    val galleryLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetMultipleContents()
+    ) { uris ->
+        attachedScreenshots = attachedScreenshots + uris
+    }
     
     // Get current user info
     val currentUser = remember { SupabaseClient.client.auth.currentUserOrNull() }
@@ -111,14 +119,14 @@ fun ReportProblemScreen(
                 // Header
                 SettingsScreenHeader(
                     title = "Reportar un problema",
-                    subtitle = "AyÃºdanos a mejorar Merqora",
+                    subtitle = "Ayúdanos a mejorar Mercora",
                     icon = Icons.Outlined.BugReport,
                     iconColor = Color(0xFFEF4444),
                     onBack = onDismiss
                 )
                 
                 if (showSuccess) {
-                    // Pantalla de Ã©xito
+                    // Pantalla de éxito
                     Column(
                         modifier = Modifier
                             .fillMaxSize()
@@ -153,7 +161,7 @@ fun ReportProblemScreen(
                         Spacer(modifier = Modifier.height(12.dp))
                         
                         Text(
-                            text = "Nuestro equipo tÃ©cnico revisarÃ¡ el problema reportado. Te contactaremos si necesitamos MÃ¡s InformaciÃ³n.",
+                            text = "Nuestro equipo técnico revisará el problema reportado. Te contactaremos si necesitamos Más Información.",
                             fontSize = 15.sp,
                             color = TextMuted,
                             textAlign = TextAlign.Center,
@@ -220,7 +228,7 @@ fun ReportProblemScreen(
                         
                         // Intro
                         Text(
-                            text = "Â¿QuÃ© problema encontraste?",
+                            text = "¿Qué problema encontraste?",
                             fontSize = 20.sp,
                             fontWeight = FontWeight.Bold,
                             color = TextPrimary
@@ -229,7 +237,7 @@ fun ReportProblemScreen(
                         Spacer(modifier = Modifier.height(8.dp))
                         
                         Text(
-                            text = "Describe el problema con el mayor detalle posible para que podamos solucionarlo RÃ¡pidamente.",
+                            text = "Describe el problema con el mayor detalle posible para que podamos solucionarlo Rápidamente.",
                             fontSize = 14.sp,
                             color = TextMuted,
                             lineHeight = 20.sp
@@ -252,7 +260,7 @@ fun ReportProblemScreen(
                             Triple("ui", "Error visual/UI", Icons.Outlined.BrokenImage),
                             Triple("performance", "Lentitud", Icons.Outlined.SlowMotionVideo),
                             Triple("data", "Datos incorrectos", Icons.Outlined.Storage),
-                            Triple("network", "Problema de ConexiÃ³n", Icons.Outlined.WifiOff),
+                            Triple("network", "Problema de Conexión", Icons.Outlined.WifiOff),
                             Triple("security", "Problema de seguridad", Icons.Outlined.Security),
                             Triple("other", "Otro problema", Icons.Outlined.MoreHoriz)
                         )
@@ -282,7 +290,7 @@ fun ReportProblemScreen(
                         
                         Spacer(modifier = Modifier.height(24.dp))
                         
-                        // DescripciÃ³n
+                        // Descripción
                         Text(
                             text = "Describe el problema",
                             fontSize = 15.sp,
@@ -297,7 +305,7 @@ fun ReportProblemScreen(
                             onValueChange = { problemDescription = it },
                             placeholder = {
                                 Text(
-                                    "Â¿QuÃ© estaba pasando cuando ocurriÃ³ el problema?",
+                                    "¿Qué estaba pasando cuando ocurrió el problema?",
                                     color = TextMuted.copy(alpha = 0.5f)
                                 )
                             },
@@ -362,7 +370,7 @@ fun ReportProblemScreen(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .clip(RoundedCornerShape(14.dp))
-                                .clickable { /* TODO: Abrir galerÃ­a */ },
+                                .clickable { galleryLauncher.launch("image/*") },
                             shape = RoundedCornerShape(14.dp),
                             color = Surface
                         ) {
@@ -391,9 +399,9 @@ fun ReportProblemScreen(
                         
                         Spacer(modifier = Modifier.height(24.dp))
                         
-                        // InformaciÃ³n adicional
+                        // Información adicional
                         Text(
-                            text = "InformaciÃ³n adicional",
+                            text = "Información adicional",
                             fontSize = 15.sp,
                             fontWeight = FontWeight.SemiBold,
                             color = TextPrimary
@@ -429,7 +437,7 @@ fun ReportProblemScreen(
                                             color = TextPrimary
                                         )
                                         Text(
-                                            text = "Modelo, VersiÃ³n de Android, etc.",
+                                            text = "Modelo, Versión de Android, etc.",
                                             fontSize = 12.sp,
                                             color = TextMuted
                                         )
@@ -487,7 +495,7 @@ fun ReportProblemScreen(
                         
                         Spacer(modifier = Modifier.height(32.dp))
                         
-                        // botÃ³n enviar
+                        // botón enviar
                         Button(
                             onClick = {
                                 isSubmitting = true

@@ -320,13 +320,13 @@ fun HashtagDetailScreen(
                         )
                         Spacer(modifier = Modifier.height(12.dp))
                         Text(
-                            text = "No hay videos con este hashtag aÃºn",
+                            text = "No hay videos con este hashtag aún",
                             color = TextMuted,
                             fontSize = 14.sp
                         )
                         Spacer(modifier = Modifier.height(4.dp))
                         Text(
-                            text = "SÃ© el primero en publicar con ${hashtag.hashtag}",
+                            text = "Sé el primero en publicar con ${hashtag.hashtag}",
                             color = TextMuted.copy(alpha = 0.7f),
                             fontSize = 12.sp
                         )

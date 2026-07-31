@@ -38,7 +38,7 @@ data class LanguageOption(
 )
 
 private val AVAILABLE_LANGUAGES = listOf(
-    LanguageOption("es", "EspaÃ±ol", "EspaÃ±ol (LatinoamÃ©rica)"),
+    LanguageOption("es", "Español", "Español (Latinoamérica)"),
     LanguageOption("en", "English", "English (US)")
 )
 
@@ -165,7 +165,7 @@ fun LanguageSettingsScreen(
                             
                             Column(modifier = Modifier.weight(1f)) {
                                 Text(
-                                    text = "Detectar automÃ¡ticamente",
+                                    text = "Detectar automáticamente",
                                     fontSize = 15.sp,
                                     fontWeight = FontWeight.SemiBold,
                                     color = TextPrimary
@@ -272,7 +272,7 @@ fun LanguageSettingsScreen(
                             )
                             Spacer(modifier = Modifier.width(10.dp))
                             Text(
-                                text = "El cambio de idioma puede requerir reiniciar la aplicaciÃ³n para aplicarse completamente.",
+                                text = "El cambio de idioma puede requerir reiniciar la aplicación para aplicarse completamente.",
                                 fontSize = 12.sp,
                                 color = TextSecondary,
                                 lineHeight = 16.sp

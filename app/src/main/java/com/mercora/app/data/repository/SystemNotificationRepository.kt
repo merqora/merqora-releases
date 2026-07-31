@@ -18,7 +18,7 @@ import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
 
 /**
- * Modelo de notificaciÃ³n del sistema
+ * Modelo de notificación del sistema
  */
 @Serializable
 data class SystemNotification(
@@ -34,12 +34,12 @@ data class SystemNotification(
 
 /**
  * Repositorio para manejar notificaciones del sistema en tiempo real.
- * DiseÃ±ado para ser escalable con miles de usuarios simultÃ¡neos.
+ * Diseñado para ser escalable con miles de usuarios simultáneos.
  * 
- * CaracterÃ­sticas:
- * - SuscripciÃ³n Realtime a nuevas notificaciones
- * - Cache local de notificaciones no leÃ­das
- * - Marcar como leÃ­das en batch
+ * Características:
+ * - Suscripción Realtime a nuevas notificaciones
+ * - Cache local de notificaciones no leídas
+ * - Marcar como leídas en batch
  * - Sin timers locales (todo el procesamiento es server-side)
  */
 object SystemNotificationRepository {
@@ -51,7 +51,7 @@ object SystemNotificationRepository {
     private val _notifications = MutableStateFlow<List<SystemNotification>>(emptyList())
     val notifications: StateFlow<List<SystemNotification>> = _notifications.asStateFlow()
     
-    // Contador de no leÃ­das
+    // Contador de no leídas
     private val _unreadCount = MutableStateFlow(0)
     val unreadCount: StateFlow<Int> = _unreadCount.asStateFlow()
     
@@ -78,7 +78,7 @@ object SystemNotificationRepository {
     }
     
     /**
-     * Carga las notificaciones no leÃ­das del usuario
+     * Carga las notificaciones no leídas del usuario
      */
     private suspend fun loadNotifications() {
         val userId = currentUserId ?: return
@@ -106,7 +106,7 @@ object SystemNotificationRepository {
     
     
     /**
-     * Marca notificaciones como leÃ­das
+     * Marca notificaciones como leídas
      */
     suspend fun markAsRead(notificationIds: List<String>) = withContext(Dispatchers.IO) {
         if (notificationIds.isEmpty()) return@withContext
@@ -134,7 +134,7 @@ object SystemNotificationRepository {
     }
     
     /**
-     * Marca todas las notificaciones como leÃ­das
+     * Marca todas las notificaciones como leídas
      */
     suspend fun markAllAsRead() {
         val ids = _notifications.value.map { it.id }
@@ -149,7 +149,7 @@ object SystemNotificationRepository {
     }
     
     /**
-     * Limpia el repositorio al cerrar sesiÃ³n
+     * Limpia el repositorio al cerrar sesión
      */
     fun cleanup() {
         currentUserId = null

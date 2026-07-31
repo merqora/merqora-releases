@@ -1,6 +1,6 @@
 ﻿# Mercora AI Support System
 
-Sistema de IA de soporte interno para Rendly con arquitectura multi-lenguaje.
+Sistema de IA de soporte interno para Mercora con arquitectura multi-lenguaje.
 
 ## Arquitectura
 

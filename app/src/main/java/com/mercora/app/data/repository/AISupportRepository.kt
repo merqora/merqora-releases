@@ -374,7 +374,7 @@ object AISupportRepository {
             // Saludos
             lowerMessage.contains("hola") || lowerMessage.contains("buenos") || 
             lowerMessage.contains("buenas") -> {
-                """¡Hola! ?? Bienvenido al soporte de Vinzay.
+                """¡Hola! ?? Bienvenido al soporte de Mercora.
                 
 En este momento estoy funcionando en modo offline. Puedo ayudarte con información básica sobre:
 
@@ -427,7 +427,7 @@ Para problemas específicos de pago, intenta más tarde cuando el servicio esté
             // Ventas
             lowerMessage.contains("vender") || lowerMessage.contains("public") ||
             lowerMessage.contains("producto") -> {
-                """Para vender en Vinzay:
+                """Para vender en Mercora:
 
 1. Toca el botón **"+"** en la barra inferior
 2. Selecciona **"Publicación"**

@@ -153,7 +153,7 @@ fun CheckoutScreen(
                 CartRepository.clearCart()
                 MercadoPagoRepository.resetState()
                 // Split Payments: MP desembolsa automáticamente al vendedor.
-                // Merqora nunca custodia el dinero. No es necesario creditSeller().
+                // Mercora nunca custodia el dinero. No es necesario creditSeller().
                 val order = OrderRepository.getOrderById(state.orderId)
                 if (order != null) {
                     checkoutState = CheckoutState.PaymentSuccess(order)
@@ -1065,9 +1065,9 @@ private fun PaymentSuccessState(
                     if (savingPdf || pdfSaved) return@OutlinedButton
                     savingPdf = true
                     kotlinx.coroutines.MainScope().launch {
-                        val userId = com.vinzay.app.data.remote.SupabaseClient.auth.currentUserOrNull()?.id
+                        val userId = com.mercora.app.data.remote.SupabaseClient.auth.currentUserOrNull()?.id
                         if (userId != null) {
-                            val result = com.vinzay.app.data.repository.PDFRepository.generateAndUpload(
+                            val result = com.mercora.app.data.repository.PDFRepository.generateAndUpload(
                                 context = context,
                                 order = order,
                                 userId = userId,

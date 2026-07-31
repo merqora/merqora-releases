@@ -59,12 +59,12 @@ fun PostQrCodeModal(
     
     // Generar QR solo cuando hay un post
     val qrBitmap = remember(post?.id) {
-        post?.let { generateQrCode("vinzay://post/${it.id}") }
+        post?.let { generateQrCode("mercora://post/${it.id}") }
     }
     
     // Generar tarjeta QR completa para guardar
     val qrCardBitmap = remember(post?.id) {
-        post?.let { generateQrCardBitmap(it, generateQrCode("vinzay://post/${it.id}", 400)) }
+        post?.let { generateQrCardBitmap(it, generateQrCode("mercora://post/${it.id}", 400)) }
     }
     
     // Backdrop
@@ -222,7 +222,7 @@ fun PostQrCodeModal(
                             onClick = {
                                 isSaving = true
                                 qrCardBitmap?.let { bitmap ->
-                                    val saved = saveQrToGallery(context, bitmap, "Vinzay_qr_${post?.id?.take(8)}")
+                                    val saved = saveQrToGallery(context, bitmap, "Mercora_qr_${post?.id?.take(8)}")
                                     saveSuccess = saved
                                     if (saved) {
                                         android.widget.Toast.makeText(
@@ -344,7 +344,7 @@ private fun generateQrCardBitmap(post: Post, qrBitmap: Bitmap?): Bitmap? {
             textAlign = android.graphics.Paint.Align.CENTER
             isAntiAlias = true
         }
-        canvas.drawText("vinzay", cardWidth / 2f, 65f, logoPaint)
+        canvas.drawText("Mercora", cardWidth / 2f, 65f, logoPaint)
         
         // QR Code centrado
         val qrX = (cardWidth - qrSize) / 2f
@@ -393,7 +393,7 @@ private fun saveQrToGallery(context: android.content.Context, bitmap: Bitmap, fi
             put(MediaStore.Images.Media.DISPLAY_NAME, "$fileName.png")
             put(MediaStore.Images.Media.MIME_TYPE, "image/png")
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                put(MediaStore.Images.Media.RELATIVE_PATH, Environment.DIRECTORY_PICTURES + "/Merqora")
+                put(MediaStore.Images.Media.RELATIVE_PATH, Environment.DIRECTORY_PICTURES + "/Mercora")
                 put(MediaStore.Images.Media.IS_PENDING, 1)
             }
         }

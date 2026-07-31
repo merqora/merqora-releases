@@ -173,8 +173,8 @@ export default function AITrainingDashboard() {
   }
 
   const tabs = [
-    { id: 'metrics', label: 'MÃ©tricas', icon: BarChart3 },
-    { id: 'review', label: `RevisiÃ³n (${pendingReview.length})`, icon: Eye },
+    { id: 'metrics', label: 'Métricas', icon: BarChart3 },
+    { id: 'review', label: `Revisión (${pendingReview.length})`, icon: Eye },
     { id: 'errors', label: `Errores (${errors.length})`, icon: AlertTriangle },
     { id: 'intents', label: 'Intents', icon: Target },
     { id: 'training', label: 'Entrenamientos', icon: Zap },
@@ -272,11 +272,11 @@ function MetricsTab({ lm, ps }) {
     { label: 'Mensajes (24h)', value: lm.total_messages || 0, icon: MessageSquare, color: 'blue' },
     { label: 'IA Resueltos', value: lm.ai_resolved || 0, icon: CheckCircle, color: 'green' },
     { label: 'Escalados', value: lm.escalated || 0, icon: AlertTriangle, color: 'yellow' },
-    { label: 'Tasa EscalaciÃ³n', value: `${lm.escalation_rate || 0}%`, icon: TrendingUp, color: 'red' },
+    { label: 'Tasa Escalación', value: `${lm.escalation_rate || 0}%`, icon: TrendingUp, color: 'red' },
     { label: 'Confianza Prom.', value: `${lm.avg_confidence || 0}%`, icon: Target, color: 'purple' },
-    { label: 'Modelo Entrenado', value: ps.model_trained ? 'SÃ­' : 'No', icon: Brain, color: ps.model_trained ? 'green' : 'gray' },
+    { label: 'Modelo Entrenado', value: ps.model_trained ? 'Sí' : 'No', icon: Brain, color: ps.model_trained ? 'green' : 'gray' },
     { label: 'Intents Modelo', value: ps.model_intents || 0, icon: Database, color: 'indigo' },
-    { label: 'Desde Ãšltimo Train', value: ps.samples_since_last_train || 0, icon: Activity, color: 'orange' },
+    { label: 'Desde Último Train', value: ps.samples_since_last_train || 0, icon: Activity, color: 'orange' },
   ]
 
   const MessageSquare = ({ className }) => <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
@@ -299,7 +299,7 @@ function MetricsTab({ lm, ps }) {
       {/* Confidence Distribution */}
       {lm.confidence_distribution && (
         <div className="bg-gray-800/50 rounded-xl p-6 border border-gray-700/50">
-          <h3 className="text-lg font-semibold text-white mb-4">DistribuciÃ³n de Confianza</h3>
+          <h3 className="text-lg font-semibold text-white mb-4">Distribución de Confianza</h3>
           <div className="flex gap-2 items-end h-32">
             {Object.entries(lm.confidence_distribution).map(([range, count]) => {
               const max = Math.max(...Object.values(lm.confidence_distribution), 1)
@@ -350,8 +350,8 @@ function ReviewTab({ items, onCorrect, onEdit }) {
     return (
       <div className="bg-gray-800/50 rounded-xl p-12 text-center border border-gray-700/50">
         <CheckCircle className="w-12 h-12 text-green-400 mx-auto mb-3" />
-        <p className="text-gray-300 text-lg">No hay items pendientes de revisiÃ³n</p>
-        <p className="text-gray-500 text-sm mt-1">Los datos nuevos aparecerÃ¡n aquÃ­</p>
+        <p className="text-gray-300 text-lg">No hay items pendientes de revisión</p>
+        <p className="text-gray-500 text-sm mt-1">Los datos nuevos aparecerán aquí</p>
       </div>
     )
   }
@@ -359,7 +359,7 @@ function ReviewTab({ items, onCorrect, onEdit }) {
   return (
     <div className="space-y-3">
       <p className="text-sm text-gray-400">
-        {items.length} muestras pendientes de revisiÃ³n. Ordenadas por menor confianza primero.
+        {items.length} muestras pendientes de revisión. Ordenadas por menor confianza primero.
       </p>
       {items.map(item => (
         <TrainingDataCard
@@ -379,7 +379,7 @@ function ErrorsTab({ items, onEdit }) {
     return (
       <div className="bg-gray-800/50 rounded-xl p-12 text-center border border-gray-700/50">
         <CheckCircle className="w-12 h-12 text-green-400 mx-auto mb-3" />
-        <p className="text-gray-300 text-lg">No hay errores de clasificaciÃ³n detectados</p>
+        <p className="text-gray-300 text-lg">No hay errores de clasificación detectados</p>
       </div>
     )
   }
@@ -387,7 +387,7 @@ function ErrorsTab({ items, onEdit }) {
   return (
     <div className="space-y-3">
       <p className="text-sm text-gray-400">
-        {items.length} errores de clasificaciÃ³n (detected_intent â‰  correct_intent)
+        {items.length} errores de clasificación (detected_intent â‰  correct_intent)
       </p>
       {items.map(item => (
         <div key={item.id} className="bg-gray-800/50 rounded-xl p-4 border border-red-500/20">
@@ -423,7 +423,7 @@ function IntentsTab({ data }) {
     return (
       <div className="bg-gray-800/50 rounded-xl p-12 text-center border border-gray-700/50">
         <Target className="w-12 h-12 text-gray-500 mx-auto mb-3" />
-        <p className="text-gray-300">No hay datos de rendimiento por intent aÃºn</p>
+        <p className="text-gray-300">No hay datos de rendimiento por intent aún</p>
       </div>
     )
   }
@@ -475,7 +475,7 @@ function TrainingRunsTab({ runs }) {
       <div className="bg-gray-800/50 rounded-xl p-12 text-center border border-gray-700/50">
         <Zap className="w-12 h-12 text-gray-500 mx-auto mb-3" />
         <p className="text-gray-300">No hay entrenamientos registrados</p>
-        <p className="text-gray-500 text-sm mt-1">Ejecuta el primer entrenamiento con el botÃ³n de arriba</p>
+        <p className="text-gray-500 text-sm mt-1">Ejecuta el primer entrenamiento con el botón de arriba</p>
       </div>
     )
   }
@@ -569,7 +569,7 @@ function TestTab({ message, setMessage, result, onTest }) {
             </div>
           )}
           {!result.model_trained && (
-            <p className="text-yellow-400 text-sm mt-3">âš ï¸ El modelo ML no estÃ¡ entrenado. Ejecuta un entrenamiento primero.</p>
+            <p className="text-yellow-400 text-sm mt-3">âš ï¸ El modelo ML no está entrenado. Ejecuta un entrenamiento primero.</p>
           )}
         </div>
       )}
@@ -588,7 +588,7 @@ function TrainingDataCard({ item, onCorrect, onEdit }) {
           <p className="text-sm text-gray-200 mb-2">
             "{item.user_message?.slice(0, expanded ? 500 : 120)}"
             {!expanded && item.user_message?.length > 120 && (
-              <button onClick={() => setExpanded(true)} className="text-purple-400 ml-1">mÃ¡s</button>
+              <button onClick={() => setExpanded(true)} className="text-purple-400 ml-1">más</button>
             )}
           </p>
           <div className="flex flex-wrap gap-2 text-xs">
@@ -648,7 +648,7 @@ function CorrectionModal({ item, onSubmit, onClose }) {
     <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4" onClick={onClose}>
       <div className="bg-gray-800 rounded-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
         <div className="p-6 border-b border-gray-700">
-          <h3 className="text-lg font-semibold text-white">Corregir ClasificaciÃ³n</h3>
+          <h3 className="text-lg font-semibold text-white">Corregir Clasificación</h3>
         </div>
         <div className="p-6 space-y-4">
           {/* Original message */}
@@ -684,7 +684,7 @@ function CorrectionModal({ item, onSubmit, onClose }) {
             <textarea
               value={correctResponse}
               onChange={e => setCorrectResponse(e.target.value)}
-              placeholder="Deja vacÃ­o para mantener la respuesta actual"
+              placeholder="Deja vacío para mantener la respuesta actual"
               rows={3}
               className="w-full bg-gray-700 text-white rounded-lg px-3 py-2 border border-gray-600 focus:border-purple-500 focus:outline-none resize-none"
             />
@@ -697,7 +697,7 @@ function CorrectionModal({ item, onSubmit, onClose }) {
               type="text"
               value={notes}
               onChange={e => setNotes(e.target.value)}
-              placeholder="RazÃ³n de la correcciÃ³n..."
+              placeholder="Razón de la corrección..."
               className="w-full bg-gray-700 text-white rounded-lg px-3 py-2 border border-gray-600 focus:border-purple-500 focus:outline-none"
             />
           </div>
@@ -711,7 +711,7 @@ function CorrectionModal({ item, onSubmit, onClose }) {
             disabled={!correctIntent}
             className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-500 disabled:opacity-50"
           >
-            Guardar CorrecciÃ³n
+            Guardar Corrección
           </button>
         </div>
       </div>

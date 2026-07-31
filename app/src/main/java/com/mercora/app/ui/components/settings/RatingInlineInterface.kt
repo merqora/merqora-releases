@@ -82,7 +82,7 @@ fun RatingInlineInterface(
         
         Spacer(modifier = Modifier.height(12.dp))
         
-        // BotÃ³n enviar
+        // Botón enviar
         Button(
             onClick = onSubmit,
             enabled = selectedRating > 0,
@@ -94,7 +94,7 @@ fun RatingInlineInterface(
             )
         ) {
             Text(
-                text = "Enviar calificaciÃ³n",
+                text = "Enviar calificación",
                 fontSize = 14.sp,
                 fontWeight = FontWeight.SemiBold,
                 modifier = Modifier.padding(vertical = 4.dp)

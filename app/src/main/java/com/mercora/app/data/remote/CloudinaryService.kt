@@ -3,8 +3,15 @@
 import android.graphics.Bitmap
 import android.util.Log
 import com.mercora.app.BuildConfig
+import io.github.jan.supabase.functions.functions
+import io.ktor.client.call.body
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.jsonPrimitive
+import kotlinx.serialization.json.put
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
@@ -22,7 +29,7 @@ import java.util.concurrent.TimeUnit
 object CloudinaryService {
     private const val TAG = "CloudinaryService"
     private val CLOUD_NAME = BuildConfig.CLOUDINARY_CLOUD_NAME
-    private const val UPLOAD_PRESET = "Vinzay_unsigned" // Upload preset unsigned
+    private const val UPLOAD_PRESET = "Mercora_unsigned" // Upload preset unsigned
     private val UPLOAD_URL = "https://api.cloudinary.com/v1_1/$CLOUD_NAME/image/upload"
     
     private val client = OkHttpClient.Builder()
@@ -34,7 +41,7 @@ object CloudinaryService {
     suspend fun uploadImage(
         bitmap: Bitmap,
         folder: String = "stories",
-        mediaType: com.vinzay.app.media.MediaOptimizer.MediaType? = null,
+        mediaType: com.mercora.app.media.MediaOptimizer.MediaType? = null,
         onProgress: (Float) -> Unit = {}
     ): Result<String> = withContext(Dispatchers.IO) {
         try {
@@ -46,7 +53,7 @@ object CloudinaryService {
             val fileExtension: String
             
             if (mediaType != null) {
-                val result = com.vinzay.app.media.MediaOptimizer.optimize(bitmap, mediaType)
+                val result = com.mercora.app.media.MediaOptimizer.optimize(bitmap, mediaType)
                 imageBytes = result.bytes
                 contentType = result.contentType
                 fileExtension = result.extension
@@ -125,53 +132,38 @@ object CloudinaryService {
     }
     
     // ---------------------------------------------------------------
-    // DELETE - Eliminar imagen de Cloudinary (requiere API key + secret)
+    // DELETE - Eliminar imagen de Cloudinary (server-side, edge function)
     // ---------------------------------------------------------------
-    private val API_KEY = BuildConfig.CLOUDINARY_API_KEY
-    private val API_SECRET = BuildConfig.CLOUDINARY_API_SECRET
     
     /**
      * Elimina una imagen de Cloudinary usando su public_id
-     * Requiere API_KEY y API_SECRET configurados
+     * El destroy se ejecuta en la edge function "media-services"
+     * (la API_SECRET no viaja dentro del APK).
      */
     suspend fun deleteImage(publicId: String): Result<Boolean> = withContext(Dispatchers.IO) {
         try {
-            if (API_KEY.isBlank() || API_SECRET.isBlank()) {
-                Log.w(TAG, "Cloudinary API_KEY o API_SECRET no configurados, no se puede eliminar")
+            if (publicId.isBlank()) {
+                Log.w(TAG, "publicId vacío, no se puede eliminar")
                 return@withContext Result.success(false)
             }
             
-            val timestamp = (System.currentTimeMillis() / 1000).toString()
-            val toSign = "public_id=${publicId}&timestamp=${timestamp}${API_SECRET}"
-            val signature = java.security.MessageDigest.getInstance("SHA-1")
-                .digest(toSign.toByteArray())
-                .joinToString("") { "%02x".format(it) }
-            
-            val requestBody = MultipartBody.Builder()
-                .setType(MultipartBody.FORM)
-                .addFormDataPart("public_id", publicId)
-                .addFormDataPart("signature", signature)
-                .addFormDataPart("api_key", API_KEY)
-                .addFormDataPart("timestamp", timestamp)
-                .build()
-            
-            val request = Request.Builder()
-                .url("https://api.cloudinary.com/v1_1/$CLOUD_NAME/image/destroy")
-                .post(requestBody)
-                .build()
-            
-            val response = client.newCall(request).execute()
-            val body = response.body?.string() ?: ""
-            
-            if (response.isSuccessful) {
-                val json = JSONObject(body)
-                val result = json.optString("result", "")
-                Log.d(TAG, "Delete result for $publicId: $result")
-                Result.success(result == "ok")
-            } else {
-                Log.e(TAG, "Delete failed for $publicId: $body")
-                Result.success(false)
+            val response = try {
+                SupabaseClient.client.functions.invoke(
+                    function = "media-services",
+                    body = buildJsonObject {
+                        put("action", "cloudinary-delete")
+                        put("publicId", publicId)
+                    }
+                )
+            } catch (e: Exception) {
+                Log.e(TAG, "media-services(cloudinary-delete) error: ${e.message}", e)
+                return@withContext Result.failure(e)
             }
+            
+            val result = Json.decodeFromString<JsonObject>(response.body<String>())
+            val ok = result["ok"]?.jsonPrimitive?.content == "true"
+            Log.d(TAG, "Delete result for $publicId: ok=$ok")
+            Result.success(ok)
         } catch (e: Exception) {
             Log.e(TAG, "Delete exception for $publicId", e)
             Result.failure(e)

@@ -1,4 +1,4 @@
-# Rendly AI Support - Lightweight deploy (Python-only, C++/Rust in fallback)
+# Mercora AI Support - Lightweight deploy (Python-only, C++/Rust in fallback)
 # Use this for Railway/Render deployment where C++/Rust native builds aren't needed
 FROM python:3.11-slim
 

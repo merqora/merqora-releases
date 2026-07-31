@@ -48,13 +48,13 @@ object TrendRepository {
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
 
-    // Mapa de categorÃ­as de posts a categorÃ­as de tendencias
+    // Mapa de categorías de posts a categorías de tendencias
     private val categoryMap = mapOf(
         "Ropa" to "fashion",
         "Calzado" to "fashion",
         "Accesorios" to "fashion",
-        "ElectrÃ³nica" to "tech",
-        "TecnologÃ­a" to "tech",
+        "Electrónica" to "tech",
+        "Tecnología" to "tech",
         "Belleza" to "beauty",
         "Salud" to "beauty",
         "Hogar" to "home",
@@ -68,7 +68,7 @@ object TrendRepository {
         try {
             _isLoading.value = true
 
-            // 1. Cargar RENDS mÃ¡s populares (por views + likes) - NO posts
+            // 1. Cargar RENDS más populares (por views + likes) - NO posts
             val popularRends = SupabaseClient.database
                 .from("rends")
                 .select {
@@ -96,7 +96,7 @@ object TrendRepository {
             val trendItems = popularRends.mapIndexed { index, rend ->
                 val user = usersMap[rend.userId]
                 val trendCategory = categoryMap[rend.category] ?: "fashion"
-                // Usar el primer hashtag real del rend, o generar uno basado en descripciÃ³n
+                // Usar el primer hashtag real del rend, o generar uno basado en descripción
                 val firstTag = if (rend.hashtags.isNotEmpty()) {
                     val tag = rend.hashtags.first()
                     if (tag.startsWith("#")) tag else "#$tag"

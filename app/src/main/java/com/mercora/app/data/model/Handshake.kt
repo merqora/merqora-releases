@@ -4,21 +4,21 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 /**
- * Estados posibles de una transacciÃ³n handshake
+ * Estados posibles de una transacción handshake
  */
 enum class HandshakeStatus {
     PROPOSED,       // Esperando respuesta del receptor
-    ACCEPTED,       // Receptor aceptÃ³, deben encontrarse
+    ACCEPTED,       // Receptor aceptó, deben encontrarse
     RENEGOTIATING,  // Receptor propuso cambios
-    REJECTED,       // Receptor rechazÃ³
+    REJECTED,       // Receptor rechazó
     IN_PROGRESS,    // En proceso de encuentro
-    COMPLETED,      // TransacciÃ³n completada exitosamente
+    COMPLETED,      // Transacción completada exitosamente
     CANCELLED,      // Cancelado
     DISPUTED        // Hay una disputa
 }
 
 /**
- * Modelo principal de transacciÃ³n Handshake
+ * Modelo principal de transacción Handshake
  */
 @Serializable
 data class HandshakeTransaction(

@@ -24,6 +24,7 @@ gradle-app.setting
 # Local configuration file
 local.properties
 gradle.properties
+keystore.properties
 google-services.json
 **/google-services.json
 
@@ -48,3 +49,15 @@ __pycache__/
 # Node modules
 node_modules/
 ai-support/node_modules/
+
+# Supabase CLI local state
+supabase/.temp/
+
+# Kotlin/Gradle session state
+.kotlin/
+
+# Crash/log artifacts
+hs_err_pid*.log
+crash_log.txt
+full_logcat.txt
+replay_pid*.log

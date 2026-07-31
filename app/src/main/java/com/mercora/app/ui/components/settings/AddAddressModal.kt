@@ -83,10 +83,10 @@ fun AddAddressModal(
         val coarseLocationGranted = permissions[Manifest.permission.ACCESS_COARSE_LOCATION] == true
         
         if (fineLocationGranted || coarseLocationGranted) {
-            // Usar el mÃ©todo que NO verifica permisos porque ya sabemos que fueron concedidos
+            // Usar el método que NO verifica permisos porque ya sabemos que fueron concedidos
             viewModel.getCurrentLocationAfterPermission()
         } else {
-            snackbarMessage = "Se necesitan permisos de ubicaciÃ³n para detectar tu direcciÃ³n actual"
+            snackbarMessage = "Se necesitan permisos de ubicación para detectar tu dirección actual"
         }
     }
     
@@ -109,12 +109,12 @@ fun AddAddressModal(
                     onDismiss()
                 }
                 is AddressEvent.RequestLocationPermission -> {
-                    // Solicitar permisos - el launcher se encargarÃ¡ de llamar 
+                    // Solicitar permisos - el launcher se encargará de llamar 
                     // getCurrentLocationAfterPermission() cuando se concedan
                     requestCurrentLocation()
                 }
                 is AddressEvent.Error -> {
-                    // Siempre mostrar un mensaje, nunca vacÃ­o
+                    // Siempre mostrar un mensaje, nunca vacío
                     snackbarMessage = if (event.message.isNotBlank()) {
                         event.message
                     } else {
@@ -255,10 +255,10 @@ fun AddAddressModal(
                     
                     // Label Input
                     AddressFormField(
-                        label = "Nombre de la direcciÃ³n",
+                        label = "Nombre de la dirección",
                         value = uiState.label,
                         onValueChange = { viewModel.updateLabel(it) },
-                        placeholder = "Ej: Casa, Trabajo, Casa de mamÃ¡",
+                        placeholder = "Ej: Casa, Trabajo, Casa de mamá",
                         leadingIcon = Icons.Outlined.Label
                     )
                     
@@ -405,7 +405,7 @@ private fun AddAddressHeader(
             }
 
             Text(
-                text = if (isEditing) "Editar direcciÃ³n" else "Nueva direcciÃ³n",
+                text = if (isEditing) "Editar dirección" else "Nueva dirección",
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
                 color = TextPrimary
@@ -484,13 +484,13 @@ private fun UseCurrentLocationButton(
             
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = "Usar mi ubicaciÃ³n actual",
+                    text = "Usar mi ubicación actual",
                     fontSize = 15.sp,
                     fontWeight = FontWeight.SemiBold,
                     color = Color(0xFF1565A0)
                 )
                 Text(
-                    text = "Detectar direcciÃ³n automÃ¡ticamente por GPS",
+                    text = "Detectar dirección automáticamente por GPS",
                     fontSize = 12.sp,
                     color = TextSecondary
                 )
@@ -548,7 +548,7 @@ private fun SelectOnMapButton(
                     color = Color(0xFFFF6B35)
                 )
                 Text(
-                    text = "Marca la ubicaciÃ³n exacta con el pin",
+                    text = "Marca la ubicación exacta con el pin",
                     fontSize = 12.sp,
                     color = TextSecondary
                 )
@@ -582,7 +582,7 @@ private fun AddressSearchField(
             modifier = Modifier.fillMaxWidth(),
             placeholder = {
                 Text(
-                    text = "Buscar direcciÃ³n...",
+                    text = "Buscar dirección...",
                     color = TextMuted
                 )
             },
@@ -718,11 +718,11 @@ private fun ValidationStatusCard(
     }
     
     val statusText = when {
-        isValidating -> "Validando direcciÃ³n..."
-        validationResult == null -> "Pendiente de validaciÃ³n"
-        validationResult.isValid -> "DirecciÃ³n vÃ¡lida"
-        validationResult.isSuspicious -> "DirecciÃ³n dudosa"
-        else -> "DirecciÃ³n invÃ¡lida"
+        isValidating -> "Validando dirección..."
+        validationResult == null -> "Pendiente de validación"
+        validationResult.isValid -> "Dirección válida"
+        validationResult.isSuspicious -> "Dirección dudosa"
+        else -> "Dirección inválida"
     }
     
     val statusIcon = when {
@@ -822,7 +822,7 @@ private fun MapPreviewCard(
                 // Load static map from Mapbox
                 AsyncImage(
                     model = mapUrl,
-                    contentDescription = "Mapa de ubicaciÃ³n",
+                    contentDescription = "Mapa de ubicación",
                     modifier = Modifier.fillMaxSize(),
                     contentScale = ContentScale.Crop
                 )
@@ -908,7 +908,7 @@ private fun AddressTypeSelector(
 ) {
     Column {
         Text(
-            text = "TIPO DE DIRECCIÃ“N",
+            text = "TIPO DE DIRECCIÓN",
             fontSize = 11.sp,
             fontWeight = FontWeight.Bold,
             color = TextMuted,
@@ -1071,13 +1071,13 @@ private fun SetAsDefaultSwitch(
             
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = "DirecciÃ³n principal",
+                    text = "Dirección principal",
                     fontSize = 15.sp,
                     fontWeight = FontWeight.SemiBold,
                     color = TextPrimary
                 )
                 Text(
-                    text = "Usar como direcciÃ³n predeterminada",
+                    text = "Usar como dirección predeterminada",
                     fontSize = 12.sp,
                     color = TextSecondary
                 )

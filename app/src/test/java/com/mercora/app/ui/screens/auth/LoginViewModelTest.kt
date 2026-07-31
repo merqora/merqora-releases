@@ -69,7 +69,7 @@ class LoginViewModelTest {
     @Test
     fun `validateEmail with invalid email format sets error`() {
         viewModel.validateEmail("not@valid")
-        assertEquals("Correo electrÃ³nico no vÃ¡lido", viewModel.uiState.value.emailError)
+        assertEquals("Correo electrónico no válido", viewModel.uiState.value.emailError)
     }
 
     @Test
@@ -93,7 +93,7 @@ class LoginViewModelTest {
     @Test
     fun `validatePassword with short password sets error`() {
         viewModel.validatePassword("12345")
-        assertEquals("MÃ­nimo 6 caracteres", viewModel.uiState.value.passwordError)
+        assertEquals("Mínimo 6 caracteres", viewModel.uiState.value.passwordError)
     }
 
     @Test
@@ -140,7 +140,7 @@ class LoginViewModelTest {
     fun `login with empty password shows error`() {
         viewModel.login("test@test.com", "", false)
         testDispatcher.scheduler.advanceUntilIdle()
-        assertEquals("Ingresa tu contraseÃ±a", viewModel.uiState.value.passwordError)
+        assertEquals("Ingresa tu contraseña", viewModel.uiState.value.passwordError)
         assertFalse(viewModel.uiState.value.isLoading)
     }
 
@@ -148,7 +148,7 @@ class LoginViewModelTest {
     fun `login with short password shows error`() {
         viewModel.login("test@test.com", "12345", false)
         testDispatcher.scheduler.advanceUntilIdle()
-        assertEquals("ContraseÃ±a demasiado corta", viewModel.uiState.value.passwordError)
+        assertEquals("Contraseña demasiado corta", viewModel.uiState.value.passwordError)
         assertFalse(viewModel.uiState.value.isLoading)
     }
 }

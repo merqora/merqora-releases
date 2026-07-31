@@ -46,7 +46,7 @@ fun AdvancedFilterModal(
 ) {
     var localState by remember(currentState) { mutableStateOf(currentState) }
     
-    // Control de Slider de precio (0 a 100 para escala logarÃ­tmica/personalizada)
+    // Control de Slider de precio (0 a 100 para escala logarítmica/personalizada)
     // 0 = $0, 25 = $500, 50 = $2000, 75 = $10000, 100 = $200000+
     fun priceToSteps(price: Double): Float {
         return when {
@@ -159,7 +159,7 @@ fun AdvancedFilterModal(
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
                                     PriceInput(
-                                        label = "MÃ­nimo",
+                                        label = "Mínimo",
                                         value = minPriceInput,
                                         onValueChange = {
                                             minPriceInput = it
@@ -181,7 +181,7 @@ fun AdvancedFilterModal(
                                     )
                                     
                                     PriceInput(
-                                        label = "MÃ¡ximo",
+                                        label = "Máximo",
                                         value = maxPriceInput,
                                         onValueChange = {
                                             maxPriceInput = it
@@ -202,7 +202,7 @@ fun AdvancedFilterModal(
                                         stepsRange = it
                                     },
                                     valueRange = 0f..100f,
-                                    steps = 0, // Continuo para mÃ¡xima precisiÃ³n
+                                    steps = 0, // Continuo para máxima precisión
                                     colors = SliderDefaults.colors(
                                         activeTrackColor = PrimaryPurple,
                                         inactiveTrackColor = TextMuted.copy(alpha = 0.2f),
@@ -256,10 +256,10 @@ fun AdvancedFilterModal(
                             }
                         }
                         
-                        // EnvÃ­o
+                        // Envío
                         item {
                             Column {
-                                FilterTitle("Opciones de EnvÃ­o")
+                                FilterTitle("Opciones de Envío")
                                 Spacer(modifier = Modifier.height(12.dp))
                                 Row(
                                     modifier = Modifier
@@ -278,7 +278,7 @@ fun AdvancedFilterModal(
                                             modifier = Modifier.size(20.dp)
                                         )
                                         Spacer(modifier = Modifier.width(12.dp))
-                                        Text("Solo envÃ­o gratis", color = TextPrimary, fontSize = 15.sp)
+                                        Text("Solo envío gratis", color = TextPrimary, fontSize = 15.sp)
                                     }
                                     Switch(
                                         checked = localState.freeShipping,
@@ -296,10 +296,10 @@ fun AdvancedFilterModal(
                             }
                         }
                         
-                        // UbicaciÃ³n
+                        // Ubicación
                         item {
                             Column {
-                                FilterTitle("UbicaciÃ³n")
+                                FilterTitle("Ubicación")
                                 Spacer(modifier = Modifier.height(12.dp))
                                 Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                                     LocationChip(
@@ -327,7 +327,7 @@ fun AdvancedFilterModal(
                         }
                     }
                     
-                    // Botones de acciÃ³n
+                    // Botones de acción
                     Surface(
                         modifier = Modifier.fillMaxWidth(),
                         color = SurfaceDark,

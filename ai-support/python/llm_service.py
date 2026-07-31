@@ -1,10 +1,10 @@
-﻿"""
-LLM Service - Sistema de IA hÃ­brido para Vinzay
+"""
+LLM Service - Sistema de IA híbrido para Mercora
 
 Combina:
 - Groq (Llama 3 70B) como LLM principal
 - Modelo local entrenado como fallback
-- CachÃ© inteligente y aprendizaje continuo
+- Caché inteligente y aprendizaje continuo
 """
 
 import os
@@ -145,9 +145,9 @@ class ResponseCache:
 
 
 class HybridLLMService:
-    SYSTEM_PROMPT = """Eres el asistente de soporte de Vinzay, una aplicacion de compra-venta similar a Wallapop/Mercado Libre.
+    SYSTEM_PROMPT = """Eres el asistente de soporte de Mercora, una aplicacion de compra-venta similar a Wallapop/Mercado Libre.
 
-CONOCIMIENTO DE Vinzay:
+CONOCIMIENTO DE Mercora:
 - Comision por venta: 10%
 - Tiempo de envio estandar: 5-10 dias habiles
 - Tiempo de envio express: 2-4 dias habiles

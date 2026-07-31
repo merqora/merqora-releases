@@ -149,9 +149,9 @@ fun PrexSettingsScreen(
                         }
                         Spacer(Modifier.width(12.dp))
                         Column(modifier = Modifier.weight(1f)) {
-                            Text("Â¿CÃ³mo funciona?", fontSize = 15.sp, fontWeight = FontWeight.Bold, color = TextPrimary)
+                            Text("¿Cómo funciona?", fontSize = 15.sp, fontWeight = FontWeight.Bold, color = TextPrimary)
                             Text(
-                                "ConfigurÃ¡ tus datos de Prex para recibir pagos de otros usuarios. Al pagarte, ellos transferirÃ¡n directo a tu cuenta.",
+                                "Configurá tus datos de Prex para recibir pagos de otros usuarios. Al pagarte, ellos transferirán directo a tu cuenta.",
                                 fontSize = 12.sp, color = TextSecondary
                             )
                         }
@@ -170,7 +170,7 @@ fun PrexSettingsScreen(
                         PrexField(
                             value = prexPhone,
                             onValueChange = { prexPhone = it },
-                            label = "TelÃ©fono",
+                            label = "Teléfono",
                             placeholder = "099 123 456",
                             icon = Icons.Outlined.Phone,
                             keyboardType = KeyboardType.Phone
@@ -179,7 +179,7 @@ fun PrexSettingsScreen(
                         PrexField(
                             value = prexAccount,
                             onValueChange = { prexAccount = it },
-                            label = "NÃºmero de cuenta",
+                            label = "Número de cuenta",
                             placeholder = "1234567890",
                             icon = Icons.Outlined.Pin,
                             keyboardType = KeyboardType.Number

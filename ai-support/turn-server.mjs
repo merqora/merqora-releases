@@ -3,8 +3,8 @@
 const server = createServer({
   auth: {
     mechanism: 'long-term',
-    realm: 'rendly.local',
-    credentials: { rendly: '***REMOVED***' }
+    realm: 'mercora.local',
+    credentials: { mercora: '***REMOVED***' }
   },
   relay: {
     ip: '0.0.0.0',

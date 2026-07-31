@@ -13,19 +13,19 @@ import kotlin.random.Random
 /**
  * Motor de ajuste de imagen ULTRA-OPTIMIZADO
  * - LUTs precalculadas para conversiones sRGB (evita pow() costoso)
- * - Procesamiento en resoluciÃ³n reducida para imÃ¡genes grandes
+ * - Procesamiento en resolución reducida para imágenes grandes
  * - Procesamiento paralelo por chunks
  */
 object ImageAdjustEngine {
     
-    // NÃºmero de threads para procesamiento paralelo
+    // Número de threads para procesamiento paralelo
     private val NUM_THREADS = Runtime.getRuntime().availableProcessors().coerceIn(4, 8)
     
-    // TamaÃ±o mÃ¡ximo para procesamiento directo (mÃ¡s grande = procesar en resoluciÃ³n reducida)
+    // Tamaño máximo para procesamiento directo (más grande = procesar en resolución reducida)
     private const val MAX_DIRECT_PIXELS = 1_000_000 // ~1000x1000
     
     // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-    // LUTs PRECALCULADAS - Evita cÃ¡lculos pow() costosos
+    // LUTs PRECALCULADAS - Evita cálculos pow() costosos
     // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
     private val srgbToLinearLUT = FloatArray(256) { i ->
         val v = i / 255f
@@ -40,7 +40,7 @@ object ImageAdjustEngine {
         (result * 255f).coerceIn(0f, 255f)
     }
     
-    // Conversiones usando LUTs (MUCHO mÃ¡s rÃ¡pido)
+    // Conversiones usando LUTs (MUCHO más rápido)
     private fun srgbToLinearFast(byteVal: Int): Float = srgbToLinearLUT[byteVal]
     
     private fun linearToSrgbFast(linear: Float): Int {
@@ -61,7 +61,7 @@ object ImageAdjustEngine {
     
     /**
      * Aplica todos los ajustes profesionales en un solo paso
-     * ULTRA-OPTIMIZADO: LUTs + paralelo + resoluciÃ³n reducida para imÃ¡genes grandes
+     * ULTRA-OPTIMIZADO: LUTs + paralelo + resolución reducida para imágenes grandes
      */
     fun applyAdjustmentsFull(
         bitmap: Bitmap,
@@ -79,7 +79,7 @@ object ImageAdjustEngine {
         val height = bitmap.height
         val totalPixels = width * height
         
-        // Para imÃ¡genes muy grandes, procesar en resoluciÃ³n reducida
+        // Para imágenes muy grandes, procesar en resolución reducida
         if (totalPixels > MAX_DIRECT_PIXELS) {
             applyAdjustmentsScaled(bitmap, brightness, contrast, saturation, 
                 exposure, highlights, shadows, temperature, tint, grain)
@@ -110,7 +110,7 @@ object ImageAdjustEngine {
         
         val chunkSize = (totalPixels + NUM_THREADS - 1) / NUM_THREADS
         
-        // Usar threads nativos en vez de runBlocking para evitar contenciÃ³n
+        // Usar threads nativos en vez de runBlocking para evitar contención
         // con Dispatchers.Default cuando se llama desde withContext(Default)
         val threads = Array(NUM_THREADS) { threadIdx ->
             Thread {
@@ -122,12 +122,12 @@ object ImageAdjustEngine {
                         val pixel = pixels[i]
                         val a = (pixel shr 24) and 0xFF
                         
-                        // 1. sRGB â†’ Linear usando LUT (RÃPIDO)
+                        // 1. sRGB â†’ Linear usando LUT (RÁPIDO)
                         var r = srgbToLinearFast((pixel shr 16) and 0xFF)
                         var g = srgbToLinearFast((pixel shr 8) and 0xFF)
                         var b = srgbToLinearFast(pixel and 0xFF)
                         
-                        // 2. ExposiciÃ³n
+                        // 2. Exposición
                         if (hasExposure) {
                             r *= expFactor
                             g *= expFactor
@@ -189,7 +189,7 @@ object ImageAdjustEngine {
                             b *= brightnessFactor
                         }
                         
-                        // 8. SaturaciÃ³n perceptual
+                        // 8. Saturación perceptual
                         if (hasSaturation) {
                             val lum = getLuminance(r, g, b)
                             r = lum + (r - lum) * satFactor
@@ -197,7 +197,7 @@ object ImageAdjustEngine {
                             b = lum + (b - lum) * satFactor
                         }
                         
-                        // 9-10. Clamp + Linear â†’ sRGB usando LUT (RÃPIDO)
+                        // 9-10. Clamp + Linear â†’ sRGB usando LUT (RÁPIDO)
                         val rOut = linearToSrgbFast(r)
                         val gOut = linearToSrgbFast(g)
                         val bOut = linearToSrgbFast(b)
@@ -236,7 +236,7 @@ object ImageAdjustEngine {
     }
     
     /**
-     * Procesa imagen grande en resoluciÃ³n reducida (MUCHO mÃ¡s rÃ¡pido)
+     * Procesa imagen grande en resolución reducida (MUCHO más rápido)
      */
     private fun applyAdjustmentsScaled(
         bitmap: Bitmap,
@@ -254,17 +254,17 @@ object ImageAdjustEngine {
         // Crear bitmap escalado
         val scaled = Bitmap.createScaledBitmap(bitmap, scaledW, scaledH, true)
         
-        // Aplicar ajustes al bitmap pequeÃ±o (rÃ¡pido)
+        // Aplicar ajustes al bitmap pequeño (rápido)
         val pixels = IntArray(scaledW * scaledH)
         scaled.getPixels(pixels, 0, scaledW, 0, 0, scaledW, scaledH)
         
-        // Procesar directamente sin mÃ¡s recursiÃ³n
+        // Procesar directamente sin más recursión
         processPixelsDirectly(pixels, brightness, contrast, saturation, exposure,
             highlights, shadows, temperature, tint, grain)
         
         scaled.setPixels(pixels, 0, scaledW, 0, 0, scaledW, scaledH)
         
-        // Escalar de vuelta al tamaÃ±o original
+        // Escalar de vuelta al tamaño original
         val result = Bitmap.createScaledBitmap(scaled, width, height, true)
         
         // Copiar resultado al bitmap original
@@ -278,7 +278,7 @@ object ImageAdjustEngine {
     }
     
     /**
-     * Procesa pixels directamente sin crear coroutines (para bitmaps pequeÃ±os)
+     * Procesa pixels directamente sin crear coroutines (para bitmaps pequeños)
      */
     private fun processPixelsDirectly(
         pixels: IntArray,
@@ -365,7 +365,7 @@ object ImageAdjustEngine {
     }
     
     /**
-     * VersiÃ³n legacy para compatibilidad
+     * Versión legacy para compatibilidad
      */
     fun applyAdjustments(
         bitmap: Bitmap,
@@ -379,7 +379,7 @@ object ImageAdjustEngine {
     }
     
     /**
-     * Aplica solo brillo para preview rÃ¡pido
+     * Aplica solo brillo para preview rápido
      */
     fun applyBrightness(bitmap: Bitmap, value: Float) {
         val cm = ColorMatrix().apply {
@@ -389,7 +389,7 @@ object ImageAdjustEngine {
     }
     
     /**
-     * Aplica solo contraste para preview rÃ¡pido
+     * Aplica solo contraste para preview rápido
      */
     fun applyContrast(bitmap: Bitmap, value: Float) {
         val scale = 1f + value
@@ -412,10 +412,10 @@ object ImageAdjustEngine {
     }
     
     /**
-     * Resetea el cache de LUTs (no-op en implementaciÃ³n Kotlin)
+     * Resetea el cache de LUTs (no-op en implementación Kotlin)
      */
     fun resetCache() {
-        // No-op - sin cache en implementaciÃ³n Kotlin
+        // No-op - sin cache en implementación Kotlin
     }
     
     /**
@@ -469,7 +469,7 @@ object ImageAdjustEngine {
     }
     
     /**
-     * VersiÃ³n legacy - Crea una copia del bitmap y aplica ajustes bÃ¡sicos
+     * Versión legacy - Crea una copia del bitmap y aplica ajustes básicos
      */
     fun applyAdjustmentsCopy(
         source: Bitmap,

@@ -92,7 +92,7 @@ object MercadoPagoRepository {
     private fun fixSandboxUrl(url: String): String = url
     
     // Deep link scheme (debe coincidir con AndroidManifest)
-    const val DEEP_LINK_SCHEME = "vinzay"
+    const val DEEP_LINK_SCHEME = "Mercora"
     const val DEEP_LINK_HOST_SUCCESS = "payment/success"
     const val DEEP_LINK_HOST_FAILURE = "payment/failure"
     const val DEEP_LINK_HOST_PENDING = "payment/pending"
@@ -218,7 +218,7 @@ object MercadoPagoRepository {
             currentOrderId = orderId
             
             // Crear intent para la Activity con WebView
-            val intent = Intent(activity, Class.forName("com.vinzay.app.ui.screens.checkout.MercadoPagoCheckoutActivity")).apply {
+            val intent = Intent(activity, Class.forName("com.mercora.app.ui.screens.checkout.MercadoPagoCheckoutActivity")).apply {
                 putExtra("checkout_url", checkoutUrl)
                 putExtra("order_id", orderId)
             }

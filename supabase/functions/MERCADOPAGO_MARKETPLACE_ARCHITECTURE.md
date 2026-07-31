@@ -2,11 +2,11 @@
 
 ## Overview
 
-Vinzay acts as a **Mercado Pago Marketplace**. When a buyer pays:
+Mercora acts as a **Mercado Pago Marketplace**. When a buyer pays:
 
 1. MP creates the payment using the **seller's access_token** (obtained via OAuth)
-2. MP **automatically splits** the payment: seller receives `(total - commission)`, Vinzay receives the commission
-3. **Vinzay NEVER custodies the money**. Funds flow directly: Buyer â†’ MP â†’ Seller + Vinzay
+2. MP **automatically splits** the payment: seller receives `(total - commission)`, Mercora receives the commission
+3. **Mercora NEVER custodies the money**. Funds flow directly: Buyer â†’ MP â†’ Seller + Mercora
 
 ## Key Concepts
 
@@ -16,7 +16,7 @@ Vinzay acts as a **Mercado Pago Marketplace**. When a buyer pays:
 - Both the seller and the platform receive their portion directly from MP
 
 ### OAuth Flow
-- Sellers connect their MP accounts via OAuth â†’ Vinzay stores their `access_token` (encrypted)
+- Sellers connect their MP accounts via OAuth â†’ Mercora stores their `access_token` (encrypted)
 - The `access_token` is used server-side only (never exposed to the client)
 - Token exchange happens via Edge Function (keeps `client_secret` secure)
 
@@ -48,7 +48,7 @@ Vinzay acts as a **Mercado Pago Marketplace**. When a buyer pays:
 ## Setup Instructions
 
 ### 1. Mercado Pago Application Setup
-1. Register Vinzay as a **Marketplace application** at https://www.mercadopago.com.uy/developers
+1. Register Mercora as a **Marketplace application** at https://www.mercadopago.com.uy/developers
 2. Get `client_id` and `client_secret`
 3. Get `access_token` for the platform account (for webhook queries)
 4. Configure `redirect_uri` for OAuth: `mercora://mp-oauth/callback`

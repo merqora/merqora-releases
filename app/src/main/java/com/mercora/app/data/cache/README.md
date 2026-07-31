@@ -1,4 +1,4 @@
-# Sistema de Caching Cache-First para Rendly
+# Sistema de Caching Cache-First para Mercora
 
 ## Resumen Ejecutivo
 
@@ -44,7 +44,7 @@ Sistema de caching profesional en capas inspirado en la arquitectura real de app
 - Invalidación por pattern matching
 - Estadísticas de hit/miss para debugging
 
-### 2. Room Database (`db/RendlyDatabase.kt`)
+### 2. Room Database (`db/MercoraDatabase.kt`)
 - Entities normalizadas con indices optimizados
 - Campo `cached_at` para TTL
 - Campo `version` para comparación de cambios
@@ -219,7 +219,7 @@ data/cache/
 ├── db/
 │   ├── CacheEntities.kt      # Room entities
 │   ├── CacheDao.kt           # DAOs optimizados
-│   └── RendlyDatabase.kt     # Database singleton
+│   └── MercoraDatabase.kt     # Database singleton
 ├── network/
 │   ├── RequestDeduplicator.kt # Deduplicación de requests
 │   └── SupabaseDataSource.kt  # Network layer

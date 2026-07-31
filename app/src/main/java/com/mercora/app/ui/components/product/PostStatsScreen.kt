@@ -79,7 +79,7 @@ fun PostStatsScreen(
 
                         item {
                             Text(
-                                text = "MÃ©tricas principales",
+                                text = "Métricas principales",
                                 fontSize = 18.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = TextPrimary
@@ -156,7 +156,7 @@ private fun StatsHeader(title: String, onClose: () -> Unit) {
     ) {
         Column(modifier = Modifier.weight(1f)) {
             Text(
-                text = "EstadÃ­sticas",
+                text = "Estadísticas",
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Bold,
                 color = TextPrimary
@@ -206,10 +206,10 @@ private fun TimeSincePublishSection(createdAt: String) {
             if (diffDays == 0L) {
                 "Publicado hoy ($formattedDate)"
             } else {
-                "Publicado hace $diffDays dÃ­as ($formattedDate)"
+                "Publicado hace $diffDays días ($formattedDate)"
             }
         } catch (e: Exception) {
-            "Fecha de publicaciÃ³n desconocida"
+            "Fecha de publicación desconocida"
         }
     }
 
@@ -241,7 +241,7 @@ private fun TimeSincePublishSection(createdAt: String) {
             Spacer(modifier = Modifier.width(14.dp))
             Column {
                 Text(
-                    text = "AntigÃ¼edad",
+                    text = "Antigüedad",
                     fontSize = 13.sp,
                     color = TextSecondary
                 )
@@ -360,7 +360,7 @@ private fun EngagementChart(likes: Int, saves: Int, shares: Int, reviews: Int) {
             Spacer(modifier = Modifier.height(16.dp))
             ChartRow("Compartidos", shares, total, Color(0xFF2E8B57))
             Spacer(modifier = Modifier.height(16.dp))
-            ChartRow("ReseÃ±as", reviews, total, Color(0xFF8B5CF6))
+            ChartRow("Reseñas", reviews, total, Color(0xFF8B5CF6))
         }
     }
 }

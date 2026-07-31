@@ -1,9 +1,6 @@
-﻿package com.mercora.app.ui.screens.auth
+package com.mercora.app.ui.screens.auth
 
 import android.content.Context
-import android.content.Intent
-import android.os.Build
-import android.provider.Settings
 import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricPrompt
 import androidx.compose.animation.*
@@ -29,6 +26,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.focus.FocusDirection
@@ -56,7 +54,8 @@ import com.mercora.app.ui.theme.*
 fun LoginScreen(
     onNavigateToRegister: () -> Unit,
     onNavigateToHome: () -> Unit,
-    onNavigateToForgotPassword: () -> Unit = {}
+    onNavigateToForgotPassword: () -> Unit = {},
+    dismissSplash: () -> Unit = {}
 ) {
     // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
     // COLD START: Check session immediately â€” instant redirect if logged in
@@ -68,8 +67,8 @@ fun LoginScreen(
     var sessionUserId by remember { mutableStateOf("") }
     var biometricEnrolledInApp by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) {
-        val loggedIn = com.vinzay.app.data.remote.SessionPersistence.isLoggedIn()
-        val userId = com.vinzay.app.data.remote.SessionPersistence.getUserId() ?: ""
+        val loggedIn = com.mercora.app.data.remote.SessionPersistence.isLoggedIn()
+        val userId = com.mercora.app.data.remote.SessionPersistence.getUserId() ?: ""
         hasSession = loggedIn
         sessionUserId = userId
         if (loggedIn && userId.isNotEmpty()) {
@@ -97,12 +96,11 @@ fun LoginScreen(
     val viewModel: LoginViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsState()
 
-    // Post-login biometric enrollment state
-    var showPostLoginEnrollment by remember { mutableStateOf(false) }
-    var postLoginUserId by remember { mutableStateOf("") }
+    // Inline biometric enrollment (tapped from fingerprint button)
+    var showInlineEnrollment by remember { mutableStateOf(false) }
     
     // Auto-trigger biometric prompt if enrolled
-    val activity = context as? androidx.fragment.app.FragmentActivity
+    val activity = context as? FragmentActivity
     LaunchedEffect(hasSession, biometricEnrolledInApp) {
         if (hasSession && biometricEnrolledInApp && activity != null && !uiState.isAuthenticated) {
             val biometricManager = BiometricManager.from(context)
@@ -111,15 +109,13 @@ fun LoginScreen(
                     activity, androidx.core.content.ContextCompat.getMainExecutor(activity),
                     object : BiometricPrompt.AuthenticationCallback() {
                         override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
-                            val uname = com.vinzay.app.data.remote.SessionPersistence.getUsername()
-                            if (!uname.isNullOrEmpty()) com.vinzay.app.data.model.WelcomeState.trigger(uname)
                             onNavigateToHome()
                         }
                     }
                 )
                 prompt.authenticate(
                     BiometricPrompt.PromptInfo.Builder()
-                        .setTitle("Inicio de sesiÃ³n biomÃ©trico")
+                        .setTitle("Inicio de sesión biométrico")
                         .setSubtitle("Usa tu huella para acceder")
                         .setAllowedAuthenticators(
                             BiometricManager.Authenticators.BIOMETRIC_STRONG or
@@ -131,42 +127,35 @@ fun LoginScreen(
         }
     }
     
-    // React to auth success
+    // React to auth success — navegar a Home directamente, sin auto-enrollment
     LaunchedEffect(uiState.isAuthenticated) {
         if (uiState.isAuthenticated) {
-            val loggedUsername = com.vinzay.app.data.remote.SessionPersistence.getUsername()
-            if (!loggedUsername.isNullOrEmpty()) {
-                com.vinzay.app.data.model.WelcomeState.trigger(loggedUsername)
-            }
-            
+            dismissSplash()
             prefs.edit()
                 .putBoolean("remember_me", rememberMe)
                 .putString("last_username", if (rememberMe) emailOrUsername else "")
                 .apply()
-            val uid = SessionPersistence.getUserId()
-            if (uiState.isBiometricAvailable && uid != null && !BiometricEnrollmentManager.isEnrolled(context, uid)) {
-                postLoginUserId = uid
-                showPostLoginEnrollment = true
-            } else {
-                onNavigateToHome()
-            }
+            onNavigateToHome()
         }
     }
 
-    // Show biometric enrollment after first login
-    if (showPostLoginEnrollment && postLoginUserId.isNotEmpty()) {
-        BiometricEnrollmentScreen(
-            userId = postLoginUserId,
-            onComplete = {
-                showPostLoginEnrollment = false
-                onNavigateToHome()
-            },
-            onSkip = {
-                showPostLoginEnrollment = false
-                onNavigateToHome()
-            }
-        )
-        return
+    // Show inline enrollment when user taps "iniciar con huella" without being enrolled
+    if (showInlineEnrollment) {
+        val inlineUserId = SessionPersistence.getUserId() ?: ""
+        if (inlineUserId.isNotEmpty()) {
+            BiometricEnrollmentScreen(
+                userId = inlineUserId,
+                onComplete = {
+                    showInlineEnrollment = false
+                },
+                onSkip = {
+                    showInlineEnrollment = false
+                }
+            )
+            return
+        } else {
+            showInlineEnrollment = false
+        }
     }
 
     // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
@@ -177,6 +166,7 @@ fun LoginScreen(
             .fillMaxSize()
             .background(HomeBg)
     ) {
+        AuthBackground()
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -211,7 +201,7 @@ fun LoginScreen(
             Surface(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(20.dp),
-                color = Surface.copy(alpha = 0.6f),
+                color = Surface.copy(alpha = 0.85f),
                 tonalElevation = 0.dp
             ) {
                 Column(modifier = Modifier.padding(24.dp)) {
@@ -269,8 +259,8 @@ fun LoginScreen(
                             passwordDirty = true
                             viewModel.validatePassword(it)
                         },
-                        label = "ContraseÃ±a",
-                        placeholder = "â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢",
+                        label = "Contraseña",
+                        placeholder = "········",
                         leadingIcon = Icons.Outlined.Lock,
                         trailingIcon = {
                             IconButton(onClick = { showPassword = !showPassword }, modifier = Modifier.size(40.dp)) {
@@ -320,7 +310,7 @@ fun LoginScreen(
                         }
 
                         Text(
-                            text = "Â¿Olvidaste?",
+                            text = "¿Olvidaste?",
                             color = PrimaryPurple,
                             fontSize = 13.sp,
                             fontWeight = FontWeight.SemiBold,
@@ -354,7 +344,7 @@ fun LoginScreen(
 
                     // â•â•â• LOGIN BUTTON â•â•â•
                     GradientButton(
-                        text = "Iniciar SesiÃ³n",
+                        text = "Iniciar Sesión",
                         icon = Icons.Filled.ArrowForward,
                         isLoading = uiState.isLoading,
                         enabled = emailOrUsername.isNotEmpty() && password.isNotEmpty() && !uiState.isLoading,
@@ -367,28 +357,27 @@ fun LoginScreen(
                         }
                     )
 
-                    // â•â•â• BIOMETRIC BUTTON â•â•â•
-                    if (uiState.isBiometricAvailable) {
-                        Spacer(modifier = Modifier.height(12.dp))
-                        BiometricLoginButton(
-                            context = context,
-                            hasSession = hasSession && BiometricEnrollmentManager.isEnrolledForCurrentSession(context),
-                            hasSavedCredentials = BiometricEnrollmentManager.hasSavedCredentials(context),
-                            onSuccess = {
-                                if (hasSession) {
-                                    onNavigateToHome()
-                                } else {
-                                    val savedEmail = BiometricEnrollmentManager.getSavedEmail(context)
-                                    val savedPass = BiometricEnrollmentManager.getSavedPassword(context)
-                                    if (savedEmail != null && savedPass != null) {
-                                        emailOrUsername = savedEmail
-                                        password = savedPass
-                                        viewModel.login(savedEmail, savedPass, rememberMe)
-                                    }
+                    // BIOMETRIC BUTTON — siempre visible
+                    Spacer(modifier = Modifier.height(12.dp))
+                    BiometricLoginButton(
+                        context = context,
+                        hasSession = hasSession && BiometricEnrollmentManager.isEnrolledForCurrentSession(context),
+                        hasSavedCredentials = BiometricEnrollmentManager.hasSavedCredentials(context),
+                        onEnrollRequest = { showInlineEnrollment = true },
+                        onSuccess = {
+                            if (hasSession) {
+                                onNavigateToHome()
+                            } else {
+                                val savedEmail = BiometricEnrollmentManager.getSavedEmail(context)
+                                val savedPass = BiometricEnrollmentManager.getSavedPassword(context)
+                                if (savedEmail != null && savedPass != null) {
+                                    emailOrUsername = savedEmail
+                                    password = savedPass
+                                    viewModel.login(savedEmail, savedPass, rememberMe)
                                 }
                             }
-                        )
-                    }
+                        }
+                    )
                 }
             }
 
@@ -418,7 +407,7 @@ fun LoginScreen(
                 Spacer(modifier = Modifier.height(20.dp))
 
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text("Â¿Nuevo en Vinzay?", color = TextMuted, fontSize = 14.sp)
+                    Text("¿Nuevo en Mercora?", color = TextMuted, fontSize = 14.sp)
                     Spacer(Modifier.width(6.dp))
                     Text(
                         text = "Crear cuenta",
@@ -468,14 +457,14 @@ private fun ForgotPasswordSheet(
                 .padding(bottom = 48.dp)
         ) {
             Text(
-                text = "Recuperar contraseÃ±a",
+                text = "Recuperar contraseña",
                 fontSize = 22.sp,
                 fontWeight = FontWeight.Bold,
                 color = TextPrimary
             )
             Spacer(Modifier.height(6.dp))
             Text(
-                text = "Te enviaremos un enlace para restablecer tu contraseÃ±a",
+                text = "Te enviaremos un enlace para restablecer tu contraseña",
                 fontSize = 14.sp,
                 color = TextSecondary
             )
@@ -491,7 +480,7 @@ private fun ForgotPasswordSheet(
                     AuthTextField(
                         value = email,
                         onValueChange = { email = it },
-                        label = "Correo electrÃ³nico",
+                        label = "Correo electrónico",
                         placeholder = "tu@email.com",
                         leadingIcon = Icons.Outlined.Email,
                         keyboardOptions = KeyboardOptions(
@@ -545,9 +534,9 @@ private fun ForgotPasswordSheet(
                     Spacer(Modifier.height(8.dp))
                     Icon(Icons.Filled.CheckCircle, null, tint = AccentGreen, modifier = Modifier.size(64.dp))
                     Spacer(Modifier.height(16.dp))
-                    Text("Â¡Enlace enviado!", fontSize = 20.sp, fontWeight = FontWeight.Bold, color = TextPrimary)
+                    Text("¡Enlace enviado!", fontSize = 20.sp, fontWeight = FontWeight.Bold, color = TextPrimary)
                     Spacer(Modifier.height(4.dp))
-                    Text("Revisa tu correo electrÃ³nico", fontSize = 14.sp, color = TextSecondary, textAlign = TextAlign.Center)
+                    Text("Revisa tu correo electrónico", fontSize = 14.sp, color = TextSecondary, textAlign = TextAlign.Center)
                     Spacer(Modifier.height(20.dp))
                     Text(
                         text = "Cerrar",
@@ -563,134 +552,6 @@ private fun ForgotPasswordSheet(
 }
 
 // ========================================================================
-// BIOMETRIC QUICK AUTH â€” shown when a session is already saved
-// ========================================================================
-@Composable
-private fun BiometricQuickAuth(
-    context: Context,
-    onSuccess: () -> Unit,
-    onUsePassword: () -> Unit
-) {
-    val activity = context as? FragmentActivity
-
-    fun launchBiometric(onSuccess: () -> Unit) {
-        activity?.let { act ->
-            val prompt = BiometricPrompt(
-                act, androidx.core.content.ContextCompat.getMainExecutor(act),
-                object : BiometricPrompt.AuthenticationCallback() {
-                    override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
-                        super.onAuthenticationSucceeded(result)
-                        onSuccess()
-                    }
-                    override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
-                        super.onAuthenticationError(errorCode, errString)
-                    }
-                    override fun onAuthenticationFailed() {
-                        super.onAuthenticationFailed()
-                    }
-                }
-            )
-            prompt.authenticate(
-                BiometricPrompt.PromptInfo.Builder()
-                    .setTitle("Inicio de sesiÃ³n biomÃ©trico")
-                    .setSubtitle("Verifica tu identidad para acceder")
-                    .setAllowedAuthenticators(
-                        BiometricManager.Authenticators.BIOMETRIC_STRONG or
-                        BiometricManager.Authenticators.DEVICE_CREDENTIAL
-                    )
-                    .build()
-            )
-        }
-    }
-
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(HomeBg),
-        contentAlignment = Alignment.Center
-    ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.padding(32.dp)
-        ) {
-            Text(
-                text = "Mercora",
-                fontSize = 36.sp,
-                fontWeight = FontWeight.Black,
-                color = PrimaryPurple,
-                letterSpacing = (-1).sp
-            )
-
-            Spacer(Modifier.height(24.dp))
-
-            Text(
-                text = "Bienvenido de vuelta",
-                fontSize = 26.sp,
-                fontWeight = FontWeight.Bold,
-                color = TextPrimary
-            )
-
-            Spacer(Modifier.height(32.dp))
-
-            Icon(
-                Icons.Outlined.Fingerprint,
-                contentDescription = "Huella digital",
-                tint = PrimaryPurple,
-                modifier = Modifier.size(72.dp)
-            )
-
-            Spacer(Modifier.height(16.dp))
-
-            Text(
-                text = "Verifica tu identidad",
-                fontSize = 16.sp,
-                color = TextSecondary
-            )
-
-            Spacer(Modifier.height(8.dp))
-
-            Text(
-                text = "Usa tu huella digital para iniciar sesiÃ³n",
-                fontSize = 14.sp,
-                color = TextMuted,
-                textAlign = TextAlign.Center
-            )
-
-            Spacer(Modifier.height(32.dp))
-
-            Surface(
-                onClick = { launchBiometric(onSuccess) },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(56.dp),
-                shape = RoundedCornerShape(16.dp),
-                color = PrimaryPurple
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    Icon(Icons.Outlined.Fingerprint, null, tint = Color.White, modifier = Modifier.size(22.dp))
-                    Spacer(Modifier.width(10.dp))
-                    Text("Verificar huella", fontSize = 16.sp, fontWeight = FontWeight.SemiBold, color = Color.White)
-                }
-            }
-
-            Spacer(Modifier.height(16.dp))
-
-            Text(
-                text = "Usar contraseÃ±a",
-                color = TextSecondary,
-                fontSize = 14.sp,
-                modifier = Modifier.clickable {
-                    onUsePassword()
-                }
-            )
-        }
-    }
-}
-
-// ========================================================================
 // BIOMETRIC LOGIN BUTTON
 // ========================================================================
 @Composable
@@ -698,45 +559,64 @@ private fun BiometricLoginButton(
     context: Context,
     hasSession: Boolean = false,
     hasSavedCredentials: Boolean = false,
+    onEnrollRequest: () -> Unit = {},
     onSuccess: () -> Unit = {}
 ) {
-    val activity = context as? FragmentActivity ?: return
+    val activity = context as? FragmentActivity
     val biometricManager = BiometricManager.from(context)
     val canAuthenticate = biometricManager.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_STRONG)
     val hasBiometricHardware = canAuthenticate != BiometricManager.BIOMETRIC_ERROR_NO_HARDWARE
     val isBiometricEnrolled = canAuthenticate == BiometricManager.BIOMETRIC_SUCCESS
 
-    if (!hasBiometricHardware) return
+    val buttonText = when {
+        !hasBiometricHardware -> "Huella no disponible"
+        isBiometricEnrolled -> "Iniciar con huella"
+        else -> "Configurar huella"
+    }
+    val buttonEnabled = hasBiometricHardware
 
     Surface(
         onClick = {
-            if (!hasSession && !hasSavedCredentials) {
+            if (!buttonEnabled) {
                 android.widget.Toast.makeText(
-                    context, "Inicia sesiÃ³n primero para guardar tus datos biomÃ©tricos",
+                    context, "Este dispositivo no tiene sensor de huella",
+                    android.widget.Toast.LENGTH_SHORT
+                ).show()
+                return@Surface
+            }
+
+            if (activity == null) {
+                android.widget.Toast.makeText(
+                    context, "Error al iniciar sensor de huella",
                     android.widget.Toast.LENGTH_SHORT
                 ).show()
                 return@Surface
             }
 
             if (!isBiometricEnrolled) {
-                // No hay huella configurada â†’ abrir settings para configurar
-                val intent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                    Intent(Settings.ACTION_BIOMETRIC_ENROLL)
+                if (hasSession || hasSavedCredentials) {
+                    onEnrollRequest()
                 } else {
-                    Intent(Settings.ACTION_FINGERPRINT_ENROLL)
-                }
-                if (intent.resolveActivity(context.packageManager) != null) {
-                    context.startActivity(intent)
-                } else {
-                    context.startActivity(Intent(Settings.ACTION_SECURITY_SETTINGS))
+                    android.widget.Toast.makeText(
+                        context, "Inicia sesión primero para configurar la huella",
+                        android.widget.Toast.LENGTH_SHORT
+                    ).show()
                 }
                 return@Surface
             }
 
-            // Hay huella configurada â†’ lanzar auth
+            if (!hasSession && !hasSavedCredentials) {
+                android.widget.Toast.makeText(
+                    context, "Inicia sesión primero para guardar tus datos biométricos",
+                    android.widget.Toast.LENGTH_SHORT
+                ).show()
+                return@Surface
+            }
+
+            // Hay huella configurada -> lanzar auth
             val prompt = BiometricPrompt(
-                activity,
-                androidx.core.content.ContextCompat.getMainExecutor(activity),
+                activity!!,
+                androidx.core.content.ContextCompat.getMainExecutor(activity!!),
                 object : BiometricPrompt.AuthenticationCallback() {
                     override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
                         super.onAuthenticationSucceeded(result)
@@ -746,7 +626,7 @@ private fun BiometricLoginButton(
             )
             prompt.authenticate(
                 BiometricPrompt.PromptInfo.Builder()
-                    .setTitle("Inicio de sesiÃ³n biomÃ©trico")
+                    .setTitle("Inicio de sesión biométrico")
                     .setSubtitle("Usa tu huella para acceder")
                     .setAllowedAuthenticators(
                         BiometricManager.Authenticators.BIOMETRIC_STRONG or
@@ -757,21 +637,28 @@ private fun BiometricLoginButton(
         },
         modifier = Modifier.fillMaxWidth().height(48.dp),
         shape = RoundedCornerShape(14.dp),
-        color = SurfaceElevated,
-        border = androidx.compose.foundation.BorderStroke(1.dp, BorderDefault)
+        color = if (buttonEnabled) SurfaceElevated else SurfaceElevated.copy(alpha = 0.4f),
+        border = if (buttonEnabled)
+            androidx.compose.foundation.BorderStroke(1.dp, BorderDefault)
+        else
+            androidx.compose.foundation.BorderStroke(1.dp, BorderDefault.copy(alpha = 0.2f))
     ) {
         Row(
             modifier = Modifier.fillMaxSize(),
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Icon(Icons.Outlined.Fingerprint, null, tint = PrimaryPurple, modifier = Modifier.size(20.dp))
+            Icon(
+                Icons.Outlined.Fingerprint, null,
+                tint = if (buttonEnabled) PrimaryPurple else TextMuted,
+                modifier = Modifier.size(20.dp)
+            )
             Spacer(Modifier.width(8.dp))
             Text(
-                text = if (isBiometricEnrolled) "Iniciar con huella" else "Configurar huella",
+                text = buttonText,
                 fontSize = 13.sp,
                 fontWeight = FontWeight.Medium,
-                color = TextSecondary
+                color = if (buttonEnabled) TextSecondary else TextMuted
             )
         }
     }
@@ -896,22 +783,55 @@ fun GradientButton(
  */
 @Composable
 fun AuthBackground(gradientOffset: Float = 0f) {
+    val infiniteTransition = rememberInfiniteTransition(label = "aurora")
+
+    val phase1 by infiniteTransition.animateFloat(
+        initialValue = 0f,
+        targetValue = (2.0 * Math.PI).toFloat(),
+        animationSpec = infiniteRepeatable(
+            animation = tween(20000, easing = LinearEasing),
+            repeatMode = RepeatMode.Restart
+        ),
+        label = "phase1"
+    )
+    val phase2 by infiniteTransition.animateFloat(
+        initialValue = 0f,
+        targetValue = (2.0 * Math.PI).toFloat(),
+        animationSpec = infiniteRepeatable(
+            animation = tween(25000, easing = LinearEasing),
+            repeatMode = RepeatMode.Restart
+        ),
+        label = "phase2"
+    )
+
     Canvas(modifier = Modifier.fillMaxSize()) {
         val w = size.width
         val h = size.height
+
+        // Blob 1: Subtle purple glow
+        val x1 = w * 0.3f + (w * 0.2f) * kotlin.math.cos(phase1)
+        val y1 = h * 0.25f + (h * 0.15f) * kotlin.math.sin(phase1 * 0.7f)
         drawCircle(
             brush = Brush.radialGradient(
-                colors = listOf(PrimaryPurple.copy(alpha = 0.35f), PrimaryPurple.copy(alpha = 0.15f), PrimaryPurple.copy(alpha = 0.05f), Color.Transparent),
-                center = Offset(w * 0.85f, h * 0.08f), radius = w * 0.6f
+                colors = listOf(PrimaryPurple.copy(alpha = 0.08f), Color.Transparent),
+                center = Offset(x1, y1),
+                radius = w * 0.6f
             ),
-            center = Offset(w * 0.85f, h * 0.08f), radius = w * 0.6f
+            center = Offset(x1, y1),
+            radius = w * 0.6f
         )
+
+        // Blob 2: Subtle blue glow
+        val x2 = w * 0.7f + (w * 0.18f) * kotlin.math.cos(phase2 + 3f)
+        val y2 = h * 0.75f + (h * 0.12f) * kotlin.math.sin(phase2 * 0.6f)
         drawCircle(
             brush = Brush.radialGradient(
-                colors = listOf(AccentPink.copy(alpha = 0.3f), AccentPink.copy(alpha = 0.12f), AccentPink.copy(alpha = 0.04f), Color.Transparent),
-                center = Offset(w * 0.15f, h * 0.92f), radius = w * 0.55f
+                colors = listOf(Color(0xFF3B82F6).copy(alpha = 0.07f), Color.Transparent),
+                center = Offset(x2, y2),
+                radius = w * 0.6f
             ),
-            center = Offset(w * 0.15f, h * 0.92f), radius = w * 0.55f
+            center = Offset(x2, y2),
+            radius = w * 0.6f
         )
     }
 }

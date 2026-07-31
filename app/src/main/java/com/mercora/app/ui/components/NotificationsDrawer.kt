@@ -53,13 +53,13 @@ data class AppNotification(
 )
 
 private val DEMO_NOTIFICATIONS = listOf(
-    AppNotification("1", NotificationType.LIKE, "https://i.pravatar.cc/150?img=1", "MarÃ­a GarcÃ­a", "le gustÃ³ tu PublicaciÃ³n", "2m", false, "https://picsum.photos/100"),
-    AppNotification("2", NotificationType.COMMENT, "https://i.pravatar.cc/150?img=2", "Juan PÃ©rez", "comentÃ³: \"Â¡Me encanta!\"", "15m", false),
-    AppNotification("3", NotificationType.FOLLOW, "https://i.pravatar.cc/150?img=3", "Ana LÃ³pez", "comenzÃ³ a seguirte", "1h", false),
-    AppNotification("4", NotificationType.SALE, "https://i.pravatar.cc/150?img=4", "Carlos Ruiz", "comprÃ³ tu producto", "3h", true, "https://picsum.photos/101"),
-    AppNotification("5", NotificationType.MENTION, "https://i.pravatar.cc/150?img=5", "Laura MartÃ­n", "te mencionÃ³ en un comentario", "5h", true),
-    AppNotification("6", NotificationType.LIKE, "https://i.pravatar.cc/150?img=6", "Diego SÃ¡nchez", "y 5 MÃ¡s les gustÃ³ tu PublicaciÃ³n", "1d", true, "https://picsum.photos/102"),
-    AppNotification("7", NotificationType.SYSTEM, null, "vinzay", "Tu cuenta ha sido verificada ?", "2d", true)
+    AppNotification("1", NotificationType.LIKE, "https://i.pravatar.cc/150?img=1", "María García", "le gustó tu Publicación", "2m", false, "https://picsum.photos/100"),
+    AppNotification("2", NotificationType.COMMENT, "https://i.pravatar.cc/150?img=2", "Juan Pérez", "comentó: \"¡Me encanta!\"", "15m", false),
+    AppNotification("3", NotificationType.FOLLOW, "https://i.pravatar.cc/150?img=3", "Ana López", "comenzó a seguirte", "1h", false),
+    AppNotification("4", NotificationType.SALE, "https://i.pravatar.cc/150?img=4", "Carlos Ruiz", "compró tu producto", "3h", true, "https://picsum.photos/101"),
+    AppNotification("5", NotificationType.MENTION, "https://i.pravatar.cc/150?img=5", "Laura Martín", "te mencionó en un comentario", "5h", true),
+    AppNotification("6", NotificationType.LIKE, "https://i.pravatar.cc/150?img=6", "Diego Sánchez", "y 5 Más les gustó tu Publicación", "1d", true, "https://picsum.photos/102"),
+    AppNotification("7", NotificationType.SYSTEM, null, "Mercora", "Tu cuenta ha sido verificada ?", "2d", true)
 )
 
 @Composable
@@ -73,7 +73,7 @@ fun NotificationsDrawer(
     val unreadCount = notifications.count { !it.isRead }
     var selectedFilter by remember { mutableStateOf("Todas") }
     
-    // Control interno de visibilidad para animaciÃ³n fluida
+    // Control interno de visibilidad para animación fluida
     var internalVisible by remember { mutableStateOf(false) }
     
     LaunchedEffect(isVisible) {
@@ -96,7 +96,7 @@ fun NotificationsDrawer(
         )
     }
     
-    // Drawer desde la derecha - animaciÃ³n RÃ¡pida sin rebote
+    // Drawer desde la derecha - animación Rápida sin rebote
     AnimatedVisibility(
         visible = isVisible,
         enter = slideInHorizontally(

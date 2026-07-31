@@ -106,15 +106,15 @@ private val SIZE_CATEGORIES = listOf(
     ),
     SizeCategory(
         "underwear", "Ropa Interior",
-        "Boxers, bÃ³xer, calzoncillos, brasieres, medias",
+        "Boxers, bóxer, calzoncillos, brasieres, medias",
         Icons.Outlined.FavoriteBorder,
         listOf(Color(0xFFD4578A), Color(0xFFE878A0)),
         listOf("XS", "S", "M", "L", "XL", "2XL"),
         listOf("XS", "S", "M", "L", "XL", "2XL")
     ),
     SizeCategory(
-        "swimwear", "Trajes de BaÃ±o",
-        "BaÃ±adores, bikinis, trusas",
+        "swimwear", "Trajes de Baño",
+        "Bañadores, bikinis, trusas",
         Icons.Outlined.Pool,
         listOf(Color(0xFF1565A0), PrimaryBright),
         listOf("S", "M", "L", "XL", "2XL"),
@@ -125,8 +125,8 @@ private val SIZE_CATEGORIES = listOf(
         "Sombreros, gorras, cinturones, guantes",
         Icons.Outlined.Watch,
         listOf(Color(0xFF6B7280), Color(0xFF8B98A5)),
-        listOf("Ãšnico", "XS", "S", "M", "L", "XL"),
-        listOf("Ãšnico", "XS", "S", "M", "L", "XL")
+        listOf("Único", "XS", "S", "M", "L", "XL"),
+        listOf("Único", "XS", "S", "M", "L", "XL")
     )
 )
 
@@ -250,7 +250,7 @@ private fun sizeToWeight(categoryId: String, size: String, gender: Gender): Floa
             if (idx < 0) 0f else idx * 1.2f + 1f
         }
         "accessories" -> {
-            val idx = listOf("Ãšnico", "XS", "S", "M", "L", "XL").indexOf(size)
+            val idx = listOf("Único", "XS", "S", "M", "L", "XL").indexOf(size)
             if (idx < 0) 0f else idx * 2f
         }
         else -> 0f
@@ -277,7 +277,7 @@ fun MySizeScreen(
     val userId = remember { SupabaseClient.auth.currentUserOrNull()?.id }
 
     // Aplica una config (cache o red) a los estados de la UI
-    fun applyConfig(existing: com.vinzay.app.data.repository.UserSizesDB) {
+    fun applyConfig(existing: com.mercora.app.data.repository.UserSizesDB) {
         gender = when (existing.gender) {
             "Mujer" -> Gender.Mujer
             else -> Gender.Hombre
@@ -308,7 +308,7 @@ fun MySizeScreen(
         catMap.forEach { (k, v) -> if (!v.isNullOrBlank()) selectedSizes[k] = v }
     }
 
-    // 1) Cache local instantÃ¡neo (sin esperar red) - la config aparece YA al entrar
+    // 1) Cache local instantáneo (sin esperar red) - la config aparece YA al entrar
     // 2) Luego refresca desde Supabase en segundo plano
     LaunchedEffect(Unit) {
         if (userId != null) {
@@ -557,8 +557,8 @@ private fun MySizeHeroBanner() {
             }
             Spacer(modifier = Modifier.height(10.dp))
             Text(
-                "Selecciona tu gÃ©nero y medidas para recibir recomendaciones precisas. " +
-                        "Cada producto mostrarÃ¡ primero las tallas que te quedan mejor.",
+                "Selecciona tu género y medidas para recibir recomendaciones precisas. " +
+                        "Cada producto mostrará primero las tallas que te quedan mejor.",
                 fontSize = 14.sp,
                 color = Color.White.copy(alpha = 0.85f),
                 lineHeight = 20.sp
@@ -569,8 +569,8 @@ private fun MySizeHeroBanner() {
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 listOf(
-                    Triple(Icons.Filled.SmartToy, "IA", "PrecisiÃ³n"),
-                    Triple(Icons.Filled.Speed, "RÃ¡pido", "Filtrado"),
+                    Triple(Icons.Filled.SmartToy, "IA", "Precisión"),
+                    Triple(Icons.Filled.Speed, "Rápido", "Filtrado"),
                     Triple(Icons.Filled.Favorite, "Perfect", "Fit")
                 ).forEach { (icon, _, label) ->
                     Surface(
@@ -604,7 +604,7 @@ private fun GenderSelector(
 ) {
     Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)) {
         Text(
-            "GÃ©nero",
+            "Género",
             fontSize = 15.sp,
             fontWeight = FontWeight.SemiBold,
             color = TextPrimary
@@ -682,7 +682,7 @@ private fun MeasurementsCard(
                 Spacer(modifier = Modifier.width(12.dp))
                 Column(modifier = Modifier.weight(1f)) {
                     Text("Tus medidas", fontSize = 16.sp, fontWeight = FontWeight.Bold, color = TextPrimary)
-                    Text("Opcional â€” Mejora la precisiÃ³n", fontSize = 12.sp, color = TextSecondary)
+                    Text("Opcional â€” Mejora la precisión", fontSize = 12.sp, color = TextSecondary)
                 }
                 Icon(
                     if (expanded) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown,
@@ -829,9 +829,9 @@ private fun FitSelector(
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             val fitOptions = listOf(
-                Triple(Fit.Ajustado, "Ajustado", "CeÃ±ido al cuerpo"),
+                Triple(Fit.Ajustado, "Ajustado", "Ceñido al cuerpo"),
                 Triple(Fit.Regular, "Regular", "Punto medio"),
-                Triple(Fit.Holgado, "Holgado", "CÃ³modo y suelto")
+                Triple(Fit.Holgado, "Holgado", "Cómodo y suelto")
             )
             fitOptions.forEach { (f, label, desc) ->
                 val isSelected = fit == f
@@ -1068,17 +1068,17 @@ private fun getSizeConversion(categoryId: String, size: String): String? {
             val eu = size.toIntOrNull() ?: return null
             val usMen = eu - 33
             val usWomen = eu - 31
-            "US Hombre: $usMen Â· US Mujer: $usWomen Â· UK: ${eu - 32}"
+            "US Hombre: $usMen · US Mujer: $usWomen · UK: ${eu - 32}"
         }
         "tops", "dresses", "outerwear", "underwear", "swimwear" -> {
             val map = mapOf("XS" to "34", "S" to "36", "M" to "38", "L" to "40", "XL" to "42", "2XL" to "44", "3XL" to "46")
             val eu = map[size]
-            if (eu != null) "Europeo: $eu Â· UK: ${eu.toInt() - 4}" else null
+            if (eu != null) "Europeo: $eu · UK: ${eu.toInt() - 4}" else null
         }
         "bottoms" -> {
             val num = size.toIntOrNull() ?: return null
             val eu = num + 16
-            "Europeo: $eu Â· UK: ${num - 18}"
+            "Europeo: $eu · UK: ${num - 18}"
         }
         else -> null
     }
@@ -1121,7 +1121,7 @@ private fun SaveButton(
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                if (selectedCount < 3) "Selecciona al menos 3 categorÃ­as" else "$selectedCount de $totalCount categorÃ­as listas",
+                if (selectedCount < 3) "Selecciona al menos 3 categorías" else "$selectedCount de $totalCount categorías listas",
                 fontSize = 12.sp,
                 color = if (canSave) AccentGreen else TextMuted,
                 fontWeight = FontWeight.Medium
@@ -1141,7 +1141,7 @@ private fun SaveButton(
             if (saved) {
                 Icon(Icons.Filled.CheckCircle, null, modifier = Modifier.size(22.dp))
                 Spacer(modifier = Modifier.width(8.dp))
-                Text("Â¡Talles guardados!", fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                Text("¡Talles guardados!", fontSize = 16.sp, fontWeight = FontWeight.Bold)
             } else if (isSaving) {
                 CircularProgressIndicator(
                     modifier = Modifier.size(22.dp),

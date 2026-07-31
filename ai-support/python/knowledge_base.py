@@ -1,4 +1,4 @@
-﻿"""Knowledge base for Mercora AI Support - FAQ and responses"""
+"""Knowledge base for Mercora AI Support - FAQ and responses"""
 
 from typing import Dict, List, Optional, Tuple
 from rapidfuzz import fuzz, process
@@ -40,29 +40,29 @@ FAQ_DATABASE: List[FAQEntry] = [
         intent="purchase_status",
         category="compras",
         questions=[
-            "Â¿DÃ³nde estÃ¡ mi pedido?",
-            "Â¿CuÃ¡ndo llega mi compra?",
+            "¿Dónde está mi pedido?",
+            "¿Cuándo llega mi compra?",
             "Quiero rastrear mi pedido",
             "Estado de mi orden",
-            "Â¿CuÃ¡nto tarda en llegar?",
+            "¿Cuánto tarda en llegar?",
         ],
         answer="""Para rastrear tu pedido:
 
-1. Ve a tu **Perfil** â†’ **Historial de pedidos**
+1. Ve a tu **Perfil** → **Historial de pedidos**
 2. Selecciona el pedido que quieres rastrear
-3. VerÃ¡s el estado actual y el nÃºmero de seguimiento
+3. Verás el estado actual y el número de seguimiento
 
 Los estados posibles son:
-â€¢ **Confirmado**: El vendedor recibiÃ³ tu orden
-â€¢ **Preparando**: Se estÃ¡ empaquetando
-â€¢ **Enviado**: Ya estÃ¡ en camino
-â€¢ **En trÃ¡nsito**: Con la paqueterÃ­a
-â€¢ **Entregado**: Â¡Ya llegÃ³!""",
+• **Confirmado**: El vendedor recibió tu orden
+• **Preparando**: Se está empaquetando
+• **Enviado**: Ya está en camino
+• **En tránsito**: Con la paquetería
+• **Entregado**: ¡Ya llegó!""",
         keywords=["pedido", "rastrear", "tracking", "seguimiento", "llega", "estado", "orden"],
         confidence_boost=0.1,
         action_buttons=[
-            ActionButton("btn_orders", "ðŸ“¦ Ver mis pedidos", "navigate", "profile/orders", "package"),
-            ActionButton("btn_contact_seller", "ðŸ’¬ Contactar vendedor", "navigate", "chat/seller", "message-circle"),
+            ActionButton("btn_orders", "📦 Ver mis pedidos", "navigate", "profile/orders", "package"),
+            ActionButton("btn_contact_seller", "💬 Contactar vendedor", "navigate", "chat/seller", "message-circle"),
         ],
     ),
     FAQEntry(
@@ -70,26 +70,26 @@ Los estados posibles son:
         intent="purchase_cancel",
         category="compras",
         questions=[
-            "Â¿CÃ³mo cancelo mi pedido?",
+            "¿Cómo cancelo mi pedido?",
             "Quiero cancelar mi compra",
-            "Â¿Puedo cancelar un pedido?",
+            "¿Puedo cancelar un pedido?",
             "Cancelar orden",
         ],
         answer="""Para cancelar un pedido:
 
-1. Ve a **Perfil** â†’ **Historial de pedidos**
+1. Ve a **Perfil** → **Historial de pedidos**
 2. Selecciona el pedido
 3. Toca **"Cancelar pedido"** (solo disponible si no ha sido enviado)
 
 **Importante:**
-â€¢ Solo puedes cancelar antes de que el vendedor envÃ­e
-â€¢ Si ya fue enviado, deberÃ¡s solicitar una devoluciÃ³n
-â€¢ El reembolso tarda 3-5 dÃ­as hÃ¡biles en reflejarse""",
+• Solo puedes cancelar antes de que el vendedor envíe
+• Si ya fue enviado, deberás solicitar una devolución
+• El reembolso tarda 3-5 días hábiles en reflejarse""",
         keywords=["cancelar", "cancelo", "anular", "deshacer", "pedido"],
         confidence_boost=0.1,
         action_buttons=[
-            ActionButton("btn_orders", "ðŸ“¦ Ver mis pedidos", "navigate", "profile/orders", "package"),
-            ActionButton("btn_refund_info", "ðŸ’° Info reembolsos", "navigate", "help/refunds", "dollar-sign"),
+            ActionButton("btn_orders", "📦 Ver mis pedidos", "navigate", "profile/orders", "package"),
+            ActionButton("btn_refund_info", "💰 Info reembolsos", "navigate", "help/refunds", "dollar-sign"),
         ],
     ),
     FAQEntry(
@@ -97,29 +97,29 @@ Los estados posibles son:
         intent="purchase_problem",
         category="compras",
         questions=[
-            "Mi pedido llegÃ³ daÃ±ado",
-            "No recibÃ­ lo que pedÃ­",
-            "El producto estÃ¡ roto",
+            "Mi pedido llegó dañado",
+            "No recibí lo que pedí",
+            "El producto está roto",
             "Me enviaron algo diferente",
             "Problema con mi pedido",
         ],
         answer="""Lamento que hayas tenido este problema. Para reportarlo:
 
-1. Ve a **Perfil** â†’ **Historial de pedidos** â†’ selecciona el pedido
+1. Ve a **Perfil** → **Historial de pedidos** → selecciona el pedido
 2. Toca **"Reportar problema"**
 3. Selecciona el tipo de problema:
-   â€¢ Producto daÃ±ado
-   â€¢ Producto diferente
-   â€¢ No llegÃ³
-   â€¢ Otro
+   • Producto dañado
+   • Producto diferente
+   • No llegó
+   • Otro
 4. Adjunta fotos como evidencia
 5. Describe el problema
 
-**Tienes 7 dÃ­as** desde la entrega para reportar. Vinzay protege tus compras.""",
-        keywords=["daÃ±ado", "roto", "diferente", "problema", "incorrecto", "mal"],
+**Tienes 7 días** desde la entrega para reportar. Mercora protege tus compras.""",
+        keywords=["dañado", "roto", "diferente", "problema", "incorrecto", "mal"],
         action_buttons=[
-            ActionButton("btn_orders", "ðŸ“¦ Ver mis pedidos", "navigate", "profile/orders", "package"),
-            ActionButton("btn_report", "âš ï¸ Reportar problema", "navigate", "order/report", "alert-triangle"),
+            ActionButton("btn_orders", "📦 Ver mis pedidos", "navigate", "profile/orders", "package"),
+            ActionButton("btn_report", "⚠️ Reportar problema", "navigate", "order/report", "alert-triangle"),
         ],
     ),
     
@@ -129,34 +129,34 @@ Los estados posibles son:
         intent="payment_methods",
         category="pagos",
         questions=[
-            "Â¿QuÃ© mÃ©todos de pago aceptan?",
-            "Â¿Puedo pagar con tarjeta?",
+            "¿Qué métodos de pago aceptan?",
+            "¿Puedo pagar con tarjeta?",
             "Formas de pago",
-            "Â¿Aceptan PayPal?",
+            "¿Aceptan PayPal?",
         ],
-        answer="""En Vinzay aceptamos:
+        answer="""En Mercora aceptamos:
 
-ðŸ’³ **Tarjetas de crÃ©dito/dÃ©bito**
-â€¢ Visa, Mastercard, American Express
+💳 **Tarjetas de crédito/débito**
+• Visa, Mastercard, American Express
 
-ðŸ¦ **Transferencia bancaria**
-â€¢ SPEI (MÃ©xico)
-â€¢ Transferencia directa
+🏦 **Transferencia bancaria**
+• SPEI (México)
+• Transferencia directa
 
-ðŸ’° **Billetera Vinzay**
-â€¢ Saldo disponible de ventas
-â€¢ Recargas
+💰 **Billetera Mercora**
+• Saldo disponible de ventas
+• Recargas
 
-ðŸ“± **Otros**
-â€¢ PayPal
-â€¢ Mercado Pago (en algunos paÃ­ses)
+📱 **Otros**
+• PayPal
+• Mercado Pago (en algunos países)
 
-Para agregar un mÃ©todo: **Perfil** â†’ **MÃ©todos de pago** â†’ **Agregar**""",
+Para agregar un método: **Perfil** → **Métodos de pago** → **Agregar**""",
         keywords=["pago", "tarjeta", "metodo", "pagar", "visa", "mastercard", "paypal"],
         confidence_boost=0.1,
         action_buttons=[
-            ActionButton("btn_payment", "ðŸ’³ MÃ©todos de pago", "navigate", "profile/payment-methods", "credit-card"),
-            ActionButton("btn_wallet", "ðŸ‘› Mi billetera", "navigate", "profile/wallet", "wallet"),
+            ActionButton("btn_payment", "💳 Métodos de pago", "navigate", "profile/payment-methods", "credit-card"),
+            ActionButton("btn_wallet", "👛 Mi billetera", "navigate", "profile/wallet", "wallet"),
         ],
     ),
     FAQEntry(
@@ -164,29 +164,29 @@ Para agregar un mÃ©todo: **Perfil** â†’ **MÃ©todos de pago** â†’ *
         intent="refund",
         category="pagos",
         questions=[
-            "Â¿CuÃ¡ndo llega mi reembolso?",
+            "¿Cuándo llega mi reembolso?",
             "No me han devuelto el dinero",
-            "Â¿CÃ³mo funciona el reembolso?",
+            "¿Cómo funciona el reembolso?",
             "Quiero mi dinero de vuelta",
         ],
-        answer="""Los reembolsos en Vinzay:
+        answer="""Los reembolsos en Mercora:
 
-â±ï¸ **Tiempos de procesamiento:**
-â€¢ Billetera Vinzay: Inmediato
-â€¢ Tarjeta de crÃ©dito: 5-10 dÃ­as hÃ¡biles
-â€¢ Tarjeta de dÃ©bito: 3-7 dÃ­as hÃ¡biles
-â€¢ PayPal: 3-5 dÃ­as hÃ¡biles
+⏱️ **Tiempos de procesamiento:**
+• Billetera Mercora: Inmediato
+• Tarjeta de crédito: 5-10 días hábiles
+• Tarjeta de débito: 3-7 días hábiles
+• PayPal: 3-5 días hábiles
 
-ðŸ“ **Ver estado del reembolso:**
-1. **Perfil** â†’ **Historial de pedidos**
+📍 **Ver estado del reembolso:**
+1. **Perfil** → **Historial de pedidos**
 2. Selecciona el pedido reembolsado
-3. VerÃ¡s "Reembolso en proceso" o "Reembolsado"
+3. Verás "Reembolso en proceso" o "Reembolsado"
 
-Si han pasado mÃ¡s de 10 dÃ­as hÃ¡biles, contacta a tu banco.""",
+Si han pasado más de 10 días hábiles, contacta a tu banco.""",
         keywords=["reembolso", "devolucion", "dinero", "devolver", "regreso"],
         action_buttons=[
-            ActionButton("btn_orders", "ðŸ“¦ Ver mis pedidos", "navigate", "profile/orders", "package"),
-            ActionButton("btn_human", "ðŸ‘¤ Hablar con agente", "call_function", "escalate_to_human", "user"),
+            ActionButton("btn_orders", "📦 Ver mis pedidos", "navigate", "profile/orders", "package"),
+            ActionButton("btn_human", "👤 Hablar con agente", "call_function", "escalate_to_human", "user"),
         ],
     ),
     FAQEntry(
@@ -202,22 +202,22 @@ Si han pasado mÃ¡s de 10 dÃ­as hÃ¡biles, contacta a tu banco.""",
         answer="""Si tu pago fue rechazado, puede ser por:
 
 1. **Fondos insuficientes** - Verifica tu saldo
-2. **Datos incorrectos** - Revisa nÃºmero, fecha y CVV
-3. **LÃ­mite excedido** - Contacta a tu banco
+2. **Datos incorrectos** - Revisa número, fecha y CVV
+3. **Límite excedido** - Contacta a tu banco
 4. **Tarjeta bloqueada** - Tu banco puede haberla bloqueado por seguridad
 5. **Problemas de red** - Intenta de nuevo en unos minutos
 
-ðŸ’¡ **Soluciones:**
-â€¢ Prueba con otro mÃ©todo de pago
-â€¢ Verifica que la direcciÃ³n de facturaciÃ³n coincida
-â€¢ Contacta a tu banco para autorizar la compra
-â€¢ Usa la Billetera Vinzay como alternativa
+💡 **Soluciones:**
+• Prueba con otro método de pago
+• Verifica que la dirección de facturación coincida
+• Contacta a tu banco para autorizar la compra
+• Usa la Billetera Mercora como alternativa
 
-Si el problema persiste, intenta con otro mÃ©todo de pago.""",
+Si el problema persiste, intenta con otro método de pago.""",
         keywords=["rechazado", "error", "fallo", "pago", "tarjeta", "problema"],
         action_buttons=[
-            ActionButton("btn_payment", "ðŸ’³ MÃ©todos de pago", "navigate", "profile/payment-methods", "credit-card"),
-            ActionButton("btn_retry", "ðŸ”„ Reintentar compra", "navigate", "cart", "shopping-cart"),
+            ActionButton("btn_payment", "💳 Métodos de pago", "navigate", "profile/payment-methods", "credit-card"),
+            ActionButton("btn_retry", "🔄 Reintentar compra", "navigate", "cart", "shopping-cart"),
         ],
     ),
     
@@ -227,29 +227,29 @@ Si el problema persiste, intenta con otro mÃ©todo de pago.""",
         intent="account_access",
         category="cuenta",
         questions=[
-            "OlvidÃ© mi contraseÃ±a",
+            "Olvidé mi contraseña",
             "No puedo entrar a mi cuenta",
-            "Recuperar contraseÃ±a",
+            "Recuperar contraseña",
             "Cambiar password",
         ],
-        answer="""Para recuperar tu contraseÃ±a:
+        answer="""Para recuperar tu contraseña:
 
-1. En la pantalla de inicio de sesiÃ³n, toca **"Â¿Olvidaste tu contraseÃ±a?"**
+1. En la pantalla de inicio de sesión, toca **"¿Olvidaste tu contraseña?"**
 2. Ingresa tu email registrado
 3. Revisa tu bandeja de entrada (y spam)
-4. Sigue el enlace para crear una nueva contraseÃ±a
+4. Sigue el enlace para crear una nueva contraseña
 
-**Para cambiar tu contraseÃ±a actual:**
-1. **Perfil** â†’ **ConfiguraciÃ³n** â†’ **Seguridad**
-2. Toca **"Cambiar contraseÃ±a"**
-3. Ingresa tu contraseÃ±a actual y la nueva
+**Para cambiar tu contraseña actual:**
+1. **Perfil** → **Configuración** → **Seguridad**
+2. Toca **"Cambiar contraseña"**
+3. Ingresa tu contraseña actual y la nueva
 
-ðŸ’¡ Usa una contraseÃ±a de al menos 8 caracteres con letras, nÃºmeros y sÃ­mbolos.""",
-        keywords=["contraseÃ±a", "password", "olvide", "recuperar", "acceso", "entrar"],
+💡 Usa una contraseña de al menos 8 caracteres con letras, números y símbolos.""",
+        keywords=["contraseña", "password", "olvide", "recuperar", "acceso", "entrar"],
         confidence_boost=0.15,
         action_buttons=[
-            ActionButton("btn_reset", "ðŸ”‘ Recuperar contraseÃ±a", "navigate", "auth/reset-password", "key"),
-            ActionButton("btn_security", "ðŸ”’ Configurar seguridad", "navigate", "profile/security", "shield"),
+            ActionButton("btn_reset", "🔑 Recuperar contraseña", "navigate", "auth/reset-password", "key"),
+            ActionButton("btn_security", "🔒 Configurar seguridad", "navigate", "profile/security", "shield"),
         ],
     ),
     FAQEntry(
@@ -258,65 +258,65 @@ Si el problema persiste, intenta con otro mÃ©todo de pago.""",
         category="cuenta",
         questions=[
             "Quiero eliminar mi cuenta",
-            "Â¿CÃ³mo borro mi cuenta?",
-            "Cerrar cuenta Vinzay",
+            "¿Cómo borro mi cuenta?",
+            "Cerrar cuenta Mercora",
             "Desactivar cuenta",
         ],
-        answer="""Para eliminar tu cuenta de Vinzay:
+        answer="""Para eliminar tu cuenta de Mercora:
 
-1. **Perfil** â†’ **ConfiguraciÃ³n** â†’ **Cuenta**
-2. DesplÃ¡zate hasta **"Eliminar cuenta"**
-3. Lee la informaciÃ³n importante
-4. Confirma con tu contraseÃ±a
+1. **Perfil** → **Configuración** → **Cuenta**
+2. Desplázate hasta **"Eliminar cuenta"**
+3. Lee la información importante
+4. Confirma con tu contraseña
 
-âš ï¸ **Antes de eliminar, considera:**
-â€¢ Tus datos se borrarÃ¡n permanentemente
-â€¢ Pedidos pendientes deben completarse primero
-â€¢ Saldo en billetera debe retirarse
-â€¢ No podrÃ¡s recuperar tu nombre de usuario
+⚠️ **Antes de eliminar, considera:**
+• Tus datos se borrarán permanentemente
+• Pedidos pendientes deben completarse primero
+• Saldo en billetera debe retirarse
+• No podrás recuperar tu nombre de usuario
 
-ðŸ’¡ Si solo quieres un descanso, considera **desactivar temporalmente** en lugar de eliminar.""",
+💡 Si solo quieres un descanso, considera **desactivar temporalmente** en lugar de eliminar.""",
         keywords=["eliminar", "borrar", "cerrar", "desactivar", "cuenta"],
         confidence_boost=0.1,
         action_buttons=[
-            ActionButton("btn_account", "ðŸ‘¤ ConfiguraciÃ³n de cuenta", "navigate", "profile/settings/account", "user-cog"),
-            ActionButton("btn_human", "ðŸ‘¤ Hablar con agente", "call_function", "escalate_to_human", "user"),
+            ActionButton("btn_account", "👤 Configuración de cuenta", "navigate", "profile/settings/account", "user-cog"),
+            ActionButton("btn_human", "👤 Hablar con agente", "call_function", "escalate_to_human", "user"),
         ],
     ),
     
-    # === ENVÃOS ===
+    # === ENVÍOS ===
     FAQEntry(
         id="shipping_address",
         intent="shipping_info",
         category="envios",
         questions=[
-            "Â¿CÃ³mo cambio mi direcciÃ³n de envÃ­o?",
-            "Agregar direcciÃ³n",
-            "Modificar direcciÃ³n",
-            "DirecciÃ³n incorrecta",
+            "¿Cómo cambio mi dirección de envío?",
+            "Agregar dirección",
+            "Modificar dirección",
+            "Dirección incorrecta",
         ],
         answer="""Para gestionar tus direcciones:
 
-**Agregar nueva direcciÃ³n:**
-1. **Perfil** â†’ **Direcciones**
-2. Toca **"+ Agregar direcciÃ³n"**
+**Agregar nueva dirección:**
+1. **Perfil** → **Direcciones**
+2. Toca **"+ Agregar dirección"**
 3. Completa los datos y guarda
 
-**Cambiar direcciÃ³n de un pedido:**
-â€¢ Solo es posible si el pedido aÃºn no fue enviado
-â€¢ Ve al pedido y toca **"Cambiar direcciÃ³n"**
-â€¢ O contacta al vendedor directamente
+**Cambiar dirección de un pedido:**
+• Solo es posible si el pedido aún no fue enviado
+• Ve al pedido y toca **"Cambiar dirección"**
+• O contacta al vendedor directamente
 
-**Editar direcciÃ³n existente:**
-1. **Perfil** â†’ **Direcciones**
-2. Selecciona la direcciÃ³n
+**Editar dirección existente:**
+1. **Perfil** → **Direcciones**
+2. Selecciona la dirección
 3. Toca **"Editar"**
 
-ðŸ’¡ Puedes marcar una direcciÃ³n como **predeterminada** para futuras compras.""",
+💡 Puedes marcar una dirección como **predeterminada** para futuras compras.""",
         keywords=["direccion", "envio", "domicilio", "agregar", "cambiar"],
         action_buttons=[
-            ActionButton("btn_addresses", "ðŸ“ Mis direcciones", "navigate", "profile/addresses", "map-pin"),
-            ActionButton("btn_orders", "ðŸ“¦ Ver mis pedidos", "navigate", "profile/orders", "package"),
+            ActionButton("btn_addresses", "📍 Mis direcciones", "navigate", "profile/addresses", "map-pin"),
+            ActionButton("btn_orders", "📦 Ver mis pedidos", "navigate", "profile/orders", "package"),
         ],
     ),
     FAQEntry(
@@ -324,28 +324,28 @@ Si el problema persiste, intenta con otro mÃ©todo de pago.""",
         intent="shipping_info",
         category="envios",
         questions=[
-            "Â¿CuÃ¡nto tarda el envÃ­o?",
+            "¿Cuánto tarda el envío?",
             "Tiempo de entrega",
-            "Â¿CuÃ¡ntos dÃ­as tarda en llegar?",
+            "¿Cuántos días tarda en llegar?",
         ],
-        answer="""Los tiempos de envÃ­o en Vinzay varÃ­an:
+        answer="""Los tiempos de envío en Mercora varían:
 
-ðŸ“¦ **EnvÃ­o estÃ¡ndar:** 5-10 dÃ­as hÃ¡biles
-ðŸš€ **EnvÃ­o express:** 2-4 dÃ­as hÃ¡biles
-ðŸƒ **EnvÃ­o mismo dÃ­a:** Disponible en algunas ciudades
+📦 **Envío estándar:** 5-10 días hábiles
+🚀 **Envío express:** 2-4 días hábiles
+🏃 **Envío mismo día:** Disponible en algunas ciudades
 
 El tiempo depende de:
-â€¢ UbicaciÃ³n del vendedor
-â€¢ Tu ciudad de destino
-â€¢ MÃ©todo de envÃ­o elegido
-â€¢ Disponibilidad del producto
+• Ubicación del vendedor
+• Tu ciudad de destino
+• Método de envío elegido
+• Disponibilidad del producto
 
-ðŸ’¡ En la pÃ¡gina del producto verÃ¡s el tiempo estimado para tu ubicaciÃ³n.
+💡 En la página del producto verás el tiempo estimado para tu ubicación.
 
-Cada vendedor indica sus tiempos de preparaciÃ³n (1-3 dÃ­as generalmente) antes del envÃ­o.""",
+Cada vendedor indica sus tiempos de preparación (1-3 días generalmente) antes del envío.""",
         keywords=["tiempo", "tarda", "llegar", "dias", "entrega", "envio"],
         action_buttons=[
-            ActionButton("btn_orders", "ðŸ“¦ Ver mis pedidos", "navigate", "profile/orders", "package"),
+            ActionButton("btn_orders", "📦 Ver mis pedidos", "navigate", "profile/orders", "package"),
         ],
     ),
     
@@ -355,13 +355,13 @@ Cada vendedor indica sus tiempos de preparaciÃ³n (1-3 dÃ­as generalmente) an
         intent="sell_how",
         category="ventas",
         questions=[
-            "Â¿CÃ³mo vendo en Vinzay?",
+            "¿Cómo vendo en Mercora?",
             "Quiero vender productos",
-            "Â¿CÃ³mo publico algo?",
+            "¿Cómo publico algo?",
             "Empezar a vender",
-            "Â¿CÃ³mo publico un producto?",
+            "¿Cómo publico un producto?",
             "Como publico un producto",
-            "CÃ³mo publicar producto",
+            "Cómo publicar producto",
             "Como vender",
             "Quiero publicar",
             "Como subo un producto",
@@ -370,33 +370,33 @@ Cada vendedor indica sus tiempos de preparaciÃ³n (1-3 dÃ­as generalmente) an
             "Como pongo a la venta",
             "Subir producto",
         ],
-        answer="""Para vender en Vinzay:
+        answer="""Para vender en Mercora:
 
-1. **Verifica tu cuenta** (Perfil â†’ VerificaciÃ³n)
-2. Toca el botÃ³n **"+"** en la barra inferior
-3. Selecciona **"PublicaciÃ³n"**
+1. **Verifica tu cuenta** (Perfil → Verificación)
+2. Toca el botón **"+"** en la barra inferior
+3. Selecciona **"Publicación"**
 4. Sube fotos de calidad de tu producto
 5. Completa:
-   â€¢ TÃ­tulo descriptivo
-   â€¢ Precio
-   â€¢ CategorÃ­a
-   â€¢ DescripciÃ³n detallada
-   â€¢ Opciones de envÃ­o
+   • Título descriptivo
+   • Precio
+   • Categoría
+   • Descripción detallada
+   • Opciones de envío
 6. Toca **"Publicar"**
 
-ðŸ’¡ **Tips para vender mÃ¡s:**
-â€¢ Usa buena iluminaciÃ³n en las fotos
-â€¢ Describe medidas y condiciÃ³n
-â€¢ Responde rÃ¡pido a los interesados
-â€¢ Precio competitivo
+💡 **Tips para vender más:**
+• Usa buena iluminación en las fotos
+• Describe medidas y condición
+• Responde rápido a los interesados
+• Precio competitivo
 
-Â¡Tu producto estarÃ¡ visible inmediatamente!""",
+¡Tu producto estará visible inmediatamente!""",
         keywords=["vender", "publicar", "venta", "producto", "anuncio"],
         confidence_boost=0.1,
         action_buttons=[
-            ActionButton("btn_publish", "âž• Publicar producto", "navigate", "publish", "plus-circle"),
-            ActionButton("btn_verify", "âœ… Verificar cuenta", "navigate", "profile/verification", "check-circle"),
-            ActionButton("btn_my_sales", "ðŸª Mis ventas", "navigate", "profile/sales", "store"),
+            ActionButton("btn_publish", "➕ Publicar producto", "navigate", "publish", "plus-circle"),
+            ActionButton("btn_verify", "✅ Verificar cuenta", "navigate", "profile/verification", "check-circle"),
+            ActionButton("btn_my_sales", "🏪 Mis ventas", "navigate", "profile/sales", "store"),
         ],
     ),
     FAQEntry(
@@ -404,35 +404,35 @@ Cada vendedor indica sus tiempos de preparaciÃ³n (1-3 dÃ­as generalmente) an
         intent="sell_payment",
         category="ventas",
         questions=[
-            "Â¿CuÃ¡nto cobra Vinzay de comisiÃ³n?",
-            "Â¿CuÃ¡l es la comisiÃ³n por venta?",
-            "Â¿QuÃ© porcentaje se llevan?",
+            "¿Cuánto cobra Mercora de comisión?",
+            "¿Cuál es la comisión por venta?",
+            "¿Qué porcentaje se llevan?",
         ],
-        answer="""Comisiones en Vinzay:
+        answer="""Comisiones en Mercora:
 
-ðŸ’° **ComisiÃ³n por venta:** 10% del precio final
+💰 **Comisión por venta:** 10% del precio final
 
 Esto incluye:
-â€¢ Procesamiento de pago
-â€¢ ProtecciÃ³n al comprador
-â€¢ Soporte al vendedor
-â€¢ Infraestructura de la plataforma
+• Procesamiento de pago
+• Protección al comprador
+• Soporte al vendedor
+• Infraestructura de la plataforma
 
 **Ejemplo:**
-â€¢ Vendes a $100
-â€¢ ComisiÃ³n: $10
-â€¢ Recibes: $90
+• Vendes a $100
+• Comisión: $10
+• Recibes: $90
 
-ðŸ“Œ **No hay costos por:**
-â€¢ Publicar productos
-â€¢ Tener cuenta de vendedor
-â€¢ Recibir mensajes
+📌 **No hay costos por:**
+• Publicar productos
+• Tener cuenta de vendedor
+• Recibir mensajes
 
-El cobro se hace automÃ¡ticamente al completarse la venta.""",
+El cobro se hace automáticamente al completarse la venta.""",
         keywords=["comision", "porcentaje", "cobra", "costo", "tarifa"],
         action_buttons=[
-            ActionButton("btn_wallet", "ðŸ‘› Mi billetera", "navigate", "profile/wallet", "wallet"),
-            ActionButton("btn_my_sales", "ðŸª Mis ventas", "navigate", "profile/sales", "store"),
+            ActionButton("btn_wallet", "👛 Mi billetera", "navigate", "profile/wallet", "wallet"),
+            ActionButton("btn_my_sales", "🏪 Mis ventas", "navigate", "profile/sales", "store"),
         ],
     ),
     
@@ -442,31 +442,31 @@ El cobro se hace automÃ¡ticamente al completarse la venta.""",
         intent="security_verify",
         category="seguridad",
         questions=[
-            "Â¿CÃ³mo activo la verificaciÃ³n en dos pasos?",
+            "¿Cómo activo la verificación en dos pasos?",
             "Activar 2FA",
-            "Doble autenticaciÃ³n",
+            "Doble autenticación",
             "Proteger mi cuenta",
         ],
-        answer="""Para activar la verificaciÃ³n en dos pasos (2FA):
+        answer="""Para activar la verificación en dos pasos (2FA):
 
-1. **Perfil** â†’ **ConfiguraciÃ³n** â†’ **Seguridad**
-2. Toca **"VerificaciÃ³n en dos pasos"**
-3. Elige tu mÃ©todo:
-   â€¢ ðŸ“± SMS (cÃ³digo por mensaje)
-   â€¢ ðŸ“§ Email (cÃ³digo por correo)
-   â€¢ ðŸ” App autenticadora (Google Authenticator, etc.)
+1. **Perfil** → **Configuración** → **Seguridad**
+2. Toca **"Verificación en dos pasos"**
+3. Elige tu método:
+   • 📱 SMS (código por mensaje)
+   • 📧 Email (código por correo)
+   • 🔐 App autenticadora (Google Authenticator, etc.)
 4. Sigue las instrucciones para configurar
 
 **Beneficios:**
-â€¢ Mayor seguridad para tu cuenta
-â€¢ ProtecciÃ³n contra accesos no autorizados
-â€¢ Alertas de inicio de sesiÃ³n sospechoso
+• Mayor seguridad para tu cuenta
+• Protección contra accesos no autorizados
+• Alertas de inicio de sesión sospechoso
 
-âš ï¸ Guarda tus cÃ³digos de respaldo en un lugar seguro.""",
+⚠️ Guarda tus códigos de respaldo en un lugar seguro.""",
         keywords=["2fa", "verificacion", "dos pasos", "autenticacion", "seguridad"],
         confidence_boost=0.1,
         action_buttons=[
-            ActionButton("btn_security", "ðŸ”’ Configurar seguridad", "navigate", "profile/security", "shield"),
+            ActionButton("btn_security", "🔒 Configurar seguridad", "navigate", "profile/security", "shield"),
         ],
     ),
     FAQEntry(
@@ -484,32 +484,32 @@ El cobro se hace automÃ¡ticamente al completarse la venta.""",
 
 **Reportar usuario:**
 1. Ve al perfil del usuario
-2. Toca los **tres puntos (â‹®)** arriba
+2. Toca los **tres puntos (⋮)** arriba
 3. Selecciona **"Reportar"**
 4. Elige el motivo:
-   â€¢ Fraude/Estafa
-   â€¢ Contenido inapropiado
-   â€¢ Acoso
-   â€¢ SuplantaciÃ³n de identidad
-   â€¢ Otro
+   • Fraude/Estafa
+   • Contenido inapropiado
+   • Acoso
+   • Suplantación de identidad
+   • Otro
 5. Agrega detalles y evidencia
 
 **Reportar producto:**
-1. En la pÃ¡gina del producto
+1. En la página del producto
 2. Toca **"Reportar"**
 3. Selecciona el motivo
 
-âš ï¸ **Si ya fuiste estafado:**
-â€¢ No borres la conversaciÃ³n
-â€¢ Guarda capturas de pantalla
-â€¢ Reporta inmediatamente
-â€¢ Contacta a soporte con los detalles
+⚠️ **Si ya fuiste estafado:**
+• No borres la conversación
+• Guarda capturas de pantalla
+• Reporta inmediatamente
+• Contacta a soporte con los detalles
 
 Investigamos cada reporte en menos de 24 horas.""",
         keywords=["reportar", "estafa", "fraude", "sospechoso", "falso", "denuncia"],
         action_buttons=[
-            ActionButton("btn_report", "âš ï¸ Reportar usuario", "navigate", "report/user", "alert-triangle"),
-            ActionButton("btn_human", "ðŸ‘¤ Hablar con agente", "call_function", "escalate_to_human", "user"),
+            ActionButton("btn_report", "⚠️ Reportar usuario", "navigate", "report/user", "alert-triangle"),
+            ActionButton("btn_human", "👤 Hablar con agente", "call_function", "escalate_to_human", "user"),
         ],
     ),
     
@@ -520,66 +520,66 @@ Investigamos cada reporte en menos de 24 horas.""",
         category="app",
         questions=[
             "La app se cierra sola",
-            "Vinzay no funciona",
+            "Mercora no funciona",
             "Error en la app",
-            "La app estÃ¡ muy lenta",
+            "La app está muy lenta",
             "No carga nada",
         ],
         answer="""Si tienes problemas con la app:
 
-**Soluciones rÃ¡pidas:**
+**Soluciones rápidas:**
 1. **Cierra y vuelve a abrir** la app
-2. **Verifica tu conexiÃ³n** a internet
+2. **Verifica tu conexión** a internet
 3. **Actualiza la app** en la tienda de aplicaciones
 4. **Reinicia tu dispositivo**
-5. **Limpia la cachÃ©:**
-   â€¢ Android: Ajustes â†’ Apps â†’ Vinzay â†’ Almacenamiento â†’ Borrar cachÃ©
-   â€¢ iOS: Elimina y reinstala la app
+5. **Limpia la caché:**
+   • Android: Ajustes → Apps → Mercora → Almacenamiento → Borrar caché
+   • iOS: Elimina y reinstala la app
 
 **Si el problema persiste:**
-â€¢ EnvÃ­anos una captura del error
-â€¢ CuÃ©ntanos quÃ© estabas haciendo cuando fallÃ³
-â€¢ Menciona tu modelo de telÃ©fono y versiÃ³n de Android/iOS
+• Envíanos una captura del error
+• Cuéntanos qué estabas haciendo cuando falló
+• Menciona tu modelo de teléfono y versión de Android/iOS
 
 Trabajamos constantemente para mejorar la app.""",
         keywords=["error", "bug", "falla", "crash", "lento", "no funciona", "cierra"],
         action_buttons=[
-            ActionButton("btn_update", "ðŸ”„ Actualizar app", "open_url", "https://play.google.com/store/apps/details?id=com.vinzay.app", "download"),
-            ActionButton("btn_human", "ðŸ‘¤ Reportar bug", "call_function", "escalate_to_human", "bug"),
+            ActionButton("btn_update", "🔄 Actualizar app", "open_url", "https://play.google.com/store/apps/details?id=com.mercora.app", "download"),
+            ActionButton("btn_human", "👤 Reportar bug", "call_function", "escalate_to_human", "bug"),
         ],
     ),
     
-    # === VERIFICACIÃ“N ===
+    # === VERIFICACIÓN ===
     FAQEntry(
         id="verification_how",
         intent="account_verify",
         category="cuenta",
         questions=[
-            "Â¿CÃ³mo verifico mi cuenta?",
+            "¿Cómo verifico mi cuenta?",
             "Quiero verificar mi cuenta",
-            "Â¿CÃ³mo me verifico?",
+            "¿Cómo me verifico?",
             "Verificar identidad",
-            "Â¿QuÃ© necesito para verificarme?",
-            "Proceso de verificaciÃ³n",
+            "¿Qué necesito para verificarme?",
+            "Proceso de verificación",
         ],
-        answer="""Para verificar tu cuenta en Vinzay:
+        answer="""Para verificar tu cuenta en Mercora:
 
-1. Ve a **Perfil** â†’ **VerificaciÃ³n**
-2. Sube tu **identificaciÃ³n oficial** (INE, pasaporte, licencia)
+1. Ve a **Perfil** → **Verificación**
+2. Sube tu **identificación oficial** (INE, pasaporte, licencia)
 3. Toma una **selfie** para confirmar tu identidad
-4. Espera la revisiÃ³n (generalmente 24-48 horas)
+4. Espera la revisión (generalmente 24-48 horas)
 
 **Beneficios de verificarte:**
-â€¢ âœ… Badge de verificado en tu perfil
-â€¢ ðŸª Puedes vender productos
-â€¢ ðŸ¤ Mayor confianza de compradores
-â€¢ ðŸ’° Acceso a retiros de dinero
+• ✅ Badge de verificado en tu perfil
+• 🏪 Puedes vender productos
+• 🤝 Mayor confianza de compradores
+• 💰 Acceso a retiros de dinero
 
-âš ï¸ La verificaciÃ³n es **obligatoria para vender** en Vinzay.""",
+⚠️ La verificación es **obligatoria para vender** en Mercora.""",
         keywords=["verificar", "verificacion", "identidad", "ine", "pasaporte", "badge"],
         confidence_boost=0.1,
         action_buttons=[
-            ActionButton("btn_verify", "âœ… Verificar cuenta", "navigate", "profile/verification", "check-circle"),
+            ActionButton("btn_verify", "✅ Verificar cuenta", "navigate", "profile/verification", "check-circle"),
         ],
     ),
     
@@ -589,35 +589,35 @@ Trabajamos constantemente para mejorar la app.""",
         intent="wallet_info",
         category="pagos",
         questions=[
-            "Â¿CÃ³mo retiro mi dinero?",
+            "¿Cómo retiro mi dinero?",
             "Retirar fondos",
-            "Â¿CÃ³mo cobro mis ventas?",
+            "¿Cómo cobro mis ventas?",
             "Quiero sacar mi dinero",
-            "Â¿DÃ³nde veo mi saldo?",
+            "¿Dónde veo mi saldo?",
             "Mi billetera",
-            "Â¿CuÃ¡ndo me pagan?",
+            "¿Cuándo me pagan?",
         ],
-        answer="""Para gestionar tu **Billetera Vinzay**:
+        answer="""Para gestionar tu **Billetera Mercora**:
 
-ðŸ“ Ve a **Perfil** â†’ **Billetera**
+📍 Ve a **Perfil** → **Billetera**
 
 **Ver saldo:**
-â€¢ Tu saldo disponible aparece en la parte superior
-â€¢ Incluye ganancias de ventas completadas
+• Tu saldo disponible aparece en la parte superior
+• Incluye ganancias de ventas completadas
 
 **Retirar fondos:**
 1. Toca **"Retirar fondos"**
-2. Ingresa el monto (mÃ­nimo $50 MXN)
+2. Ingresa el monto (mínimo $50 MXN)
 3. Selecciona tu cuenta bancaria
 4. Confirma la transferencia
-5. El dinero llega en **1-3 dÃ­as hÃ¡biles**
+5. El dinero llega en **1-3 días hábiles**
 
-ðŸ’¡ El saldo se libera cuando el comprador confirma la recepciÃ³n del producto.""",
+💡 El saldo se libera cuando el comprador confirma la recepción del producto.""",
         keywords=["billetera", "saldo", "retirar", "cobrar", "dinero", "fondos", "pagan"],
         confidence_boost=0.1,
         action_buttons=[
-            ActionButton("btn_wallet", "ðŸ‘› Mi billetera", "navigate", "profile/wallet", "wallet"),
-            ActionButton("btn_bank", "ðŸ¦ Agregar cuenta bancaria", "navigate", "profile/bank-accounts", "building"),
+            ActionButton("btn_wallet", "👛 Mi billetera", "navigate", "profile/wallet", "wallet"),
+            ActionButton("btn_bank", "🏦 Agregar cuenta bancaria", "navigate", "profile/bank-accounts", "building"),
         ],
     ),
     
@@ -627,33 +627,33 @@ Trabajamos constantemente para mejorar la app.""",
         intent="handshake_info",
         category="compras",
         questions=[
-            "Â¿QuÃ© es el handshake?",
-            "Â¿CÃ³mo funciona la compra presencial?",
+            "¿Qué es el handshake?",
+            "¿Cómo funciona la compra presencial?",
             "Comprar en persona",
-            "Â¿CÃ³mo hago un handshake?",
+            "¿Cómo hago un handshake?",
             "Entrega en persona",
             "Quedar con el vendedor",
         ],
         answer="""El **Handshake** es nuestro sistema de compra presencial seguro:
 
-**Â¿CÃ³mo funciona?**
+**¿Cómo funciona?**
 1. Acuerda con el vendedor/comprador por chat
-2. Uno de los dos inicia el **Handshake** desde el chat (botÃ³n +)
+2. Uno de los dos inicia el **Handshake** desde el chat (botón +)
 3. Se propone un punto de encuentro y precio
 4. El otro acepta la propuesta
 5. Ambos se dirigen al punto de encuentro
 6. Al llegar, ambos **confirman la entrega** en la app
-7. Â¡TransacciÃ³n completada! âœ…
+7. ¡Transacción completada! ✅
 
 **Seguridad:**
-â€¢ ðŸ—ºï¸ Mapa en tiempo real para ver la ubicaciÃ³n de ambos
-â€¢ ðŸ“ DetecciÃ³n automÃ¡tica de llegada (50m)
-â€¢ âœ… Ambas partes deben confirmar
-â€¢ ðŸ”’ Sistema de disputas si hay problemas
-â€¢ ðŸ“± Funciona **offline** con QR si no hay internet""",
+• 🗺️ Mapa en tiempo real para ver la ubicación de ambos
+• 📍 Detección automática de llegada (50m)
+• ✅ Ambas partes deben confirmar
+• 🔒 Sistema de disputas si hay problemas
+• 📱 Funciona **offline** con QR si no hay internet""",
         keywords=["handshake", "presencial", "persona", "encuentro", "quedar", "entrega"],
         action_buttons=[
-            ActionButton("btn_chat", "ðŸ’¬ Ir al chat", "navigate", "chat", "message-circle"),
+            ActionButton("btn_chat", "💬 Ir al chat", "navigate", "chat", "message-circle"),
         ],
     ),
     
@@ -663,7 +663,7 @@ Trabajamos constantemente para mejorar la app.""",
         intent="notification_settings",
         category="cuenta",
         questions=[
-            "Â¿CÃ³mo desactivo las notificaciones?",
+            "¿Cómo desactivo las notificaciones?",
             "No quiero recibir notificaciones",
             "Configurar notificaciones",
             "Muchas notificaciones",
@@ -671,18 +671,18 @@ Trabajamos constantemente para mejorar la app.""",
         ],
         answer="""Para configurar tus notificaciones:
 
-1. Ve a **Perfil** â†’ **ConfiguraciÃ³n** â†’ **Notificaciones**
-2. Activa o desactiva por categorÃ­a:
-   â€¢ ðŸ’¬ **Mensajes** - Nuevos chats y respuestas
-   â€¢ ðŸ›’ **Compras** - Estados de pedidos
-   â€¢ â¤ï¸ **Interacciones** - Likes, comentarios, seguidores
-   â€¢ ðŸª **Ventas** - Nuevas ventas y consultas
-   â€¢ ðŸ“¢ **Promociones** - Ofertas y novedades
+1. Ve a **Perfil** → **Configuración** → **Notificaciones**
+2. Activa o desactiva por categoría:
+   • 💬 **Mensajes** - Nuevos chats y respuestas
+   • 🛒 **Compras** - Estados de pedidos
+   • ❤️ **Interacciones** - Likes, comentarios, seguidores
+   • 🏪 **Ventas** - Nuevas ventas y consultas
+   • 📢 **Promociones** - Ofertas y novedades
 
-ðŸ’¡ TambiÃ©n puedes **silenciar chats individuales** desde el chat especÃ­fico.""",
+💡 También puedes **silenciar chats individuales** desde el chat específico.""",
         keywords=["notificaciones", "silenciar", "desactivar", "alertas", "avisos"],
         action_buttons=[
-            ActionButton("btn_notif", "ðŸ”” Configurar notificaciones", "navigate", "profile/settings/notifications", "bell"),
+            ActionButton("btn_notif", "🔔 Configurar notificaciones", "navigate", "profile/settings/notifications", "bell"),
         ],
     ),
     
@@ -692,35 +692,35 @@ Trabajamos constantemente para mejorar la app.""",
         intent="return_process",
         category="compras",
         questions=[
-            "Â¿CÃ³mo devuelvo un producto?",
-            "Quiero hacer una devoluciÃ³n",
-            "Â¿Puedo devolver algo?",
-            "Proceso de devoluciÃ³n",
+            "¿Cómo devuelvo un producto?",
+            "Quiero hacer una devolución",
+            "¿Puedo devolver algo?",
+            "Proceso de devolución",
             "Devolver compra",
         ],
-        answer="""Para devolver un producto en Vinzay:
+        answer="""Para devolver un producto en Mercora:
 
-1. Ve a **Perfil** â†’ **Historial de pedidos**
+1. Ve a **Perfil** → **Historial de pedidos**
 2. Selecciona el pedido
-3. Toca **"Solicitar devoluciÃ³n"**
+3. Toca **"Solicitar devolución"**
 4. Selecciona el motivo:
-   â€¢ Producto diferente al anunciado
-   â€¢ Producto daÃ±ado
-   â€¢ No es lo que esperaba
-   â€¢ Otro motivo
+   • Producto diferente al anunciado
+   • Producto dañado
+   • No es lo que esperaba
+   • Otro motivo
 5. Adjunta **fotos del producto**
 6. Describe el problema
 
 **Importante:**
-â€¢ â° Tienes **7 dÃ­as** desde la entrega para solicitar devoluciÃ³n
-â€¢ ðŸ“¦ DeberÃ¡s enviar el producto de vuelta al vendedor
-â€¢ ðŸ’° El reembolso se procesa al confirmar la recepciÃ³n del vendedor
-â€¢ ðŸ”’ Vinzay protege tu compra durante todo el proceso""",
+• ⏰ Tienes **7 días** desde la entrega para solicitar devolución
+• 📦 Deberás enviar el producto de vuelta al vendedor
+• 💰 El reembolso se procesa al confirmar la recepción del vendedor
+• 🔒 Mercora protege tu compra durante todo el proceso""",
         keywords=["devolver", "devolucion", "regresar", "retornar", "producto"],
         confidence_boost=0.1,
         action_buttons=[
-            ActionButton("btn_orders", "ðŸ“¦ Ver mis pedidos", "navigate", "profile/orders", "package"),
-            ActionButton("btn_human", "ðŸ‘¤ Hablar con agente", "call_function", "escalate_to_human", "user"),
+            ActionButton("btn_orders", "📦 Ver mis pedidos", "navigate", "profile/orders", "package"),
+            ActionButton("btn_human", "👤 Hablar con agente", "call_function", "escalate_to_human", "user"),
         ],
     ),
     
@@ -730,31 +730,31 @@ Trabajamos constantemente para mejorar la app.""",
         intent="stories_info",
         category="app",
         questions=[
-            "Â¿CÃ³mo subo una historia?",
-            "Â¿CÃ³mo funcionan las historias?",
+            "¿Cómo subo una historia?",
+            "¿Cómo funcionan las historias?",
             "Publicar historia",
-            "Stories en Vinzay",
-            "Â¿CuÃ¡nto duran las historias?",
+            "Stories en Mercora",
+            "¿Cuánto duran las historias?",
         ],
-        answer="""Las **Historias** en Vinzay te permiten compartir momentos con tus seguidores:
+        answer="""Las **Historias** en Mercora te permiten compartir momentos con tus seguidores:
 
 **Publicar una historia:**
-1. Toca el botÃ³n **"+"** en la secciÃ³n de historias (arriba del feed)
-2. Toma una foto/video o elige de tu galerÃ­a
+1. Toca el botón **"+"** en la sección de historias (arriba del feed)
+2. Toma una foto/video o elige de tu galería
 3. Agrega texto, stickers o efectos
 4. Toca **"Publicar"**
 
-**CaracterÃ­sticas:**
-â€¢ â° Duran **24 horas**
-â€¢ ðŸ‘ï¸ Puedes ver quiÃ©n las vio
-â€¢ â¤ï¸ Los seguidores pueden reaccionar y responder
-â€¢ ðŸ”’ Puedes **ocultar** historias a usuarios especÃ­ficos
-â€¢ â†—ï¸ Se pueden reenviar/compartir
+**Características:**
+• ⏰ Duran **24 horas**
+• 👁️ Puedes ver quién las vio
+• ❤️ Los seguidores pueden reaccionar y responder
+• 🔒 Puedes **ocultar** historias a usuarios específicos
+• ↗️ Se pueden reenviar/compartir
 
-ðŸ’¡ Las historias son ideales para mostrar productos nuevos o promociones.""",
+💡 Las historias son ideales para mostrar productos nuevos o promociones.""",
         keywords=["historia", "story", "stories", "publicar", "subir"],
         action_buttons=[
-            ActionButton("btn_stories", "ðŸ“¸ Ver historias", "navigate", "home/stories", "camera"),
+            ActionButton("btn_stories", "📸 Ver historias", "navigate", "home/stories", "camera"),
         ],
     ),
     
@@ -764,33 +764,33 @@ Trabajamos constantemente para mejorar la app.""",
         intent="rends_info",
         category="app",
         questions=[
-            "Â¿QuÃ© son los Rends?",
-            "Â¿CÃ³mo subo un Rend?",
+            "¿Qué son los Rends?",
+            "¿Cómo subo un Rend?",
             "Publicar un Rend",
-            "Â¿CÃ³mo funcionan los Rends?",
+            "¿Cómo funcionan los Rends?",
             "Videos cortos",
         ],
-        answer="""Los **Rends** son videos cortos en Vinzay (similar a Reels/TikTok):
+        answer="""Los **Rends** son videos cortos en Mercora (similar a Reels/TikTok):
 
 **Crear un Rend:**
-1. Toca el botÃ³n **"+"** en la barra inferior
+1. Toca el botón **"+"** en la barra inferior
 2. Selecciona **"Rend"**
 3. Graba un video (hasta 60 segundos) o sube uno
-4. Edita: agrega mÃºsica, texto, filtros
-5. Escribe una descripciÃ³n y hashtags
+4. Edita: agrega música, texto, filtros
+5. Escribe una descripción y hashtags
 6. Toca **"Publicar"**
 
 **Funcionalidades:**
-â€¢ â¤ï¸ Likes y comentarios
-â€¢ ðŸ’¾ Guardar favoritos
-â€¢ â†—ï¸ Compartir
-â€¢ ðŸ·ï¸ Etiquetar productos (Â¡vende directo desde el video!)
+• ❤️ Likes y comentarios
+• 💾 Guardar favoritos
+• ↗️ Compartir
+• 🏷️ Etiquetar productos (¡vende directo desde el video!)
 
-ðŸ’¡ Los Rends con productos etiquetados tienen **3x mÃ¡s engagement**.""",
+💡 Los Rends con productos etiquetados tienen **3x más engagement**.""",
         keywords=["rend", "rends", "video", "reels", "corto", "grabar"],
         action_buttons=[
-            ActionButton("btn_rends", "ðŸŽ¬ Ver Rends", "navigate", "rends", "play-circle"),
-            ActionButton("btn_create", "âž• Crear Rend", "navigate", "create/rend", "plus-circle"),
+            ActionButton("btn_rends", "🎬 Ver Rends", "navigate", "rends", "play-circle"),
+            ActionButton("btn_create", "➕ Crear Rend", "navigate", "create/rend", "plus-circle"),
         ],
     ),
     
@@ -800,31 +800,31 @@ Trabajamos constantemente para mejorar la app.""",
         intent="privacy_info",
         category="cuenta",
         questions=[
-            "Â¿CÃ³mo hago mi perfil privado?",
+            "¿Cómo hago mi perfil privado?",
             "Configurar privacidad",
             "No quiero que vean mi perfil",
             "Ocultar actividad",
-            "Â¿QuiÃ©n ve mi informaciÃ³n?",
+            "¿Quién ve mi información?",
             "Perfil privado",
         ],
-        answer="""Para configurar tu privacidad en Vinzay:
+        answer="""Para configurar tu privacidad en Mercora:
 
-1. Ve a **Perfil** â†’ **ConfiguraciÃ³n** â†’ **Privacidad**
+1. Ve a **Perfil** → **Configuración** → **Privacidad**
 
 **Opciones disponibles:**
-â€¢ ðŸ‘¤ **Visibilidad del perfil** - PÃºblico, solo seguidores, o privado
-â€¢ ðŸŸ¢ **Estado en lÃ­nea** - Mostrar/ocultar cuÃ¡ndo estÃ¡s conectado
-â€¢ ðŸ‘ï¸ **Ãšltima conexiÃ³n** - Mostrar/ocultar tu Ãºltima vez en lÃ­nea
-â€¢ ðŸ·ï¸ **Etiquetado** - Permitir/bloquear que te etiqueten
-â€¢ @ **Menciones** - Permitir/bloquear menciones
-â€¢ â¤ï¸ **Likes** - Mostrar/ocultar tus likes
-â€¢ ðŸ›’ **Actividad de compras** - Mostrar/ocultar
-â€¢ ðŸ“– **Historias** - Ocultar de usuarios especÃ­ficos
+• 👤 **Visibilidad del perfil** - Público, solo seguidores, o privado
+• 🟢 **Estado en línea** - Mostrar/ocultar cuándo estás conectado
+• 👁️ **Última conexión** - Mostrar/ocultar tu última vez en línea
+• 🏷️ **Etiquetado** - Permitir/bloquear que te etiqueten
+• @ **Menciones** - Permitir/bloquear menciones
+• ❤️ **Likes** - Mostrar/ocultar tus likes
+• 🛒 **Actividad de compras** - Mostrar/ocultar
+• 📖 **Historias** - Ocultar de usuarios específicos
 
-ðŸ’¡ Un perfil **privado** solo permite que tus seguidores vean tu contenido.""",
+💡 Un perfil **privado** solo permite que tus seguidores vean tu contenido.""",
         keywords=["privacidad", "privado", "ocultar", "visibilidad", "configurar"],
         action_buttons=[
-            ActionButton("btn_privacy", "ðŸ”’ Configurar privacidad", "navigate", "profile/settings/privacy", "eye-off"),
+            ActionButton("btn_privacy", "🔒 Configurar privacidad", "navigate", "profile/settings/privacy", "eye-off"),
         ],
     ),
     
@@ -834,31 +834,31 @@ Trabajamos constantemente para mejorar la app.""",
         intent="product_manage",
         category="ventas",
         questions=[
-            "Â¿CÃ³mo edito mi publicaciÃ³n?",
+            "¿Cómo edito mi publicación?",
             "Cambiar precio de producto",
             "Modificar mi anuncio",
-            "Actualizar publicaciÃ³n",
-            "Borrar publicaciÃ³n",
+            "Actualizar publicación",
+            "Borrar publicación",
         ],
         answer="""Para gestionar tus publicaciones:
 
-**Editar publicaciÃ³n:**
-1. Ve a tu **Perfil** â†’ tus publicaciones
-2. Toca la publicaciÃ³n que quieres editar
-3. Toca los **tres puntos (â‹®)** â†’ **"Editar"**
-4. Modifica lo que necesites (precio, fotos, descripciÃ³n)
+**Editar publicación:**
+1. Ve a tu **Perfil** → tus publicaciones
+2. Toca la publicación que quieres editar
+3. Toca los **tres puntos (⋮)** → **"Editar"**
+4. Modifica lo que necesites (precio, fotos, descripción)
 5. Guarda los cambios
 
-**Eliminar publicaciÃ³n:**
-1. Ve a la publicaciÃ³n
-2. Toca **â‹®** â†’ **"Eliminar"**
-3. Confirma la eliminaciÃ³n
+**Eliminar publicación:**
+1. Ve a la publicación
+2. Toca **⋮** → **"Eliminar"**
+3. Confirma la eliminación
 
-âš ï¸ No puedes eliminar publicaciones con **pedidos activos**.""",
+⚠️ No puedes eliminar publicaciones con **pedidos activos**.""",
         keywords=["editar", "modificar", "publicacion", "producto", "anuncio", "precio", "borrar"],
         action_buttons=[
-            ActionButton("btn_profile", "ðŸ‘¤ Mi perfil", "navigate", "profile", "user"),
-            ActionButton("btn_sales", "ðŸª Mis ventas", "navigate", "profile/sales", "store"),
+            ActionButton("btn_profile", "👤 Mi perfil", "navigate", "profile", "user"),
+            ActionButton("btn_sales", "🏪 Mis ventas", "navigate", "profile/sales", "store"),
         ],
     ),
     
@@ -868,37 +868,37 @@ Trabajamos constantemente para mejorar la app.""",
         intent="chat_info",
         category="app",
         questions=[
-            "Â¿CÃ³mo funciona el chat?",
-            "Â¿Puedo hacer llamadas?",
-            "Â¿CÃ³mo contacto al vendedor?",
+            "¿Cómo funciona el chat?",
+            "¿Puedo hacer llamadas?",
+            "¿Cómo contacto al vendedor?",
             "Enviar mensaje al vendedor",
-            "Â¿Hay videollamadas?",
+            "¿Hay videollamadas?",
         ],
-        answer="""El **Chat de Vinzay** tiene muchas funciones:
+        answer="""El **Chat de Mercora** tiene muchas funciones:
 
 **Mensajes:**
-â€¢ ðŸ’¬ Texto con formato
-â€¢ ðŸ“· Fotos y videos
-â€¢ @ Menciones de usuarios
-â€¢ ðŸ”— Compartir productos
+• 💬 Texto con formato
+• 📷 Fotos y videos
+• @ Menciones de usuarios
+• 🔗 Compartir productos
 
 **Llamadas:**
-â€¢ ðŸ“ž Llamadas de voz (VoIP)
-â€¢ Calidad HD con cancelaciÃ³n de ruido
+• 📞 Llamadas de voz (VoIP)
+• Calidad HD con cancelación de ruido
 
 **Funciones especiales:**
-â€¢ ðŸ¤ Iniciar **Handshake** (compra presencial)
-â€¢ ðŸ“Œ Fijar mensajes importantes
-â€¢ ðŸ·ï¸ Etiquetar conversaciones
-â€¢ ðŸ” Buscar en el chat
-â€¢ âœ… Indicador de lectura
+• 🤝 Iniciar **Handshake** (compra presencial)
+• 📌 Fijar mensajes importantes
+• 🏷️ Etiquetar conversaciones
+• 🔍 Buscar en el chat
+• ✅ Indicador de lectura
 
 **Contactar vendedor:**
-1. Ve a la publicaciÃ³n del producto
+1. Ve a la publicación del producto
 2. Toca **"Consultar"** o **"Enviar mensaje"**""",
         keywords=["chat", "mensaje", "llamada", "contactar", "vendedor", "comunicar"],
         action_buttons=[
-            ActionButton("btn_chats", "ðŸ’¬ Mis chats", "navigate", "chat", "message-circle"),
+            ActionButton("btn_chats", "💬 Mis chats", "navigate", "chat", "message-circle"),
         ],
     ),
     
@@ -908,34 +908,34 @@ Trabajamos constantemente para mejorar la app.""",
         intent="social_info",
         category="cuenta",
         questions=[
-            "Â¿CÃ³mo consigo mÃ¡s seguidores?",
-            "Â¿CÃ³mo sigo a alguien?",
+            "¿Cómo consigo más seguidores?",
+            "¿Cómo sigo a alguien?",
             "Ver mis seguidores",
             "Bloquear seguidor",
-            "Â¿Para quÃ© sirven los seguidores?",
+            "¿Para qué sirven los seguidores?",
         ],
-        answer="""Los **seguidores** en Vinzay son importantes para vender mÃ¡s:
+        answer="""Los **seguidores** en Mercora son importantes para vender más:
 
 **Seguir a alguien:**
-â€¢ Ve a su perfil y toca **"Seguir"**
+• Ve a su perfil y toca **"Seguir"**
 
 **Ver tus seguidores:**
-â€¢ **Perfil** â†’ toca el nÃºmero de **seguidores**
+• **Perfil** → toca el número de **seguidores**
 
 **Beneficios de tener seguidores:**
-â€¢ ðŸ“£ Tus publicaciones aparecen en su feed
-â€¢ ðŸ“– Ven tus historias y Rends
-â€¢ ðŸ”” Reciben notificaciones de tus nuevos productos
-â€¢ â­ Mayor visibilidad en bÃºsquedas
+• 📣 Tus publicaciones aparecen en su feed
+• 📖 Ven tus historias y Rends
+• 🔔 Reciben notificaciones de tus nuevos productos
+• ⭐ Mayor visibilidad en búsquedas
 
 **Tips para crecer:**
-â€¢ ðŸ“¸ Publica contenido de calidad regularmente
-â€¢ ðŸŽ¬ Crea Rends atractivos
-â€¢ ðŸ’¬ Responde rÃ¡pido a consultas
-â€¢ ðŸ·ï¸ Usa hashtags relevantes""",
+• 📸 Publica contenido de calidad regularmente
+• 🎬 Crea Rends atractivos
+• 💬 Responde rápido a consultas
+• 🏷️ Usa hashtags relevantes""",
         keywords=["seguidores", "seguir", "followers", "bloquear", "social"],
         action_buttons=[
-            ActionButton("btn_profile", "ðŸ‘¤ Mi perfil", "navigate", "profile", "user"),
+            ActionButton("btn_profile", "👤 Mi perfil", "navigate", "profile", "user"),
         ],
     ),
     
@@ -945,63 +945,63 @@ Trabajamos constantemente para mejorar la app.""",
         intent="interaction_info",
         category="app",
         questions=[
-            "Â¿DÃ³nde veo mis guardados?",
-            "Â¿CÃ³mo guardo un producto?",
+            "¿Dónde veo mis guardados?",
+            "¿Cómo guardo un producto?",
             "Mis favoritos",
             "Productos que me gustan",
-            "Â¿CÃ³mo doy like?",
+            "¿Cómo doy like?",
         ],
         answer="""Para gestionar tus **likes y guardados**:
 
-**Dar like:** Toca el â¤ï¸ en cualquier publicaciÃ³n o Rend
+**Dar like:** Toca el ❤️ en cualquier publicación o Rend
 
-**Guardar producto:** Toca el ðŸ”– (bookmark) en la publicaciÃ³n
+**Guardar producto:** Toca el 🔖 (bookmark) en la publicación
 
 **Ver guardados:**
-â€¢ **Perfil** â†’ **Guardados** (Ã­cono de bookmark)
-â€¢ EstÃ¡n organizados por categorÃ­a
+• **Perfil** → **Guardados** (ícono de bookmark)
+• Están organizados por categoría
 
 **Ver likes:**
-â€¢ **Perfil** â†’ **Likes** (Ã­cono de corazÃ³n)
+• **Perfil** → **Likes** (ícono de corazón)
 
-ðŸ’¡ Los productos guardados te **notifican** si bajan de precio o tienen oferta.""",
+💡 Los productos guardados te **notifican** si bajan de precio o tienen oferta.""",
         keywords=["guardados", "favoritos", "like", "guardar", "bookmark", "corazon"],
         action_buttons=[
-            ActionButton("btn_saved", "ðŸ”– Mis guardados", "navigate", "profile/saved", "bookmark"),
+            ActionButton("btn_saved", "🔖 Mis guardados", "navigate", "profile/saved", "bookmark"),
         ],
     ),
     
-    # === RESEÃ‘AS ===
+    # === RESEÑAS ===
     FAQEntry(
         id="reviews_info",
         intent="review_info",
         category="compras",
         questions=[
-            "Â¿CÃ³mo dejo una reseÃ±a?",
+            "¿Cómo dejo una reseña?",
             "Calificar al vendedor",
-            "Â¿DÃ³nde pongo mi opiniÃ³n?",
+            "¿Dónde pongo mi opinión?",
             "Dejar comentario de compra",
             "Calificar producto",
         ],
-        answer="""Para dejar una **reseÃ±a** despuÃ©s de tu compra:
+        answer="""Para dejar una **reseña** después de tu compra:
 
-1. Ve a **Perfil** â†’ **Historial de pedidos**
+1. Ve a **Perfil** → **Historial de pedidos**
 2. Selecciona el pedido completado
-3. Toca **"Dejar reseÃ±a"**
-4. Califica con â­ (1-5 estrellas)
-5. Escribe tu opiniÃ³n
+3. Toca **"Dejar reseña"**
+4. Califica con ⭐ (1-5 estrellas)
+5. Escribe tu opinión
 6. Opcionalmente adjunta fotos
 7. Publica
 
-**Tu reseÃ±a ayuda a:**
-â€¢ ðŸŒŸ Otros compradores a decidir
-â€¢ ðŸ“Š El vendedor a mejorar
-â€¢ ðŸ† Construir la reputaciÃ³n de la comunidad
+**Tu reseña ayuda a:**
+• 🌟 Otros compradores a decidir
+• 📊 El vendedor a mejorar
+• 🏆 Construir la reputación de la comunidad
 
-âš ï¸ Las reseÃ±as son **permanentes** y solo se pueden dejar en pedidos completados.""",
-        keywords=["reseÃ±a", "calificar", "opinion", "estrellas", "review", "comentario"],
+⚠️ Las reseñas son **permanentes** y solo se pueden dejar en pedidos completados.""",
+        keywords=["reseña", "calificar", "opinion", "estrellas", "review", "comentario"],
         action_buttons=[
-            ActionButton("btn_orders", "ðŸ“¦ Ver mis pedidos", "navigate", "profile/orders", "package"),
+            ActionButton("btn_orders", "📦 Ver mis pedidos", "navigate", "profile/orders", "package"),
         ],
     ),
     
@@ -1011,102 +1011,102 @@ Trabajamos constantemente para mejorar la app.""",
         intent="offer_info",
         category="compras",
         questions=[
-            "Â¿CÃ³mo hago una oferta?",
-            "Â¿Puedo negociar el precio?",
+            "¿Cómo hago una oferta?",
+            "¿Puedo negociar el precio?",
             "Hacer contraoferta",
-            "Â¿El precio es fijo?",
+            "¿El precio es fijo?",
             "Enviar oferta al vendedor",
         ],
-        answer="""El sistema de **ofertas** en Vinzay te permite negociar:
+        answer="""El sistema de **ofertas** en Mercora te permite negociar:
 
 **Hacer una oferta:**
-1. Ve a la publicaciÃ³n del producto
+1. Ve a la publicación del producto
 2. Toca **"Hacer oferta"**
 3. Ingresa el precio que propones
 4. Opcionalmente agrega un mensaje
-5. EnvÃ­a la oferta
+5. Envía la oferta
 
 **El vendedor puede:**
-â€¢ âœ… **Aceptar** - Se procede con la compra
-â€¢ ðŸ”„ **Contraoferta** - Propone otro precio
-â€¢ âŒ **Rechazar** - La oferta se cancela
+• ✅ **Aceptar** - Se procede con la compra
+• 🔄 **Contraoferta** - Propone otro precio
+• ❌ **Rechazar** - La oferta se cancela
 
-ðŸ’¡ **Tips:**
-â€¢ Las ofertas demasiado bajas pueden ser ignoradas
-â€¢ SÃ© respetuoso en las negociaciones
-â€¢ Puedes tener mÃºltiples ofertas activas""",
+💡 **Tips:**
+• Las ofertas demasiado bajas pueden ser ignoradas
+• Sé respetuoso en las negociaciones
+• Puedes tener múltiples ofertas activas""",
         keywords=["oferta", "negociar", "precio", "contraoferta", "descuento"],
         action_buttons=[
-            ActionButton("btn_offers", "ðŸ·ï¸ Mis ofertas", "navigate", "profile/offers", "tag"),
+            ActionButton("btn_offers", "🏷️ Mis ofertas", "navigate", "profile/offers", "tag"),
         ],
     ),
     
-    # === REPUTACIÃ“N ===
+    # === REPUTACIÓN ===
     FAQEntry(
         id="reputation_info",
         intent="reputation_info",
         category="cuenta",
         questions=[
-            "Â¿CÃ³mo funciona la reputaciÃ³n?",
-            "Â¿QuÃ© es el puntaje de reputaciÃ³n?",
-            "Mejorar mi reputaciÃ³n",
-            "Â¿Por quÃ© importa la reputaciÃ³n?",
+            "¿Cómo funciona la reputación?",
+            "¿Qué es el puntaje de reputación?",
+            "Mejorar mi reputación",
+            "¿Por qué importa la reputación?",
         ],
-        answer="""La **reputaciÃ³n** en Vinzay refleja tu confiabilidad:
+        answer="""La **reputación** en Mercora refleja tu confiabilidad:
 
 **Se compone de:**
-â€¢ â­ **CalificaciÃ³n promedio** de reseÃ±as
-â€¢ ðŸ“¦ **Pedidos completados** exitosamente
-â€¢ â±ï¸ **Tiempo de respuesta** en chat
-â€¢ ðŸšš **Velocidad de envÃ­o**
-â€¢ ðŸ”„ **Tasa de cancelaciÃ³n** (menor = mejor)
-â€¢ âœ… **Cuenta verificada** (bonus)
+• ⭐ **Calificación promedio** de reseñas
+• 📦 **Pedidos completados** exitosamente
+• ⏱️ **Tiempo de respuesta** en chat
+• 🚚 **Velocidad de envío**
+• 🔄 **Tasa de cancelación** (menor = mejor)
+• ✅ **Cuenta verificada** (bonus)
 
 **Niveles:**
-â€¢ ðŸ¥‰ Bronce - Inicio
-â€¢ ðŸ¥ˆ Plata - Buen historial
-â€¢ ðŸ¥‡ Oro - Excelente reputaciÃ³n
-â€¢ ðŸ’Ž Diamante - Top vendedor
+• 🥉 Bronce - Inicio
+• 🥈 Plata - Buen historial
+• 🥇 Oro - Excelente reputación
+• 💎 Diamante - Top vendedor
 
-ðŸ’¡ **Tips para mejorar:**
-â€¢ Responde mensajes rÃ¡pido
-â€¢ EnvÃ­a pedidos a tiempo
-â€¢ MantÃ©n buenas calificaciones
-â€¢ Resuelve problemas amigablemente""",
+💡 **Tips para mejorar:**
+• Responde mensajes rápido
+• Envía pedidos a tiempo
+• Mantén buenas calificaciones
+• Resuelve problemas amigablemente""",
         keywords=["reputacion", "puntaje", "calificacion", "confianza", "nivel"],
         action_buttons=[
-            ActionButton("btn_profile", "ðŸ‘¤ Ver mi reputaciÃ³n", "navigate", "profile", "user"),
+            ActionButton("btn_profile", "👤 Ver mi reputación", "navigate", "profile", "user"),
         ],
     ),
     
-    # === ZONAS / UBICACIÃ“N ===
+    # === ZONAS / UBICACIÓN ===
     FAQEntry(
         id="zones_info",
         intent="zone_info",
         category="app",
         questions=[
-            "Â¿QuÃ© son las zonas?",
-            "Â¿CÃ³mo cambio mi zona?",
-            "Ver productos cerca de mÃ­",
+            "¿Qué son las zonas?",
+            "¿Cómo cambio mi zona?",
+            "Ver productos cerca de mí",
             "Productos en mi ciudad",
-            "Filtrar por ubicaciÃ³n",
+            "Filtrar por ubicación",
         ],
         answer="""Las **Zonas** te permiten ver productos cerca de ti:
 
 **Configurar tu zona:**
-1. La app detecta tu ubicaciÃ³n automÃ¡ticamente
-2. TambiÃ©n puedes configurarla manualmente en **Perfil** â†’ **Direcciones**
+1. La app detecta tu ubicación automáticamente
+2. También puedes configurarla manualmente en **Perfil** → **Direcciones**
 
 **Beneficios:**
-â€¢ ðŸ“ Ver productos cerca de tu zona
-â€¢ ðŸ¤ Facilita compras presenciales (Handshake)
-â€¢ ðŸšš EnvÃ­os mÃ¡s rÃ¡pidos y baratos
-â€¢ ðŸ‘¥ Conectar con vendedores locales
+• 📍 Ver productos cerca de tu zona
+• 🤝 Facilita compras presenciales (Handshake)
+• 🚚 Envíos más rápidos y baratos
+• 👥 Conectar con vendedores locales
 
-ðŸ’¡ Usa el filtro de **"Cerca de mÃ­"** en la bÃºsqueda para ver solo productos en tu zona.""",
+💡 Usa el filtro de **"Cerca de mí"** en la búsqueda para ver solo productos en tu zona.""",
         keywords=["zona", "ubicacion", "cerca", "ciudad", "local", "region"],
         action_buttons=[
-            ActionButton("btn_explore", "ðŸ” Explorar cerca", "navigate", "explore/nearby", "map-pin"),
+            ActionButton("btn_explore", "🔍 Explorar cerca", "navigate", "explore/nearby", "map-pin"),
         ],
     ),
     
@@ -1116,23 +1116,23 @@ Trabajamos constantemente para mejorar la app.""",
         intent="language_info",
         category="cuenta",
         questions=[
-            "Â¿CÃ³mo cambio el idioma?",
-            "Cambiar a inglÃ©s",
-            "Â¿La app estÃ¡ en inglÃ©s?",
+            "¿Cómo cambio el idioma?",
+            "Cambiar a inglés",
+            "¿La app está en inglés?",
             "Configurar idioma",
         ],
-        answer="""Para cambiar el idioma de Vinzay:
+        answer="""Para cambiar el idioma de Mercora:
 
-1. Ve a **Perfil** â†’ **ConfiguraciÃ³n** â†’ **Idioma**
+1. Ve a **Perfil** → **Configuración** → **Idioma**
 2. Selecciona tu idioma preferido:
-   â€¢ ðŸ‡ªðŸ‡¸ **EspaÃ±ol**
-   â€¢ ðŸ‡ºðŸ‡¸ **English**
-3. La app se actualizarÃ¡ automÃ¡ticamente
+   • 🇪🇸 **Español**
+   • 🇺🇸 **English**
+3. La app se actualizará automáticamente
 
-ðŸ’¡ El idioma se guarda en tu cuenta, asÃ­ que se mantiene en cualquier dispositivo.""",
-        keywords=["idioma", "lenguaje", "ingles", "espaÃ±ol", "cambiar", "language"],
+💡 El idioma se guarda en tu cuenta, así que se mantiene en cualquier dispositivo.""",
+        keywords=["idioma", "lenguaje", "ingles", "español", "cambiar", "language"],
         action_buttons=[
-            ActionButton("btn_lang", "ðŸŒ Cambiar idioma", "navigate", "profile/settings/language", "globe"),
+            ActionButton("btn_lang", "🌐 Cambiar idioma", "navigate", "profile/settings/language", "globe"),
         ],
     ),
     
@@ -1142,30 +1142,30 @@ Trabajamos constantemente para mejorar la app.""",
         intent="livestream_info",
         category="app",
         questions=[
-            "Â¿CÃ³mo hago un en vivo?",
-            "Â¿Hay transmisiones en vivo?",
+            "¿Cómo hago un en vivo?",
+            "¿Hay transmisiones en vivo?",
             "Live stream",
-            "Â¿Puedo vender en vivo?",
+            "¿Puedo vender en vivo?",
         ],
-        answer="""Las **transmisiones en vivo** en Vinzay:
+        answer="""Las **transmisiones en vivo** en Mercora:
 
 **Iniciar un Live:**
-1. Toca el botÃ³n **"+"** en la barra inferior
+1. Toca el botón **"+"** en la barra inferior
 2. Selecciona **"En vivo"**
-3. Agrega un tÃ­tulo descriptivo
-4. Toca **"Iniciar transmisiÃ³n"**
+3. Agrega un título descriptivo
+4. Toca **"Iniciar transmisión"**
 
 **Durante el Live:**
-â€¢ ðŸ’¬ Chat en tiempo real con viewers
-â€¢ ðŸ·ï¸ Muestra y etiqueta productos
-â€¢ ðŸ›’ Los viewers pueden comprar directo
-â€¢ â¤ï¸ Reacciones en tiempo real
-â€¢ ðŸ‘¥ Ver cantidad de espectadores
+• 💬 Chat en tiempo real con viewers
+• 🏷️ Muestra y etiqueta productos
+• 🛒 Los viewers pueden comprar directo
+• ❤️ Reacciones en tiempo real
+• 👥 Ver cantidad de espectadores
 
-ðŸ’¡ Los Lives son excelentes para mostrar productos en detalle y responder preguntas al instante.""",
+💡 Los Lives son excelentes para mostrar productos en detalle y responder preguntas al instante.""",
         keywords=["vivo", "live", "transmision", "stream", "directo"],
         action_buttons=[
-            ActionButton("btn_live", "ðŸ“º Ir a Lives", "navigate", "live", "video"),
+            ActionButton("btn_live", "📺 Ir a Lives", "navigate", "live", "video"),
         ],
     ),
     
@@ -1178,33 +1178,33 @@ Trabajamos constantemente para mejorar la app.""",
             "El vendedor no responde",
             "No me contesta el vendedor",
             "Problema con un vendedor",
-            "El vendedor no envÃ­a mi pedido",
-            "Vendedor desapareciÃ³",
+            "El vendedor no envía mi pedido",
+            "Vendedor desapareció",
         ],
         answer="""Si tienes problemas con un vendedor:
 
 **Si no responde mensajes:**
-â€¢ â° Dale un tiempo razonable (24-48 horas)
-â€¢ ðŸ“© EnvÃ­a un recordatorio amable
-â€¢ Si pasan mÃ¡s de 48h sin respuesta, reporta
+• ⏰ Dale un tiempo razonable (24-48 horas)
+• 📩 Envía un recordatorio amable
+• Si pasan más de 48h sin respuesta, reporta
 
-**Si no envÃ­a tu pedido:**
-1. Ve a **Perfil** â†’ **Historial de pedidos**
-2. Si pasaron mÃ¡s de 3 dÃ­as sin envÃ­o, toca **"Reportar problema"**
-3. Selecciona **"El vendedor no envÃ­a"**
-4. Vinzay intervendrÃ¡ para resolver
+**Si no envía tu pedido:**
+1. Ve a **Perfil** → **Historial de pedidos**
+2. Si pasaron más de 3 días sin envío, toca **"Reportar problema"**
+3. Selecciona **"El vendedor no envía"**
+4. Mercora intervendrá para resolver
 
 **Si sospechas fraude:**
-â€¢ ðŸš¨ Reporta inmediatamente al usuario
-â€¢ ðŸ“¸ Guarda capturas de pantalla
-â€¢ ðŸ’¬ No borres la conversaciÃ³n
+• 🚨 Reporta inmediatamente al usuario
+• 📸 Guarda capturas de pantalla
+• 💬 No borres la conversación
 
-âš ï¸ Vinzay protege tus compras. Si el vendedor no cumple, recibirÃ¡s reembolso completo.""",
+⚠️ Mercora protege tus compras. Si el vendedor no cumple, recibirás reembolso completo.""",
         keywords=["vendedor", "responde", "envia", "problema", "contactar"],
         confidence_boost=0.1,
         action_buttons=[
-            ActionButton("btn_orders", "ðŸ“¦ Ver mis pedidos", "navigate", "profile/orders", "package"),
-            ActionButton("btn_human", "ðŸ‘¤ Hablar con agente", "call_function", "escalate_to_human", "user"),
+            ActionButton("btn_orders", "📦 Ver mis pedidos", "navigate", "profile/orders", "package"),
+            ActionButton("btn_human", "👤 Hablar con agente", "call_function", "escalate_to_human", "user"),
         ],
     ),
     
@@ -1214,8 +1214,8 @@ Trabajamos constantemente para mejorar la app.""",
         intent="highlights_info",
         category="app",
         questions=[
-            "Â¿QuÃ© son los highlights?",
-            "Â¿CÃ³mo creo un highlight?",
+            "¿Qué son los highlights?",
+            "¿Cómo creo un highlight?",
             "Guardar historias en destacados",
             "Historias destacadas",
         ],
@@ -1223,20 +1223,20 @@ Trabajamos constantemente para mejorar la app.""",
 
 **Crear un Highlight:**
 1. Ve a tu **Perfil**
-2. Toca **"+ Nuevo"** en la secciÃ³n de highlights
+2. Toca **"+ Nuevo"** en la sección de highlights
 3. Selecciona historias pasadas que quieras incluir
 4. Dale un **nombre** y elige una **portada**
 5. Toca **"Crear"**
 
 **Usos populares:**
-â€¢ ðŸ·ï¸ **CatÃ¡logo** - Muestra tus productos
-â€¢ â­ **ReseÃ±as** - Comparte opiniones de clientes
-â€¢ ðŸ“¦ **EnvÃ­os** - Muestra tu proceso de empaque
-â€¢ â“ **FAQ** - Responde preguntas frecuentes
-â€¢ ðŸŽ‰ **Ofertas** - Promociones activas""",
+• 🏷️ **Catálogo** - Muestra tus productos
+• ⭐ **Reseñas** - Comparte opiniones de clientes
+• 📦 **Envíos** - Muestra tu proceso de empaque
+• ❓ **FAQ** - Responde preguntas frecuentes
+• 🎉 **Ofertas** - Promociones activas""",
         keywords=["highlights", "destacados", "historias", "guardar", "permanente"],
         action_buttons=[
-            ActionButton("btn_profile", "ðŸ‘¤ Mi perfil", "navigate", "profile", "user"),
+            ActionButton("btn_profile", "👤 Mi perfil", "navigate", "profile", "user"),
         ],
     ),
     
@@ -1247,7 +1247,7 @@ Trabajamos constantemente para mejorar la app.""",
         category="general",
         questions=[
             "Quiero hablar con una persona",
-            "Â¿Puedo hablar con un humano?",
+            "¿Puedo hablar con un humano?",
             "Necesito un agente",
             "Hablar con soporte humano",
             "No me sirve el bot",
@@ -1256,16 +1256,16 @@ Trabajamos constantemente para mejorar la app.""",
         ],
         answer="""Entiendo que prefieres hablar con una persona. Voy a transferirte con un agente de soporte humano.
 
-Un momento por favor, alguien del equipo de Vinzay se comunicarÃ¡ contigo en breve. ðŸ™
+Un momento por favor, alguien del equipo de Mercora se comunicará contigo en breve. 🙏
 
 Mientras esperas:
-â€¢ ðŸ“‹ Ten a mano los detalles de tu consulta
-â€¢ ðŸ“¸ Prepara capturas de pantalla si aplica
-â€¢ ðŸ“¦ Si es sobre un pedido, ten el nÃºmero listo""",
+• 📋 Ten a mano los detalles de tu consulta
+• 📸 Prepara capturas de pantalla si aplica
+• 📦 Si es sobre un pedido, ten el número listo""",
         keywords=["humano", "persona", "agente", "bot", "transferir", "real"],
         confidence_boost=0.2,
         action_buttons=[
-            ActionButton("btn_escalate", "ðŸ‘¤ Conectar con agente", "call_function", "escalate_to_human", "user"),
+            ActionButton("btn_escalate", "👤 Conectar con agente", "call_function", "escalate_to_human", "user"),
         ],
     ),
     
@@ -1279,18 +1279,18 @@ Mientras esperas:
             "Muchas gracias",
             "Eso es todo",
             "Ya no necesito nada",
-            "AdiÃ³s",
+            "Adiós",
             "Hasta luego",
             "Bye",
             "Listo, gracias",
         ],
-        answer="""Â¡Me alegra haber podido ayudarte! ðŸ˜Š
+        answer="""¡Me alegra haber podido ayudarte! 😊
 
-Si necesitas algo mÃ¡s en el futuro, no dudes en escribirme. Estoy disponible **24/7**.
+Si necesitas algo más en el futuro, no dudes en escribirme. Estoy disponible **24/7**.
 
-ðŸ’¡ **Â¿SabÃ­as que?** Puedes calificar esta conversaciÃ³n para ayudarnos a mejorar.
+💡 **¿Sabías que?** Puedes calificar esta conversación para ayudarnos a mejorar.
 
-Â¡Que tengas un excelente dÃ­a! ðŸ‘‹""",
+¡Que tengas un excelente día! 👋""",
         keywords=["gracias", "adios", "bye", "luego", "listo", "todo"],
         confidence_boost=0.15,
     ),
@@ -1302,30 +1302,30 @@ Si necesitas algo mÃ¡s en el futuro, no dudes en escribirme. Estoy disponible 
         category="general",
         questions=[
             "Hola",
-            "Buenos dÃ­as",
+            "Buenos días",
             "Buenas tardes",
             "Buenas noches",
             "Hey",
         ],
-        answer="""Â¡Hola! ðŸ‘‹ Bienvenido al soporte de Vinzay.
+        answer="""¡Hola! 👋 Bienvenido al soporte de Mercora.
 
-Soy el asistente virtual y estoy aquÃ­ para ayudarte. Puedo responder preguntas sobre:
+Soy el asistente virtual y estoy aquí para ayudarte. Puedo responder preguntas sobre:
 
-â€¢ ðŸ›’ **Compras** - Pedidos, rastreo, cancelaciones, devoluciones
-â€¢ ðŸ’° **Pagos** - MÃ©todos, reembolsos, billetera
-â€¢ ðŸ‘¤ **Cuenta** - ContraseÃ±a, verificaciÃ³n, privacidad
-â€¢ ðŸ“¦ **EnvÃ­os** - Direcciones, tiempos, problemas
-â€¢ ðŸª **Ventas** - Publicar, comisiones, cobros
-â€¢ ðŸ”’ **Seguridad** - 2FA, reportes, protecciÃ³n
-â€¢ ðŸ“± **App** - Historias, Rends, chat, Lives
+• 🛒 **Compras** - Pedidos, rastreo, cancelaciones, devoluciones
+• 💰 **Pagos** - Métodos, reembolsos, billetera
+• 👤 **Cuenta** - Contraseña, verificación, privacidad
+• 📦 **Envíos** - Direcciones, tiempos, problemas
+• 🏪 **Ventas** - Publicar, comisiones, cobros
+• 🔒 **Seguridad** - 2FA, reportes, protección
+• 📱 **App** - Historias, Rends, chat, Lives
 
-Â¿En quÃ© puedo ayudarte hoy?""",
+¿En qué puedo ayudarte hoy?""",
         keywords=["hola", "buenos", "buenas", "hey", "saludos"],
         confidence_boost=0.2,
         action_buttons=[
-            ActionButton("btn_orders", "ðŸ“¦ Mis pedidos", "navigate", "profile/orders", "package"),
-            ActionButton("btn_sell", "ðŸª Vender producto", "navigate", "publish", "plus-circle"),
-            ActionButton("btn_help", "â“ Ver preguntas frecuentes", "navigate", "help/faq", "help-circle"),
+            ActionButton("btn_orders", "📦 Mis pedidos", "navigate", "profile/orders", "package"),
+            ActionButton("btn_sell", "🏪 Vender producto", "navigate", "publish", "plus-circle"),
+            ActionButton("btn_help", "❓ Ver preguntas frecuentes", "navigate", "help/faq", "help-circle"),
         ],
     ),
 ]

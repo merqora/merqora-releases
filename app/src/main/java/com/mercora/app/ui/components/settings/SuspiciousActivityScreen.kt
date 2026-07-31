@@ -1,5 +1,6 @@
 ﻿package com.mercora.app.ui.components.settings
 
+import android.widget.Toast
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -16,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -125,7 +127,7 @@ fun SuspiciousActivityScreen(
                         CircularProgressIndicator(color = PrimaryPurple)
                     }
                 } else if (activities.isEmpty()) {
-                    // Estado vacÃ­o - sin actividad sospechosa
+                    // Estado vacío - sin actividad sospechosa
                     Box(
                         modifier = Modifier
                             .fillMaxSize()
@@ -151,7 +153,7 @@ fun SuspiciousActivityScreen(
                             Spacer(modifier = Modifier.height(24.dp))
                             
                             Text(
-                                text = "Â¡Todo seguro!",
+                                text = "¡Todo seguro!",
                                 fontSize = 20.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = TextPrimary
@@ -191,8 +193,8 @@ fun SuspiciousActivityScreen(
                                         )
                                     }
                                     Spacer(modifier = Modifier.height(12.dp))
-                                    SecurityTip("Activa la autenticaciÃ³n de dos factores")
-                                    SecurityTip("Usa una contraseÃ±a Ãºnica y segura")
+                                    SecurityTip("Activa la autenticación de dos factores")
+                                    SecurityTip("Usa una contraseña única y segura")
                                     SecurityTip("Revisa tus sesiones activas regularmente")
                                 }
                             }
@@ -256,6 +258,8 @@ private fun SuspiciousActivityItem(
     activity: SecurityRepository.SuspiciousActivity,
     onResolve: () -> Unit
 ) {
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
     val riskColor = when (activity.risk_level) {
         "critical" -> Color(0xFFDC2626)
         "high" -> Color(0xFFEF4444)
@@ -383,7 +387,7 @@ private fun SuspiciousActivityItem(
                 }
             }
             
-            // BotÃ³n de acciÃ³n si no estÃ¡ resuelto
+            // Botón de acción si no está resuelto
             if (!activity.is_resolved) {
                 Spacer(modifier = Modifier.height(16.dp))
                 
@@ -409,7 +413,15 @@ private fun SuspiciousActivityItem(
                     }
                     
                     Button(
-                        onClick = { /* TODO: Reportar y cambiar contraseÃ±a */ },
+                        onClick = {
+                            scope.launch {
+                                val userId = SupabaseClient.auth.currentUserOrNull()?.id
+                                if (userId != null && activity.id != null) {
+                                    SecurityRepository.resolveSuspiciousActivity(activity.id, userId, "Reportada por usuario - no reconocida")
+                                    Toast.makeText(context, "Actividad reportada. Cambiá tu contraseña desde Ajustes > Seguridad", Toast.LENGTH_LONG).show()
+                                }
+                            }
+                        },
                         modifier = Modifier.weight(1f),
                         shape = RoundedCornerShape(10.dp),
                         colors = ButtonDefaults.buttonColors(
@@ -432,19 +444,19 @@ private fun SuspiciousActivityItem(
 
 private fun getSuspiciousActivityTitle(type: String): String {
     return when (type) {
-        "unusual_location" -> "UbicaciÃ³n inusual"
-        "multiple_failed_logins" -> "MÃºltiples intentos fallidos"
+        "unusual_location" -> "Ubicación inusual"
+        "multiple_failed_logins" -> "Múltiples intentos fallidos"
         "new_device" -> "Nuevo dispositivo"
         "unusual_time" -> "Horario inusual"
         "rapid_requests" -> "Actividad sospechosa"
-        "suspicious_login" -> "Inicio de sesiÃ³n sospechoso"
+        "suspicious_login" -> "Inicio de sesión sospechoso"
         else -> "Actividad detectada"
     }
 }
 
 private fun getRiskLevelText(level: String): String {
     return when (level) {
-        "critical" -> "CRÃTICO"
+        "critical" -> "CRÍTICO"
         "high" -> "ALTO"
         "medium" -> "MEDIO"
         else -> "BAJO"
