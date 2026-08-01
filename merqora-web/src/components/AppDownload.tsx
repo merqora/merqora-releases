@@ -7,7 +7,7 @@ export default function AppDownload({ version }: { version: AppVersion | null })
   const downloadUrl = version.file_url || `/api/download-apk/${version.id}`
 
   return (
-    <section className={styles.section}>
+    <section id="descargar" className={styles.section}>
       <div className="container">
         <div className={styles.card}>
           <div className={styles.badge}>Mercora App</div>

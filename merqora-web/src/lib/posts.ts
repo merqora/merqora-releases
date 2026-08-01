@@ -150,6 +150,50 @@ export async function getPopularPosts(limit = 10) {
   return attachUsers(data as PostDB[])
 }
 
+export async function getDeals(limit = 10) {
+  const supabase = await createServerSupabaseClient()
+
+  const { data, error } = await supabase
+    .from('posts')
+    .select('*')
+    .eq('status', 'active')
+    .not('previous_price', 'is', null)
+    .order('created_at', { ascending: false })
+    .limit(limit)
+
+  if (error || !data) return []
+  return attachUsers(data as PostDB[])
+}
+
+export async function searchPosts(
+  query: string,
+  category: string,
+  limit = 50,
+  offset = 0
+) {
+  const supabase = await createServerSupabaseClient()
+
+  let builder = supabase
+    .from('posts')
+    .select('*')
+    .eq('status', 'active')
+
+  if (query) {
+    builder = builder.or(`title.ilike.%${query}%,description.ilike.%${query}%`)
+  }
+
+  if (category && category !== 'todos') {
+    builder = builder.eq('category', category)
+  }
+
+  const { data, error } = await builder
+    .order('created_at', { ascending: false })
+    .range(offset, offset + limit - 1)
+
+  if (error || !data) return []
+  return attachUsers(data as PostDB[])
+}
+
 export async function getFeaturedPosts(limit = 6) {
   const supabase = await createServerSupabaseClient()
 

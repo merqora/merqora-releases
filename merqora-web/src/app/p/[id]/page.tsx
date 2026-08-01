@@ -2,9 +2,12 @@
 import Link from 'next/link'
 import { createServerSupabaseClient } from '@/lib/supabase/server'
 import { getPostById, getUserById, getPostsByCategory, getRecentPosts } from '@/lib/posts'
+import { getLatestVersion } from '@/lib/app'
 import ProductCard from '@/components/ProductCard'
 import ProductGallery from '@/components/ProductGallery'
 import ProductDetailsClient from '@/components/ProductDetailsClient'
+import SiteHeader from '@/components/SiteHeader'
+import SiteFooter from '@/components/SiteFooter'
 import styles from './page.module.css'
 
 export async function generateMetadata({
@@ -66,19 +69,24 @@ export default async function ProductPage({
 
   if (!post) {
     return (
-      <div className={styles.notFound}>
-        <h1>Producto no encontrado</h1>
-        <p>El producto que buscas no existe o fue eliminado.</p>
-        <Link href="/" className="btn-primary">
-          Explorar productos
-        </Link>
+      <div className={styles.page}>
+        <SiteHeader version={null} />
+        <div className={styles.notFound}>
+          <h1>Producto no encontrado</h1>
+          <p>El producto que buscas no existe o fue eliminado.</p>
+          <Link href="/" className="btn-primary">
+            Explorar productos
+          </Link>
+        </div>
+        <SiteFooter />
       </div>
     )
   }
 
-  const [user, allPosts] = await Promise.all([
+  const [user, allPosts, latestVersion] = await Promise.all([
     post.userId ? getUserById(post.userId) : null,
     getRecentPosts(20),
+    getLatestVersion(),
   ])
 
   const filteredAll = allPosts
@@ -87,6 +95,7 @@ export default async function ProductPage({
 
   return (
     <div className={styles.page}>
+      <SiteHeader version={latestVersion} />
       <div className="container">
         <nav className={styles.breadcrumb}>
           <Link href="/">Inicio</Link>
@@ -110,6 +119,7 @@ export default async function ProductPage({
           </section>
         )}
       </div>
+      <SiteFooter />
     </div>
   )
 }

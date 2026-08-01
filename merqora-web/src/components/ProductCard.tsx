@@ -32,7 +32,17 @@ export default function ProductCard({ post }: { post: Post }) {
         ) : (
           <div className={styles.placeholder} />
         )}
-        {post.isNew && <span className={styles.badge}>Nuevo</span>}
+        <span className={styles.badgeRow}>
+          {post.isNew && <span className={styles.badge}>Nuevo</span>}
+          {post.freeShipping && (
+            <span className={`${styles.badge} ${styles.badgeShipping}`}>
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M1 3h15v13H1zM16 8h4l3 3v5h-7zM5.5 21a2 2 0 1 0 0-4 2 2 0 0 0 0 4zM18.5 21a2 2 0 1 0 0-4 2 2 0 0 0 0 4z" />
+              </svg>
+              Envío gratis
+            </span>
+          )}
+        </span>
         {discount > 0 && (
           <span className={`${styles.badge} ${styles.badgeDisc}`}>-{discount}%</span>
         )}
@@ -82,6 +92,12 @@ export default function ProductCard({ post }: { post: Post }) {
             )}
             <span className={styles.sellerName}>
               {post.userStoreName || post.username}
+              {post.isUserVerified && (
+                <svg className={styles.verifiedIcon} width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-label="Vendedor verificado">
+                  <path d="M12 2l2.4 1.8 3-.1 1 2.8 2.6 1.5-.7 2.9.7 2.9-2.6 1.5-1 2.8-3-.1L12 22l-2.4-1.8-3 .1-1-2.8L3 16l.7-2.9L3 10.2l2.6-1.5 1-2.8 3 .1L12 2z" />
+                  <path d="M9 12l2 2 4-4" />
+                </svg>
+              )}
             </span>
           </div>
           <div className={styles.metaRight}>
