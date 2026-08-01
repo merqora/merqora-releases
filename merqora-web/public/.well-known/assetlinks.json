@@ -4,9 +4,7 @@
     "target": {
       "namespace": "android_app",
       "package_name": "com.mercora.app",
-      "sha256_cert_fingerprints": [
-        "17:70:8C:CB:82:F6:B9:85:A7:4B:38:8A:2A:D8:74:83:2F:EA:3F:0E:B1:71:D3:E5:77:0B:99:B3:70:BF:AA:AA"
-      ]
+      "sha256_cert_fingerprints": ["17:70:8C:CB:82:F6:B9:85:A7:4B:38:8A:2A:D8:74:83:2F:EA:3F:0E:B1:71:3D:1E:57:70:B9:9B:37:0B:FA:AA"]
     }
   }
 ]
