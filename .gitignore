@@ -61,3 +61,6 @@ hs_err_pid*.log
 crash_log.txt
 full_logcat.txt
 replay_pid*.log
+
+# Local Netlify folder
+.netlify
