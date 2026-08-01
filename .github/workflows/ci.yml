@@ -125,7 +125,10 @@ jobs:
 
   sentry-release:
     name: Sentry Release (main only)
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    # Desactivado temporalmente: requiere el keystore de release como secret
+    # (KEYSTORE_BASE64 + keystore.properties) para poder firmar assembleRelease.
+    # Re-activar cuando el usuario provea el keystore.
+    if: false
     needs: [lint, unit-tests, build]
     runs-on: ubuntu-latest
     timeout-minutes: 20
