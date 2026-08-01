@@ -131,6 +131,6 @@ object AnalyticsHelper {
             fromVersion?.let { putString("from_version", it) }
             toVersion?.let { putString("to_version", it) }
         }
-        analytics?.logEvent("app_update", params)
+        analytics?.logEvent("app_updated", params)
     }
 }

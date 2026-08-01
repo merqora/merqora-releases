@@ -142,7 +142,11 @@ object MediaOptimizer {
         // Step 4: Compress to WebP (lossy) or JPEG
         val baos = ByteArrayOutputStream()
         val (format, contentType, extension) = if (mediaType.useWebP) {
-            Triple(Bitmap.CompressFormat.WEBP_LOSSY, "image/webp", "webp")
+            if (android.os.Build.VERSION.SDK_INT >= 30) {
+                Triple(Bitmap.CompressFormat.WEBP_LOSSY, "image/webp", "webp")
+            } else {
+                Triple(Bitmap.CompressFormat.JPEG, "image/jpeg", "jpg")
+            }
         } else {
             Triple(Bitmap.CompressFormat.JPEG, "image/jpeg", "jpg")
         }

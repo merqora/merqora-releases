@@ -159,6 +159,7 @@ fun RendViewerScreen(
 }
 
 @Composable
+@androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
 private fun RendViewerPage(
     rend: Rend,
     isPlaying: Boolean,

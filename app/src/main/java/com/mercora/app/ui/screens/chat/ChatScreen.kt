@@ -2165,9 +2165,39 @@ private fun MessageBubble(
     onForwardSharedPost: ((SharedPostData) -> Unit)? = null,
     onSharedPostClick: ((String) -> Unit)? = null,
     onRendClick: ((String) -> Unit)? = null,
+    onChatOpen: ((String) -> Unit)? = null,
+    onReactionUpdate: ((String, String) -> Unit)? = null,
+    isFromCurrentUser: Boolean = false,
+    onImageClick: (String?) -> Unit = {},
+    onAudioPlay: (String) -> Unit = {},
+    onDownload: ((String?) -> Unit)? = null,
+    onDeleteMessage: ((String) -> Unit)? = null,
+    onForward: ((String) -> Unit)? = null,
+    onPinToggle: ((Message) -> Unit)? = null,
+    isPinned: Boolean = false,
+    onProductClick: ((String) -> Unit)? = null,
+    onQuickReaction: ((String) -> Unit)? = null,
+    onSaveChatMessage: ((String) -> Unit)? = null,
+    onHighlightMessage: ((String) -> Unit)? = null,
+    onApproveRequest: ((String) -> Unit)? = null,
+    onRejectRequest: ((String) -> Unit)? = null,
+    onLinkClick: ((String) -> Unit)? = null,
+    onForwardToChat: ((String) -> Unit)? = null,
+    showSenderBadges: Boolean = true,
+    timeColor: Color = Color.Unspecified,
+    otherTimeColor: Color = Color.Unspecified,
+    onAdminMessage: ((String) -> Unit)? = null,
+    onReportMessage: ((String) -> Unit)? = null,
+    isAdmin: Boolean = false,
+    renderFirstFrame: Boolean = false,
+    onConversationClicked: ((String) -> Unit)? = null,
+    onShareRendToChat: ((SharedPostData) -> Unit)? = null,
+    onForwardSharedPostClick: ((SharedPostData) -> Unit)? = null,
+    onOpenProfile: ((String) -> Unit)? = null,
     onNavigateToUserProfile: ((String) -> Unit)? = null,
     onOpenMapModal: ((Double, Double) -> Unit)? = null
 ) {
+    val currentProfile by ProfileRepository.currentProfile.collectAsState()
     // Paleta premium: grises elegantes
     val myMessageBg = Color(0xFF2D3748) // Gris oscuro elegante
     val otherMessageBg = Color(0xFF1E2732)
@@ -2591,7 +2621,7 @@ private fun MessageBubble(
                                 accentColor = if (message.isFromMe) Color.White else Color(0xFF1565A0),
                                 timeColor = if (message.isFromMe) timeColor else otherTimeColor,
                                 senderAvatar = if (message.isFromMe) 
-                                    ProfileRepository.currentProfile.value?.avatarUrl 
+                                    currentProfile?.avatarUrl 
                                 else 
                                     otherUserAvatar,
                                 sentTime = formatMessageTimeWithAmPm(message.createdAt)

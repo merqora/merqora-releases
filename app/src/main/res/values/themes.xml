@@ -7,22 +7,12 @@
         <!-- Fondo negro: el preview window del cold start debe ser igual al splash Compose -->
         <item name="android:windowBackground">#000000</item>
         
-        <!-- SplashScreen API - Cold Start Optimization -->
-        <!-- Fondo negro = mismo fondo que MercoraSplashScreen para transición invisible -->
-        <item name="android:windowSplashScreenBackground">#000000</item>
-        <!-- Icono transparente: la animación real es MercoraSplashScreen en Compose -->
-        <item name="android:windowSplashScreenAnimatedIcon">@android:color/transparent</item>
-        <!-- Duraci�n de animaci�n del icono -->
-        <item name="android:windowSplashScreenAnimationDuration">0</item>
-        
-        <!-- Optimizaciones de renderizado -->
+        <!-- Optimizaciones de renderizado (SplashScreen API en values-v31) -->
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
-        <item name="android:windowLayoutInDisplayCutoutMode">shortEdges</item>
     </style>
     
     <!-- Tema espec�fico para Splash sin contenido (m�xima velocidad) -->
     <style name="Theme.Mercora.Splash" parent="Theme.Mercora">
         <item name="android:windowBackground">#000000</item>
-        <item name="android:windowSplashScreenBackground">#000000</item>
     </style>
 </resources>

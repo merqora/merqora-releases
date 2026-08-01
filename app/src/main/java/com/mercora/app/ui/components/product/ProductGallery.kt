@@ -119,6 +119,7 @@ fun ProductImageGalleryV2(
 }
 
 @Composable
+@androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
 fun ProductVideoPlayer(
     videoUrl: String,
     isCurrentPage: Boolean

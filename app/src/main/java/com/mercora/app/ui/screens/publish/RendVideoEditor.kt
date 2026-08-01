@@ -442,14 +442,14 @@ fun RendVideoEditor(
         if (undoStack.isEmpty()) return null
         val current = timelineItems.toList()
         redoStack.add(current)
-        return undoStack.removeLast()
+        return undoStack.removeAt(undoStack.size - 1)
     }
     
     fun performRedo(): List<TimelineItem>? {
         if (redoStack.isEmpty()) return null
         val current = timelineItems.toList()
         undoStack.add(current)
-        return redoStack.removeLast()
+        return redoStack.removeAt(redoStack.size - 1)
     }
     
     // â•â•â• GALERÍA Y CÁMARA â•â•â•

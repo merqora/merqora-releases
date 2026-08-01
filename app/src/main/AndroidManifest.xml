@@ -73,18 +73,6 @@
 
         </provider>
         
-        <!-- Disable Emoji2 auto-init (adds ~50ms) -->
-        <provider
-            android:name="androidx.emoji2.text.EmojiCompatInitializer"
-            android:authorities="${applicationId}.emoji2"
-            tools:node="remove" />
-            
-        <!-- Disable Lifecycle ProcessLifecycleOwnerInitializer if present -->
-        <provider
-            android:name="androidx.lifecycle.ProcessLifecycleOwnerInitializer"
-            android:authorities="${applicationId}.lifecycle-process"
-            tools:node="remove" />
-        
         <!-- FileProvider for sharing files (PDFs, etc.) -->
         <provider
             android:name="androidx.core.content.FileProvider"
@@ -114,7 +102,7 @@
                  MERCADO PAGO DEEP LINKS - Retorno después del pago
                  Maneja: mercora://payment/success, mercora://payment/failure, mercora://payment/pending
                  ═══════════════════════════════════════════════════════════════════ -->
-            <intent-filter android:autoVerify="true">
+            <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
