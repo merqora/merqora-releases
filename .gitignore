@@ -24,6 +24,9 @@ gradle-app.setting
 # Local configuration file
 local.properties
 gradle.properties
+keystore.properties
+google-services.json
+**/google-services.json
 
 # Build outputs
 app/build/
@@ -32,3 +35,32 @@ build_result.txt
 
 # NDK
 obj/
+nul
+
+# Environment variables
+.env
+**/.env
+**/.env.*
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Node modules
+node_modules/
+ai-support/node_modules/
+
+# Supabase CLI local state
+supabase/.temp/
+
+# Kotlin/Gradle session state
+.kotlin/
+
+# Crash/log artifacts
+hs_err_pid*.log
+crash_log.txt
+full_logcat.txt
+replay_pid*.log
+
+# Local Netlify folder
+.netlify

@@ -1,4 +1,4 @@
--- ═══════════════════════════════════════════════════════════════
+﻿-- ═══════════════════════════════════════════════════════════════
 -- AGREGAR COLUMNA is_verified A LA TABLA usuarios
 -- ═══════════════════════════════════════════════════════════════
 -- Ejecutar en Supabase SQL Editor
@@ -21,7 +21,7 @@ BEGIN
     -- Obtener el UUID del usuario admin desde auth.users
     SELECT id INTO admin_user_id 
     FROM auth.users 
-    WHERE email = 'soporte.merqora@gmail.com';
+    WHERE email = 'soporte@mercora.app';
     
     -- Si el usuario existe en auth.users
     IF admin_user_id IS NOT NULL THEN
@@ -39,14 +39,14 @@ BEGIN
             VALUES (
                 admin_user_id,
                 'admin',
-                'soporte.merqora@gmail.com',
+                'soporte@mercora.app',
                 true
             );
             
             RAISE NOTICE 'Usuario admin creado con is_verified = true';
         END IF;
     ELSE
-        RAISE NOTICE 'Usuario con email soporte.merqora@gmail.com no encontrado en auth.users';
+        RAISE NOTICE 'Usuario con email soporte@mercora.app no encontrado en auth.users';
     END IF;
 END $$;
 
@@ -60,5 +60,5 @@ SELECT
     u.created_at
 FROM public.usuarios u
 LEFT JOIN auth.users au ON u.user_id = au.id
-WHERE u.email = 'soporte.merqora@gmail.com' 
-   OR au.email = 'soporte.merqora@gmail.com';
+WHERE u.email = 'soporte@mercora.app' 
+   OR au.email = 'soporte@mercora.app';

@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Mercora</string>
+
+    <!-- Navigation -->
+    <string name="nav_inicio">Inicio</string>
+    <string name="nav_explorar">Explorar</string>
+    <string name="nav_perfil">Perfil</string>
+    <string name="nav_publicar">Publicar</string>
+    <string name="nav_notificaciones">Notificaciones</string>
+    <string name="nav_mensajes">Mensajes</string>
+    <string name="nav_carrito">Carrito</string>
+    <string name="nav_buscar">Buscar</string>
+    <string name="nav_volver">Volver</string>
+    <string name="nav_cerrar">Cerrar</string>
+
+    <!-- Auth -->
+    <string name="auth_iniciar_sesion">Iniciar sesión</string>
+    <string name="auth_crear_cuenta">Crear cuenta</string>
+    <string name="auth_recuperar_contrasena">Recuperar contraseña</string>
+    <string name="auth_correo_electronico">Correo electrónico</string>
+    <string name="auth_contrasena">Contraseña</string>
+    <string name="auth_confirmar_contrasena">Confirmar contraseña</string>
+    <string name="auth_nombre_usuario">Nombre de usuario</string>
+    <string name="auth_nombre">Nombre</string>
+    <string name="auth_genero">Género</string>
+    <string name="auth_otro">Otro</string>
+    <string name="auth_prefiero_no_decirlo">Prefiero no decirlo</string>
+    <string name="auth_seleccionar">Seleccionar</string>
+    <string name="auth_enviar_enlace">Enviar enlace</string>
+    <string name="auth_huella_digital">Huella digital</string>
+    <string name="auth_verificar_huella">Verificar huella</string>
+    <string name="auth_usar_contrasena">Usar contraseña</string>
+    <string name="auth_configurar_huella">Configurar huella</string>
+    <string name="auth_iniciar_con_huella">Iniciar con huella</string>
+    <string name="auth_contrasena_incorrecta">Contraseña incorrecta</string>
+    <string name="auth_formato_invalido">Formato inválido</string>
+    <string name="auth_fecha_invalida">Fecha inválida</string>
+
+    <!-- Common Actions -->
+    <string name="action_guardar">Guardar</string>
+    <string name="action_cancelar">Cancelar</string>
+    <string name="action_eliminar">Eliminar</string>
+    <string name="action_compartir">Compartir</string>
+    <string name="action_reportar">Reportar</string>
+    <string name="action_editar">Editar</string>
+    <string name="action_enviar">Enviar</string>
+    <string name="action_seguir">Seguir</string>
+    <string name="action_siguiendo">Siguiendo</string>
+    <string name="action_dejar_de_seguir">Dejar de seguir</string>
+    <string name="action_confirmar">Confirmar</string>
+    <string name="action_continuar">Continuar</string>
+    <string name="action_actualizar">Actualizar</string>
+    <string name="action_reintentar">Reintentar</string>
+    <string name="action_ver_todo">Ver todo</string>
+    <string name="action_ver_mas">Ver más</string>
+    <string name="action_recargar">Recargar</string>
+    <string name="action_siguiente">Siguiente</string>
+    <string name="action_anterior">Anterior</string>
+    <string name="action_listo">Listo</string>
+    <string name="action_entendido">Entendido</string>
+    <string name="action_agregar">Agregar</string>
+    <string name="action_quitar">Quitar</string>
+    <string name="action_crear">Crear</string>
+    <string name="action_configurar">Configurar</string>
+    <string name="action_restablecer">Restablecer</string>
+    <string name="action_bloquear">Bloquear</string>
+    <string name="action_seleccionar">Seleccionar</string>
+    <string name="action_completado">Completado</string>
+
+    <!-- Product / Post -->
+    <string name="product_producto">Producto</string>
+    <string name="product_precio">Precio</string>
+    <string name="product_condicion">Condición</string>
+    <string name="product_estado">Estado</string>
+    <string name="product_categoria">Categoría</string>
+    <string name="product_stock">Stock</string>
+    <string name="product_disponible">Disponible</string>
+    <string name="product_no_disponible">No disponible</string>
+    <string name="product_agotado">Agotado</string>
+    <string name="product_nuevo">Nuevo</string>
+    <string name="product_como_nuevo">Como nuevo</string>
+    <string name="product_buen_estado">Buen estado</string>
+    <string name="product_usado">Usado</string>
+    <string name="product_ubicacion">Ubicación</string>
+    <string name="product_descripcion">Descripción</string>
+    <string name="product_video">Video</string>
+    <string name="product_audio">Audio</string>
+    <string name="product_imagen">Imagen</string>
+    <string name="product_valoracion">Valoración</string>
+    <string name="product_me_gusta">Me gusta</string>
+    <string name="product_publicaciones">Publicaciones</string>
+    <string name="product_sebastian">Publicación</string>
+    <string name="product_articulo">Artículo</string>
+
+    <!-- Profile -->
+    <string name="profile_publicaciones">Publicaciones</string>
+    <string name="profile_seguidores">Seguidores</string>
+    <string name="profile_siguiendo">Siguiendo</string>
+    <string name="profile_ventas">Ventas</string>
+    <string name="profile_valoracion">Valoración</string>
+    <string name="profile_tienda">Tienda</string>
+    <string name="profile_ubicacion">Ubicación</string>
+    <string name="profile_telefono">Teléfono</string>
+    <string name="profile_tarjeta">Tarjeta</string>
+    <string name="profile_transferencia">Transferencia</string>
+    <string name="profile_efectivo">Efectivo</string>
+    <string name="profile_mercado_pago">Mercado Pago</string>
+    <string name="profile_enviar_mensaje">Enviar mensaje</string>
+    <string name="profile_solicitud_enviada">Solicitud enviada</string>
+    <string name="profile_te_sigue">Te sigue</string>
+
+    <!-- Product Condition -->
+    <string name="condition_nuevo">Nuevo</string>
+    <string name="condition_como_nuevo">Como nuevo</string>
+    <string name="condition_buen_estado">Buen estado</string>
+    <string name="condition_usado">Usado</string>
+
+    <!-- Payment -->
+    <string name="payment_tarjeta">Tarjeta</string>
+    <string name="payment_transferencia">Transferencia</string>
+    <string name="payment_efectivo">Efectivo</string>
+    <string name="payment_mercado_pago">Mercado Pago</string>
+    <string name="payment_debito">Débito</string>
+    <string name="payment_credito">Crédito</string>
+    <string name="payment_subtotal">Subtotal</string>
+    <string name="payment_total">Total</string>
+    <string name="payment_envio">Envío</string>
+    <string name="payment_descuento">Descuento</string>
+    <string name="payment_gratis">Gratis</string>
+    <string name="payment_referencia">Referencia</string>
+    <string name="payment_nombre_titular">Nombre del titular</string>
+    <string name="payment_pago_cancelado">Pago cancelado</string>
+    <string name="payment_volver_al_carrito">Volver al carrito</string>
+
+    <!-- Time -->
+    <string name="time_hoy">Hoy</string>
+    <string name="time_ayer">Ayer</string>
+    <string name="time_esta_semana">Esta semana</string>
+    <string name="time_este_mes">Este mes</string>
+    <string name="time_anteriores">Anteriores</string>
+    <string name="time_reciente">Reciente</string>
+
+    <!-- Order Status -->
+    <string name="status_pendiente">Pendiente</string>
+    <string name="status_procesando">Procesando</string>
+    <string name="status_procesando_pago">Procesando pago</string>
+    <string name="status_completado">Completado</string>
+    <string name="status_cancelado">Cancelado</string>
+    <string name="status_rechazado">Rechazado</string>
+    <string name="status_oculto">Oculto</string>
+
+    <!-- Notifications -->
+    <string name="notif_todas">Todas</string>
+    <string name="notif_likes">Likes</string>
+    <string name="notif_comentarios">Comentarios</string>
+    <string name="notif_seguidores">Seguidores</string>
+    <string name="notif_ventas">Ventas</string>
+    <string name="notif_nuevo_seguidor">Nuevo seguidor</string>
+    <string name="notif_nueva_venta">Nueva venta</string>
+    <string name="notif_nuevo_like">Nuevo like</string>
+    <string name="notif_nueva_opinion">Nueva opinión</string>
+    <string name="notif_solicitud_aceptada">Solicitud aceptada</string>
+    <string name="notif_te_mencionaron">Te mencionaron</string>
+    <string name="notif_handshake">Handshake</string>
+
+    <!-- Settings -->
+    <string name="settings_configuracion">Configuración</string>
+    <string name="settings_privacidad">Privacidad</string>
+    <string name="settings_soporte">Soporte</string>
+    <string name="settings_ayuda">Ayuda</string>
+    <string name="settings_preferencias">Preferencias</string>
+    <string name="settings_cambiar_contrasena">Cambiar contraseña</string>
+    <string name="settings_notificaciones_push">Notificaciones push</string>
+    <string name="settings_notificaciones_sistema">Notificaciones del sistema</string>
+    <string name="settings_cerrar_sesion">Cerrar sesión</string>
+    <string name="settings_compra">Compra</string>
+    <string name="settings_venta">Venta</string>
+    <string name="settings_pedido">Pedido</string>
+    <string name="settings_saldo_insuficiente">Saldo insuficiente</string>
+    <string name="settings_monto_invalido">Monto inválido</string>
+
+    <!-- Gender -->
+    <string name="gender_masculino">Masculino</string>
+    <string name="gender_femenino">Femenino</string>
+    <string name="gender_otro">Otro</string>
+    <string name="gender_prefiero_no_decirlo">Prefiero no decirlo</string>
+
+    <!-- Explore -->
+    <string name="explore_tendencias">Tendencias</string>
+    <string name="explore_en_alza">En alza</string>
+    <string name="explore_no_hay_ofertas">No hay ofertas activas</string>
+    <string name="explore_no_hay_resultados">No se encontraron resultados</string>
+    <string name="explore_no_hay_publicaciones">No hay más publicaciones</string>
+    <string name="explore_no_hay_rends">No hay Rends Aún</string>
+    <string name="explore_no_hay_videos">No hay videos con este hashtag aún</string>
+    <string name="explore_hashtags_relacionados">Hashtags relacionados</string>
+
+    <!-- Chat -->
+    <string name="chat_mensaje">Mensaje</string>
+    <string name="chat_chat">Chat</string>
+    <string name="chat_grabando">Grabando</string>
+    <string name="chat_enviar_audio">Enviar audio</string>
+    <string name="chat_sin_resultados">Sin resultados</string>
+    <string name="chat_no_se_encontraron_usuarios">No se encontraron usuarios</string>
+    <string name="chat_no_hay_mensajes">Sin mensajes</string>
+    <string name="chat_opciones">Opciones</string>
+    <string name="chat_reenviar_a">Reenviar a…</string>
+    <string name="chat_articulo_compartido">Artículo compartido</string>
+    <string name="chat_ubicacion_compartida">Ubicación compartida</string>
+    <string name="chat_contacto_compartido">Contacto compartido</string>
+    <string name="chat_archivo_adjunto">Archivo adjunto</string>
+    <string name="chat_acuerdo_cancelado">Acuerdo cancelado</string>
+    <string name="chat_imagen">Imagen</string>
+    <string name="chat_video">Video</string>
+
+    <!-- Media -->
+    <string name="media_galeria">Galería</string>
+    <string name="media_camara">Cámara</string>
+    <string name="media_videos">Videos</string>
+    <string name="media_foto">Foto</string>
+
+    <!-- Call -->
+    <string name="call_videollamada">Videollamada</string>
+    <string name="call_llamada_de_voz">Llamada de voz</string>
+    <string name="call_llamada_entrante">Llamada entrante</string>
+    <string name="call_ocupado">Ocupado</string>
+    <string name="call_activar">Activar</string>
+    <string name="call_silenciar">Silenciar</string>
+
+    <!-- Story / Highlight -->
+    <string name="story_nuevo">Nuevo</string>
+    <string name="story_estrella">Estrella</string>
+    <string name="story_categoria">Categoría</string>
+    <string name="story_nombre">Nombre</string>
+    <string name="story_publicando">Publicando historia</string>
+
+    <!-- Error -->
+    <string name="error_desconocido">Error desconocido</string>
+    <string name="error_no_autenticado">No hay usuario autenticado</string>
+    <string name="error_no_conectado">No conectado</string>
+    <string name="error_ya_suscrito">Ya suscrito</string>
+    <string name="error_no_autorizado">No autorizado</string>
+    <string name="error_respuesta_vacia">Respuesta vacía</string>
+    <string name="error_no_se_pudo_ubicacion">No se pudo obtener ubicación</string>
+    <string name="error_fondos_insuficientes">Fondos insuficientes</string>
+    <string name="error_no_puedes_seguirte">No puedes seguirte a ti mismo</string>
+    <string name="error_no_hay_solicitud">No existe solicitud pendiente</string>
+
+    <!-- Editor -->
+    <string name="editor_ajustes">Ajustes</string>
+    <string name="editor_color">Color</string>
+    <string name="editor_anadir">Añadir</string>
+
+    <!-- Misc -->
+    <string name="misc_usuario">Usuario</string>
+    <string name="misc_tu">Tú</string>
+    <string name="misc_privacidad">Privacidad</string>
+    <string name="misc_proximamente">Próximamente</string>
+    <string name="misc_no">No</string>
+    <string name="misc_si">Sí</string>
+    <string name="misc_fecha_de_nacimiento">Fecha de nacimiento</string>
+    <string name="misc_fecha">Fecha</string>
+    <string name="misc_guardado">Guardado</string>
+    <string name="misc_no_me_interesa">No me interesa</string>
+    <string name="misc_peso">Peso</string>
+    <string name="misc_denunciar">Denunciar</string>
+    <string name="misc_estado">Estado</string>
+    <string name="misc_articulos">Artículos</string>
+</resources>

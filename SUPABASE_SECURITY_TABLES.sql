@@ -1,5 +1,5 @@
--- =====================================================
--- TABLAS DE SEGURIDAD PARA RENDLY
+﻿-- =====================================================
+-- TABLAS DE SEGURIDAD PARA MERCORA
 -- Ejecutar en Supabase SQL Editor
 -- =====================================================
 

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+﻿import { useState, useEffect } from 'react'
 import { supabase } from '../supabaseClient'
 
 export default function Feedback() {
@@ -23,7 +23,7 @@ export default function Feedback() {
           table: 'app_feedback'
         },
         (payload) => {
-          console.log('✅ Nuevo feedback recibido:', payload.new)
+          console.log('âœ… Nuevo feedback recibido:', payload.new)
           setFeedbackList(prev => [payload.new, ...prev])
         }
       )
@@ -35,7 +35,7 @@ export default function Feedback() {
           table: 'app_feedback'
         },
         (payload) => {
-          console.log('✅ Feedback actualizado:', payload.new)
+          console.log('âœ… Feedback actualizado:', payload.new)
           setFeedbackList(prev => 
             prev.map(f => f.id === payload.new.id ? payload.new : f)
           )
@@ -44,7 +44,7 @@ export default function Feedback() {
       .subscribe((status) => {
         console.log('📡 Feedback realtime status:', status)
         if (status === 'SUBSCRIBED') {
-          console.log('✅ Suscrito a cambios de app_feedback en tiempo real')
+          console.log('âœ… Suscrito a cambios de app_feedback en tiempo real')
         }
       })
 
@@ -63,14 +63,14 @@ export default function Feedback() {
         .order('created_at', { ascending: false })
       
       if (error) {
-        console.error('❌ Error cargando feedback:', error)
+        console.error('âŒ Error cargando feedback:', error)
         throw error
       }
       
-      console.log(`✅ ${data?.length || 0} feedbacks cargados`)
+      console.log(`âœ… ${data?.length || 0} feedbacks cargados`)
       setFeedbackList(data || [])
     } catch (error) {
-      console.error('❌ Error loading feedback:', error)
+      console.error('âŒ Error loading feedback:', error)
       alert(`Error cargando feedback: ${error.message}`)
     } finally {
       setLoading(false)
@@ -85,7 +85,7 @@ export default function Feedback() {
         .eq('id', feedbackId)
       
       if (error) throw error
-      console.log('✓ Estado actualizado')
+      console.log('âœ“ Estado actualizado')
     } catch (error) {
       console.error('Error updating status:', error)
     }
@@ -99,7 +99,7 @@ export default function Feedback() {
         .eq('id', feedbackId)
       
       if (error) throw error
-      console.log('✓ Prioridad actualizada')
+      console.log('âœ“ Prioridad actualizada')
     } catch (error) {
       console.error('Error updating priority:', error)
     }
@@ -123,7 +123,7 @@ export default function Feedback() {
       
       setResponseText('')
       setSelectedFeedback(null)
-      console.log('✓ Respuesta enviada')
+      console.log('âœ“ Respuesta enviada')
     } catch (error) {
       console.error('Error sending response:', error)
     } finally {
@@ -140,8 +140,8 @@ export default function Feedback() {
       feature_request: '💡 Nueva función',
       improvement: '📈 Mejora',
       complaint: '😤 Queja',
-      praise: '👏 Elogio',
-      other: '📝 Otro'
+      praise: 'ðŸ‘ Elogio',
+      other: 'ðŸ“ Otro'
     }
     return labels[category] || category
   }
@@ -180,7 +180,7 @@ export default function Feedback() {
     <div className="space-y-6 fade-in">
       <div>
         <h1 className="text-2xl font-bold text-text-primary">Feedback de Usuarios</h1>
-        <p className="text-text-tertiary mt-1">Comentarios y sugerencias para mejorar Rendly</p>
+        <p className="text-text-tertiary mt-1">Comentarios y sugerencias para mejorar Mercora</p>
       </div>
 
       {/* Filters */}
@@ -190,7 +190,7 @@ export default function Feedback() {
           className={`px-4 py-2 rounded-xl font-medium transition-all ${
             filter === 'all'
               ? 'bg-primary text-white'
-              : 'bg-rendly-surface text-text-secondary hover:bg-rendly-surface-elevated'
+              : 'bg-mercora-surface text-text-secondary hover:bg-mercora-surface-elevated'
           }`}
         >
           Todos ({feedbackList.length})
@@ -200,7 +200,7 @@ export default function Feedback() {
           className={`px-4 py-2 rounded-xl font-medium transition-all ${
             filter === 'pending'
               ? 'bg-accent-gold text-white'
-              : 'bg-rendly-surface text-text-secondary hover:bg-rendly-surface-elevated'
+              : 'bg-mercora-surface text-text-secondary hover:bg-mercora-surface-elevated'
           }`}
         >
           Pendientes ({feedbackList.filter(f => f.status === 'pending').length})
@@ -210,7 +210,7 @@ export default function Feedback() {
           className={`px-4 py-2 rounded-xl font-medium transition-all ${
             filter === 'reviewing'
               ? 'bg-accent-blue text-white'
-              : 'bg-rendly-surface text-text-secondary hover:bg-rendly-surface-elevated'
+              : 'bg-mercora-surface text-text-secondary hover:bg-mercora-surface-elevated'
           }`}
         >
           En revisión ({feedbackList.filter(f => f.status === 'reviewing').length})
@@ -220,7 +220,7 @@ export default function Feedback() {
           className={`px-4 py-2 rounded-xl font-medium transition-all ${
             filter === 'planned'
               ? 'bg-primary text-white'
-              : 'bg-rendly-surface text-text-secondary hover:bg-rendly-surface-elevated'
+              : 'bg-mercora-surface text-text-secondary hover:bg-mercora-surface-elevated'
           }`}
         >
           Planificado ({feedbackList.filter(f => f.status === 'planned').length})
@@ -230,7 +230,7 @@ export default function Feedback() {
           className={`px-4 py-2 rounded-xl font-medium transition-all ${
             filter === 'implemented'
               ? 'bg-accent-green text-white'
-              : 'bg-rendly-surface text-text-secondary hover:bg-rendly-surface-elevated'
+              : 'bg-mercora-surface text-text-secondary hover:bg-mercora-surface-elevated'
           }`}
         >
           Implementado ({feedbackList.filter(f => f.status === 'implemented').length})
@@ -240,14 +240,14 @@ export default function Feedback() {
       {/* Feedback List */}
       <div className="grid gap-4">
         {filteredFeedback.length === 0 ? (
-          <div className="text-center py-12 text-text-tertiary bg-rendly-surface rounded-2xl border border-primary/10">
+          <div className="text-center py-12 text-text-tertiary bg-mercora-surface rounded-2xl border border-primary/10">
             No hay feedback con este filtro
           </div>
         ) : (
           filteredFeedback.map((feedback) => (
             <div
               key={feedback.id}
-              className="bg-rendly-surface rounded-2xl border border-primary/10 p-5 hover:border-primary/30 transition-all cursor-pointer"
+              className="bg-mercora-surface rounded-2xl border border-primary/10 p-5 hover:border-primary/30 transition-all cursor-pointer"
               onClick={() => setSelectedFeedback(feedback)}
             >
               <div className="flex items-start justify-between mb-3">
@@ -260,7 +260,7 @@ export default function Feedback() {
                     <span className={`text-sm font-medium ${getPriorityColor(feedback.priority)}`}>
                       {feedback.priority === 'high' && '🔴'}
                       {feedback.priority === 'medium' && '🟡'}
-                      {feedback.priority === 'low' && '⚪'}
+                      {feedback.priority === 'low' && 'âšª'}
                     </span>
                   </div>
                   <h3 className="font-semibold text-text-primary mb-1">{feedback.title}</h3>
@@ -268,7 +268,7 @@ export default function Feedback() {
                 </div>
                 {feedback.rating && (
                   <div className="flex items-center ml-4">
-                    <span className="text-yellow-500 text-xl">{'⭐'.repeat(feedback.rating)}</span>
+                    <span className="text-yellow-500 text-xl">{'â­'.repeat(feedback.rating)}</span>
                   </div>
                 )}
               </div>
@@ -293,7 +293,7 @@ export default function Feedback() {
                   <div className="flex items-center gap-2">
                     <span className="text-2xl">{getCategoryLabel(selectedFeedback.category)}</span>
                     {selectedFeedback.rating && (
-                      <span className="text-yellow-500">{'⭐'.repeat(selectedFeedback.rating)}</span>
+                      <span className="text-yellow-500">{'â­'.repeat(selectedFeedback.rating)}</span>
                     )}
                   </div>
                 </div>

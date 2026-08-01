@@ -5,8 +5,8 @@
 ### 1️⃣ Modal Visual con Estrellas (Android App)
 
 **Archivos modificados:**
-- `@app/src/main/java/com/rendly/app/ui/components/settings/RatingDialog.kt` - **NUEVO**
-- `@app/src/main/java/com/rendly/app/ui/components/settings/HelpCenterScreen.kt:1093-1094,1164-1165,1578-1621`
+- `@app/src/main/java/com/mercora/app/ui/components/settings/RatingDialog.kt` - **NUEVO**
+- `@app/src/main/java/com/mercora/app/ui/components/settings/HelpCenterScreen.kt:1093-1094,1164-1165,1578-1621`
 
 **Cambios:**
 ```kotlin
@@ -37,7 +37,7 @@ RatingDialog(
 
 ### 2️⃣ Arreglado guardado en Supabase con buildJsonObject
 
-**Archivo:** `@app/src/main/java/com/rendly/app/data/repository/AISupportRepository.kt:280-305`
+**Archivo:** `@app/src/main/java/com/mercora/app/data/repository/AISupportRepository.kt:280-305`
 
 **Cambios:**
 ```kotlin

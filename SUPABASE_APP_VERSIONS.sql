@@ -1,5 +1,5 @@
--- ═══════════════════════════════════════════════════════════════
--- MERQORA - Sistema de Versiones de App (APK Distribution)
+﻿-- ═══════════════════════════════════════════════════════════════
+-- Mercora - Sistema de Versiones de App (APK Distribution)
 -- ═══════════════════════════════════════════════════════════════
 -- Ejecutar en Supabase SQL Editor
 -- Después de ejecutar, crear el bucket 'app-releases' en Storage

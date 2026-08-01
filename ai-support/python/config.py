@@ -1,6 +1,6 @@
-"""Configuration for Rendly AI Support"""
+﻿"""Configuration for Mercora AI Support"""
 
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 from functools import lru_cache
 
 class Settings(BaseSettings):
@@ -28,9 +28,10 @@ class Settings(BaseSettings):
     support_user_id: str = ""  # Your user ID for receiving escalations
     escalation_notification: bool = True
     
-    class Config:
-        env_file = ".env"
-        env_prefix = "RENDLY_AI_"
+    # Groq LLM
+    groq_key: str = ""  # Groq API key for Llama 3 70B
+    
+    model_config = SettingsConfigDict(env_file=".env", env_prefix="mercora_ai_", extra="ignore")
 
 
 @lru_cache()

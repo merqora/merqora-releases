@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'
+﻿import { useState, useEffect, useCallback } from 'react'
 import { supabase } from '../supabaseClient'
 import {
   Brain, TrendingUp, Target, AlertTriangle, CheckCircle, XCircle,
@@ -7,7 +7,7 @@ import {
   ArrowUpRight, ArrowDownRight, Minus, Activity, Database
 } from 'lucide-react'
 
-const API_BASE = 'https://merqora-releases-production.up.railway.app'
+const API_BASE = 'https://mercora-releases-production.up.railway.app'
 
 export default function AITrainingDashboard() {
   const [activeTab, setActiveTab] = useState('metrics')
@@ -266,7 +266,7 @@ export default function AITrainingDashboard() {
   )
 }
 
-/* ═══════════ METRICS TAB ═══════════ */
+/* â•â•â•â•â•â•â•â•â•â•â• METRICS TAB â•â•â•â•â•â•â•â•â•â•â• */
 function MetricsTab({ lm, ps }) {
   const cards = [
     { label: 'Mensajes (24h)', value: lm.total_messages || 0, icon: MessageSquare, color: 'blue' },
@@ -344,7 +344,7 @@ function MetricsTab({ lm, ps }) {
   )
 }
 
-/* ═══════════ REVIEW TAB ═══════════ */
+/* â•â•â•â•â•â•â•â•â•â•â• REVIEW TAB â•â•â•â•â•â•â•â•â•â•â• */
 function ReviewTab({ items, onCorrect, onEdit }) {
   if (items.length === 0) {
     return (
@@ -373,7 +373,7 @@ function ReviewTab({ items, onCorrect, onEdit }) {
   )
 }
 
-/* ═══════════ ERRORS TAB ═══════════ */
+/* â•â•â•â•â•â•â•â•â•â•â• ERRORS TAB â•â•â•â•â•â•â•â•â•â•â• */
 function ErrorsTab({ items, onEdit }) {
   if (items.length === 0) {
     return (
@@ -387,7 +387,7 @@ function ErrorsTab({ items, onEdit }) {
   return (
     <div className="space-y-3">
       <p className="text-sm text-gray-400">
-        {items.length} errores de clasificación (detected_intent ≠ correct_intent)
+        {items.length} errores de clasificación (detected_intent â‰  correct_intent)
       </p>
       {items.map(item => (
         <div key={item.id} className="bg-gray-800/50 rounded-xl p-4 border border-red-500/20">
@@ -398,7 +398,7 @@ function ErrorsTab({ items, onEdit }) {
                 <span className="px-2 py-1 bg-red-500/20 text-red-300 rounded">
                   IA dijo: {item.detected_intent}
                 </span>
-                <span className="text-gray-500">→</span>
+                <span className="text-gray-500">â†’</span>
                 <span className="px-2 py-1 bg-green-500/20 text-green-300 rounded">
                   Correcto: {item.correct_intent}
                 </span>
@@ -417,7 +417,7 @@ function ErrorsTab({ items, onEdit }) {
   )
 }
 
-/* ═══════════ INTENTS TAB ═══════════ */
+/* â•â•â•â•â•â•â•â•â•â•â• INTENTS TAB â•â•â•â•â•â•â•â•â•â•â• */
 function IntentsTab({ data }) {
   if (data.length === 0) {
     return (
@@ -468,7 +468,7 @@ function IntentsTab({ data }) {
   )
 }
 
-/* ═══════════ TRAINING RUNS TAB ═══════════ */
+/* â•â•â•â•â•â•â•â•â•â•â• TRAINING RUNS TAB â•â•â•â•â•â•â•â•â•â•â• */
 function TrainingRunsTab({ runs }) {
   if (runs.length === 0) {
     return (
@@ -518,7 +518,7 @@ function Stat({ label, value }) {
   )
 }
 
-/* ═══════════ TEST TAB ═══════════ */
+/* â•â•â•â•â•â•â•â•â•â•â• TEST TAB â•â•â•â•â•â•â•â•â•â•â• */
 function TestTab({ message, setMessage, result, onTest }) {
   return (
     <div className="space-y-4">
@@ -569,7 +569,7 @@ function TestTab({ message, setMessage, result, onTest }) {
             </div>
           )}
           {!result.model_trained && (
-            <p className="text-yellow-400 text-sm mt-3">⚠️ El modelo ML no está entrenado. Ejecuta un entrenamiento primero.</p>
+            <p className="text-yellow-400 text-sm mt-3">âš ï¸ El modelo ML no está entrenado. Ejecuta un entrenamiento primero.</p>
           )}
         </div>
       )}
@@ -577,7 +577,7 @@ function TestTab({ message, setMessage, result, onTest }) {
   )
 }
 
-/* ═══════════ TRAINING DATA CARD ═══════════ */
+/* â•â•â•â•â•â•â•â•â•â•â• TRAINING DATA CARD â•â•â•â•â•â•â•â•â•â•â• */
 function TrainingDataCard({ item, onCorrect, onEdit }) {
   const [expanded, setExpanded] = useState(false)
 
@@ -626,7 +626,7 @@ function TrainingDataCard({ item, onCorrect, onEdit }) {
   )
 }
 
-/* ═══════════ CORRECTION MODAL ═══════════ */
+/* â•â•â•â•â•â•â•â•â•â•â• CORRECTION MODAL â•â•â•â•â•â•â•â•â•â•â• */
 function CorrectionModal({ item, onSubmit, onClose }) {
   const [correctIntent, setCorrectIntent] = useState(item.correct_intent || item.detected_intent || '')
   const [correctResponse, setCorrectResponse] = useState(item.correct_response || '')

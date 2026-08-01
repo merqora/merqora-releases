@@ -1,41 +1,41 @@
-# Rendly AI Support System
+﻿# Mercora AI Support System
 
-Sistema de IA de soporte interno para Rendly con arquitectura multi-lenguaje.
+Sistema de IA de soporte interno para Mercora con arquitectura multi-lenguaje.
 
 ## Arquitectura
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                      Android App                             │
-│                   (SupportChatScreen)                        │
-└─────────────────────┬───────────────────────────────────────┘
-                      │ HTTP/REST
-                      ▼
-┌─────────────────────────────────────────────────────────────┐
-│                    Python (FastAPI)                          │
-│                    Orquestador IA                            │
-│  - Recibe mensajes                                           │
-│  - Clasifica intención                                       │
-│  - Consulta FAQ/conocimiento                                 │
-│  - Decide: responder o escalar                               │
-└──────┬──────────────────────────────────┬───────────────────┘
-       │                                  │
-       ▼                                  ▼
-┌──────────────────┐            ┌─────────────────────────────┐
-│   C++ (pybind11) │            │      Rust (Service)         │
-│   Motor Scoring  │            │  - Rate limiting            │
-│  - confidence    │            │  - Sanitización             │
-│  - intent match  │            │  - Sesiones                 │
-│  - text analysis │            │  - Logging                  │
-└──────────────────┘            └─────────────────────────────┘
-                      │
-                      ▼
-┌─────────────────────────────────────────────────────────────┐
-│                       Supabase                               │
-│  - support_conversations                                     │
-│  - support_messages                                          │
-│  - ai_feedback                                               │
-└─────────────────────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚                      Android App                             â”‚
+â”‚                   (SupportChatScreen)                        â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+                      â”‚ HTTP/REST
+                      â–¼
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚                    Python (FastAPI)                          â”‚
+â”‚                    Orquestador IA                            â”‚
+â”‚  - Recibe mensajes                                           â”‚
+â”‚  - Clasifica intenciÃ³n                                       â”‚
+â”‚  - Consulta FAQ/conocimiento                                 â”‚
+â”‚  - Decide: responder o escalar                               â”‚
+â””â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+       â”‚                                  â”‚
+       â–¼                                  â–¼
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”            â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚   C++ (pybind11) â”‚            â”‚      Rust (Service)         â”‚
+â”‚   Motor Scoring  â”‚            â”‚  - Rate limiting            â”‚
+â”‚  - confidence    â”‚            â”‚  - SanitizaciÃ³n             â”‚
+â”‚  - intent match  â”‚            â”‚  - Sesiones                 â”‚
+â”‚  - text analysis â”‚            â”‚  - Logging                  â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜            â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+                      â”‚
+                      â–¼
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚                       Supabase                               â”‚
+â”‚  - support_conversations                                     â”‚
+â”‚  - support_messages                                          â”‚
+â”‚  - ai_feedback                                               â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ## Componentes
@@ -60,33 +60,33 @@ Sistema de IA de soporte interno para Rendly con arquitectura multi-lenguaje.
 - Session management
 - Structured logging
 
-## Lógica de Decisión
+## LÃ³gica de DecisiÃ³n
 
 ```
 Usuario escribe mensaje
-        │
-        ▼
-   Rust valida (rate limit, sanitización)
-        │
-        ▼
-   Python clasifica intención
-        │
-        ▼
+        â”‚
+        â–¼
+   Rust valida (rate limit, sanitizaciÃ³n)
+        â”‚
+        â–¼
+   Python clasifica intenciÃ³n
+        â”‚
+        â–¼
    C++ calcula confidence_score
-        │
-        ▼
-┌───────┴───────┐
-│ score >= 70?  │
-└───────┬───────┘
-    YES │ NO
-        │
-   ┌────┴────┐
-   │         │
-   ▼         ▼
+        â”‚
+        â–¼
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”´â”€â”€â”€â”€â”€â”€â”€â”
+â”‚ score >= 70?  â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”˜
+    YES â”‚ NO
+        â”‚
+   â”Œâ”€â”€â”€â”€â”´â”€â”€â”€â”€â”
+   â”‚         â”‚
+   â–¼         â–¼
 IA responde  Escalar a humano
 ```
 
-## Instalación
+## InstalaciÃ³n
 
 ```bash
 # Python
@@ -104,7 +104,7 @@ cd rust
 cargo build --release
 ```
 
-## Ejecución
+## EjecuciÃ³n
 
 ```bash
 cd python
@@ -115,5 +115,5 @@ uvicorn main:app --host 0.0.0.0 --port 8000
 
 - `POST /ai/support/message` - Procesar mensaje de usuario
 - `POST /ai/support/feedback` - Feedback sobre respuesta
-- `GET /ai/support/conversation/{id}` - Obtener conversación
+- `GET /ai/support/conversation/{id}` - Obtener conversaciÃ³n
 - `POST /ai/support/escalate` - Escalar a humano

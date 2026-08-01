@@ -1,5 +1,5 @@
-"""
-Merqora AI Training Pipeline - Real ML Training System
+﻿"""
+Mercora AI Training Pipeline - Real ML Training System
 
 This module handles:
 1. Dataset management (export, import, clean, split)
@@ -38,9 +38,9 @@ for d in [MODEL_DIR, DATASET_DIR, REPORTS_DIR]:
     d.mkdir(exist_ok=True)
 
 
-# ═══════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 # DATA MODELS
-# ═══════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 @dataclass
 class TrainingSample:
@@ -107,9 +107,9 @@ class MetricsSnapshot:
     metrics_by_intent: Dict[str, Dict] = field(default_factory=dict)
 
 
-# ═══════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 # TEXT PROCESSING (shared with local_ai_model)
-# ═══════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 STOPWORDS_ES = {
     'de', 'la', 'que', 'el', 'en', 'y', 'a', 'los', 'del', 'se', 'las',
@@ -139,9 +139,9 @@ def tokenize(text: str, remove_stopwords: bool = True) -> List[str]:
     return tokens
 
 
-# ═══════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 # DATASET MANAGER
-# ═══════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 class DatasetManager:
     """Manages training datasets: export, import, split, clean"""
@@ -309,9 +309,9 @@ class DatasetManager:
         }
 
 
-# ═══════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 # MODEL TRAINER (scikit-learn based)
-# ═══════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 class IntentClassifierTrainer:
     """
@@ -580,9 +580,9 @@ class IntentClassifierTrainer:
             return False
 
 
-# ═══════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 # TRAINING PIPELINE
-# ═══════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 class TrainingPipeline:
     """
@@ -618,7 +618,7 @@ class TrainingPipeline:
         self._interaction_log: List[Dict] = []
         self._metrics_window: List[Dict] = []
     
-    # ─── Data Collection ───
+    # â”€â”€â”€ Data Collection â”€â”€â”€
     
     def record_interaction(
         self,
@@ -743,7 +743,7 @@ class TrainingPipeline:
         logger.info("buffer_flushed", saved=saved, total=len(batch))
         return saved
     
-    # ─── Dataset Building ───
+    # â”€â”€â”€ Dataset Building â”€â”€â”€
     
     async def fetch_training_dataset(self, min_confidence: int = 0, only_reviewed: bool = False, limit: int = 10000) -> int:
         """Fetch training data from Supabase"""
@@ -796,7 +796,7 @@ class TrainingPipeline:
         logger.info("dataset_from_buffer", count=count)
         return count
     
-    # ─── Training ───
+    # â”€â”€â”€ Training â”€â”€â”€
     
     async def run_training(
         self,
@@ -1024,7 +1024,7 @@ class TrainingPipeline:
         
         return report_path
     
-    # ─── Prediction (using active model) ───
+    # â”€â”€â”€ Prediction (using active model) â”€â”€â”€
     
     def predict_intent(self, text: str) -> Tuple[str, float, Dict[str, float]]:
         """Predict intent using the active trained model"""
@@ -1032,7 +1032,7 @@ class TrainingPipeline:
             return "unknown", 0.0, {}
         return self.active_model.predict(text)
     
-    # ─── Metrics ───
+    # â”€â”€â”€ Metrics â”€â”€â”€
     
     def get_live_metrics(self, hours: int = 24) -> Dict:
         """Get live metrics from in-memory interaction log"""
@@ -1102,13 +1102,13 @@ class TrainingPipeline:
         
         return None
     
-    # ─── Auto-retraining ───
+    # â”€â”€â”€ Auto-retraining â”€â”€â”€
     
     def should_retrain(self) -> bool:
         """Check if auto-retraining should be triggered"""
         return self._samples_since_last_train >= self.auto_retrain_threshold
     
-    # ─── Dynamic Prompt Updates ───
+    # â”€â”€â”€ Dynamic Prompt Updates â”€â”€â”€
     
     def get_few_shot_examples(self, n_per_intent: int = 2) -> List[Dict]:
         """
@@ -1158,9 +1158,9 @@ class TrainingPipeline:
         }
 
 
-# ═══════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 # SINGLETON
-# ═══════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 _pipeline: Optional[TrainingPipeline] = None
 

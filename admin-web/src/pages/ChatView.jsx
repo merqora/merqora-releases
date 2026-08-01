@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+﻿import { useState, useEffect, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { 
   ArrowLeft, 
@@ -28,7 +28,7 @@ function MessageBubble({ message, isFromAgent }) {
   const isAgent = message.role === 'human_support'
   
   const bubbleColors = {
-    user: 'bg-rendly-surface-elevated',
+    user: 'bg-mercora-surface-elevated',
     ai: 'bg-primary/20 border border-primary/30',
     human_support: 'bg-accent-blue/20 border border-accent-blue/30',
     system: 'bg-accent-gold/10 border border-accent-gold/30'
@@ -63,7 +63,7 @@ function MessageBubble({ message, isFromAgent }) {
         `}>
           {/* Role label */}
           <p className={`text-xs mb-1 ${isUser ? 'text-accent-magenta' : isAI ? 'text-primary' : 'text-accent-blue'}`}>
-            {isUser ? 'Usuario' : isAI ? 'IA Rendly' : 'Agente de Soporte'}
+            {isUser ? 'Usuario' : isAI ? 'IA Mercora' : 'Agente de Soporte'}
           </p>
           
           {/* Content */}
@@ -73,7 +73,7 @@ function MessageBubble({ message, isFromAgent }) {
           <div className="flex items-center gap-2 mt-2 text-text-muted text-xs">
             <span>{timeString}</span>
             {message.confidence_score && (
-              <span className="text-primary">• {message.confidence_score}% confianza</span>
+              <span className="text-primary">â€¢ {message.confidence_score}% confianza</span>
             )}
           </div>
         </div>
@@ -209,7 +209,7 @@ export default function ChatView() {
 Tu consulta ha sido marcada como resuelta por nuestro equipo de soporte.
 
 ¿Cómo calificarías la atención recibida?
-⭐ Responde con un número del 1 al 5:
+â­ Responde con un número del 1 al 5:
 1 = Muy malo
 2 = Malo  
 3 = Regular
@@ -252,7 +252,7 @@ Tu opinión nos ayuda a mejorar. ¡Gracias!`
         created_at: new Date().toISOString()
       }])
       
-      alert('✅ Conversación marcada como resuelta. Se envió solicitud de calificación al usuario.')
+      alert('âœ… Conversación marcada como resuelta. Se envió solicitud de calificación al usuario.')
       
     } catch (error) {
       console.error('Error resolving:', error)
@@ -286,11 +286,11 @@ Tu opinión nos ayuda a mejorar. ¡Gracias!`
   return (
     <div className="flex flex-col h-[calc(100vh-8rem)] fade-in">
       {/* Header */}
-      <div className="flex items-center justify-between p-4 bg-rendly-surface rounded-t-2xl border border-primary/10 border-b-0">
+      <div className="flex items-center justify-between p-4 bg-mercora-surface rounded-t-2xl border border-primary/10 border-b-0">
         <div className="flex items-center gap-4">
           <button 
             onClick={() => navigate(-1)}
-            className="p-2 text-text-secondary hover:text-text-primary hover:bg-rendly-surface-elevated rounded-xl transition-colors"
+            className="p-2 text-text-secondary hover:text-text-primary hover:bg-mercora-surface-elevated rounded-xl transition-colors"
           >
             <ArrowLeft className="w-5 h-5" />
           </button>
@@ -327,7 +327,7 @@ Tu opinión nos ayuda a mejorar. ¡Gracias!`
       </div>
       
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-4 bg-rendly-bg border-x border-primary/10 space-y-4">
+      <div className="flex-1 overflow-y-auto p-4 bg-mercora-bg border-x border-primary/10 space-y-4">
         {messages.length === 0 ? (
           <div className="text-center py-8 text-text-tertiary">
             No hay mensajes en esta conversación
@@ -341,7 +341,7 @@ Tu opinión nos ayuda a mejorar. ¡Gracias!`
       </div>
       
       {/* Input */}
-      <div className="p-4 bg-rendly-surface rounded-b-2xl border border-primary/10 border-t-0">
+      <div className="p-4 bg-mercora-surface rounded-b-2xl border border-primary/10 border-t-0">
         <div className="flex items-center gap-3">
           <input
             type="text"
@@ -364,7 +364,7 @@ Tu opinión nos ayuda a mejorar. ¡Gracias!`
             }}
             onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && handleSend()}
             placeholder="Escribe tu respuesta al usuario..."
-            className="flex-1 px-4 py-3 bg-rendly-bg border border-primary/20 rounded-xl text-text-primary placeholder-text-muted focus:outline-none focus:border-primary transition-colors"
+            className="flex-1 px-4 py-3 bg-mercora-bg border border-primary/20 rounded-xl text-text-primary placeholder-text-muted focus:outline-none focus:border-primary transition-colors"
           />
           <button
             onClick={handleSend}
@@ -373,7 +373,7 @@ Tu opinión nos ayuda a mejorar. ¡Gracias!`
               p-3 rounded-xl transition-all duration-200
               ${newMessage.trim() && !sending
                 ? 'bg-primary text-white hover:bg-primary-dark glow-purple'
-                : 'bg-rendly-surface-elevated text-text-muted cursor-not-allowed'
+                : 'bg-mercora-surface-elevated text-text-muted cursor-not-allowed'
               }
             `}
           >

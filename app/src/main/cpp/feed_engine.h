@@ -1,5 +1,5 @@
 /**
- * Rendly Feed Engine v2 - Global-Scale Recommendation System
+ * Mercora Feed Engine v2 - Global-Scale Recommendation System
  * 
  * Architecture:
  *   FinalScore = UserAffinity
@@ -31,7 +31,7 @@
 #include <cmath>
 #include <cstring>
 
-namespace rendly {
+namespace mercora {
 
 // ═══════════════════════════════════════════════════════════════
 // CONSTANTS
@@ -388,4 +388,4 @@ private:
     float    safePow(float base, float power) const;
 };
 
-} // namespace rendly
+} // namespace mercora

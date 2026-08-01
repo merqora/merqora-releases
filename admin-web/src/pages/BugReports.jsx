@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+﻿import { useState, useEffect } from 'react'
 import { supabase } from '../supabaseClient'
 
 export default function BugReports() {
@@ -24,7 +24,7 @@ export default function BugReports() {
           table: 'bug_reports'
         },
         (payload) => {
-          console.log('🐛 Nuevo reporte de error:', payload.new)
+          console.log('ðŸ› Nuevo reporte de error:', payload.new)
           setReports(prev => [payload.new, ...prev])
           
           // Notificación visual
@@ -93,7 +93,7 @@ export default function BugReports() {
         .eq('id', reportId)
       
       if (error) throw error
-      console.log('✓ Estado actualizado')
+      console.log('âœ“ Estado actualizado')
     } catch (error) {
       console.error('Error updating status:', error)
     }
@@ -107,7 +107,7 @@ export default function BugReports() {
         .eq('id', reportId)
       
       if (error) throw error
-      console.log('✓ Severidad actualizada')
+      console.log('âœ“ Severidad actualizada')
     } catch (error) {
       console.error('Error updating severity:', error)
     }
@@ -121,7 +121,7 @@ export default function BugReports() {
         .eq('id', reportId)
       
       if (error) throw error
-      console.log('✓ Prioridad actualizada')
+      console.log('âœ“ Prioridad actualizada')
     } catch (error) {
       console.error('Error updating priority:', error)
     }
@@ -153,7 +153,7 @@ export default function BugReports() {
       
       setAdminNotes('')
       setResolutionNotes('')
-      console.log('✓ Notas guardadas')
+      console.log('âœ“ Notas guardadas')
     } catch (error) {
       console.error('Error saving notes:', error)
     } finally {
@@ -169,11 +169,11 @@ export default function BugReports() {
     const labels = {
       crash: '💥 Crash',
       ui: '🎨 UI/Visual',
-      performance: '⚡ Rendimiento',
+      performance: 'âš¡ Rendimiento',
       data: '📊 Datos',
-      network: '🌐 Red',
+      network: 'ðŸŒ Red',
       security: '🔒 Seguridad',
-      other: '🐛 Otro'
+      other: 'ðŸ› Otro'
     }
     return labels[category] || category
   }
@@ -218,19 +218,19 @@ export default function BugReports() {
 
       {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="bg-rendly-surface rounded-2xl border border-primary/10 p-4">
+        <div className="bg-mercora-surface rounded-2xl border border-primary/10 p-4">
           <div className="text-2xl font-bold text-accent-magenta">{reports.filter(r => r.status === 'open').length}</div>
           <div className="text-sm text-text-tertiary">Abiertos</div>
         </div>
-        <div className="bg-rendly-surface rounded-2xl border border-primary/10 p-4">
+        <div className="bg-mercora-surface rounded-2xl border border-primary/10 p-4">
           <div className="text-2xl font-bold text-accent-blue">{reports.filter(r => r.status === 'in_progress').length}</div>
           <div className="text-sm text-text-tertiary">En Progreso</div>
         </div>
-        <div className="bg-rendly-surface rounded-2xl border border-primary/10 p-4">
+        <div className="bg-mercora-surface rounded-2xl border border-primary/10 p-4">
           <div className="text-2xl font-bold text-accent-gold">{reports.filter(r => r.severity === 'critical').length}</div>
           <div className="text-sm text-text-tertiary">Críticos</div>
         </div>
-        <div className="bg-rendly-surface rounded-2xl border border-primary/10 p-4">
+        <div className="bg-mercora-surface rounded-2xl border border-primary/10 p-4">
           <div className="text-2xl font-bold text-accent-green">{reports.filter(r => r.status === 'fixed').length}</div>
           <div className="text-sm text-text-tertiary">Resueltos</div>
         </div>
@@ -243,7 +243,7 @@ export default function BugReports() {
           className={`px-4 py-2 rounded-xl font-medium transition-all ${
             filter === 'all'
               ? 'bg-primary text-white'
-              : 'bg-rendly-surface text-text-secondary hover:bg-rendly-surface-elevated'
+              : 'bg-mercora-surface text-text-secondary hover:bg-mercora-surface-elevated'
           }`}
         >
           Todos ({reports.length})
@@ -253,7 +253,7 @@ export default function BugReports() {
           className={`px-4 py-2 rounded-xl font-medium transition-all ${
             filter === 'open'
               ? 'bg-accent-magenta text-white'
-              : 'bg-rendly-surface text-text-secondary hover:bg-rendly-surface-elevated'
+              : 'bg-mercora-surface text-text-secondary hover:bg-mercora-surface-elevated'
           }`}
         >
           Abiertos ({reports.filter(r => r.status === 'open').length})
@@ -263,7 +263,7 @@ export default function BugReports() {
           className={`px-4 py-2 rounded-xl font-medium transition-all ${
             filter === 'investigating'
               ? 'bg-accent-gold text-white'
-              : 'bg-rendly-surface text-text-secondary hover:bg-rendly-surface-elevated'
+              : 'bg-mercora-surface text-text-secondary hover:bg-mercora-surface-elevated'
           }`}
         >
           Investigando ({reports.filter(r => r.status === 'investigating').length})
@@ -273,7 +273,7 @@ export default function BugReports() {
           className={`px-4 py-2 rounded-xl font-medium transition-all ${
             filter === 'in_progress'
               ? 'bg-accent-blue text-white'
-              : 'bg-rendly-surface text-text-secondary hover:bg-rendly-surface-elevated'
+              : 'bg-mercora-surface text-text-secondary hover:bg-mercora-surface-elevated'
           }`}
         >
           En Progreso ({reports.filter(r => r.status === 'in_progress').length})
@@ -283,7 +283,7 @@ export default function BugReports() {
           className={`px-4 py-2 rounded-xl font-medium transition-all ${
             filter === 'fixed'
               ? 'bg-accent-green text-white'
-              : 'bg-rendly-surface text-text-secondary hover:bg-rendly-surface-elevated'
+              : 'bg-mercora-surface text-text-secondary hover:bg-mercora-surface-elevated'
           }`}
         >
           Resueltos ({reports.filter(r => r.status === 'fixed').length})
@@ -293,14 +293,14 @@ export default function BugReports() {
       {/* Reports List */}
       <div className="grid gap-4">
         {filteredReports.length === 0 ? (
-          <div className="text-center py-12 text-text-tertiary bg-rendly-surface rounded-2xl border border-primary/10">
+          <div className="text-center py-12 text-text-tertiary bg-mercora-surface rounded-2xl border border-primary/10">
             No hay reportes con este filtro
           </div>
         ) : (
           filteredReports.map((report) => (
             <div
               key={report.id}
-              className="bg-rendly-surface rounded-2xl border border-primary/10 p-5 hover:border-primary/30 transition-all cursor-pointer"
+              className="bg-mercora-surface rounded-2xl border border-primary/10 p-5 hover:border-primary/30 transition-all cursor-pointer"
               onClick={() => {
                 setSelectedReport(report)
                 setAdminNotes(report.admin_notes || '')
@@ -318,7 +318,7 @@ export default function BugReports() {
                       {report.severity === 'critical' && '🔴 CRÍTICO'}
                       {report.severity === 'high' && '🟠 Alto'}
                       {report.severity === 'medium' && '🟡 Medio'}
-                      {report.severity === 'low' && '⚪ Bajo'}
+                      {report.severity === 'low' && 'âšª Bajo'}
                     </span>
                   </div>
                   <h3 className="font-semibold text-text-primary mb-1">{report.title}</h3>

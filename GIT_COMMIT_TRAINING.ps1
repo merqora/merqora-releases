@@ -1,4 +1,4 @@
-#!/usr/bin/env pwsh
+﻿#!/usr/bin/env pwsh
 # ════════════════════════════════════════════════════════
 # Git Commit - AI Continuous Learning Pipeline
 # ════════════════════════════════════════════════════════
@@ -12,7 +12,7 @@ Write-Host ""
 # Verificar que estamos en el directorio correcto
 $currentDir = Get-Location
 if (-not (Test-Path "ai-support")) {
-    Write-Host "❌ Error: Debes ejecutar desde c:\Users\Rodrigo\Documents\Rendly\" -ForegroundColor Red
+    Write-Host "❌ Error: Debes ejecutar desde c:\Users\Rodrigo\Documents\Mercora\" -ForegroundColor Red
     exit 1
 }
 

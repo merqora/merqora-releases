@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+﻿import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { 
   AlertCircle, 
@@ -36,7 +36,7 @@ function EscalationCard({ escalation, onResolve }) {
   }
   
   return (
-    <div className="bg-rendly-surface rounded-2xl border border-primary/10 overflow-hidden hover:border-primary/30 transition-all duration-300">
+    <div className="bg-mercora-surface rounded-2xl border border-primary/10 overflow-hidden hover:border-primary/30 transition-all duration-300">
       {/* Header */}
       <div className="flex items-center justify-between p-4 border-b border-primary/10">
         <div className="flex items-center gap-3">
@@ -63,7 +63,7 @@ function EscalationCard({ escalation, onResolve }) {
         
         {/* Last message */}
         {escalation.last_message && (
-          <div className="bg-rendly-bg rounded-xl p-3">
+          <div className="bg-mercora-bg rounded-xl p-3">
             <p className="text-text-tertiary text-xs mb-1">Último mensaje</p>
             <p className="text-text-secondary text-sm line-clamp-2">{escalation.last_message}</p>
           </div>
@@ -192,7 +192,7 @@ export default function Escalations() {
           content: feedbackMessage
         })
       
-      console.log('✅ Mensaje de calificación enviado al usuario')
+      console.log('âœ… Mensaje de calificación enviado al usuario')
       
       // 3. ELIMINAR la escalación inmediatamente de la lista local
       setEscalations(prev => prev.filter(e => e.id !== escalationId))
@@ -206,17 +206,17 @@ export default function Escalations() {
       if (deleteEscError) {
         console.error('Error eliminando escalación:', deleteEscError)
       } else {
-        console.log('🗑️ Escalación eliminada de la base de datos')
+        console.log('🗑ï¸ Escalación eliminada de la base de datos')
       }
       
       // NOTA: NO eliminamos support_conversations ni support_messages
       // porque ai_feedback necesita estos datos para el aprendizaje de IA
       // La conversación se archivará automáticamente después de 24h
       
-      console.log('✅ Chat resuelto. El feedback se guardará cuando el usuario califique.')
+      console.log('âœ… Chat resuelto. El feedback se guardará cuando el usuario califique.')
       
     } catch (error) {
-      console.error('❌ Error resolving:', error)
+      console.error('âŒ Error resolving:', error)
       alert(`Error: ${error.message}`)
       // Recargar en caso de error para sincronizar estado
       loadEscalations()
@@ -252,7 +252,7 @@ export default function Escalations() {
             placeholder="Buscar..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="pl-10 pr-4 py-2 bg-rendly-surface border border-primary/20 rounded-xl text-text-primary placeholder-text-muted focus:outline-none focus:border-primary w-full md:w-64"
+            className="pl-10 pr-4 py-2 bg-mercora-surface border border-primary/20 rounded-xl text-text-primary placeholder-text-muted focus:outline-none focus:border-primary w-full md:w-64"
           />
         </div>
       </div>
@@ -267,7 +267,7 @@ export default function Escalations() {
               flex items-center gap-2 px-4 py-2 rounded-xl whitespace-nowrap transition-all
               ${filter === key 
                 ? 'bg-primary text-white' 
-                : 'bg-rendly-surface text-text-secondary hover:bg-rendly-surface-elevated'
+                : 'bg-mercora-surface text-text-secondary hover:bg-mercora-surface-elevated'
               }
             `}
           >
@@ -298,7 +298,7 @@ export default function Escalations() {
           ))}
         </div>
       ) : (
-        <div className="text-center py-16 bg-rendly-surface rounded-2xl border border-primary/10">
+        <div className="text-center py-16 bg-mercora-surface rounded-2xl border border-primary/10">
           <CheckCircle className="w-16 h-16 mx-auto mb-4 text-accent-green" />
           <h3 className="text-xl font-semibold text-text-primary mb-2">
             ¡Todo al día!

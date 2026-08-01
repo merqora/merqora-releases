@@ -1,4 +1,4 @@
-# 🚀 Instrucciones de Compilación - Rendly Native
+# 🚀 Instrucciones de Compilación - Mercora Native
 
 ## Prerequisitos
 
@@ -32,7 +32,7 @@ En Android Studio:
 
 #### **1. Abrir Proyecto**
 ```
-File → Open → Seleccionar carpeta "Rendly"
+File → Open → Seleccionar carpeta "Mercora"
 ```
 
 #### **2. Sincronizar Gradle**
@@ -72,7 +72,7 @@ Compilaciones posteriores: ~30 segundos.
 
 #### **Windows:**
 ```bash
-cd Rendly
+cd Mercora
 
 # Compilar Debug APK
 gradlew.bat assembleDebug
@@ -86,7 +86,7 @@ app\build\outputs\apk\debug\app-debug.apk
 
 #### **Linux/Mac:**
 ```bash
-cd Rendly
+cd Mercora
 
 # Dar permisos de ejecución
 chmod +x gradlew
@@ -129,7 +129,7 @@ sdkmanager "build-tools;34.0.0"
 **Solución:** Revisar logcat en Android Studio:
 ```
 View → Tool Windows → Logcat
-Filtrar por "RendlyApp" o "AndroidRuntime"
+Filtrar por "MercoraApp" o "AndroidRuntime"
 ```
 
 ### Compilación muy lenta
@@ -181,12 +181,12 @@ Si ves estos mensajes, el código nativo está funcionando correctamente.
 
 ### Medir Frame Rate:
 ```bash
-adb shell dumpsys gfxinfo com.rendly.app
+adb shell dumpsys gfxinfo com.mercora.app
 ```
 
 ### Medir Memory:
 ```bash
-adb shell dumpsys meminfo com.rendly.app
+adb shell dumpsys meminfo com.mercora.app
 ```
 
 ### Profile en Android Studio:
@@ -209,7 +209,7 @@ Una vez compilado exitosamente:
 
 ## Diferencia Real vs React Native
 
-| Métrica | Vinzary (RN) | Rendly Native |
+| Métrica | Vinzary (RN) | Mercora Native |
 |---------|--------------|---------------|
 | **Startup** | ~2-3s | <500ms |
 | **Frame Rate** | 50-58 FPS | 60 FPS constante |

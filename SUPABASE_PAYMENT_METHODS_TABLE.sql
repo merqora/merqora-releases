@@ -1,5 +1,5 @@
--- ══════════════════════════════════════════════════════════════════════════════
--- PAYMENT METHODS TABLE - Sistema de métodos de pago para Rendly
+﻿-- ══════════════════════════════════════════════════════════════════════════════
+-- PAYMENT METHODS TABLE - Sistema de métodos de pago para MERCORA
 -- ══════════════════════════════════════════════════════════════════════════════
 
 -- Tabla principal de métodos de pago

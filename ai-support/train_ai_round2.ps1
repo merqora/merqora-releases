@@ -1,8 +1,8 @@
-$baseUrl = "https://merqora-releases-production.up.railway.app/ai/support/message"
+﻿$baseUrl = "https://mercora-releases-production.up.railway.app/ai/support/message"
 $headers = @{ "Content-Type" = "application/json" }
 
 $messages = @(
-    # ═══ RONDA 2: PREGUNTAS COMPLEJAS Y CONVERSACIONALES ═══
+    # â•â•â• RONDA 2: PREGUNTAS COMPLEJAS Y CONVERSACIONALES â•â•â•
     
     # --- Compras avanzadas ---
     "compre un producto hace 3 dias y todavia dice pendiente, que pasa?",
@@ -30,7 +30,7 @@ $messages = @(
     "como pongo envio gratis en mis productos?",
     "puedo ofrecer descuentos en mis publicaciones?",
     "como creo una oferta o promocion?",
-    "que porcentaje se queda Rendly de mis ventas?",
+    "que porcentaje se queda Mercora de mis ventas?",
     "cuando depositan el dinero de mis ventas?",
     "como configuro el envio de mis productos?",
     "puedo vender servicios ademas de productos?",
@@ -52,11 +52,11 @@ $messages = @(
     "como activo la verificacion en dos pasos?",
     "perdi el telefono y no puedo acceder a mi cuenta",
     "quiero cambiar el email de mi cuenta",
-    "me llegan correos sospechosos de Rendly",
+    "me llegan correos sospechosos de Mercora",
     "alguien creo una cuenta con mis datos",
     "como reporto una cuenta falsa?",
     "me estan suplantando la identidad",
-    "como vinculo mi cuenta de Rendly con redes sociales?",
+    "como vinculo mi cuenta de Mercora con redes sociales?",
     "puedo tener dos cuentas?",
     "como transfiero mis datos a otra cuenta?",
     "la verificacion por SMS no me llega",
@@ -83,7 +83,7 @@ $messages = @(
     "como hago un rend con varias fotos y video?",
     "puedo subir un rend desde la galeria?",
     "que resolucion recomiendan para los videos?",
-    "como hago un timelapse en Rendly?",
+    "como hago un timelapse en Mercora?",
     "se puede hacer slowmotion?",
     "como agrego transiciones entre clips?",
     "puedo usar mi propia musica en un rend?",
@@ -96,7 +96,7 @@ $messages = @(
     "se puede colaborar en un rend con otro usuario?",
     "como hago un dueto o remix?",
     "que es el feed de rends?",
-    "como funciona el algoritmo de Rendly?",
+    "como funciona el algoritmo de Mercora?",
     "por que mis rends tienen pocas vistas?",
     "como gano mas seguidores?",
     
@@ -131,7 +131,7 @@ $messages = @(
     # --- Problemas tecnicos avanzados ---
     "la app no funciona con mi version de Android",
     "que version minima de Android necesito?",
-    "puedo usar Rendly en tablet?",
+    "puedo usar Mercora en tablet?",
     "la app consume muchos datos moviles",
     "como reduzco el consumo de datos?",
     "los videos se ven pixelados",
@@ -141,12 +141,12 @@ $messages = @(
     "la app pide permisos que no quiero dar",
     "por que la app necesita acceso a la camara?",
     "por que la app necesita acceso al microfono?",
-    "la app se actualizo y perdí mis datos",
+    "la app se actualizo y perdÃ­ mis datos",
     "como reporto un bug?",
     "hay una version beta de la app?",
     
     # --- Categorias especificas de productos ---
-    "como busco ropa en Rendly?",
+    "como busco ropa en Mercora?",
     "hay seccion de electronica?",
     "donde estan los productos de belleza?",
     "como filtro por categoria?",
@@ -155,16 +155,16 @@ $messages = @(
     "como uso los filtros de busqueda?",
     "no encuentro lo que busco",
     
-    # --- Preguntas sobre Rendly como empresa ---
-    "Rendly tiene oficinas fisicas?",
-    "como contacto a Rendly por telefono?",
+    # --- Preguntas sobre Mercora como empresa ---
+    "Mercora tiene oficinas fisicas?",
+    "como contacto a Mercora por telefono?",
     "tienen email de soporte?",
     "donde puedo dejar una sugerencia?",
     "hay programa de afiliados?",
-    "puedo trabajar en Rendly?",
-    "Rendly tiene app para iPhone?",
+    "puedo trabajar en Mercora?",
+    "Mercora tiene app para iPhone?",
     "cuando sale la version para iOS?",
-    "Rendly tiene pagina web?",
+    "Mercora tiene pagina web?",
     
     # --- Situaciones de emergencia ---
     "me robaron y usaron mi cuenta para comprar",
@@ -177,7 +177,7 @@ $messages = @(
     # --- Preguntas con emociones ---
     "estoy muy frustrado con la app nada funciona",
     "llevo dias esperando respuesta del vendedor estoy harto",
-    "excelente app me encanta Rendly!",
+    "excelente app me encanta Mercora!",
     "quiero felicitar a un vendedor como hago?",
     "la peor experiencia de compra de mi vida",
     "me siento estafado nadie me ayuda",
@@ -190,7 +190,7 @@ $messages = @(
     "se me borro la app y perdi el acceso a mi cuenta y tengo pedidos pendientes",
     "como le doy seguimiento a mi envio y cuando puedo reclamar si no llega?",
     "quiero empezar a vender pero no se que necesito ni como funciona el pago",
-    "mi hijo menor quiere vender en Rendly tiene permitido?",
+    "mi hijo menor quiere vender en Mercora tiene permitido?",
     "vivo en el exterior puedo comprar y que me envien a mi pais?"
 )
 
@@ -201,10 +201,10 @@ $okCount = 0
 $escCount = 0
 $i = 0
 
-Write-Host "═══════════════════════════════════════════════════" -ForegroundColor Cyan
+Write-Host "â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•" -ForegroundColor Cyan
 Write-Host "  ENTRENAMIENTO IA RENDLY - RONDA 2 (AVANZADO)" -ForegroundColor Cyan
 Write-Host "  Total de mensajes: $total" -ForegroundColor Cyan
-Write-Host "═══════════════════════════════════════════════════" -ForegroundColor Cyan
+Write-Host "â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•" -ForegroundColor Cyan
 Write-Host ""
 
 foreach ($msg in $messages) {
@@ -245,20 +245,20 @@ foreach ($msg in $messages) {
 }
 
 Write-Host ""
-Write-Host "═══════════════════════════════════════════════════" -ForegroundColor Cyan
+Write-Host "â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•" -ForegroundColor Cyan
 Write-Host "  RONDA 2 COMPLETADA" -ForegroundColor Green
 Write-Host "  Exitosos: $success / $total" -ForegroundColor Green
 Write-Host "  Respondidos por IA: $okCount" -ForegroundColor Green
 Write-Host "  Escalados: $escCount" -ForegroundColor Yellow
 Write-Host "  Errores: $errors" -ForegroundColor $(if ($errors -gt 0) { "Red" } else { "Green" })
-Write-Host "═══════════════════════════════════════════════════" -ForegroundColor Cyan
+Write-Host "â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•" -ForegroundColor Cyan
 
 # Obtener stats finales
 try {
-    $statsResp = Invoke-WebRequest -Uri "https://merqora-releases-production.up.railway.app/ai/support/stats" -UseBasicParsing
+    $statsResp = Invoke-WebRequest -Uri "https://mercora-releases-production.up.railway.app/ai/support/stats" -UseBasicParsing
     $stats = $statsResp.Content | ConvertFrom-Json
     Write-Host ""
-    Write-Host "═══ STATS FINALES DE LA IA ═══" -ForegroundColor Magenta
+    Write-Host "â•â•â• STATS FINALES DE LA IA â•â•â•" -ForegroundColor Magenta
     Write-Host "  Cache: $($stats.response_cache_size) respuestas" -ForegroundColor White
     Write-Host "  Patrones: $($stats.learned_patterns_count) aprendidos" -ForegroundColor White
     Write-Host "  Modelo local: $($stats.local_ai.training_examples) ejemplos" -ForegroundColor White

@@ -1,5 +1,5 @@
-// ═══════════════════════════════════════════════════════════════════════════════
-// RENDLY - FCM Push Notification Edge Function
+﻿// ═══════════════════════════════════════════════════════════════════════════════
+// MERCORA - FCM Push Notification Edge Function
 // Envía notificaciones push a través de Firebase Cloud Messaging
 // ═══════════════════════════════════════════════════════════════════════════════
 
@@ -41,7 +41,7 @@ async function sendToFCM(notification: PushNotification): Promise<{ success: boo
           image: notification.image_url || undefined,
           sound: 'default',
           click_action: 'FLUTTER_NOTIFICATION_CLICK',
-          android_channel_id: 'rendly_notifications',
+          android_channel_id: 'mercora_notifications',
         },
         data: {
           ...notification.data,
@@ -75,10 +75,21 @@ serve(async (req) => {
   }
 
   try {
-    // Crear cliente Supabase con service role
+    // ── JWT obligatorio ──
+    const authHeader = req.headers.get('authorization') || ''
     const supabaseUrl = Deno.env.get('SUPABASE_URL') || ''
-    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || ''
-    const supabase = createClient(supabaseUrl, supabaseServiceKey)
+    const supabase = createClient(supabaseUrl, Deno.env.get('RENDLY_SERVICE_KEY') || '')
+    let authenticatedUserId = ''
+    try {
+      const jwt = authHeader.replace('Bearer ', '')
+      const { data: { user }, error: authError } = await supabase.auth.getUser(jwt)
+      if (authError || !user) {
+        return new Response(JSON.stringify({ error: 'No autorizado' }), { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
+      }
+      authenticatedUserId = user.id
+    } catch {
+      return new Response(JSON.stringify({ error: 'No autorizado' }), { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
+    }
 
     // Obtener notificaciones pendientes
     const { data: pendingNotifications, error: fetchError } = await supabase
@@ -117,6 +128,19 @@ serve(async (req) => {
         failCount++
       }
     }
+
+    // Auditoría
+    try {
+      await supabase.from('notification_audit').insert({
+        user_id: authenticatedUserId,
+        title: 'batch_push',
+        body: `Batch processed ${pendingNotifications.length} notifications`,
+        tokens_count: 0,
+        sent_count: successCount,
+        failed_count: failCount,
+        created_at: new Date().toISOString(),
+      })
+    } catch { /* non-critical */ }
 
     return new Response(
       JSON.stringify({

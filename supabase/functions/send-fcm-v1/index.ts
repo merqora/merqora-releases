@@ -1,5 +1,5 @@
-// ═══════════════════════════════════════════════════════════════════════════════
-// RENDLY - FCM HTTP v1 API Edge Function
+﻿// ═══════════════════════════════════════════════════════════════════════════════
+// MERCORA - FCM HTTP v1 API Edge Function
 // Envía notificaciones push de forma segura usando OAuth2
 // ═══════════════════════════════════════════════════════════════════════════════
 
@@ -7,7 +7,7 @@ import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
 // Configuración de Firebase - Se obtiene de variables de entorno de Supabase
-const FIREBASE_PROJECT_ID = Deno.env.get('FIREBASE_PROJECT_ID') || 'rendly-app'
+const FIREBASE_PROJECT_ID = Deno.env.get('FIREBASE_PROJECT_ID') || 'mercora-app'
 const FIREBASE_CLIENT_EMAIL = Deno.env.get('FIREBASE_CLIENT_EMAIL') || ''
 const FIREBASE_PRIVATE_KEY = Deno.env.get('FIREBASE_PRIVATE_KEY')?.replace(/\\n/g, '\n') || ''
 
@@ -157,6 +157,24 @@ serve(async (req) => {
   }
   
   try {
+    const authHeader = req.headers.get('authorization') || ''
+    const supabase = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('RENDLY_SERVICE_KEY') ?? ''
+    )
+    let authenticatedUserId = ''
+    try {
+      const jwt = authHeader.replace('Bearer ', '')
+      const { data: { user }, error: authError } = await supabase.auth.getUser(jwt)
+      if (authError || !user) {
+        return new Response(JSON.stringify({ error: 'No autorizado' }), { status: 401, headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' } })
+      }
+      authenticatedUserId = user.id
+    } catch {
+      return new Response(JSON.stringify({ error: 'No autorizado' }), { status: 401, headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' } })
+    }
+    // const authenticatedUserId = 'debug_user'; // Temporalmente para depuración
+
     const { tokens, title, body, data, image_url } = await req.json()
     
     if (!tokens || !Array.isArray(tokens) || tokens.length === 0) {
@@ -172,6 +190,10 @@ serve(async (req) => {
         { status: 400, headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' } }
       )
     }
+    
+    console.log(`[DEBUG] FIREBASE_PROJECT_ID: ${FIREBASE_PROJECT_ID}`);
+    console.log(`[DEBUG] FIREBASE_CLIENT_EMAIL: ${FIREBASE_CLIENT_EMAIL}`);
+    console.log(`[DEBUG] FIREBASE_PRIVATE_KEY is set: ${FIREBASE_PRIVATE_KEY ? 'Yes' : 'No'}`);
     
     // Verificar que las credenciales estén configuradas
     if (!FIREBASE_CLIENT_EMAIL || !FIREBASE_PRIVATE_KEY) {
@@ -192,6 +214,19 @@ serve(async (req) => {
     const successCount = results.filter(r => r.success).length
     const failures = results.filter(r => !r.success).map(r => r.error)
     
+    // Auditoría de envío
+    try {
+      await supabase.from('notification_audit').insert({
+        user_id: authenticatedUserId,
+        title,
+        body,
+        tokens_count: tokens.length,
+        sent_count: successCount,
+        failed_count: failures.length,
+        created_at: new Date().toISOString(),
+      })
+    } catch { /* non-critical */ }
+
     return new Response(
       JSON.stringify({
         success: successCount > 0,

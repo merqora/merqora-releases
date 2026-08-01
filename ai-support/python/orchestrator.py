@@ -35,7 +35,7 @@ from training_pipeline import get_training_pipeline
 
 # Try to import Rust security service
 try:
-    import rendly_security
+    import Mercora_security
     RUST_AVAILABLE = True
 except ImportError:
     RUST_AVAILABLE = False
@@ -116,7 +116,7 @@ class SecurityService:
 def get_security_service():
     """Get security service (Rust if available, else Python)"""
     if RUST_AVAILABLE:
-        return rendly_security.SecurityService()
+        return Mercora_security.SecurityService()
     return SecurityService()
 
 
@@ -181,7 +181,7 @@ class AIOrchestrator:
         if analysis.is_aggressive:
             return """Entiendo que estás frustrado/a. Voy a transferirte con un agente de soporte humano que podrá ayudarte mejor con tu situación.
 
-Un momento por favor, alguien del equipo de Rendly se comunicará contigo en breve. 🙏"""
+Un momento por favor, alguien del equipo de Mercora se comunicará contigo en breve. 🙏"""
         
         if analysis.is_confused:
             return """Veo que tienes varias dudas. Para darte la mejor ayuda posible, te voy a conectar con un agente de soporte.
@@ -190,7 +190,7 @@ En unos momentos alguien del equipo te atenderá personalmente. ¡Gracias por tu
         
         return """Para brindarte la mejor asistencia con tu consulta, te voy a conectar con un agente de soporte humano.
 
-Un miembro del equipo Rendly te atenderá en breve. ¡Gracias por contactarnos! 🙏"""
+Un miembro del equipo Mercora te atenderá en breve. ¡Gracias por contactarnos! 🙏"""
     
     def _generate_fallback_response(self, analysis: AnalysisResult) -> str:
         """Generate fallback when no FAQ match"""

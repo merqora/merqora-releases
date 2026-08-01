@@ -1,7 +1,7 @@
 #include "scoring_engine.hpp"
 #include <mutex>
 
-namespace rendly {
+namespace mercora {
 namespace ai {
 
 static std::unique_ptr<ScoringEngine> g_instance;
@@ -87,4 +87,4 @@ int ScoringEngine::calculate_confidence_score(const std::string& user_message) c
 }
 
 } // namespace ai
-} // namespace rendly
+} // namespace mercora

@@ -1,6 +1,6 @@
-# 🧠 AI Continuous Learning Pipeline - Deployment Guide
+﻿# ðŸ§  AI Continuous Learning Pipeline - Deployment Guide
 
-## ✅ Pre-requisitos
+## âœ… Pre-requisitos
 
 - Python 3.10+ instalado
 - Acceso a Supabase (credenciales en `.env`)
@@ -9,7 +9,7 @@
 
 ---
 
-## 📋 Paso 1: Ejecutar SQL en Supabase
+## ðŸ“‹ Paso 1: Ejecutar SQL en Supabase
 
 1. **Ir a Supabase Dashboard**
    - https://app.supabase.com/project/YOUR_PROJECT_ID/editor
@@ -20,7 +20,7 @@
 
 3. **Copiar y ejecutar el SQL**
    - Abrir archivo: `SUPABASE_AI_TRAINING_PIPELINE.sql`
-   - Copiar TODO el contenido (634 líneas)
+   - Copiar TODO el contenido (634 lÃ­neas)
    - Pegar en el SQL Editor
    - Click en "Run" (o Ctrl+Enter)
 
@@ -32,7 +32,7 @@
    ORDER BY table_name;
    ```
    
-   Deberías ver:
+   DeberÃ­as ver:
    - `ai_intent_corrections`
    - `ai_metrics_snapshots`
    - `ai_prompt_versions`
@@ -46,7 +46,7 @@
    AND routine_name LIKE '%training%';
    ```
    
-   Deberías ver:
+   DeberÃ­as ver:
    - `create_metrics_snapshot`
    - `get_ai_training_metrics`
    - `get_training_dataset`
@@ -54,12 +54,12 @@
 
 ---
 
-## 📦 Paso 2: Instalar Dependencias Python
+## ðŸ“¦ Paso 2: Instalar Dependencias Python
 
-### Opción A: Local (para testing)
+### OpciÃ³n A: Local (para testing)
 
 ```powershell
-cd c:\Users\Rodrigo\Documents\Rendly\ai-support\python
+cd c:\Users\Rodrigo\Documents\Mercora\ai-support\python
 pip install -r requirements.txt
 ```
 
@@ -67,23 +67,23 @@ pip install -r requirements.txt
 - `scikit-learn>=1.4.0` - Machine learning
 - `numpy>=1.26.0` - Numerical computing
 
-### Opción B: Railway (production)
+### OpciÃ³n B: Railway (production)
 
-Railway instalará automáticamente las nuevas dependencias del `requirements.txt` en el próximo deploy.
+Railway instalarÃ¡ automÃ¡ticamente las nuevas dependencias del `requirements.txt` en el prÃ³ximo deploy.
 
-**Verificar instalación local:**
+**Verificar instalaciÃ³n local:**
 ```powershell
-python -c "import sklearn; import numpy; print('✅ scikit-learn:', sklearn.__version__); print('✅ numpy:', numpy.__version__)"
+python -c "import sklearn; import numpy; print('âœ… scikit-learn:', sklearn.__version__); print('âœ… numpy:', numpy.__version__)"
 ```
 
 ---
 
-## 🚀 Paso 3: Deploy Backend (Railway)
+## ðŸš€ Paso 3: Deploy Backend (Railway)
 
 ### A. Verificar cambios en Git
 
 ```powershell
-cd c:\Users\Rodrigo\Documents\Rendly
+cd c:\Users\Rodrigo\Documents\Mercora
 git status
 ```
 
@@ -113,7 +113,7 @@ git commit -m "feat: AI Continuous Learning Pipeline con scikit-learn
 - Dataset export JSONL para fine-tuning
 - Human feedback loop con RPC submit_intent_correction
 - Buffer auto-flush cada 20 interacciones
-- Métricas live con window de 24h
+- MÃ©tricas live con window de 24h
 - Confusion matrix y per-intent metrics
 "
 
@@ -122,46 +122,46 @@ git push origin main
 
 ### C. Railway auto-deploy
 
-Railway detectará el push y re-deployará automáticamente.
+Railway detectarÃ¡ el push y re-deployarÃ¡ automÃ¡ticamente.
 
 **Verificar deploy:**
 1. Ir a https://railway.app/project/YOUR_PROJECT_ID
 2. Ver logs del servicio `ai-support`
-3. Esperar "✅ Deployment successful"
+3. Esperar "âœ… Deployment successful"
 
 **Verificar nuevos endpoints:**
 ```powershell
 # Test health check
-curl https://merqora-releases-production.up.railway.app/health
+curl https://mercora-releases-production.up.railway.app/health
 
 # Test training metrics endpoint
-curl https://merqora-releases-production.up.railway.app/ai/training/metrics?hours=24
+curl https://mercora-releases-production.up.railway.app/ai/training/metrics?hours=24
 ```
 
 ---
 
-## 🎨 Paso 4: Deploy Admin Panel (Netlify)
+## ðŸŽ¨ Paso 4: Deploy Admin Panel (Netlify)
 
 ### A. Build local (opcional - para testing)
 
 ```powershell
-cd c:\Users\Rodrigo\Documents\Rendly\admin-web
+cd c:\Users\Rodrigo\Documents\Mercora\admin-web
 npm install
 npm run build
 ```
 
 ### B. Deploy a Netlify
 
-**Opción 1: Auto-deploy desde Git**
+**OpciÃ³n 1: Auto-deploy desde Git**
 ```powershell
 git add admin-web/
 git commit -m "feat: AI Training Dashboard para continuous learning"
 git push origin main
 ```
 
-Netlify detectará el push y re-deployará.
+Netlify detectarÃ¡ el push y re-deployarÃ¡.
 
-**Opción 2: Manual deploy con CLI**
+**OpciÃ³n 2: Manual deploy con CLI**
 ```powershell
 cd admin-web
 netlify deploy --prod
@@ -170,7 +170,7 @@ netlify deploy --prod
 ### C. Verificar admin panel
 
 1. Ir a https://YOUR_ADMIN_PANEL.netlify.app/admin/training-pipeline
-2. Deberías ver el nuevo dashboard con tabs:
+2. DeberÃ­as ver el nuevo dashboard con tabs:
    - **Metrics** - KPIs, confidence distribution, intent distribution
    - **Review** - Pending human review (sorted by lowest confidence)
    - **Errors** - Classification errors
@@ -180,12 +180,12 @@ netlify deploy --prod
 
 ---
 
-## 🧪 Paso 5: Primera Corrida de Entrenamiento
+## ðŸ§ª Paso 5: Primera Corrida de Entrenamiento
 
-### Opción A: Desde PowerShell Script
+### OpciÃ³n A: Desde PowerShell Script
 
 ```powershell
-cd c:\Users\Rodrigo\Documents\Rendly\ai-support
+cd c:\Users\Rodrigo\Documents\Mercora\ai-support
 
 # Ejecutar script completo (mensajes + flush + train)
 .\scripts\train_model.ps1
@@ -198,25 +198,25 @@ cd c:\Users\Rodrigo\Documents\Rendly\ai-support
 
 **Output esperado:**
 ```
-═══════════════════════════════════════════════
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
   STEP 1: Sending training messages (70)
-═══════════════════════════════════════════════
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 [1/70] OK C:85 MATCH | Como puedo comprar un producto?
 [2/70] OK C:90 MATCH | Quiero comprar algo pero no se como
 ...
 
-═══════════════════════════════════════════════
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
   STEP 2: Flushing training buffer to Supabase
-═══════════════════════════════════════════════
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 Flushed: 70 records
 
-═══════════════════════════════════════════════
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
   STEP 3: Training ML model (TF-IDF + SVM)
-═══════════════════════════════════════════════
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
-═══════════════════════════════════════════════
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
   TRAINING COMPLETED
-═══════════════════════════════════════════════
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
   Status:        completed
   Accuracy:      92.5%
   F1 Score:      91.3%
@@ -225,16 +225,16 @@ Flushed: 70 records
   Intents:       35
 ```
 
-### Opción B: Desde Admin Dashboard
+### OpciÃ³n B: Desde Admin Dashboard
 
 1. Ir a `/admin/training-pipeline`
-2. Click en botón **"Entrenar Modelo"**
-3. Esperar mensaje de confirmación con métricas
+2. Click en botÃ³n **"Entrenar Modelo"**
+3. Esperar mensaje de confirmaciÃ³n con mÃ©tricas
 4. Ver el run en el tab "Training Runs"
 
 ---
 
-## 📊 Paso 6: Verificar Sistema Funcionando
+## ðŸ“Š Paso 6: Verificar Sistema Funcionando
 
 ### Test 1: Enviar mensaje real
 
@@ -242,11 +242,11 @@ Flushed: 70 records
 $headers = @{ "Content-Type" = "application/json" }
 $body = @{
     user_id = "test_user_123"
-    message = "Como compro algo en Rendly?"
+    message = "Como compro algo en Mercora?"
     session_id = "test_session_1"
 } | ConvertTo-Json
 
-Invoke-WebRequest -Uri "https://merqora-releases-production.up.railway.app/ai/support/message" -Method POST -Headers $headers -Body $body
+Invoke-WebRequest -Uri "https://mercora-releases-production.up.railway.app/ai/support/message" -Method POST -Headers $headers -Body $body
 ```
 
 **Esperado:**
@@ -256,7 +256,7 @@ Invoke-WebRequest -Uri "https://merqora-releases-production.up.railway.app/ai/su
 ### Test 2: Verificar buffer flush
 
 ```powershell
-curl -X POST https://merqora-releases-production.up.railway.app/ai/training/flush
+curl -X POST https://mercora-releases-production.up.railway.app/ai/training/flush
 ```
 
 **Esperado:**
@@ -278,10 +278,10 @@ ORDER BY created_at DESC
 LIMIT 10;
 ```
 
-### Test 4: Verificar métricas live
+### Test 4: Verificar mÃ©tricas live
 
 ```powershell
-curl "https://merqora-releases-production.up.railway.app/ai/training/metrics?hours=24"
+curl "https://mercora-releases-production.up.railway.app/ai/training/metrics?hours=24"
 ```
 
 **Esperado:**
@@ -302,10 +302,10 @@ curl "https://merqora-releases-production.up.railway.app/ai/training/metrics?hou
 }
 ```
 
-### Test 5: Probar predicción
+### Test 5: Probar predicciÃ³n
 
 ```powershell
-curl "https://merqora-releases-production.up.railway.app/ai/training/predict?message=quiero%20devolver%20un%20producto"
+curl "https://mercora-releases-production.up.railway.app/ai/training/predict?message=quiero%20devolver%20un%20producto"
 ```
 
 **Esperado:**
@@ -325,81 +325,81 @@ curl "https://merqora-releases-production.up.railway.app/ai/training/predict?mes
 
 ---
 
-## 🔄 Flujo Continuo de Aprendizaje
+## ðŸ”„ Flujo Continuo de Aprendizaje
 
-### 1. Usuario interactúa
-- Mensaje → Orchestrator → Respuesta
+### 1. Usuario interactÃºa
+- Mensaje â†’ Orchestrator â†’ Respuesta
 - **Auto-guardado** en `training_pipeline._training_buffer`
 
 ### 2. Buffer auto-flush
-- Cada **20 registros** → flush a `ai_training_data`
+- Cada **20 registros** â†’ flush a `ai_training_data`
 - O manual: `POST /ai/training/flush`
 
-### 3. Revisión humana (Admin Dashboard)
-- Tab **"Review"** → Ver low-confidence messages
-- Click "✏️ Corregir" → Modal con intent selector
-- Submit → RPC `submit_intent_correction`
+### 3. RevisiÃ³n humana (Admin Dashboard)
+- Tab **"Review"** â†’ Ver low-confidence messages
+- Click "âœï¸ Corregir" â†’ Modal con intent selector
+- Submit â†’ RPC `submit_intent_correction`
 - **Trigger auto-detecta** si hay mismatch
 
 ### 4. Auto-retraining
-- Cada **100 samples** nuevos → trigger automático
+- Cada **100 samples** nuevos â†’ trigger automÃ¡tico
 - O manual: Click "Entrenar Modelo" en dashboard
 - **Solo se deploya** si F1 no baja >5%
 
 ### 5. Monitoreo
-- **Metrics tab** → Live metrics 24h
-- **Intents tab** → Per-intent accuracy
-- **Errors tab** → Misclassifications
+- **Metrics tab** â†’ Live metrics 24h
+- **Intents tab** â†’ Per-intent accuracy
+- **Errors tab** â†’ Misclassifications
 
 ---
 
-## 📁 Archivos del Modelo
+## ðŸ“ Archivos del Modelo
 
 Los modelos entrenados se guardan en:
 ```
 ai-support/python/trained_model/
-├── intent_classifier_latest.pkl          # Modelo activo
-├── intent_classifier_YYYYMMDD_HHMMSS.pkl # Backups
-└── reports/
-    └── training_YYYYMMDD_HHMMSS.txt      # Reporte de cada run
+â”œâ”€â”€ intent_classifier_latest.pkl          # Modelo activo
+â”œâ”€â”€ intent_classifier_YYYYMMDD_HHMMSS.pkl # Backups
+â””â”€â”€ reports/
+    â””â”€â”€ training_YYYYMMDD_HHMMSS.txt      # Reporte de cada run
 ```
 
 Los datasets exportados:
 ```
 ai-support/python/datasets/
-├── training_dataset_latest.jsonl
-└── training_dataset_YYYYMMDD_HHMMSS.csv
+â”œâ”€â”€ training_dataset_latest.jsonl
+â””â”€â”€ training_dataset_YYYYMMDD_HHMMSS.csv
 ```
 
 ---
 
-## 🐛 Troubleshooting
+## ðŸ› Troubleshooting
 
 ### Error: "Supabase not configured"
-**Solución:** Verificar variables de entorno:
+**SoluciÃ³n:** Verificar variables de entorno:
 ```powershell
-echo $env:RENDLY_AI_SUPABASE_URL
-echo $env:RENDLY_AI_SUPABASE_KEY
+echo $env:Mercora_AI_SUPABASE_URL
+echo $env:Mercora_AI_SUPABASE_KEY
 ```
 
 ### Error: "Model not trained yet"
-**Solución:** Ejecutar primer entrenamiento:
+**SoluciÃ³n:** Ejecutar primer entrenamiento:
 ```powershell
 .\scripts\train_model.ps1
 ```
 
 ### Error: "Training failed - not enough samples"
-**Solución:** Necesitas mínimo **20 samples**. Enviar más mensajes de prueba.
+**SoluciÃ³n:** Necesitas mÃ­nimo **20 samples**. Enviar mÃ¡s mensajes de prueba.
 
 ### Buffer no se flushea
 **Verificar:**
 ```powershell
-curl https://merqora-releases-production.up.railway.app/ai/training/dataset/stats
+curl https://mercora-releases-production.up.railway.app/ai/training/dataset/stats
 ```
 
 **Manual flush:**
 ```powershell
-curl -X POST https://merqora-releases-production.up.railway.app/ai/training/flush
+curl -X POST https://mercora-releases-production.up.railway.app/ai/training/flush
 ```
 
 ### Admin dashboard no carga
@@ -410,9 +410,9 @@ curl -X POST https://merqora-releases-production.up.railway.app/ai/training/flus
 
 ---
 
-## 📈 Métricas Clave a Monitorear
+## ðŸ“ˆ MÃ©tricas Clave a Monitorear
 
-| Métrica | Target | Crítico si |
+| MÃ©trica | Target | CrÃ­tico si |
 |---------|--------|------------|
 | Intent Accuracy | >85% | <70% |
 | Escalation Rate | <15% | >30% |
@@ -423,7 +423,7 @@ curl -X POST https://merqora-releases-production.up.railway.app/ai/training/flus
 
 ---
 
-## ✅ Checklist Final
+## âœ… Checklist Final
 
 - [ ] SQL ejecutado en Supabase
 - [ ] Tablas y RPCs creados correctamente
@@ -432,24 +432,24 @@ curl -X POST https://merqora-releases-production.up.railway.app/ai/training/flus
 - [ ] Admin panel re-deployado en Netlify
 - [ ] Primer entrenamiento ejecutado exitosamente
 - [ ] Modelo guardado en `trained_model/`
-- [ ] Métricas live funcionando
+- [ ] MÃ©tricas live funcionando
 - [ ] Admin dashboard accesible
-- [ ] Buffer flush automático funciona
+- [ ] Buffer flush automÃ¡tico funciona
 - [ ] Human corrections funcionan
 - [ ] Auto-retraining configurado
 
 ---
 
-## 🎯 Próximos Pasos (Post-deployment)
+## ðŸŽ¯ PrÃ³ximos Pasos (Post-deployment)
 
-1. **Cargar datos históricos**
-   - Migrar `ai_feedback` existente → `ai_training_data`
-   - Script de migración si es necesario
+1. **Cargar datos histÃ³ricos**
+   - Migrar `ai_feedback` existente â†’ `ai_training_data`
+   - Script de migraciÃ³n si es necesario
 
 2. **Entrenar con datos reales**
    - Dejar sistema activo 1-2 semanas
    - Acumular 500+ samples
-   - Re-entrenar con datos de producción
+   - Re-entrenar con datos de producciÃ³n
 
 3. **Fine-tuning pipeline**
    - Ajustar `auto_retrain_threshold` (default: 100)
@@ -468,4 +468,4 @@ curl -X POST https://merqora-releases-production.up.railway.app/ai/training/flus
 
 ---
 
-**🚀 Sistema listo para producción con aprendizaje continuo real.**
+**ðŸš€ Sistema listo para producciÃ³n con aprendizaje continuo real.**

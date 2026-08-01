@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+﻿import { useState, useEffect } from 'react'
 import { supabase } from '../supabaseClient'
 import { 
   Brain, 
@@ -66,10 +66,10 @@ export default function AILearning() {
       
       if (error) throw error
       
-      console.log(`✅ ${data?.length || 0} registros de feedback cargados`)
+      console.log(`âœ… ${data?.length || 0} registros de feedback cargados`)
       setLearningData(data || [])
     } catch (error) {
-      console.error('❌ Error loading learning data:', error)
+      console.error('âŒ Error loading learning data:', error)
       alert(`Error: ${error.message}`)
     } finally {
       setLoading(false)
@@ -157,7 +157,7 @@ export default function AILearning() {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-        <div className="bg-rendly-surface rounded-2xl border border-primary/10 p-4">
+        <div className="bg-mercora-surface rounded-2xl border border-primary/10 p-4">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-text-tertiary text-sm">Total Feedback</p>
@@ -167,7 +167,7 @@ export default function AILearning() {
           </div>
         </div>
 
-        <div className="bg-rendly-surface rounded-2xl border border-primary/10 p-4">
+        <div className="bg-mercora-surface rounded-2xl border border-primary/10 p-4">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-text-tertiary text-sm">Positivos</p>
@@ -177,7 +177,7 @@ export default function AILearning() {
           </div>
         </div>
 
-        <div className="bg-rendly-surface rounded-2xl border border-primary/10 p-4">
+        <div className="bg-mercora-surface rounded-2xl border border-primary/10 p-4">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-text-tertiary text-sm">Negativos</p>
@@ -187,7 +187,7 @@ export default function AILearning() {
           </div>
         </div>
 
-        <div className="bg-rendly-surface rounded-2xl border border-primary/10 p-4">
+        <div className="bg-mercora-surface rounded-2xl border border-primary/10 p-4">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-text-tertiary text-sm">Calificación</p>
@@ -207,19 +207,19 @@ export default function AILearning() {
             </div>
             <Award className="w-8 h-8" />
           </div>
-          <p className="text-xs text-white/70 mt-2">Respuestas ≥4⭐ para entrenar IA</p>
+          <p className="text-xs text-white/70 mt-2">Respuestas â‰¥4â­ para entrenar IA</p>
         </div>
       </div>
 
       {/* Filters */}
-      <div className="bg-rendly-surface rounded-2xl border border-primary/10 p-4 space-y-4">
+      <div className="bg-mercora-surface rounded-2xl border border-primary/10 p-4 space-y-4">
         <div className="flex flex-wrap gap-3">
           <button
             onClick={() => setFilter('all')}
             className={`px-4 py-2 rounded-xl font-medium transition-all ${
               filter === 'all'
                 ? 'bg-primary text-white'
-                : 'bg-rendly-bg text-text-secondary hover:bg-rendly-surface-elevated'
+                : 'bg-mercora-bg text-text-secondary hover:bg-mercora-surface-elevated'
             }`}
           >
             Todos ({learningData.length})
@@ -229,7 +229,7 @@ export default function AILearning() {
             className={`px-4 py-2 rounded-xl font-medium transition-all ${
               filter === 'positive'
                 ? 'bg-accent-green text-white'
-                : 'bg-rendly-bg text-text-secondary hover:bg-rendly-surface-elevated'
+                : 'bg-mercora-bg text-text-secondary hover:bg-mercora-surface-elevated'
             }`}
           >
             Positivos ({learningData.filter(f => f.helpful).length})
@@ -239,7 +239,7 @@ export default function AILearning() {
             className={`px-4 py-2 rounded-xl font-medium transition-all ${
               filter === 'negative'
                 ? 'bg-accent-magenta text-white'
-                : 'bg-rendly-bg text-text-secondary hover:bg-rendly-surface-elevated'
+                : 'bg-mercora-bg text-text-secondary hover:bg-mercora-surface-elevated'
             }`}
           >
             Negativos ({learningData.filter(f => !f.helpful).length})
@@ -312,7 +312,7 @@ export default function AILearning() {
                       )}
                       {item.helpful && item.rating >= 4 && (
                         <span className="px-2 py-0.5 bg-purple-100 text-purple-700 text-xs font-medium rounded-full">
-                          ✨ Para aprendizaje
+                          âœ¨ Para aprendizaje
                         </span>
                       )}
                     </div>
@@ -463,7 +463,7 @@ export default function AILearning() {
                       <span className="font-semibold text-purple-900">Usado para Aprendizaje de IA</span>
                     </div>
                     <p className="text-sm text-purple-700">
-                      Este feedback positivo (≥4 estrellas) se está usando para mejorar las respuestas del asistente.
+                      Este feedback positivo (â‰¥4 estrellas) se está usando para mejorar las respuestas del asistente.
                       La IA aprenderá de la interacción entre el usuario y el agente para manejar consultas similares en el futuro.
                     </p>
                   </div>

@@ -1,4 +1,264 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Merqora</string>
+    <string name="app_name">Mercora</string>
+
+    <!-- Navigation -->
+    <string name="nav_inicio">Home</string>
+    <string name="nav_explorar">Explore</string>
+    <string name="nav_perfil">Profile</string>
+    <string name="nav_publicar">Publish</string>
+    <string name="nav_notificaciones">Notifications</string>
+    <string name="nav_mensajes">Messages</string>
+    <string name="nav_carrito">Cart</string>
+    <string name="nav_buscar">Search</string>
+    <string name="nav_volver">Back</string>
+    <string name="nav_cerrar">Close</string>
+
+    <!-- Auth -->
+    <string name="auth_iniciar_sesion">Log in</string>
+    <string name="auth_crear_cuenta">Create account</string>
+    <string name="auth_recuperar_contrasena">Forgot password</string>
+    <string name="auth_correo_electronico">Email</string>
+    <string name="auth_contrasena">Password</string>
+    <string name="auth_confirmar_contrasena">Confirm password</string>
+    <string name="auth_nombre_usuario">Username</string>
+    <string name="auth_nombre">Name</string>
+    <string name="auth_genero">Gender</string>
+    <string name="auth_otro">Other</string>
+    <string name="auth_prefiero_no_decirlo">Prefer not to say</string>
+    <string name="auth_seleccionar">Select</string>
+    <string name="auth_enviar_enlace">Send link</string>
+    <string name="auth_huella_digital">Fingerprint</string>
+    <string name="auth_verificar_huella">Verify fingerprint</string>
+    <string name="auth_usar_contrasena">Use password</string>
+    <string name="auth_configurar_huella">Set up fingerprint</string>
+    <string name="auth_iniciar_con_huella">Log in with fingerprint</string>
+    <string name="auth_contrasena_incorrecta">Incorrect password</string>
+    <string name="auth_formato_invalido">Invalid format</string>
+    <string name="auth_fecha_invalida">Invalid date</string>
+
+    <!-- Common Actions -->
+    <string name="action_guardar">Save</string>
+    <string name="action_cancelar">Cancel</string>
+    <string name="action_eliminar">Delete</string>
+    <string name="action_compartir">Share</string>
+    <string name="action_reportar">Report</string>
+    <string name="action_editar">Edit</string>
+    <string name="action_enviar">Send</string>
+    <string name="action_seguir">Follow</string>
+    <string name="action_siguiendo">Following</string>
+    <string name="action_dejar_de_seguir">Unfollow</string>
+    <string name="action_confirmar">Confirm</string>
+    <string name="action_continuar">Continue</string>
+    <string name="action_actualizar">Update</string>
+    <string name="action_reintentar">Retry</string>
+    <string name="action_ver_todo">See all</string>
+    <string name="action_ver_mas">See more</string>
+    <string name="action_recargar">Reload</string>
+    <string name="action_siguiente">Next</string>
+    <string name="action_anterior">Previous</string>
+    <string name="action_listo">Done</string>
+    <string name="action_entendido">Got it</string>
+    <string name="action_agregar">Add</string>
+    <string name="action_quitar">Remove</string>
+    <string name="action_crear">Create</string>
+    <string name="action_configurar">Set up</string>
+    <string name="action_restablecer">Reset</string>
+    <string name="action_bloquear">Block</string>
+    <string name="action_seleccionar">Select</string>
+    <string name="action_completado">Completed</string>
+
+    <!-- Product / Post -->
+    <string name="product_producto">Product</string>
+    <string name="product_precio">Price</string>
+    <string name="product_condicion">Condition</string>
+    <string name="product_estado">Status</string>
+    <string name="product_categoria">Category</string>
+    <string name="product_stock">Stock</string>
+    <string name="product_disponible">Available</string>
+    <string name="product_no_disponible">Unavailable</string>
+    <string name="product_agotado">Sold out</string>
+    <string name="product_nuevo">New</string>
+    <string name="product_como_nuevo">Like new</string>
+    <string name="product_buen_estado">Good condition</string>
+    <string name="product_usado">Used</string>
+    <string name="product_ubicacion">Location</string>
+    <string name="product_descripcion">Description</string>
+    <string name="product_video">Video</string>
+    <string name="product_audio">Audio</string>
+    <string name="product_imagen">Image</string>
+    <string name="product_valoracion">Rating</string>
+    <string name="product_me_gusta">Like</string>
+    <string name="product_publicaciones">Posts</string>
+    <string name="product_sebastian">Post</string>
+    <string name="product_articulo">Item</string>
+
+    <!-- Profile -->
+    <string name="profile_publicaciones">Posts</string>
+    <string name="profile_seguidores">Followers</string>
+    <string name="profile_siguiendo">Following</string>
+    <string name="profile_ventas">Sales</string>
+    <string name="profile_valoracion">Rating</string>
+    <string name="profile_tienda">Store</string>
+    <string name="profile_ubicacion">Location</string>
+    <string name="profile_telefono">Phone</string>
+    <string name="profile_tarjeta">Card</string>
+    <string name="profile_transferencia">Transfer</string>
+    <string name="profile_efectivo">Cash</string>
+    <string name="profile_mercado_pago">Mercado Pago</string>
+    <string name="profile_enviar_mensaje">Send message</string>
+    <string name="profile_solicitud_enviada">Request sent</string>
+    <string name="profile_te_sigue">Follows you</string>
+
+    <!-- Payment -->
+    <string name="payment_tarjeta">Card</string>
+    <string name="payment_transferencia">Transfer</string>
+    <string name="payment_efectivo">Cash</string>
+    <string name="payment_mercado_pago">Mercado Pago</string>
+    <string name="payment_debito">Debit</string>
+    <string name="payment_credito">Credit</string>
+    <string name="payment_subtotal">Subtotal</string>
+    <string name="payment_total">Total</string>
+    <string name="payment_envio">Shipping</string>
+    <string name="payment_descuento">Discount</string>
+    <string name="payment_gratis">Free</string>
+    <string name="payment_referencia">Reference</string>
+    <string name="payment_nombre_titular">Cardholder name</string>
+    <string name="payment_pago_cancelado">Payment cancelled</string>
+    <string name="payment_volver_al_carrito">Back to cart</string>
+
+    <!-- Time -->
+    <string name="time_hoy">Today</string>
+    <string name="time_ayer">Yesterday</string>
+    <string name="time_esta_semana">This week</string>
+    <string name="time_este_mes">This month</string>
+    <string name="time_anteriores">Earlier</string>
+    <string name="time_reciente">Recent</string>
+
+    <!-- Order Status -->
+    <string name="status_pendiente">Pending</string>
+    <string name="status_procesando">Processing</string>
+    <string name="status_procesando_pago">Processing payment</string>
+    <string name="status_completado">Completed</string>
+    <string name="status_cancelado">Cancelled</string>
+    <string name="status_rechazado">Rejected</string>
+    <string name="status_oculto">Hidden</string>
+
+    <!-- Notifications -->
+    <string name="notif_todas">All</string>
+    <string name="notif_likes">Likes</string>
+    <string name="notif_comentarios">Comments</string>
+    <string name="notif_seguidores">Followers</string>
+    <string name="notif_ventas">Sales</string>
+    <string name="notif_nuevo_seguidor">New follower</string>
+    <string name="notif_nueva_venta">New sale</string>
+    <string name="notif_nuevo_like">New like</string>
+    <string name="notif_nueva_opinion">New review</string>
+    <string name="notif_solicitud_aceptada">Request accepted</string>
+    <string name="notif_te_mencionaron">You were mentioned</string>
+    <string name="notif_handshake">Handshake</string>
+
+    <!-- Settings -->
+    <string name="settings_configuracion">Settings</string>
+    <string name="settings_privacidad">Privacy</string>
+    <string name="settings_soporte">Support</string>
+    <string name="settings_ayuda">Help</string>
+    <string name="settings_preferencias">Preferences</string>
+    <string name="settings_cambiar_contrasena">Change password</string>
+    <string name="settings_notificaciones_push">Push notifications</string>
+    <string name="settings_notificaciones_sistema">System notifications</string>
+    <string name="settings_cerrar_sesion">Log out</string>
+    <string name="settings_compra">Purchase</string>
+    <string name="settings_venta">Sale</string>
+    <string name="settings_pedido">Order</string>
+    <string name="settings_saldo_insuficiente">Insufficient balance</string>
+    <string name="settings_monto_invalido">Invalid amount</string>
+
+    <!-- Gender -->
+    <string name="gender_masculino">Male</string>
+    <string name="gender_femenino">Female</string>
+    <string name="gender_otro">Other</string>
+    <string name="gender_prefiero_no_decirlo">Prefer not to say</string>
+
+    <!-- Explore -->
+    <string name="explore_tendencias">Trending</string>
+    <string name="explore_en_alza">Rising</string>
+    <string name="explore_no_hay_ofertas">No active offers</string>
+    <string name="explore_no_hay_resultados">No results found</string>
+    <string name="explore_no_hay_publicaciones">No more posts</string>
+    <string name="explore_no_hay_rends">No Rends yet</string>
+    <string name="explore_no_hay_videos">No videos with this hashtag yet</string>
+    <string name="explore_hashtags_relacionados">Related hashtags</string>
+
+    <!-- Chat -->
+    <string name="chat_mensaje">Message</string>
+    <string name="chat_chat">Chat</string>
+    <string name="chat_grabando">Recording</string>
+    <string name="chat_enviar_audio">Send audio</string>
+    <string name="chat_sin_resultados">No results</string>
+    <string name="chat_no_se_encontraron_usuarios">No users found</string>
+    <string name="chat_no_hay_mensajes">No messages</string>
+    <string name="chat_opciones">Options</string>
+    <string name="chat_reenviar_a">Forward to…</string>
+    <string name="chat_articulo_compartido">Shared item</string>
+    <string name="chat_ubicacion_compartida">Shared location</string>
+    <string name="chat_contacto_compartido">Shared contact</string>
+    <string name="chat_archivo_adjunto">Attachment</string>
+    <string name="chat_acuerdo_cancelado">Agreement cancelled</string>
+    <string name="chat_imagen">Image</string>
+    <string name="chat_video">Video</string>
+
+    <!-- Media -->
+    <string name="media_galeria">Gallery</string>
+    <string name="media_camara">Camera</string>
+    <string name="media_videos">Videos</string>
+    <string name="media_foto">Photo</string>
+
+    <!-- Call -->
+    <string name="call_videollamada">Video call</string>
+    <string name="call_llamada_de_voz">Voice call</string>
+    <string name="call_llamada_entrante">Incoming call</string>
+    <string name="call_ocupado">Busy</string>
+    <string name="call_activar">Activate</string>
+    <string name="call_silenciar">Mute</string>
+
+    <!-- Story / Highlight -->
+    <string name="story_nuevo">New</string>
+    <string name="story_estrella">Star</string>
+    <string name="story_categoria">Category</string>
+    <string name="story_nombre">Name</string>
+    <string name="story_publicando">Posting story</string>
+
+    <!-- Error -->
+    <string name="error_desconocido">Unknown error</string>
+    <string name="error_no_autenticado">Not authenticated</string>
+    <string name="error_no_conectado">Not connected</string>
+    <string name="error_ya_suscrito">Already subscribed</string>
+    <string name="error_no_autorizado">Unauthorized</string>
+    <string name="error_respuesta_vacia">Empty response</string>
+    <string name="error_no_se_pudo_ubicacion">Could not get location</string>
+    <string name="error_fondos_insuficientes">Insufficient funds</string>
+    <string name="error_no_puedes_seguirte">You cannot follow yourself</string>
+    <string name="error_no_hay_solicitud">No pending request</string>
+
+    <!-- Editor -->
+    <string name="editor_ajustes">Settings</string>
+    <string name="editor_color">Color</string>
+    <string name="editor_anadir">Add</string>
+
+    <!-- Misc -->
+    <string name="misc_usuario">User</string>
+    <string name="misc_tu">You</string>
+    <string name="misc_privacidad">Privacy</string>
+    <string name="misc_proximamente">Coming soon</string>
+    <string name="misc_no">No</string>
+    <string name="misc_si">Yes</string>
+    <string name="misc_fecha_de_nacimiento">Date of birth</string>
+    <string name="misc_fecha">Date</string>
+    <string name="misc_guardado">Saved</string>
+    <string name="misc_no_me_interesa">Not interested</string>
+    <string name="misc_peso">Weight</string>
+    <string name="misc_denunciar">Report</string>
+    <string name="misc_estado">Status</string>
+    <string name="misc_articulos">Items</string>
 </resources>

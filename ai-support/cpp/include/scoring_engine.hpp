@@ -5,7 +5,7 @@
 #include <unordered_map>
 #include <memory>
 
-namespace rendly {
+namespace mercora {
 namespace ai {
 
 struct AnalysisResult {
@@ -122,4 +122,4 @@ private:
 };
 
 } // namespace ai
-} // namespace rendly
+} // namespace mercora

@@ -1,11 +1,11 @@
-[package]
-name = "rendly-security"
+﻿[package]
+name = "mercora-security"
 version = "1.0.0"
 edition = "2021"
-description = "Rendly AI Support - Security & Infrastructure Service"
+description = "Mercora AI Support - Security & Infrastructure Service"
 
 [lib]
-name = "rendly_security"
+name = "Mercora_security"
 crate-type = ["cdylib", "rlib"]
 
 [dependencies]

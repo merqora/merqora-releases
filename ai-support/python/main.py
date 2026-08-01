@@ -1,5 +1,5 @@
 """
-Rendly AI Support - FastAPI Application
+Mercora AI Support - FastAPI Application
 
 Main entry point for the AI support system.
 """
@@ -68,8 +68,8 @@ async def lifespan(app: FastAPI):
 
 # Create FastAPI app
 app = FastAPI(
-    title="Rendly AI Support",
-    description="AI-powered support system for Rendly app",
+    title="Mercora AI Support",
+    description="AI-powered support system for Mercora app",
     version="1.0.0",
     lifespan=lifespan,
 )

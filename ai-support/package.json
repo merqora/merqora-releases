@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "node-turn": "^0.0.6",
+    "turn-server": "^0.5.0"
+  }
+}

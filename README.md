@@ -1,6 +1,6 @@
-# 🚀 Merqora Releases - Production App Repository
+# 🚀 Mercora - Production App Repository
 
-APK releases y código fuente completo para Merqora/Rendly app.
+APK releases y código fuente completo para Mercora app.
 
 ## Stack Tecnológico Enterprise
 
@@ -44,7 +44,7 @@ APK releases y código fuente completo para Merqora/Rendly app.
 
 ```bash
 # 1. Abrir en Android Studio
-cd Rendly
+cd Mercora
 
 # 2. Sincronizar Gradle
 ./gradlew build
@@ -67,8 +67,10 @@ Ver documentación completa en `ai-support/python/README_TRAINING.md`
 
 ## Deployment
 
-- **Backend**: Railway - https://merqora-releases-production.up.railway.app
+- **Backend AI**: Render - https://vinzay-ai.onrender.com
 - **Admin Panel**: Netlify
+- **Web (mercora.app)**: Next.js
+- **Edge Functions**: Supabase (media-services, livekit-token, mercadopago*, mp-webhook, send-fcm-v1, etc.)
 - **APK Releases**: GitHub Releases
 
 Ver guía completa en `AI_TRAINING_DEPLOYMENT.md`

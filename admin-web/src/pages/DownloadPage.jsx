@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+﻿import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import {
   Download, ArrowLeft, Shield, CheckCircle, Smartphone,
@@ -33,7 +33,7 @@ export default function DownloadPage() {
         id: 'fallback',
         version_name: '1.0.0',
         version_code: 1,
-        changelog: 'Primera versión de Merqora. Incluye:\n• Marketplace con búsqueda y filtros\n• Chat en tiempo real\n• Sistema de verificación\n• Handshake para transacciones seguras\n• Soporte IA 24/7\n• Ofertas dinámicas',
+        changelog: 'Primera versión de Mercora. Incluye:\nâ€¢ Marketplace con búsqueda y filtros\nâ€¢ Chat en tiempo real\nâ€¢ Sistema de verificación\nâ€¢ Handshake para transacciones seguras\nâ€¢ Soporte IA 24/7\nâ€¢ Ofertas dinámicas',
         file_size_mb: 45,
         min_android: '8.0',
         is_latest: true,
@@ -62,7 +62,7 @@ export default function DownloadPage() {
         downloadUrl = version.file_url
       } else {
         // Try to get from storage bucket
-        const fileName = `merqora-v${version.version_name}.apk`
+        const fileName = `Mercora-v${version.version_name}.apk`
         const { data } = supabase.storage.from('app-releases').getPublicUrl(fileName)
         downloadUrl = data?.publicUrl
       }
@@ -70,7 +70,7 @@ export default function DownloadPage() {
       if (downloadUrl) {
         // Proxy GitHub URLs through Netlify to avoid redirect to github.com
         let finalUrl = downloadUrl
-        const ghPrefix = 'https://github.com/merqora/merqora-releases/releases/download/'
+        const ghPrefix = 'https://github.com/Mercora/Mercora-releases/releases/download/'
         if (downloadUrl.startsWith(ghPrefix)) {
           finalUrl = '/download-apk/' + downloadUrl.slice(ghPrefix.length)
         }
@@ -78,7 +78,7 @@ export default function DownloadPage() {
         // Force direct download
         const link = document.createElement('a')
         link.href = finalUrl
-        link.download = `merqora-v${version.version_name}.apk`
+        link.download = `Mercora-v${version.version_name}.apk`
         document.body.appendChild(link)
         link.click()
         document.body.removeChild(link)
@@ -114,10 +114,10 @@ export default function DownloadPage() {
       <nav className="glass-strong fixed top-0 left-0 right-0 z-50 py-4">
         <div className="max-w-5xl mx-auto px-4 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-3 group">
-            <div className="w-9 h-9 rounded-xl gradient-rendly flex items-center justify-center">
+            <div className="w-9 h-9 rounded-xl gradient-mercora flex items-center justify-center">
               <ShoppingBag className="w-4 h-4 text-white" />
             </div>
-            <span className="text-lg font-bold text-white">Merqora</span>
+            <span className="text-lg font-bold text-white">Mercora</span>
           </Link>
           <Link to="/" className="flex items-center gap-2 text-text-secondary hover:text-white transition-colors text-sm">
             <ArrowLeft className="w-4 h-4" /> Volver al inicio
@@ -128,11 +128,11 @@ export default function DownloadPage() {
       <main className="max-w-5xl mx-auto px-4 pt-28 pb-20 relative z-10">
         {/* Hero */}
         <div className="text-center mb-12">
-          <div className="w-20 h-20 rounded-3xl gradient-rendly flex items-center justify-center mx-auto mb-6 animate-glow">
+          <div className="w-20 h-20 rounded-3xl gradient-mercora flex items-center justify-center mx-auto mb-6 animate-glow">
             <Download className="w-10 h-10 text-white" />
           </div>
           <h1 className="text-4xl sm:text-5xl font-black text-white mb-4">
-            Descargá <span className="gradient-text">Merqora</span>
+            Descargá <span className="gradient-text">Mercora</span>
           </h1>
           <p className="text-text-secondary text-lg max-w-xl mx-auto">
             Descarga directa y segura. Instalá en tu Android en menos de un minuto.
@@ -163,7 +163,7 @@ export default function DownloadPage() {
                     </div>
 
                     <h2 className="text-2xl font-bold text-white mb-2">
-                      Merqora v{latestVersion.version_name}
+                      Mercora v{latestVersion.version_name}
                     </h2>
 
                     <div className="flex flex-wrap gap-4 text-sm text-text-secondary mb-4">
@@ -229,9 +229,9 @@ export default function DownloadPage() {
                   { step: '1', title: 'Descargá el APK', desc: 'Tocá el botón de descarga arriba', icon: Download },
                   { step: '2', title: 'Abrí el archivo', desc: 'Buscalo en tus descargas', icon: FileText },
                   { step: '3', title: 'Permití la instalación', desc: 'Habilitá "fuentes desconocidas" si te lo pide', icon: Shield },
-                  { step: '4', title: '¡Listo!', desc: 'Abrí Merqora y creá tu cuenta', icon: CheckCircle },
+                  { step: '4', title: '¡Listo!', desc: 'Abrí Mercora y creá tu cuenta', icon: CheckCircle },
                 ].map((s, i) => (
-                  <div key={i} className="bg-rendly-bg rounded-2xl p-4 text-center">
+                  <div key={i} className="bg-mercora-bg rounded-2xl p-4 text-center">
                     <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mx-auto mb-3">
                       <s.icon className="w-6 h-6 text-primary" />
                     </div>
@@ -251,7 +251,7 @@ export default function DownloadPage() {
                     <p className="text-text-secondary text-xs leading-relaxed">
                       Es normal. Chrome muestra este aviso para <strong className="text-white">todas</strong> las apps que no vienen de Play Store. 
                       Tocá <strong className="text-white">"Descargar de todos modos"</strong> para continuar. 
-                      Merqora es 100% segura y libre de virus.
+                      Mercora es 100% segura y libre de virus.
                     </p>
                   </div>
                 </div>
@@ -260,7 +260,7 @@ export default function DownloadPage() {
                   <div>
                     <p className="text-white text-sm font-medium mb-1">¿Te pide habilitar "fuentes desconocidas"?</p>
                     <p className="text-text-secondary text-xs leading-relaxed">
-                      Andá a <strong className="text-white">Configuración → Seguridad → Fuentes desconocidas</strong> y habilitá 
+                      Andá a <strong className="text-white">Configuración â†’ Seguridad â†’ Fuentes desconocidas</strong> y habilitá 
                       la opción para tu navegador. Esto es necesario para instalar apps fuera de Play Store.
                     </p>
                   </div>
@@ -277,10 +277,10 @@ export default function DownloadPage() {
                 </h3>
                 <div className="space-y-3">
                   {olderVersions.map(v => (
-                    <div key={v.id} className="bg-rendly-bg rounded-2xl overflow-hidden">
+                    <div key={v.id} className="bg-mercora-bg rounded-2xl overflow-hidden">
                       <button
                         onClick={() => setExpandedVersion(expandedVersion === v.id ? null : v.id)}
-                        className="w-full flex items-center justify-between p-4 hover:bg-rendly-surface-elevated transition-colors"
+                        className="w-full flex items-center justify-between p-4 hover:bg-mercora-surface-elevated transition-colors"
                       >
                         <div className="flex items-center gap-4">
                           <span className="font-semibold text-white">v{v.version_name}</span>
@@ -326,7 +326,7 @@ export default function DownloadPage() {
       {/* Footer */}
       <footer className="border-t border-white/5 py-6">
         <div className="max-w-5xl mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-4">
-          <p className="text-text-muted text-sm">© {new Date().getFullYear()} Merqora</p>
+          <p className="text-text-muted text-sm">© {new Date().getFullYear()} Mercora</p>
           <Link to="/" className="text-text-tertiary hover:text-white text-sm transition-colors">Volver al inicio</Link>
         </div>
       </footer>

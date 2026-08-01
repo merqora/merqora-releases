@@ -1,21 +1,21 @@
 {
   "project_info": {
-    "project_number": "619903470328",
-    "project_id": "rendly-app",
-    "storage_bucket": "rendly-app.firebasestorage.app"
+    "project_number": "73298730750",
+    "project_id": "mercora-2a078",
+    "storage_bucket": "mercora-2a078.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:619903470328:android:46712dc0bcaa858713090d",
+        "mobilesdk_app_id": "1:73298730750:android:6369b65ff7f9550c658faf",
         "android_client_info": {
-          "package_name": "com.rendly.app"
+          "package_name": "com.mercora.app"
         }
       },
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyCs0DAvRZRHnKx6Xh-bYyVTs81EH4sNJZI"
+          "current_key": "AIzaSyAnYg4GTPIRsh-pmIhrj5z44kziWzMMS5U"
         }
       ],
       "services": {

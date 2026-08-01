@@ -15,6 +15,7 @@
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
     
     <!-- Location permissions for GPS -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
@@ -29,9 +30,15 @@
     <uses-feature android:name="android.hardware.camera.autofocus" android:required="false" />
     <uses-feature android:name="android.hardware.location.gps" android:required="false" />
 
+    <!-- Package visibility for payment app detection -->
+    <queries>
+        <package android:name="com.mercadopago.wallet" />
+        <package android:name="air.Prex" />
+    </queries>
+
     <application
-        android:name=".MerqoraApplication"
-        android:usesCleartextTraffic="true"
+        android:name=".MercoraApplication"
+        android:networkSecurityConfig="@xml/network_security_config"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -39,7 +46,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Merqora"
+        android:theme="@style/Theme.Mercora"
         android:hardwareAccelerated="true"
         android:largeHeap="true"
         tools:targetApi="31">
@@ -62,13 +69,8 @@
                 android:value="androidx.startup"
                 tools:node="remove" />
                 
-            <!-- Custom initializers disabled - adding overhead in debug builds -->
-            <!-- TODO: Re-enable for release builds after signing setup -->
-            <!--
-            <meta-data
-                android:name="com.rendly.app.startup.DeferredInitializer"
-                android:value="androidx.startup" />
-            -->
+            <!-- Custom initializers for release builds -->
+
         </provider>
         
         <!-- Disable Emoji2 auto-init (adds ~50ms) -->
@@ -98,7 +100,7 @@
         <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:theme="@style/Theme.Merqora"
+            android:theme="@style/Theme.Mercora"
             android:windowSoftInputMode="adjustResize"
             android:screenOrientation="portrait"
             android:launchMode="singleTask"
@@ -110,16 +112,30 @@
             
             <!-- ═══════════════════════════════════════════════════════════════════
                  MERCADO PAGO DEEP LINKS - Retorno después del pago
-                 Maneja: merqora://payment/success, merqora://payment/failure, merqora://payment/pending
+                 Maneja: mercora://payment/success, mercora://payment/failure, mercora://payment/pending
                  ═══════════════════════════════════════════════════════════════════ -->
             <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <!-- Deep link scheme: merqora://payment/* -->
+                <!-- Deep link scheme: mercora://payment/* -->
                 <data 
-                    android:scheme="merqora"
+                    android:scheme="mercora"
                     android:host="payment" />
+            </intent-filter>
+
+            <!-- ═══════════════════════════════════════════════════════════════════
+                 APP LINKS / DEEP LINKS - Productos compartidos
+                 Maneja: https://mercora.app/p/* y https://mercora.netlify.app/p/*
+                 ═══════════════════════════════════════════════════════════════════ -->
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <!-- Host principal acordado -->
+                <data android:scheme="https" android:host="mercora.app" android:pathPrefix="/p/" />
+                <!-- Host de Netlify de respaldo -->
+                <data android:scheme="https" android:host="mercora.netlify.app" android:pathPrefix="/p/" />
             </intent-filter>
         </activity>
         
@@ -130,7 +146,7 @@
         <activity
             android:name=".ui.screens.checkout.MercadoPagoCheckoutActivity"
             android:exported="false"
-            android:theme="@style/Theme.Merqora"
+            android:theme="@style/Theme.Mercora"
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity" />
         
@@ -139,17 +155,22 @@
              Recibe notificaciones push incluso con la app cerrada
              ═══════════════════════════════════════════════════════════════════ -->
         <service
-            android:name=".service.MerqoraFirebaseMessagingService"
+            android:name=".service.MercoraFirebaseMessagingService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
         
+        <!-- Sentry DSN -->
+        <meta-data
+            android:name="io.sentry.dsn"
+            android:value="https://cf9d2a01688263e58b44e36419d224ea@o4511757401915392.ingest.us.sentry.io/4511757409452032" />
+            
         <!-- FCM Default Notification Channel -->
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_channel_id"
-            android:value="merqora_messages" />
+            android:value="mercora_messages" />
             
         <!-- FCM Default Notification Icon -->
         <meta-data

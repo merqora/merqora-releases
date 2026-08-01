@@ -1,4 +1,4 @@
-# Rendly AI Support - Docker Configuration
+﻿# Mercora AI Support - Docker Configuration
 # Multi-stage build for Python + C++ + Rust
 
 # ==========================================

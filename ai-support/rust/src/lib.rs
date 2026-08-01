@@ -1,4 +1,4 @@
-//! Rendly AI Support - Security & Infrastructure
+//! Mercora AI Support - Security & Infrastructure
 //! 
 //! This crate provides:
 //! - Rate limiting
@@ -127,7 +127,7 @@ impl SecurityService {
 
 /// Python module
 #[pymodule]
-fn rendly_security(_py: Python, m: &PyModule) -> PyResult<()> {
+fn Mercora_security(_py: Python, m: &PyModule) -> PyResult<()> {
     m.add_class::<SecurityService>()?;
     m.add_class::<ValidationResult>()?;
     Ok(())

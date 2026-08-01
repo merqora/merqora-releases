@@ -1,16 +1,16 @@
-#!/usr/bin/env pwsh
-# ════════════════════════════════════════════════════════
-# MERQORA AI - Training Pipeline Script
-# ════════════════════════════════════════════════════════
+﻿#!/usr/bin/env pwsh
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+# MERCORA AI - Training Pipeline Script
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 # This script:
 # 1. Sends test messages to collect training data
 # 2. Flushes the buffer to Supabase
 # 3. Triggers a full ML training run
 # 4. Shows the training report
-# ════════════════════════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 param(
-    [string]$BaseUrl = "https://merqora-releases-production.up.railway.app",
+    [string]$BaseUrl = "https://mercora-releases-production.up.railway.app",
     [switch]$SkipMessages,
     [switch]$OnlyTrain,
     [switch]$OnlyFlush,
@@ -19,7 +19,7 @@ param(
 
 $headers = @{ "Content-Type" = "application/json" }
 
-# ═══ Step 1: Send training messages ═══
+# â•â•â• Step 1: Send training messages â•â•â•
 if (-not $SkipMessages -and -not $OnlyTrain -and -not $OnlyFlush) {
     $messages = @(
         # COMPRAS Y PAGOS
@@ -121,9 +121,9 @@ if (-not $SkipMessages -and -not $OnlyTrain -and -not $OnlyFlush) {
     $i = 0
 
     Write-Host ""
-    Write-Host "═══════════════════════════════════════════════" -ForegroundColor Cyan
+    Write-Host "â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•" -ForegroundColor Cyan
     Write-Host "  STEP 1: Sending training messages ($total)" -ForegroundColor Cyan
-    Write-Host "═══════════════════════════════════════════════" -ForegroundColor Cyan
+    Write-Host "â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•" -ForegroundColor Cyan
 
     foreach ($item in $messages) {
         $i++
@@ -163,12 +163,12 @@ if (-not $SkipMessages -and -not $OnlyTrain -and -not $OnlyFlush) {
     Write-Host "Messages sent: $success/$total (Errors: $errors)" -ForegroundColor $(if ($errors -gt 0) { "Yellow" } else { "Green" })
 }
 
-# ═══ Step 2: Flush buffer to Supabase ═══
+# â•â•â• Step 2: Flush buffer to Supabase â•â•â•
 if (-not $OnlyTrain) {
     Write-Host ""
-    Write-Host "═══════════════════════════════════════════════" -ForegroundColor Cyan
+    Write-Host "â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•" -ForegroundColor Cyan
     Write-Host "  STEP 2: Flushing training buffer to Supabase" -ForegroundColor Cyan
-    Write-Host "═══════════════════════════════════════════════" -ForegroundColor Cyan
+    Write-Host "â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•" -ForegroundColor Cyan
 
     try {
         $flushResponse = Invoke-WebRequest -Uri "$BaseUrl/ai/training/flush" -Method POST -Headers $headers -UseBasicParsing -TimeoutSec 30
@@ -182,11 +182,11 @@ if (-not $OnlyTrain) {
 
 if ($OnlyFlush) { exit 0 }
 
-# ═══ Step 3: Trigger training run ═══
+# â•â•â• Step 3: Trigger training run â•â•â•
 Write-Host ""
-Write-Host "═══════════════════════════════════════════════" -ForegroundColor Cyan
+Write-Host "â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•" -ForegroundColor Cyan
 Write-Host "  STEP 3: Training ML model (TF-IDF + SVM)" -ForegroundColor Cyan
-Write-Host "═══════════════════════════════════════════════" -ForegroundColor Cyan
+Write-Host "â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•" -ForegroundColor Cyan
 Write-Host "This may take a minute..." -ForegroundColor Gray
 
 try {
@@ -195,9 +195,9 @@ try {
     $trainJson = $trainResponse.Content | ConvertFrom-Json
 
     Write-Host ""
-    Write-Host "═══════════════════════════════════════════════" -ForegroundColor Green
+    Write-Host "â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•" -ForegroundColor Green
     Write-Host "  TRAINING COMPLETED" -ForegroundColor Green
-    Write-Host "═══════════════════════════════════════════════" -ForegroundColor Green
+    Write-Host "â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•" -ForegroundColor Green
     Write-Host "  Status:        $($trainJson.status)" -ForegroundColor White
     Write-Host "  Run ID:        $($trainJson.run_id)" -ForegroundColor Gray
     Write-Host "  Duration:      $($trainJson.duration_seconds)s" -ForegroundColor White
@@ -249,11 +249,11 @@ try {
     Write-Host "Training error: $($_.Exception.Message)" -ForegroundColor Red
 }
 
-# ═══ Step 4: Show current metrics ═══
+# â•â•â• Step 4: Show current metrics â•â•â•
 Write-Host ""
-Write-Host "═══════════════════════════════════════════════" -ForegroundColor Cyan
+Write-Host "â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•" -ForegroundColor Cyan
 Write-Host "  CURRENT PIPELINE STATUS" -ForegroundColor Cyan
-Write-Host "═══════════════════════════════════════════════" -ForegroundColor Cyan
+Write-Host "â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•" -ForegroundColor Cyan
 
 try {
     $metricsResponse = Invoke-WebRequest -Uri "$BaseUrl/ai/training/metrics?hours=24" -Method GET -Headers $headers -UseBasicParsing -TimeoutSec 15
@@ -273,7 +273,7 @@ try {
 }
 
 Write-Host ""
-Write-Host "═══════════════════════════════════════════════" -ForegroundColor Green
+Write-Host "â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•" -ForegroundColor Green
 Write-Host "  DONE" -ForegroundColor Green
-Write-Host "═══════════════════════════════════════════════" -ForegroundColor Green
+Write-Host "â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•" -ForegroundColor Green
 Write-Host ""

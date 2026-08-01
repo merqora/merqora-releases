@@ -18,21 +18,27 @@ import { supabase } from '../supabaseClient'
 
 // URL de Supabase para Edge Functions (FCM v1 API - más seguro)
 const SUPABASE_URL = 'https://xyrpmmnegzjkbysoocpc.supabase.co'
-const SUPABASE_ANON_KEY = '***REMOVED_ANON_KEY***'
+const SUPABASE_ANON_KEY = 'sb_publishable_jwNO2ocLF0MLBGHaF_EEjg_P4IhPH38'
 
 // Función para enviar push notification via Supabase Edge Function (FCM v1 API)
 async function sendPushNotification(tokens, title, body, data = {}, imageUrl = null) {
   if (!tokens || tokens.length === 0) {
-    console.log('⚠️ No hay tokens FCM para enviar')
-    return { success: false, error: 'No hay tokens' }
+    console.log('âš ï¸ No hay tokens FCM para enviar');
+    return { success: false, error: 'No hay tokens' };
   }
 
   try {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
+      return { success: false, error: 'Usuario no autenticado' };
+    }
+    const accessToken = session.access_token;
+
     const response = await fetch(`${SUPABASE_URL}/functions/v1/send-fcm-v1`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+        'Authorization': `Bearer ${accessToken}`,
         'apikey': SUPABASE_ANON_KEY,
       },
       body: JSON.stringify({
@@ -42,19 +48,19 @@ async function sendPushNotification(tokens, title, body, data = {}, imageUrl = n
         data,
         image_url: imageUrl
       }),
-    })
+    });
 
-    const result = await response.json()
-    console.log('📬 FCM v1 Response:', result)
+    const result = await response.json();
+    console.log('📬 FCM v1 Response:', result);
     
-    if (result.success) {
-      return { success: true, result }
+    if (response.ok && result.success) {
+      return { success: true, result };
     } else {
-      return { success: false, error: result.error || 'Error desconocido' }
+      return { success: false, error: result.error || 'Error desconocido' };
     }
   } catch (error) {
-    console.error('❌ Error enviando push:', error)
-    return { success: false, error: error.message }
+    console.error('âŒ Error enviando push:', error);
+    return { success: false, error: error.message };
   }
 }
 
@@ -229,12 +235,12 @@ function NotificationTest() {
         )
         
         if (pushResult.success) {
-          showNotificationToast(`✅ Notificación + Push enviada a ${post.user_id.slice(0, 8)}...`, 'success')
+          showNotificationToast(`âœ… Notificación + Push enviada a ${post.user_id.slice(0, 8)}...`, 'success')
         } else {
-          showNotificationToast(`✅ Notificación enviada (push falló: ${pushResult.error})`, 'warning')
+          showNotificationToast(`âœ… Notificación enviada (push falló: ${pushResult.error})`, 'warning')
         }
       } else {
-        showNotificationToast(`✅ Notificación enviada (sin tokens FCM)`, 'success')
+        showNotificationToast(`âœ… Notificación enviada (sin tokens FCM)`, 'success')
       }
     } catch (error) {
       console.error('Error sending notification:', error)
@@ -291,12 +297,12 @@ function NotificationTest() {
         )
         
         if (pushResult.success) {
-          showNotificationToast(`✅ Notificación + Push enviada a ${targetUserId.slice(0, 8)}...`, 'success')
+          showNotificationToast(`âœ… Notificación + Push enviada a ${targetUserId.slice(0, 8)}...`, 'success')
         } else {
-          showNotificationToast(`✅ Notificación enviada (push falló: ${pushResult.error})`, 'warning')
+          showNotificationToast(`âœ… Notificación enviada (push falló: ${pushResult.error})`, 'warning')
         }
       } else {
-        showNotificationToast(`✅ Notificación enviada (sin tokens FCM)`, 'success')
+        showNotificationToast(`âœ… Notificación enviada (sin tokens FCM)`, 'success')
       }
       
       setTargetUserId('')
@@ -350,7 +356,7 @@ function NotificationTest() {
           <button
             onClick={fetchPosts}
             disabled={loading}
-            className="flex items-center gap-2 px-4 py-2 bg-rendly-surface-elevated text-text-primary rounded-xl hover:bg-primary/20 transition-colors disabled:opacity-50"
+            className="flex items-center gap-2 px-4 py-2 bg-mercora-surface-elevated text-text-primary rounded-xl hover:bg-primary/20 transition-colors disabled:opacity-50"
           >
             <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
             Recargar
@@ -375,13 +381,13 @@ function NotificationTest() {
         <ol className="list-decimal list-inside space-y-1 text-text-secondary text-sm">
           <li>Selecciona un usuario <strong>remitente</strong> abajo (quien "da" el like)</li>
           <li>Abre la app Android y asegúrate de estar logueado</li>
-          <li>Da click en el botón ❤️ de cualquier post</li>
+          <li>Da click en el botón â¤ï¸ de cualquier post</li>
           <li>La notificación llegará mostrando el username del remitente</li>
         </ol>
       </div>
 
       {/* Selector de usuario remitente */}
-      <div className="bg-rendly-surface rounded-xl p-4 space-y-4">
+      <div className="bg-mercora-surface rounded-xl p-4 space-y-4">
         <h3 className="font-semibold text-text-primary flex items-center gap-2">
           <UserCheck className="w-5 h-5 text-blue-400" />
           Seleccionar usuario remitente
@@ -397,7 +403,7 @@ function NotificationTest() {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && searchUsers()}
-            className="flex-1 px-4 py-2 bg-rendly-bg border border-primary/20 rounded-xl text-text-primary placeholder-text-muted focus:outline-none focus:border-primary transition-colors"
+            className="flex-1 px-4 py-2 bg-mercora-bg border border-primary/20 rounded-xl text-text-primary placeholder-text-muted focus:outline-none focus:border-primary transition-colors"
           />
           <button
             onClick={searchUsers}
@@ -440,7 +446,7 @@ function NotificationTest() {
                 className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-colors ${
                   senderUser?.user_id === user.user_id 
                     ? 'bg-blue-500/20 border border-blue-500/30' 
-                    : 'bg-rendly-bg hover:bg-primary/10'
+                    : 'bg-mercora-bg hover:bg-primary/10'
                 }`}
                 onClick={() => setSenderUser(user)}
               >
@@ -465,7 +471,7 @@ function NotificationTest() {
       </div>
 
       {/* Custom notification sender */}
-      <div className="bg-rendly-surface rounded-xl p-4">
+      <div className="bg-mercora-surface rounded-xl p-4">
         <h3 className="font-semibold text-text-primary mb-3 flex items-center gap-2">
           <Send className="w-5 h-5 text-primary" />
           Enviar notificación a un usuario específico
@@ -476,7 +482,7 @@ function NotificationTest() {
             placeholder="User ID del destinatario (UUID)"
             value={targetUserId}
             onChange={(e) => setTargetUserId(e.target.value)}
-            className="flex-1 px-4 py-2 bg-rendly-bg border border-primary/20 rounded-xl text-text-primary placeholder-text-muted focus:outline-none focus:border-primary transition-colors"
+            className="flex-1 px-4 py-2 bg-mercora-bg border border-primary/20 rounded-xl text-text-primary placeholder-text-muted focus:outline-none focus:border-primary transition-colors"
           />
           <button
             onClick={sendCustomNotification}
@@ -492,25 +498,25 @@ function NotificationTest() {
           </button>
         </div>
         <p className="text-text-muted text-xs mt-2">
-          Tu ID: <code className="bg-rendly-bg px-1 rounded">{currentUser?.id || 'cargando...'}</code>
+          Tu ID: <code className="bg-mercora-bg px-1 rounded">{currentUser?.id || 'cargando...'}</code>
         </p>
       </div>
 
       {/* Recent sent notifications */}
       {sentNotifications.length > 0 && (
-        <div className="bg-rendly-surface rounded-xl p-4">
+        <div className="bg-mercora-surface rounded-xl p-4">
           <h3 className="font-semibold text-text-primary mb-3 flex items-center gap-2">
             <CheckCircle className="w-5 h-5 text-green-400" />
             Notificaciones enviadas recientemente
           </h3>
           <div className="space-y-2 max-h-40 overflow-y-auto">
             {sentNotifications.map((notif, idx) => (
-              <div key={notif.id || idx} className="flex items-center gap-3 text-sm bg-rendly-bg p-2 rounded-lg">
+              <div key={notif.id || idx} className="flex items-center gap-3 text-sm bg-mercora-bg p-2 rounded-lg">
                 <Bell className="w-4 h-4 text-accent-magenta" />
                 <span className="text-text-secondary">
                   <span className="text-text-primary font-medium">{notif.type}</span>
-                  {' → '}
-                  <code className="text-xs bg-rendly-surface px-1 rounded">{notif.recipient_id?.slice(0, 8)}...</code>
+                  {' â†’ '}
+                  <code className="text-xs bg-mercora-surface px-1 rounded">{notif.recipient_id?.slice(0, 8)}...</code>
                 </span>
                 <span className="text-text-muted text-xs ml-auto">{formatDate(notif.created_at)}</span>
               </div>
@@ -527,7 +533,7 @@ function NotificationTest() {
           { label: 'Notif. enviadas', value: sentNotifications.length, color: 'text-green-400' },
           { label: 'Estado', value: realtimeStatus === 'connected' ? '🟢' : '🟡', color: 'text-text-primary' },
         ].map(stat => (
-          <div key={stat.label} className="bg-rendly-surface p-4 rounded-xl">
+          <div key={stat.label} className="bg-mercora-surface p-4 rounded-xl">
             <p className="text-text-muted text-sm">{stat.label}</p>
             <p className={`text-2xl font-bold ${stat.color}`}>{stat.value}</p>
           </div>
@@ -538,7 +544,7 @@ function NotificationTest() {
       <div className="space-y-4">
         <h3 className="font-semibold text-text-primary flex items-center gap-2">
           <Image className="w-5 h-5" />
-          Posts disponibles - Click en ❤️ para enviar notificación de like
+          Posts disponibles - Click en â¤ï¸ para enviar notificación de like
         </h3>
         
         {loading ? (
@@ -546,7 +552,7 @@ function NotificationTest() {
             <RefreshCw className="w-8 h-8 text-primary animate-spin" />
           </div>
         ) : posts.length === 0 ? (
-          <div className="text-center py-12 bg-rendly-surface rounded-xl">
+          <div className="text-center py-12 bg-mercora-surface rounded-xl">
             <Image className="w-16 h-16 text-text-muted mx-auto mb-4" />
             <h3 className="text-lg font-medium text-text-primary mb-2">No hay posts</h3>
             <p className="text-text-muted">
@@ -558,11 +564,11 @@ function NotificationTest() {
             {posts.map(post => (
               <div 
                 key={post.id} 
-                className="bg-rendly-surface rounded-xl overflow-hidden border border-primary/10 hover:border-primary/30 transition-colors"
+                className="bg-mercora-surface rounded-xl overflow-hidden border border-primary/10 hover:border-primary/30 transition-colors"
               >
                 {/* Image */}
                 {post.images?.[0] ? (
-                  <div className="aspect-square bg-rendly-bg">
+                  <div className="aspect-square bg-mercora-bg">
                     <img 
                       src={post.images[0]} 
                       alt={post.title || 'Post'}
@@ -570,7 +576,7 @@ function NotificationTest() {
                     />
                   </div>
                 ) : (
-                  <div className="aspect-square bg-rendly-bg flex items-center justify-center">
+                  <div className="aspect-square bg-mercora-bg flex items-center justify-center">
                     <Image className="w-12 h-12 text-text-muted" />
                   </div>
                 )}
@@ -583,7 +589,7 @@ function NotificationTest() {
                   
                   <div className="flex items-center gap-2 text-text-muted text-sm">
                     <User className="w-4 h-4" />
-                    <code className="text-xs bg-rendly-bg px-1 rounded">
+                    <code className="text-xs bg-mercora-bg px-1 rounded">
                       {post.user_id?.slice(0, 12)}...
                     </code>
                   </div>

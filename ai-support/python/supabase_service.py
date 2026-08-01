@@ -1,4 +1,4 @@
-"""
+﻿"""
 Supabase Service - Persistencia y aprendizaje automático
 
 Guarda todas las conversaciones, mensajes y feedback en Supabase.
@@ -54,8 +54,8 @@ class SupabaseService:
     """
     
     def __init__(self):
-        self.supabase_url = os.getenv("RENDLY_AI_SUPABASE_URL", os.getenv("SUPABASE_URL", ""))
-        self.supabase_key = os.getenv("RENDLY_AI_SUPABASE_KEY", os.getenv("SUPABASE_SERVICE_KEY", ""))
+        self.supabase_url = os.getenv("mercora_ai_SUPABASE_URL", os.getenv("SUPABASE_URL", ""))
+        self.supabase_key = os.getenv("mercora_ai_SUPABASE_KEY", os.getenv("SUPABASE_SERVICE_KEY", ""))
         
         self.is_configured = bool(self.supabase_url and self.supabase_key)
         
@@ -401,9 +401,9 @@ class SupabaseService:
         
         return best_match
     
-    # ═══════════════════════════════════════
+    # â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
     # AI TRAINING DATA METHODS
-    # ═══════════════════════════════════════
+    # â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
     
     async def save_training_data(
         self,

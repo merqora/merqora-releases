@@ -1,4 +1,4 @@
-"""Pydantic models for Rendly AI Support API"""
+﻿"""Pydantic models for Mercora AI Support API"""
 
 from pydantic import BaseModel, Field
 from typing import Optional, List
@@ -119,7 +119,7 @@ class HealthResponse(BaseModel):
     components: dict
 
 
-# ═══ Training Pipeline Models ═══
+# â•â•â• Training Pipeline Models â•â•â•
 
 class TrainingRunRequest(BaseModel):
     run_name: Optional[str] = None

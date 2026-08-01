@@ -1,4 +1,4 @@
-# ✅ TODOS LOS ARREGLOS COMPLETADOS
+﻿# ✅ TODOS LOS ARREGLOS COMPLETADOS
 
 ## 📋 Cambios Implementados
 
@@ -23,7 +23,7 @@ const feedbackMessage = `__RATING_REQUEST__`
 ### 2️⃣ Mensaje Interactivo Inline (NO Flotante) ✅
 
 **Archivos Creados:**
-- `app/src/main/java/com/rendly/app/ui/components/settings/RatingInlineInterface.kt`
+- `app/src/main/java/com/mercora/app/ui/components/settings/RatingInlineInterface.kt`
 
 **Características:**
 - ✅ 5 estrellas seleccionables (arreglado el bug de mostrar solo 4)
@@ -223,13 +223,13 @@ val request = FeedbackRequest(
 ## 🔧 Archivos Modificados/Creados
 
 ### Creados:
-1. ✅ `app/src/main/java/com/rendly/app/ui/components/settings/RatingInlineInterface.kt`
+1. ✅ `app/src/main/java/com/mercora/app/ui/components/settings/RatingInlineInterface.kt`
 2. ✅ `RESUMEN_ARREGLOS_COMPLETOS.md` (este archivo)
 
 ### Modificados:
 1. ✅ `admin-web/src/pages/Escalations.jsx` - Mensaje corto + eliminación
-2. ✅ `app/src/main/java/com/rendly/app/ui/components/settings/HelpCenterScreen.kt` - Banner + mensaje inline
-3. ✅ `app/src/main/java/com/rendly/app/data/repository/AISupportRepository.kt` - Columnas completas
+2. ✅ `app/src/main/java/com/mercora/app/ui/components/settings/HelpCenterScreen.kt` - Banner + mensaje inline
+3. ✅ `app/src/main/java/com/mercora/app/data/repository/AISupportRepository.kt` - Columnas completas
 
 ---
 
@@ -335,7 +335,7 @@ FeedbackRepository.submitFeedback(
 ## 🚀 Compilar y Probar
 
 ```bash
-cd c:\Users\Rodrigo\Documents\Rendly
+cd c:\Users\Rodrigo\Documents\Mercora
 ./gradlew assembleDebug
 ```
 

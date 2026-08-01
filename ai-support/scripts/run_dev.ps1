@@ -1,7 +1,7 @@
-# Rendly AI Support - Development Server Script (Windows)
+﻿# Mercora AI Support - Development Server Script (Windows)
 # Run this from the ai-support directory
 
-Write-Host "[*] Starting Rendly AI Support Development Server..." -ForegroundColor Cyan
+Write-Host "[*] Starting Mercora AI Support Development Server..." -ForegroundColor Cyan
 
 # Check if Python is installed
 if (-not (Get-Command python -ErrorAction SilentlyContinue)) {

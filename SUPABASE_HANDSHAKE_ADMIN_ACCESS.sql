@@ -1,4 +1,4 @@
--- ═══════════════════════════════════════════════════════════════
+﻿-- ═══════════════════════════════════════════════════════════════
 -- POLÍTICA TEMPORAL: Permitir acceso admin a handshakes para testing
 -- ═══════════════════════════════════════════════════════════════
 
@@ -8,7 +8,7 @@ CREATE POLICY "Admins can view all handshakes" ON handshake_transactions
     FOR SELECT USING (
         auth.jwt() ->> 'email' IN (
             'hello.clendova@gmail.com',
-            'admin@rendly.com'
+            'admin@mercora.app'
             -- Agrega más emails de admin aquí
         )
     );
