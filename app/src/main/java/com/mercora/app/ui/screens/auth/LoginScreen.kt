@@ -576,13 +576,38 @@ private fun BiometricLoginButton(
     }
     val buttonEnabled = hasBiometricHardware
 
+    var showNoHardwareDialog by remember { mutableStateOf(false) }
+
+    if (showNoHardwareDialog) {
+        AlertDialog(
+            onDismissRequest = { showNoHardwareDialog = false },
+            containerColor = SurfaceElevated,
+            title = {
+                Text(
+                    text = "Huella no disponible",
+                    color = TextPrimary,
+                    fontWeight = FontWeight.Bold
+                )
+            },
+            text = {
+                Text(
+                    text = "Este dispositivo no tiene sensor de huella. " +
+                        "Podés iniciar sesión con tu correo y contraseña.",
+                    color = TextSecondary
+                )
+            },
+            confirmButton = {
+                TextButton(onClick = { showNoHardwareDialog = false }) {
+                    Text("Entendido", color = PrimaryPurple, fontWeight = FontWeight.SemiBold)
+                }
+            }
+        )
+    }
+
     Surface(
         onClick = {
             if (!buttonEnabled) {
-                android.widget.Toast.makeText(
-                    context, "Este dispositivo no tiene sensor de huella",
-                    android.widget.Toast.LENGTH_SHORT
-                ).show()
+                showNoHardwareDialog = true
                 return@Surface
             }
 

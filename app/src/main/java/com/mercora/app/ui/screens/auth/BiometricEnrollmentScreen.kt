@@ -29,6 +29,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
 import com.mercora.app.data.biometric.BiometricEnrollmentManager
 import com.mercora.app.ui.theme.*
 
@@ -43,7 +45,61 @@ fun BiometricEnrollmentScreen(
     val context = LocalContext.current
     var scanCount by remember { mutableIntStateOf(0) }
     var showSuccess by remember { mutableStateOf(false) }
+    var deviceStatus by remember {
+        mutableIntStateOf(
+            BiometricManager.from(context)
+                .canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_STRONG)
+        )
+    }
 
+    // Re-evaluar estado al volver de los Ajustes del sistema (después de registrar una huella)
+    DisposableEffect(context) {
+        val observer = object : DefaultLifecycleObserver {
+            override fun onResume(owner: LifecycleOwner) {
+                deviceStatus = BiometricManager.from(context)
+                    .canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_STRONG)
+            }
+        }
+        val lifecycle = (context.findActivity() as? LifecycleOwner)?.lifecycle
+        lifecycle?.addObserver(observer)
+        onDispose { lifecycle?.removeObserver(observer) }
+    }
+
+    when (deviceStatus) {
+        BiometricManager.BIOMETRIC_SUCCESS -> EnrollmentFlowUI(
+            context = context,
+            userId = userId,
+            scanCount = scanCount,
+            showSuccess = showSuccess,
+            onScanCountChange = { scanCount = it },
+            onShowSuccessChange = { showSuccess = it },
+            onComplete = onComplete,
+            onSkip = onSkip
+        )
+
+        BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED -> EnrollInSystemUI(
+            context = context,
+            onContinueWithPassword = onSkip
+        )
+
+        else -> NoHardwareUI(onContinueWithPassword = onSkip)
+    }
+}
+
+// ========================================================================
+// FLUJO NORMAL: 5 escaneos de huella (sensor disponible y con huellas)
+// ========================================================================
+@Composable
+private fun EnrollmentFlowUI(
+    context: Context,
+    userId: String,
+    scanCount: Int,
+    showSuccess: Boolean,
+    onScanCountChange: (Int) -> Unit,
+    onShowSuccessChange: (Boolean) -> Unit,
+    onComplete: () -> Unit,
+    onSkip: () -> Unit
+) {
     val progress = scanCount.toFloat() / REQUIRED_SCANS
     val fillColor by animateColorAsState(
         targetValue = if (progress >= 1f) PrimaryBright else if (progress > 0f) PrimaryPurple else TextMuted,
@@ -61,9 +117,9 @@ fun BiometricEnrollmentScreen(
                     val next = scanCount + 1
                     if (next >= REQUIRED_SCANS) {
                         BiometricEnrollmentManager.markEnrolled(context, userId)
-                        showSuccess = true
+                        onShowSuccessChange(true)
                     }
-                    scanCount = next
+                    onScanCountChange(next)
                 }
                 override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
                     super.onAuthenticationError(errorCode, errString)
@@ -239,7 +295,7 @@ fun BiometricEnrollmentScreen(
                 Spacer(Modifier.height(16.dp))
 
                 Text(
-                    text = "Omitir",
+                    text = "Continuar con contraseña",
                     color = TextSecondary,
                     fontSize = 14.sp,
                     modifier = Modifier.clickable { onSkip() }
@@ -259,6 +315,171 @@ fun BiometricEnrollmentScreen(
                     color = TextSecondary,
                     textAlign = TextAlign.Center
                 )
+            }
+        }
+    }
+}
+
+// ========================================================================
+// SENSOR DISPONIBLE PERO SIN HUELLAS REGISTRADAS EN EL SISTEMA
+// ========================================================================
+@Composable
+private fun EnrollInSystemUI(
+    context: Context,
+    onContinueWithPassword: () -> Unit
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(HomeBg),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.padding(32.dp)
+        ) {
+            Icon(
+                imageVector = Icons.Outlined.Fingerprint,
+                contentDescription = null,
+                tint = TextMuted,
+                modifier = Modifier.size(80.dp)
+            )
+
+            Spacer(Modifier.height(24.dp))
+
+            Text(
+                text = "Configura una huella en tu dispositivo",
+                fontSize = 22.sp,
+                fontWeight = FontWeight.Bold,
+                color = TextPrimary,
+                textAlign = TextAlign.Center
+            )
+
+            Spacer(Modifier.height(12.dp))
+
+            Text(
+                text = "Tu teléfono no tiene huellas registradas. " +
+                    "Para usar \"Iniciar con huella\", primero agrega una huella " +
+                    "desde los Ajustes del sistema.",
+                fontSize = 14.sp,
+                color = TextSecondary,
+                textAlign = TextAlign.Center,
+                lineHeight = 20.sp
+            )
+
+            Spacer(Modifier.height(40.dp))
+
+            Surface(
+                onClick = { openSystemFingerprintEnrollment(context) },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(56.dp),
+                shape = RoundedCornerShape(16.dp),
+                color = PrimaryPurple
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    Icon(
+                        Icons.Outlined.Fingerprint, null,
+                        tint = Color.White, modifier = Modifier.size(22.dp)
+                    )
+                    Spacer(Modifier.width(10.dp))
+                    Text(
+                        "Configurar huella en el sistema",
+                        fontSize = 15.sp, fontWeight = FontWeight.SemiBold, color = Color.White
+                    )
+                }
+            }
+
+            Spacer(Modifier.height(12.dp))
+
+            Surface(
+                onClick = onContinueWithPassword,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(52.dp),
+                shape = RoundedCornerShape(16.dp),
+                color = SurfaceElevated,
+                border = androidx.compose.foundation.BorderStroke(1.dp, BorderDefault.copy(alpha = 0.5f))
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    Text(
+                        "Continuar con contraseña",
+                        fontSize = 15.sp, fontWeight = FontWeight.Medium, color = TextSecondary
+                    )
+                }
+            }
+        }
+    }
+}
+
+// ========================================================================
+// DISPOSITIVO SIN SENSOR DE HUELLA
+// ========================================================================
+@Composable
+private fun NoHardwareUI(onContinueWithPassword: () -> Unit) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(HomeBg),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.padding(32.dp)
+        ) {
+            Icon(
+                imageVector = Icons.Outlined.Fingerprint,
+                contentDescription = null,
+                tint = TextMuted,
+                modifier = Modifier.size(80.dp)
+            )
+
+            Spacer(Modifier.height(24.dp))
+
+            Text(
+                text = "Tu dispositivo no tiene sensor de huella",
+                fontSize = 22.sp,
+                fontWeight = FontWeight.Bold,
+                color = TextPrimary,
+                textAlign = TextAlign.Center
+            )
+
+            Spacer(Modifier.height(12.dp))
+
+            Text(
+                text = "Podés iniciar sesión con tu correo y contraseña " +
+                    "de forma segura.",
+                fontSize = 14.sp,
+                color = TextSecondary,
+                textAlign = TextAlign.Center,
+                lineHeight = 20.sp
+            )
+
+            Spacer(Modifier.height(40.dp))
+
+            Surface(
+                onClick = onContinueWithPassword,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(56.dp),
+                shape = RoundedCornerShape(16.dp),
+                color = PrimaryPurple
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    Text(
+                        "Continuar con contraseña",
+                        fontSize = 15.sp, fontWeight = FontWeight.SemiBold, color = Color.White
+                    )
+                }
             }
         }
     }
