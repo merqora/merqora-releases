@@ -1,6 +1,10 @@
 ﻿package com.mercora.app.ui.screens.auth
 
 import android.content.Context
+import android.content.Intent
+import android.content.ContextWrapper
+import android.os.Build
+import android.provider.Settings
 import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricPrompt
 import androidx.compose.animation.*
@@ -47,7 +51,7 @@ fun BiometricEnrollmentScreen(
     )
 
     fun doBiometric() {
-        val activity = context as? androidx.fragment.app.FragmentActivity ?: return
+        val activity = context.findActivity() as? androidx.fragment.app.FragmentActivity ?: return
         BiometricPrompt(
             activity,
             androidx.core.content.ContextCompat.getMainExecutor(activity),
@@ -63,6 +67,9 @@ fun BiometricEnrollmentScreen(
                 }
                 override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
                     super.onAuthenticationError(errorCode, errString)
+                    if (errorCode == BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED) {
+                        openSystemFingerprintEnrollment(context)
+                    }
                 }
                 override fun onAuthenticationFailed() {
                     super.onAuthenticationFailed()
@@ -283,4 +290,30 @@ private fun buttonTextForStep(step: Int): String = when (step) {
 
 fun isBiometricEnrolled(context: Context, userId: String): Boolean {
     return BiometricEnrollmentManager.isEnrolled(context, userId)
+}
+
+private fun Context.findActivity(): android.app.Activity? {
+    var ctx: Context = this
+    while (ctx is ContextWrapper) {
+        if (ctx is android.app.Activity) return ctx
+        ctx = ctx.baseContext
+    }
+    return null
+}
+
+private fun openSystemFingerprintEnrollment(context: Context) {
+    val intent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+        Intent(Settings.ACTION_BIOMETRIC_ENROLL).putExtra(
+            Settings.EXTRA_BIOMETRIC_AUTHENTICATORS_ALLOWED,
+            BiometricManager.Authenticators.BIOMETRIC_STRONG
+        )
+    } else {
+        Intent(Settings.ACTION_FINGERPRINT_ENROLL)
+    }
+    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+    try {
+        context.startActivity(intent)
+    } catch (e: Exception) {
+        // Sin pantalla de enrolamiento disponible; el usuario debe ir a Ajustes
+    }
 }

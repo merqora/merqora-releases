@@ -1,6 +1,7 @@
 package com.mercora.app.ui.screens.auth
 
 import android.content.Context
+import android.content.ContextWrapper
 import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricPrompt
 import androidx.compose.animation.*
@@ -100,7 +101,7 @@ fun LoginScreen(
     var showInlineEnrollment by remember { mutableStateOf(false) }
     
     // Auto-trigger biometric prompt if enrolled
-    val activity = context as? FragmentActivity
+    val activity = context.findActivity() as? FragmentActivity
     LaunchedEffect(hasSession, biometricEnrolledInApp) {
         if (hasSession && biometricEnrolledInApp && activity != null && !uiState.isAuthenticated) {
             val biometricManager = BiometricManager.from(context)
@@ -562,7 +563,7 @@ private fun BiometricLoginButton(
     onEnrollRequest: () -> Unit = {},
     onSuccess: () -> Unit = {}
 ) {
-    val activity = context as? FragmentActivity
+    val activity = context.findActivity() as? FragmentActivity
     val biometricManager = BiometricManager.from(context)
     val canAuthenticate = biometricManager.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_STRONG)
     val hasBiometricHardware = canAuthenticate != BiometricManager.BIOMETRIC_ERROR_NO_HARDWARE
@@ -834,4 +835,13 @@ fun AuthBackground(gradientOffset: Float = 0f) {
             radius = w * 0.6f
         )
     }
+}
+
+private fun Context.findActivity(): android.app.Activity? {
+    var ctx: Context = this
+    while (ctx is ContextWrapper) {
+        if (ctx is android.app.Activity) return ctx
+        ctx = ctx.baseContext
+    }
+    return null
 }
